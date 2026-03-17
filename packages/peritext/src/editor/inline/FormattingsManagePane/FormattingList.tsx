@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {SYMBOL} from 'nano-theme';
-import type {SavedFormatting} from '../../state/formattings';
+import type {SavedFmt} from '../../state/formattings';
 import {FormattingIcon} from '../views/icon/FormattingIcon';
 
 export interface FormattingListProps {
-  formattings: SavedFormatting[];
-  onSelect: (formatting: SavedFormatting) => void;
+  formattings: SavedFmt[];
+  onSelect: (formatting: SavedFmt) => void;
 }
 
 export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSelect}) => {

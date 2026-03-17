@@ -2,14 +2,14 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {FormattingEdit} from '../views/edit/FormattingEdit';
 import {useSyncStoreOpt} from '../../../web/react/hooks';
-import type {SavedFormatting} from '../../state/formattings';
+import type {SavedFmt} from '../../state/formattings';
 
 const blockClass = rule({
   maxW: '600px',
 });
 
 export interface FormattingEditFormProps {
-  formatting: SavedFormatting;
+  formatting: SavedFmt;
   onSave?: () => void;
 }
 

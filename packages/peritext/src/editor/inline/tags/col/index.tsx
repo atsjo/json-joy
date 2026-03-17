@@ -12,7 +12,7 @@ import {View} from './components/View';
 import {Edit} from './components/Edit';
 import {isValid} from '../../../util/color';
 import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
-import type {ToolbarFormatting} from '../../../state/formattings';
+import type {Fmt} from '../../../state/formattings';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'paintbrush'});
 
@@ -46,7 +46,7 @@ export const behavior = new (class ColBehavior extends InlineSliceBehavior<
     icon: () => <Icon width={16} height={16} />,
   };
 
-  public readonly validate = (formatting: ToolbarFormatting<any, any>): ValidationResult => {
+  public readonly validate = (formatting: Fmt<any, any>): ValidationResult => {
     const obj = formatting.conf()?.view() as Data;
     if (!obj || typeof obj !== 'object') return [{code: 'INVALID_CONFIG'}];
     const color = obj.col || '';
@@ -55,7 +55,7 @@ export const behavior = new (class ColBehavior extends InlineSliceBehavior<
     return 'good';
   };
 
-  public readonly previewText = (formatting: ToolbarFormatting<any, any>): string => {
+  public readonly previewText = (formatting: Fmt<any, any>): string => {
     const data = formatting.conf()?.view() as Data;
     if (!data || typeof data !== 'object') return '';
     let color = data.col || '';

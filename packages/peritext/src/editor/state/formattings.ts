@@ -1,27 +1,25 @@
-import {s} from 'json-joy/lib/json-crdt-patch';
+import {ITimestampStruct, s} from 'json-joy/lib/json-crdt-patch';
 import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
 import {toSchema} from 'json-joy/lib/json-crdt/schema/toSchema';
+import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {InlineSliceBehavior, ValidationResult} from '../inline/InlineSliceBehavior';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 import type {EditorState} from '.';
 
-export interface FormattingBase<B extends InlineSliceBehavior<any, any, any>, R extends Range<string>> {
+export interface FmtBase<B extends InlineSliceBehavior<any, any, any>, R extends Range<string>> {
   behavior: B;
   range: R;
 }
 
-export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {
+export interface Fmt<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
+  extends FmtBase<InlineSliceBehavior<any, any, any>, R> {
   conf(): ObjApi<Node> | undefined;
 }
 
-export interface ToolbarFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
-  extends FormattingBase<InlineSliceBehavior<any, any, any>, R>,
-    FormattingWithConfig<Node> {}
-
-export abstract class EditableFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
-  implements ToolbarFormatting<R, Node>
+export abstract class EditableFmt<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
+  implements Fmt<R, Node>
 {
   public constructor(
     public readonly behavior: InlineSliceBehavior<any, any, any>,
@@ -39,31 +37,10 @@ export abstract class EditableFormatting<R extends Range<string> = Range<string>
 }
 
 /**
- * Formatting is a specific application of known formatting option to a range of
- * text. Formatting is composed of a specific {@link Slice} which stores the
- * state (location, data) of the formatting and a {@link EditorInlineSliceBehavior}
- * which defines the formatting behavior.
- */
-export class SavedFormatting<Node extends ObjNode = ObjNode> extends EditableFormatting<Slice<string>, Node> {
-  /**
-   * @returns Unique key for this formatting. This is the hash of the slice.
-   *     This is used to identify the formatting in the UI.
-   */
-  public key(): number {
-    return this.range.hash;
-  }
-
-  public conf(): ObjApi<Node> | undefined {
-    const node = this.range.dataNode();
-    return node instanceof ObjApi ? node : undefined;
-  }
-}
-
-/**
  * New formatting which is being created. Once created, it will be promoted to
- * a {@link SavedFormatting} instance.
+ * a {@link SavedFmt} instance.
  */
-export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableFormatting<Range<string>, Node> {
+export class NewFmt<Node extends ObjNode = ObjNode> extends EditableFmt<Range<string>, Node> {
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(
@@ -92,10 +69,31 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableForma
   };
 }
 
-export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends SavedFormatting<Node> {
+/**
+ * Formatting is a specific application of known formatting option to a range of
+ * text. Formatting is composed of a specific {@link Slice} which stores the
+ * state (location, data) of the formatting and a {@link EditorInlineSliceBehavior}
+ * which defines the formatting behavior.
+ */
+export class SavedFmt<Node extends ObjNode = ObjNode> extends EditableFmt<Slice<string>, Node> {
+  /**
+   * @returns Unique key for this formatting. This is the hash of the slice.
+   *     This is used to identify the formatting in the UI.
+   */
+  public key(): number {
+    return this.range.hash;
+  }
+
+  public conf(): ObjApi<Node> | undefined {
+    const node = this.range.dataNode();
+    return node instanceof ObjApi ? node : undefined;
+  }
+}
+
+export class ShadowFmt<Node extends ObjNode = ObjNode> extends SavedFmt<Node> {
   protected _model: Model<any>;
 
-  constructor(public readonly saved: SavedFormatting<Node>) {
+  constructor(public readonly saved: SavedFmt<Node>) {
     super(saved.behavior, saved.range, saved.state);
     const nodeApi = saved.conf();
     const schema = nodeApi ? toSchema(nodeApi.node) : saved.behavior.schema;
@@ -104,5 +102,26 @@ export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends Saved
 
   public conf(): ObjApi<Node> | undefined {
     return this._model.api.obj([]) as unknown as ObjApi<Node>;
+  }
+}
+
+export class SynthFmt<Node extends ObjNode = ObjNode> {
+  public readonly confId: ITimestampStruct | undefined;
+  public readonly model: Model<any>;
+  public readonly str: ValueSyncStore<string>;
+  
+  constructor(public readonly saved: SavedFmt<Node>) {
+    const sourceModel = saved.range.txt.model;
+    this.str = new ValueSyncStore(saved.range.text());
+    this.model = sourceModel.clone();
+    this.confId = saved.conf()?.node.id;
+  }
+
+  public conf(): ObjApi<ObjNode> | undefined {
+    const {confId, model} = this;
+    if (!confId) return;
+    const node = model.index.get(confId) as ObjNode | undefined;
+    if (!node) return;
+    return model.api.wrap(node);
   }
 }

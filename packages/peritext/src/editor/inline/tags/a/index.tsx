@@ -14,7 +14,7 @@ import {Edit} from './components/Edit';
 import {getDomain} from '../../../util';
 import {Favicon} from '../../../components/Favicon';
 import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
-import type {ToolbarFormatting} from '../../../state/formattings';
+import type {Fmt} from '../../../state/formattings';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'link'});
 
@@ -58,7 +58,7 @@ export const behavior = new (class ABehavior extends InlineSliceBehavior<
     keys: ['⌘', 'k'],
   };
 
-  public readonly validate = (formatting: ToolbarFormatting<any, any>): ValidationResult => {
+  public readonly validate = (formatting: Fmt<any, any>): ValidationResult => {
     const obj = formatting.conf()?.view() as Data;
     if (!obj || typeof obj !== 'object') return [{code: 'INVALID_CONFIG'}];
     const href = obj.href || '';
@@ -68,7 +68,7 @@ export const behavior = new (class ABehavior extends InlineSliceBehavior<
     return domain ? 'good' : 'fine';
   };
 
-  public readonly previewText = (formatting: ToolbarFormatting<any, any>): string => {
+  public readonly previewText = (formatting: Fmt<any, any>): string => {
     const data = formatting.conf()?.view() as Data;
     if (!data || typeof data !== 'object') return '';
     return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');

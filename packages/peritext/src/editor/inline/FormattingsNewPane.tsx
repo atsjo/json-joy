@@ -10,14 +10,14 @@ import {ContextPaneHeaderSep} from '../components/ContextPaneHeaderSep';
 import {useSyncStoreOpt} from '../../web/react/hooks';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import type {NewFormatting} from '../state/formattings';
+import type {NewFmt} from '../state/formattings';
 
 const blockClass = rule({
   maxW: '600px',
 });
 
 export interface FormattingsNewPaneProps {
-  formatting: NewFormatting;
+  formatting: NewFmt;
   onSave: () => void;
 }
 

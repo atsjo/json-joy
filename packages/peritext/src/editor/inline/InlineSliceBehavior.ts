@@ -2,7 +2,7 @@ import * as React from 'react';
 import {SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
-import type {EditableFormatting, SavedFormatting, ToolbarFormatting} from '../state/formattings';
+import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
 
 export class InlineSliceBehavior<
   Stacking extends SliceStacking = SliceStacking,
@@ -21,7 +21,7 @@ export class InlineSliceBehavior<
    *     or 'fine'. If the formatting is invalid, return an array of validation
    *     errors.
    */
-  validate?: (formatting: ToolbarFormatting<any, any>) => ValidationResult = void 0;
+  validate?: (formatting: Fmt<any, any>) => ValidationResult = void 0;
 
   /**
    * Returns a short description of the formatting, for the user to easily
@@ -31,7 +31,7 @@ export class InlineSliceBehavior<
    * @returns A short description of the formatting. For example, if the
    * formatting is text color, this would be the color name.
    */
-  previewText?: (formatting: ToolbarFormatting) => string = void 0;
+  previewText?: (formatting: Fmt) => string = void 0;
 
   /**
    * A function that returns a React node to be used as an icon for the
@@ -53,11 +53,11 @@ export class InlineSliceBehavior<
 }
 
 export interface IconProps {
-  formatting: ToolbarFormatting;
+  formatting: Fmt;
 }
 
 export interface ViewProps {
-  formatting: SavedFormatting;
+  formatting: SavedFmt;
 
   /** Call when user wants to enter "edit" mode for this formatting. */
   onEdit: () => void;
@@ -67,7 +67,7 @@ export interface EditProps {
   /**
    * The formatting slice to be edited.
    */
-  formatting: EditableFormatting;
+  formatting: EditableFmt;
 
   /**
    * The function to be called when the formatting is ready to be saved.

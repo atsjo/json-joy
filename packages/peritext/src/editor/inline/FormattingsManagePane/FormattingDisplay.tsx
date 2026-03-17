@@ -17,14 +17,14 @@ import {useFormattingPane} from './context';
 import {ContextPaneHeader} from '../../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../../components/ContextPaneHeaderSep';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
-import type {SavedFormatting} from '../../state/formattings';
+import type {SavedFmt} from '../../state/formattings';
 
 const PencilIcon = makeIcon({set: 'lucide', icon: 'pencil'});
 const TrashIcon = makeIcon({set: 'lucide', icon: 'trash'});
 const OptionsIcon = makeIcon({set: 'tabler', icon: 'dots-vertical'});
 
 export interface FormattingDisplayProps {
-  formatting: SavedFormatting;
+  formatting: SavedFmt;
   onClose?: () => void;
 }
 

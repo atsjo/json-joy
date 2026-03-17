@@ -12,7 +12,7 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
 import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
-import type {ToolbarFormatting} from '../../../state/formattings';
+import type {Fmt} from '../../../state/formattings';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 
 export const Icon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
@@ -47,13 +47,13 @@ export const behavior = new (class MathBehavior extends InlineSliceBehavior<
     icon: () => <Icon width={16} height={16} />,
   };
 
-  public readonly validate = (formatting: ToolbarFormatting<any, any>): ValidationResult => {
+  public readonly validate = (formatting: Fmt<any, any>): ValidationResult => {
     const tex = (formatting.range as unknown as Slice<string>).text?.() ?? '';
     if (!tex || typeof tex !== 'string') return 'empty';
     return 'good';
   };
 
-  public readonly previewText = (formatting: ToolbarFormatting<any, any>): string => {
+  public readonly previewText = (formatting: Fmt<any, any>): string => {
     const tex = (formatting.range as unknown as Slice<string>).text?.() ?? '';
     return tex.length > 32 ? tex.slice(0, 32) + '…' : tex;
   };

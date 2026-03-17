@@ -2,7 +2,7 @@ import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import {NewFormatting} from './formattings';
+import {NewFmt} from './formattings';
 import {inlines} from '../inline/tags';
 import {Menu} from './menus/Menu';
 import type {PeritextEventTarget} from 'json-joy/src/json-crdt-extensions';
@@ -25,7 +25,9 @@ export class EditorState implements UiLifeCycles {
    * New slice configuration. This is used for new slices which are not yet
    * applied to the text as they need to be configured first.
    */
-  public readonly newSlice = new ValueSyncStore<NewFormatting | undefined>(void 0);
+  public readonly newSlice = new ValueSyncStore<NewFmt | undefined>(void 0);
+
+  public readonly activeSlice = new ValueSyncStore<undefined>(void 0);
 
   /**
    * The ID of the active (where the main cursor or focus is placed) leaf block.
@@ -73,7 +75,7 @@ export class EditorState implements UiLifeCycles {
   //   return true;
   // }
 
-  public startSliceConfig(tag: SliceTypeName | string | number, menu?: MenuItem): NewFormatting | undefined {
+  public startSliceConfig(tag: SliceTypeName | string | number, menu?: MenuItem): NewFmt | undefined {
     const editor = this.txt.editor;
     const behavior = editor.getRegistry().get(tag);
     const range = editor.mainCursor()?.range();
@@ -83,7 +85,7 @@ export class EditorState implements UiLifeCycles {
       newSlice.next(void 0);
       return;
     }
-    const formatting = new NewFormatting(behavior, range, this);
+    const formatting = new NewFmt(behavior, range, this);
     newSlice.next(formatting);
     return formatting;
   }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {rule} from 'nano-theme';
-import type {ToolbarFormatting} from '../state/formattings';
+import type {Fmt} from '../state/formattings';
 
 const blockClass = rule({
   d: 'flex',
@@ -32,7 +32,7 @@ const iconClass = rule({
 });
 
 export interface FormattingTitleProps {
-  formatting: ToolbarFormatting;
+  formatting: Fmt;
   onClick?: React.MouseEventHandler;
 }
 

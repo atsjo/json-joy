@@ -1,5 +1,5 @@
 import {BehaviorSubject} from 'rxjs';
-import {SavedFormatting, SavedShadowFormatting} from '../../state/formattings';
+import {SavedFmt, ShadowFmt} from '../../state/formattings';
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
 import {JsonCrdtDiff} from 'json-joy/lib/json-crdt-diff/JsonCrdtDiff';
 import {subject} from '../../../web/util/rx';
@@ -7,20 +7,20 @@ import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 import type {EditorState} from '../../state';
 
 export class FormattingManageState {
-  public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);
+  public readonly selected$ = new BehaviorSubject<SavedFmt | null>(null);
   public readonly view$ = new BehaviorSubject<'view' | 'edit'>('view');
-  public readonly editing$ = new BehaviorSubject<SavedShadowFormatting | undefined>(undefined);
+  public readonly editing$ = new BehaviorSubject<ShadowFmt | undefined>(undefined);
 
   public constructor(
     public readonly state: EditorState,
     public readonly inline: Inline | undefined,
   ) {}
 
-  public getFormattings$(inline: Inline | undefined = this.inline): BehaviorSubject<SavedFormatting[]> {
+  public getFormattings$(inline: Inline | undefined = this.inline): BehaviorSubject<SavedFmt[]> {
     const state = this.state;
     return subject(state.surface.render$, () => {
       const slices = inline?.p1.layers;
-      const res: SavedFormatting[] = [];
+      const res: SavedFmt[] = [];
       if (!slices) return res;
       const registry = state.txt.editor.getRegistry();
       for (const slice of slices) {
@@ -33,13 +33,13 @@ export class FormattingManageState {
         const isConfigurable = !!behavior.schema;
         if (!isConfigurable) continue;
         if (!(slice instanceof Slice)) continue;
-        res.push(new SavedFormatting(behavior, slice, state));
+        res.push(new SavedFmt(behavior, slice, state));
       }
       return res;
     });
   }
 
-  public readonly select = (formatting: SavedFormatting | null) => {
+  public readonly select = (formatting: SavedFmt | null) => {
     this.selected$.next(formatting);
   };
 
@@ -52,7 +52,7 @@ export class FormattingManageState {
     const selected = this.selected$.getValue();
     if (!selected) return;
     this.view$.next('edit');
-    const formatting = new SavedShadowFormatting(selected);
+    const formatting = new ShadowFmt(selected);
     this.editing$.next(formatting);
   };
 
