@@ -57,7 +57,7 @@ export const View: React.FC<ViewProps> = ({formatting, onEdit}) => {
 
   return (
     <div className={blockClass}>
-      <div style={{textAlign: 'center', margin: '-16px 0'}}>
+      <div style={{textAlign: 'center', margin: '-16px'}}>
         <BasicButton display rounder onClick={onEdit}>
           {React.createElement('math-span', {mode: "textstyle"}, tex)}
         </BasicButton>

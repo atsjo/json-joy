@@ -37,9 +37,8 @@ export interface InlineMathProps extends IslandFrameProps {
 }
 
 export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
-  const editor = useEditor();
-
-  if (!attr.isStart()) return Char.ZeroLengthSpace;
+  // if (!attr.isStart()) return Char.ZeroLengthSpace;
+  if (!attr.isStart()) return;
 
   const tex = (attr.slice as unknown as Slice<string>).text?.() ?? '';
 
@@ -47,13 +46,7 @@ export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
     <Island
       inline={inline}
       attr={attr}
-      onMouseDown={() => {
-        editor.et.cursor({at: attr.slice, flip: true});
-      }}
       className={equationClass}
-      under={(
-        <span>aha</span>
-      )}
     >
       {React.createElement('math-span', {mode: "textstyle", className: equationClass + (inline.isSelected() ? equationSelectedClass : '')}, tex)}
     </Island>

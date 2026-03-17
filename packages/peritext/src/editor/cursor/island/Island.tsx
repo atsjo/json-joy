@@ -3,10 +3,11 @@ import * as React from 'react';
 import {IslandFrame, IslandFrameProps} from './IslandFrame';
 import {IslandUnder} from './IslandUnder';
 import {Char} from '../../../web/constants';
+import {useEditor} from '../../context';
 
 export interface IslandProps extends IslandFrameProps {
-  inline?: Inline;
-  attr?: InlineAttr;
+  inline: Inline;
+  attr: InlineAttr;
   children?: React.ReactNode;
 }
 
@@ -15,6 +16,8 @@ export interface IslandProps extends IslandFrameProps {
  */
 export const Island: React.FC<IslandProps> = (props) => {
   const {children, inline, attr, ...rest} = props;
+
+  const editor = useEditor();
 
   const selected = inline?.isSelected();
   let isExactSelection = false;
@@ -26,7 +29,17 @@ export const Island: React.FC<IslandProps> = (props) => {
   return (
     <>
       {Char.ZeroLengthSpace}
-      <IslandFrame {...rest} selected={selected} outline={isExactSelection} under={<IslandUnder {...props} selected={selected && isExactSelection} />}>
+      <IslandFrame {...rest}
+        selected={selected}
+        outline={isExactSelection}
+        under={<IslandUnder {...props} selected={selected && isExactSelection} />}
+        onMouseDown={() => {
+          editor.et.cursor({at: attr.slice, flip: true});
+        }}
+        onDoubleClick={() => {
+          console.log('DOUBLE CLICK');
+        }}
+      >
         {children}
       </IslandFrame>
       {Char.ZeroLengthSpace}
