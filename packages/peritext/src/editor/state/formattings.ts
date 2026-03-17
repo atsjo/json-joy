@@ -1,5 +1,6 @@
 import {s} from 'json-joy/lib/json-crdt-patch';
 import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
+import {toSchema} from 'json-joy/lib/json-crdt/schema/toSchema';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {InlineSliceBehavior, ValidationResult} from '../inline/InlineSliceBehavior';
@@ -76,7 +77,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableForma
   }
 
   public conf(): ObjApi<Node> | undefined {
-    return this.model.api.obj(['conf']) as ObjApi<Node>;
+    return this.model.api.obj(['conf']) as unknown as ObjApi<Node>;
   }
 
   public readonly save = () => {
@@ -89,4 +90,19 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableForma
     et.format('tog', this.behavior.tag, 'many', view);
     et.cursor({move: [['focus', 'char', 0, true]]});
   };
+}
+
+export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends SavedFormatting<Node> {
+  protected _model: Model<any>;
+
+  constructor(public readonly saved: SavedFormatting<Node>) {
+    super(saved.behavior, saved.range, saved.state);
+    const nodeApi = saved.conf();
+    const schema = nodeApi ? toSchema(nodeApi.node) : saved.behavior.schema;
+    this._model = Model.create(schema as any);
+  }
+
+  public conf(): ObjApi<Node> | undefined {
+    return this._model.api.obj([]) as unknown as ObjApi<Node>;
+  }
 }

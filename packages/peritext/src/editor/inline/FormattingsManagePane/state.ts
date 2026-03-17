@@ -1,11 +1,8 @@
 import {BehaviorSubject} from 'rxjs';
-import {SavedFormatting} from '../../state/formattings';
+import {SavedFormatting, SavedShadowFormatting} from '../../state/formattings';
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
-import {toSchema} from 'json-joy/lib/json-crdt/schema/toSchema';
 import {JsonCrdtDiff} from 'json-joy/lib/json-crdt-diff/JsonCrdtDiff';
 import {subject} from '../../../web/util/rx';
-import {Model, type ObjApi} from 'json-joy/lib/json-crdt/model';
-import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 import type {EditorState} from '../../state';
 
@@ -79,19 +76,4 @@ export class FormattingManageState {
     this.switchToViewPanel();
     this.state.surface.rerender();
   };
-}
-
-export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends SavedFormatting<Node> {
-  protected _model: Model<any>;
-
-  constructor(public readonly saved: SavedFormatting<Node>) {
-    super(saved.behavior, saved.range, saved.state);
-    const nodeApi = saved.conf();
-    const schema = nodeApi ? toSchema(nodeApi.node) : saved.behavior.schema;
-    this._model = Model.create(schema as any);
-  }
-
-  public conf(): ObjApi<Node> | undefined {
-    return this._model.api.obj([]) as unknown as ObjApi<Node>;
-  }
 }
