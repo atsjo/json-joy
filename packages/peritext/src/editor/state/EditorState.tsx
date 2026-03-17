@@ -2,7 +2,7 @@ import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import {NewFmt} from './formattings';
+import {NewFmt} from './formattings/NewFmt';
 import {inlines} from '../inline/tags';
 import {Menu} from './menus/Menu';
 import type {PeritextEventTarget} from 'json-joy/src/json-crdt-extensions';
