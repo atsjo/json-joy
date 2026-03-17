@@ -297,7 +297,6 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
     if (!length) throw new Error('EMPTY_PATCH');
     const id = patch.getId();
     let __model: Model<N> | undefined;
-    const getModel = () => __model || (__model = this.replayTo(id!, false));
     const builder = this.end.api.builder;
     for (let i = length - 1; i >= 0; i--) {
       const op = ops[i];
@@ -306,33 +305,28 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
         builder.del(op.obj, [new Timespan(opId.sid, opId.time, op.span())]);
         continue;
       }
-      const model = getModel();
+      const model = __model || (__model = this.replayTo(id!, false));
       // TODO: Do not overwrite already deleted values? Or needed for concurrency? Orphaned nodes.
       if (op instanceof InsValOp) {
-        const val = model.index.get(op.obj);
-        if (val instanceof ValNode) {
-          const schema = toSchema(val.node());
-          const newId = schema.build(builder);
-          builder.setVal(op.obj, newId);
-        }
+        const nodeId = op.obj;
+        const val = model.index.get(nodeId);
+        if (val instanceof ValNode)
+          builder.setVal(nodeId, toSchema(val.node()).build(builder));
       } else if (op instanceof InsObjOp || op instanceof InsVecOp) {
         const data: (typeof op)['data'] = [];
-        const container = model.index.get(op.obj);
+        const nodeId = op.obj;
+        const container = model.index.get(nodeId);
         for (const [key] of op.data) {
-          let value: JsonNode | undefined;
-          if (container instanceof ObjNode) value = container.get(key + '');
-          else if (container instanceof VecNode) value = container.get(+key);
-          if (value) {
-            const schema = toSchema(value);
-            const newId = schema.build(builder);
-            data.push([key, newId] as any);
-          } else {
-            data.push([key, builder.con(undefined)] as any);
-          }
+          let oldValueNode: JsonNode | undefined = container instanceof ObjNode
+            ? container.get(key + '')
+            : container instanceof VecNode
+              ? container.get(+key) : undefined;
+          if (oldValueNode) data.push([key, toSchema(oldValueNode).build(builder)] as any);
+          else data.push([key, builder.con(undefined)] as any);
         }
         if (data.length) {
-          if (op instanceof InsObjOp) builder.insObj(op.obj, data as InsObjOp['data']);
-          else if (op instanceof InsVecOp) builder.insVec(op.obj, data as InsVecOp['data']);
+          if (op instanceof InsObjOp) builder.insObj(nodeId, data as InsObjOp['data']);
+          else if (op instanceof InsVecOp) builder.insVec(nodeId, data as InsVecOp['data']);
         }
       } else if (op instanceof DelOp) {
         const node = model.index.find(op.obj);
