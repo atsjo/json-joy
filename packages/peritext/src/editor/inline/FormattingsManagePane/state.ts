@@ -1,5 +1,6 @@
 import {BehaviorSubject} from 'rxjs';
-import {SavedFmt, ShadowFmt} from '../../state/formattings';
+import {SavedFmt} from '../../state/formattings';
+import {SynthFmt} from '../../state/formattings/SynthFmt';
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
 import {JsonCrdtDiff} from 'json-joy/lib/json-crdt-diff/JsonCrdtDiff';
 import {subject} from '../../../web/util/rx';
@@ -9,7 +10,7 @@ import type {EditorState} from '../../state';
 export class FormattingManageState {
   public readonly selected$ = new BehaviorSubject<SavedFmt | null>(null);
   public readonly view$ = new BehaviorSubject<'view' | 'edit'>('view');
-  public readonly editing$ = new BehaviorSubject<ShadowFmt | undefined>(undefined);
+  public readonly editing$ = new BehaviorSubject<SynthFmt | undefined>(undefined);
 
   public constructor(
     public readonly state: EditorState,
@@ -52,7 +53,7 @@ export class FormattingManageState {
     const selected = this.selected$.getValue();
     if (!selected) return;
     this.view$.next('edit');
-    const formatting = new ShadowFmt(selected);
+    const formatting = new SynthFmt(selected);
     this.editing$.next(formatting);
   };
 

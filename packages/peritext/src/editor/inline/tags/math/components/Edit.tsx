@@ -1,10 +1,13 @@
 import * as React from 'react';
-import 'mathlive';
 import {rule} from 'nano-theme';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {useT} from 'use-t';
 import type {EditProps} from '../../../InlineSliceBehavior';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
+
+import 'mathlive';
+import 'mathlive/fonts.css';
+import 'mathlive/static.css';
 
 const fieldWrapClass = rule({
   d: 'block',
@@ -53,18 +56,16 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   return (
     <div>
       <div className={fieldWrapClass}>
-        {/* math-field custom element — registered by `import 'mathlive'`.
-            Using React.createElement to bypass JSX IntrinsicElements check. */}
         {React.createElement('math-field', {
-          ref: fieldRef,
+          // ref: fieldRef,
           value: initialTex,
-          'virtual-keyboard-mode': 'onfocus',
-          onKeyDown: (e: React.KeyboardEvent) => {
-            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-              e.preventDefault();
-              handleSave();
-            }
-          },
+          // 'virtual-keyboard-mode': 'onfocus',
+          // onKeyDown: (e: React.KeyboardEvent) => {
+          //   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          //     e.preventDefault();
+          //     handleSave();
+          //   }
+          // },
         })}
       </div>
       <div className={actionsClass}>

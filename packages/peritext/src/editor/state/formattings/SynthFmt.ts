@@ -1,26 +1,32 @@
-import {ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
+import {SavedFmt} from '.';
 import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
 import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
-import type {SavedFmt} from '.';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 
-export class SynthFmt<Node extends ObjNode = ObjNode> {
-  public readonly confId: ITimestampStruct | undefined;
-  public readonly model: Model<any>;
+export class SynthFmt<Node extends ObjNode = ObjNode> extends SavedFmt<Node> {
+  private readonly _conf: ObjApi<Node> | undefined;
   public readonly str: ValueSyncStore<string>;
   
   constructor(public readonly saved: SavedFmt<Node>) {
+    super(saved.behavior, saved.range, saved.state);
     const sourceModel = saved.range.txt.model;
     this.str = new ValueSyncStore(saved.range.text());
-    this.model = sourceModel.clone();
-    this.confId = saved.conf()?.node.id;
+    const clone = sourceModel.clone();
+    const confId = saved.conf()?.node.id;
+    if (!confId) return;
+    const node = clone.index.get(confId) as ObjNode | undefined;
+    let _conf: ObjApi<Node> | undefined;
+    if (node) {
+      const nodeApi = clone.api.wrap(node);
+      if (nodeApi instanceof ObjApi) _conf = nodeApi as unknown as ObjApi<Node>;
+    } else {
+      const shadowModel = Model.create(saved.behavior.schema);
+      _conf = shadowModel.api.obj([]) as unknown as ObjApi<Node>;
+    }
+    this._conf = _conf;
   }
 
-  public conf(): ObjApi<ObjNode> | undefined {
-    const {confId, model} = this;
-    if (!confId) return;
-    const node = model.index.get(confId) as ObjNode | undefined;
-    if (!node) return;
-    return model.api.wrap(node);
+  public conf(): ObjApi<Node> | undefined {
+    return this._conf;
   }
 }
