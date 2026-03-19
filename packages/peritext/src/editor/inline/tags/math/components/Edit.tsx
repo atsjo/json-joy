@@ -57,15 +57,19 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
     <div>
       <div className={fieldWrapClass}>
         {React.createElement('math-field', {
-          // ref: fieldRef,
+          ref: fieldRef,
           value: initialTex,
           // 'virtual-keyboard-mode': 'onfocus',
-          // onKeyDown: (e: React.KeyboardEvent) => {
-          //   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-          //     e.preventDefault();
-          //     handleSave();
-          //   }
-          // },
+          onKeyDown: (e: React.KeyboardEvent) => {
+            const el = fieldRef.current as any;
+            if (!el) return;
+            const newTex: string = el.value ?? '';
+            console.log({newTex});
+            // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+            //   e.preventDefault();
+            //   handleSave();
+            // }
+          },
         })}
       </div>
       <div className={actionsClass}>
