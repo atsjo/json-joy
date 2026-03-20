@@ -1,6 +1,6 @@
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
-import {BehaviorSubject} from 'rxjs';
+import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import {WebFacade} from '../dom/facade/WebFacade';
 import type {PeritextHeadless} from 'json-joy/src/json-crdt-extensions/peritext';
 import type {PeritextPlugin} from '../react/types';
@@ -12,7 +12,7 @@ export class PeritextSurfaceState implements UiLifeCycles {
   public readonly peritext: Peritext;
   public readonly dom: DomController;
   public readonly log: Log;
-  public readonly render$ = new BehaviorSubject<number>(0);
+  public readonly render$ = new ValueSyncStore<number>(0);
   public readonly events: PeritextEventDefaults;
 
   /** Overlay portal container element. */
@@ -21,7 +21,7 @@ export class PeritextSurfaceState implements UiLifeCycles {
   public readonly rerender = (): void => {
     const {peritext, render$} = this;
     peritext.refresh();
-    render$.next(render$.getValue() + 1);
+    render$.next(render$.value + 1);
   };
 
   constructor(

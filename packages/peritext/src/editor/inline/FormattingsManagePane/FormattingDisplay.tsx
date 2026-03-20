@@ -12,11 +12,11 @@ import {FormattingPane} from '../FormattingPane';
 import {ContextMenu, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {FormattingEditForm} from './FormattingEditForm';
-import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useFormattingPane} from './context';
 import {ContextPaneHeader} from '../../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../../components/ContextPaneHeaderSep';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import type {SavedFmt} from '../../state/formattings';
 
 const PencilIcon = makeIcon({set: 'lucide', icon: 'pencil'});
@@ -30,8 +30,8 @@ export interface FormattingDisplayProps {
 
 export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting, onClose}) => {
   const state = useFormattingPane();
-  const editFormatting = useBehaviorSubject(state.editing$);
-  const view = useBehaviorSubject(state.view$);
+  const editFormatting = useSyncStore(state.editing);
+  const view = useSyncStore(state.view);
   const {surface} = useEditor();
   const [t] = useT();
 
@@ -93,7 +93,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         <FormattingTitle
           formatting={formatting}
           onClick={() => {
-            if (state.view$.value === 'view') state.switchToEditPanel();
+            if (state.view.value === 'view') state.switchToEditPanel();
           }}
         />
       </ContextPaneHeader>

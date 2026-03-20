@@ -7,7 +7,7 @@ import {defaultPlugin} from '../../plugins/minimal';
 import {PeritextSurfaceState} from '../state';
 import {context} from './context';
 import {BlockView} from './BlockView';
-import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import type {PeritextPlugin} from './types';
 import type {PeritextApi} from 'json-joy/src/json-crdt-extensions/peritext';
 
@@ -111,7 +111,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   const {state, div} = props;
 
   // Subscribe to re-render events.
-  useBehaviorSubject(state.render$);
+  useSyncStore(state.render$);
 
   // Render the main body of the editor.
   const block = state.peritext.blocks.root;
