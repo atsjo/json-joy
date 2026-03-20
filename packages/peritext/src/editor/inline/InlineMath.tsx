@@ -1,12 +1,15 @@
-import 'mathlive';
 import * as React from 'react';
-import {Char} from '../../web/constants';
-import {useEditor} from '../context';
 import {Island} from '../cursor/island/Island';
 import {IslandFrameProps} from '../cursor/island/IslandFrame';
 import {rule} from 'nano-theme';
 import type {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
+
+import 'mathlive';
+// TODO: load these once?
+// or: https://cdn.jsdelivr.net/npm/mathlive@0.109.0/mathlive-static.css
+import 'mathlive/fonts.css';
+import 'mathlive/static.css';
 
 const equationClass = rule({
   cur: 'pointer',
@@ -25,11 +28,6 @@ const equationSelectedClass = rule({
   },
 });
 
-// TODO: load these once?
-// or: https://cdn.jsdelivr.net/npm/mathlive@0.109.0/mathlive-static.css
-// import 'mathlive/fonts.css';
-// import 'mathlive/static.css';
-
 export interface InlineMathProps extends IslandFrameProps {
   inline: Inline;
   attr: InlineAttr;
@@ -37,10 +35,16 @@ export interface InlineMathProps extends IslandFrameProps {
 }
 
 export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
-  // if (!attr.isStart()) return Char.ZeroLengthSpace;
+  const ref = React.useRef<HTMLInputElement>(null);
+
   if (!attr.isStart()) return;
 
   const tex = (attr.slice as unknown as Slice<string>).text?.() ?? '';
+
+  if (ref.current && ref.current.textContent !== tex) {
+    ref.current.textContent = tex;
+    try {(ref.current as any).render?.();} catch {}
+  }
 
   return (
     <Island
@@ -48,7 +52,7 @@ export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
       attr={attr}
       className={equationClass}
     >
-      {React.createElement('math-span', {mode: "textstyle", className: equationClass + (inline.isSelected() ? equationSelectedClass : '')}, tex)}
+      {React.createElement('math-span', {ref, mode: "textstyle", className: equationClass + (inline.isSelected() ? equationSelectedClass : '')}, tex)}
     </Island>
   );
 };

@@ -43,6 +43,17 @@ export class JsonCrdtDiff {
     );
   }
 
+  public applyStrPatch(patch: str.Patch, src: StrNode, start: ITimestampStruct = src.id, length: number = src.length()): void {
+    const builder = this.builder;
+    const offset = start === src.id ? 0 : (src.posById(start) ?? 0);
+    str.apply(
+      patch,
+      length,
+      (pos, txt) => builder.insStr(src.id, !pos ? start : src.find(pos + offset - 1)!, txt),
+      (pos, len) => builder.del(src.id, src.findInterval(pos + offset, len)),
+    );
+  }
+
   protected diffBin(src: BinNode, dst: Uint8Array): void {
     const view = src.view();
     if (cmpUint8Array(view, dst)) return;
@@ -204,7 +215,7 @@ export class JsonCrdtDiff {
     }
   }
 
-  protected diffAny(src: JsonNode, dst: unknown): void {
+  public diffAny(src: JsonNode, dst: unknown): void {
     if (src instanceof ConNode) {
       if (dst instanceof nodes.con) dst = dst.raw;
       const val = src.val;

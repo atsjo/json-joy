@@ -39,7 +39,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
 
   const right = doEdit ? (
     <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-      <BasicButton fill width={'auto'} onClick={state.returnFromEditPanelAndSave}>
+      <BasicButton fill width={'auto'} onClick={state.onSave}>
         {t('Save')}
       </BasicButton>
       <Space horizontal />
@@ -99,7 +99,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       {doEdit ? (
-        <FormattingEditForm formatting={editFormatting} onSave={state.returnFromEditPanelAndSave} />
+        <FormattingEditForm formatting={editFormatting} onSave={state.onSave} />
       ) : formatting.behavior.View ? (
         <>
           <ContextSep />

@@ -2,6 +2,7 @@ import {SavedFmt} from '../../state/formattings';
 import {SynthFmt} from '../../state/formattings/SynthFmt';
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
 import {JsonCrdtDiff} from 'json-joy/lib/json-crdt-diff/JsonCrdtDiff';
+import * as str from 'json-joy/lib/util/diff/str';
 import * as sync from 'thingies/lib/sync';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 import type {EditorState} from '../../state';
@@ -57,23 +58,26 @@ export class FmtManagePaneState {
     this.editing.next(formatting);
   };
 
-  public readonly returnFromEditPanelAndSave = (): void => {
-    const shadowFormatting = this.editing.value;
-    if (!shadowFormatting) return;
-    const view = shadowFormatting.conf()!.view();
-    const formatting = shadowFormatting.saved;
-    const data = formatting.conf();
-    if (!data) return;
-    // if (!data) {
-    //   // Slice has no stored data node (e.g. plain-toggle marks like math).
-    //   // The Edit component is responsible for its own save; just close the panel.
-    //   this.switchToViewPanel();
-    //   this.state.surface.rerender();
-    //   return;
-    // }
-    const model = data.api.model;
-    const patch = new JsonCrdtDiff(model).diff(data.node, view);
-    if (patch.ops.length) model.applyPatch(patch);
+  public readonly onSave = (): void => {
+    const fmt = this.editing.value;
+    if (!fmt) return;
+    const original = fmt.saved;
+    const range = original.range;
+    const model = range.txt.model;
+    const differ = new JsonCrdtDiff(model);
+    const newData = fmt.conf()?.view();
+    const originalData = original.conf();
+    if (originalData && newData && (typeof newData === 'object')) {
+      differ.diffAny(originalData.node, newData);
+    }
+    const originalText = range.text();
+    const newText = fmt.str.value;
+    if (originalText !== newText) {
+      const patch = str.diff(originalText, newText);
+      if (patch.length) differ.applyStrPatch(patch, range.txt.strApi().node, range.start.id, originalText.length);
+    }
+    const patch = differ.builder.flush();
+    if (patch.ops.length) model.applyLocalPatch(patch);
     this.switchToViewPanel();
     this.state.surface.rerender();
   };
