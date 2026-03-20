@@ -12,22 +12,34 @@ export type WrapListInValueSyncStore<T extends unknown[]> = {
 export interface Disposable {
   dispose(): void;
 }
+export interface SyncValue<T> {
+  value: T;
+}
 
-export class Value<V> extends FanOut<void> implements SyncStore<V> {  
-  constructor(public value: V) {
+export class Value<V> extends FanOut<void> implements SyncStore<V>, SyncValue<V> {  
+  constructor(value: V) {
     super();
+    this.value = value;
   } 
+
   public next(value: V, force = false): void {
     if (!force && this.value === value) return;
     this.value = value;
     this.emit();
   }
+
+  /** ----------------------------------------------------- {@link SyncValue} */
+
+  public value: V;
+
+  /** ----------------------------------------------------- {@link SyncStore} */
+
   public readonly subscribe: SyncStoreSubscribe = (cb) => this.listen(cb);
   public readonly getSnapshot: () => V = () => this.value;
 }
 
-export class Computed<N, V extends unknown[] = any> extends FanOut<void> implements SyncStore<N>, Disposable {
-  private cached: N | undefined = void 0;
+export class Computed<N, V extends unknown[] = any> extends FanOut<void> implements SyncValue<N>, SyncStore<N>, Disposable {
+  private cache: N | undefined = void 0;
   private subs: SyncStoreUnsubscribe[];
 
   constructor(
@@ -40,33 +52,38 @@ export class Computed<N, V extends unknown[] = any> extends FanOut<void> impleme
     for (let i = 0; i < length; i++) {
       const dep = deps[i];
       const sub = dep.listen(() => {
-        this.cached = void 0;
+        this.cache = void 0;
         this.emit();
       });
       subs.push(sub);
     }
   }
 
-  public dispose() {
-    for (const sub of this.subs) sub();
+  private _comp(): N {
+    const cached = this.cache;
+    if (cached !== undefined) return cached;
+    return this.cache = this.compute(this.deps.map((dep) => dep.getSnapshot()) as V);
   }
 
-  private _comp(): N {
-    let cached = this.cached;
-    if (cached !== undefined) return cached;
-    return this.cached = this.compute(this.deps.map((dep) => dep.getSnapshot()) as V);
-  }
+  /** ----------------------------------------------------- {@link SyncValue} */
 
   public get value(): N {
     return this._comp();
   }
 
+  /** ----------------------------------------------------- {@link SyncStore} */
+
   public readonly subscribe: SyncStoreSubscribe = (cb) => this.listen(cb);
   public readonly getSnapshot: () => N = () => this._comp();
+
+  /** ---------------------------------------------------- {@link Disposable} */
+
+  public dispose() {
+    for (const sub of this.subs) sub();
+  }
 }
 
 export const val = <V>(initial: V): Value<V> => new Value(initial);
-
 export const comp = <V extends unknown[], N>(
   deps: WrapListInValueSyncStore<V>,
   compute: (args: V) => N,
