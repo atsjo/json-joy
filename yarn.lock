@@ -2126,7 +2126,7 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-presence@workspace:packages/collaborative-presence"
   dependencies:
     json-joy: "workspace:*"
-    thingies: "npm:^2.5.0"
+    thingies: "npm:^2.6.0"
   peerDependencies:
     tslib: "*"
   languageName: unknown
@@ -2302,7 +2302,7 @@ __metadata:
     react-use: "npm:^17.6.0"
     rxjs: "npm:^7.8.2"
     sonic-forest: "npm:^1.2.1"
-    thingies: "npm:^2.5.0"
+    thingies: "npm:^2.6.0"
     use-t: "npm:^1.6.4"
   peerDependencies:
     "@monaco-editor/react": "*"
@@ -2542,7 +2542,7 @@ __metadata:
     redis-parser: "npm:^3.0.0"
     safe-stable-stringify: "npm:^2.3.1"
     secure-json-parse: "npm:^2.4.0"
-    thingies: "npm:^2.5.0"
+    thingies: "npm:^2.6.0"
     tinybench: "npm:^2.4.0"
     tree-dump: "npm:^1.1.0"
     tslib: "npm:^2.6.2"
@@ -2659,7 +2659,7 @@ __metadata:
     "@jsonjoy.com/json-random": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     sonic-forest: "npm:^1.2.1"
-    thingies: "npm:^2.5.0"
+    thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
   peerDependencies:
     rxjs: "*"
@@ -2671,7 +2671,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/keyboard@workspace:packages/keyboard"
   dependencies:
-    thingies: "npm:^2.5.0"
+    thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
   peerDependencies:
     tslib: "*"
@@ -2754,7 +2754,7 @@ __metadata:
     rx-use: "npm:^1.9.0"
     rxjs: "npm:^7.8.1"
     slugify: "npm:^1.6.6"
-    thingies: "npm:^2.5.0"
+    thingies: "npm:^2.6.0"
     use-t: "npm:^1.6.4"
     very-small-parser: "npm:^1.14.0"
   peerDependencies:
@@ -10190,7 +10190,7 @@ __metadata:
     rxjs: "npm:^7.8.2"
     slate: "npm:^0.120.0"
     sonic-forest: "npm:^1.2.1"
-    thingies: "npm:^2.5.0"
+    thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
     ts-jest: "npm:^29.4.0"
     ts-loader: "npm:^9.5.2"
@@ -14051,6 +14051,15 @@ __metadata:
   peerDependencies:
     tslib: ^2
   checksum: 10c0/52194642c129615b6af15648621be9a2784ad25526e3facca6c28aa1a36ea32245ef146ebc3fbaf64a3605b8301a5335da505d0c314f851ff293b184e0de7fb9
+  languageName: node
+  linkType: hard
+
+"thingies@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "thingies@npm:2.6.0"
+  peerDependencies:
+    tslib: ^2
+  checksum: 10c0/6357247872cfd0ef5407455eab2724ccbf591f0b1a56a230c66ab139dc0a8bb4acaf85c177af0eee7a49740a4674c424529eca3e573b439eb256afed4e433fac
   languageName: node
   linkType: hard
 
