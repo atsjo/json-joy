@@ -3,7 +3,7 @@ import {drule, rule, useTheme} from 'nano-theme';
 import {context} from './context';
 import {Button} from '../../web/components/Button';
 import {Console} from './Console';
-import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'json-joy/lib/util/events/sync-store';
 import {useSyncStore} from '../../web/react/hooks';
 import {DebugState} from './state';
 import {CssClass} from '../../web/constants';
@@ -60,10 +60,10 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({state: state_, ct
       state,
       ctx,
       flags: {
-        dom: new ValueSyncStore(true),
-        editor: new ValueSyncStore(true),
-        peritext: new ValueSyncStore(false),
-        model: new ValueSyncStore(false),
+        dom: new Value(true),
+        editor: new Value(true),
+        peritext: new Value(false),
+        model: new Value(false),
       },
     }),
     [state, ctx],

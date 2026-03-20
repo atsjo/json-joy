@@ -1,4 +1,4 @@
-import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'json-joy/lib/util/events/sync-store';
 import {HslColor} from '@jsonjoy.com/ui';
 import type {ChangeDetail} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '../../web/types';
@@ -6,13 +6,13 @@ import type {PeritextSurfaceState} from '../../web/state';
 
 export class CursorState implements UiLifeCycles {
   /** Current score. */
-  public readonly score: ValueSyncStore<number> = new ValueSyncStore(0);
+  public readonly score: Value<number> = new Value(0);
 
   /** By how much the score changed. */
-  public readonly scoreDelta: ValueSyncStore<number> = new ValueSyncStore(0);
+  public readonly scoreDelta: Value<number> = new Value(0);
 
   /** The last score that was shown to the user. */
-  public readonly lastVisScore: ValueSyncStore<number> = new ValueSyncStore(0);
+  public readonly lastVisScore: Value<number> = new Value(0);
 
   constructor(
     public readonly ctx: PeritextSurfaceState,

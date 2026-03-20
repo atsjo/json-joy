@@ -1,15 +1,15 @@
 import * as React from 'react';
-import type {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import type {Value} from 'json-joy/lib/util/events/sync-store';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {DebugState} from './state';
 
 export interface DebugRenderersContextValue {
   state: DebugState;
   flags: {
-    dom: ValueSyncStore<boolean>;
-    editor: ValueSyncStore<boolean>;
-    peritext: ValueSyncStore<boolean>;
-    model: ValueSyncStore<boolean>;
+    dom: Value<boolean>;
+    editor: Value<boolean>;
+    peritext: Value<boolean>;
+    model: Value<boolean>;
   };
   ctx: PeritextSurfaceState;
 }

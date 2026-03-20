@@ -1,4 +1,4 @@
-import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'json-joy/lib/util/events/sync-store';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
@@ -17,7 +17,7 @@ export class EditorState implements UiLifeCycles {
   public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
-  public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
+  public readonly showInlineToolbar = new Value<[show: boolean, time: number]>([false, 0]);
 
   public readonly menu = new Menu(this);
 
@@ -25,9 +25,9 @@ export class EditorState implements UiLifeCycles {
    * New slice configuration. This is used for new slices which are not yet
    * applied to the text as they need to be configured first.
    */
-  public readonly newSlice = new ValueSyncStore<NewFmt | undefined>(void 0);
+  public readonly newSlice = new Value<NewFmt | undefined>(void 0);
 
-  public readonly activeSlice = new ValueSyncStore<undefined>(void 0);
+  public readonly activeSlice = new Value<undefined>(void 0);
 
   /**
    * The ID of the active (where the main cursor or focus is placed) leaf block.

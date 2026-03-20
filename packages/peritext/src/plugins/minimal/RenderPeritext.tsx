@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Chrome} from './Chrome';
 import {context, type MinimalPluginContextValue} from './context';
-import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'json-joy/lib/util/events/sync-store';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {ChangeDetail} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 
@@ -14,9 +14,9 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) =
   const value: MinimalPluginContextValue = React.useMemo(
     () => ({
       ctx,
-      score: new ValueSyncStore(0),
-      scoreDelta: new ValueSyncStore(0),
-      lastVisScore: new ValueSyncStore(0),
+      score: new Value(0),
+      scoreDelta: new Value(0),
+      lastVisScore: new Value(0),
     }),
     [ctx],
   );

@@ -9,7 +9,7 @@ import {Slice} from '../slice/Slice';
 import {toLine} from 'pojo-dump/lib/toLine';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
-import {ValueSyncStore} from '../../../util/events/sync-store';
+import {Value} from '../../../util/events/sync-store';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {
   type Patch,
@@ -83,7 +83,7 @@ export class Editor<T = string> implements Printable {
    * for {@link SliceStacking.One} formatting which is set as "pending" when
    * user toggles it while cursor is caret.
    */
-  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
+  public readonly pending = new Value<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);

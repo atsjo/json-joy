@@ -1,11 +1,11 @@
-import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {Value} from 'json-joy/lib/util/events/sync-store';
 import type {UiLifeCycles} from '../../../web/types';
 
 export class DebugState implements UiLifeCycles {
-  public readonly enabled = new ValueSyncStore<boolean>(false);
-  public readonly showSliceOutlines = new ValueSyncStore<boolean>(true);
-  public readonly showSliceInfo = new ValueSyncStore<boolean>(true);
-  public readonly showCursorInfo = new ValueSyncStore<boolean>(true);
+  public readonly enabled = new Value<boolean>(false);
+  public readonly showSliceOutlines = new Value<boolean>(true);
+  public readonly showSliceInfo = new Value<boolean>(true);
+  public readonly showCursorInfo = new Value<boolean>(true);
 
   public toggleDebugMode(): void {
     const {enabled, showSliceOutlines, showSliceInfo, showCursorInfo} = this;

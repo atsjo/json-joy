@@ -7,13 +7,13 @@ export interface SyncStore<T> {
 export type SyncStoreSubscribe = (callback: () => void) => SyncStoreUnsubscribe;
 export type SyncStoreUnsubscribe = () => void;
 export type WrapListInValueSyncStore<T extends unknown[]> = {
-  [K in keyof T]: ValueSyncStore<T[K]>;
+  [K in keyof T]: Value<T[K]>;
 };
 export interface Disposable {
   dispose(): void;
 }
 
-export class ValueSyncStore<V> extends FanOut<void> implements SyncStore<V> {  
+export class Value<V> extends FanOut<void> implements SyncStore<V> {  
   constructor(public value: V) {
     super();
   } 
@@ -65,7 +65,7 @@ export class Computed<N, V extends unknown[] = any> extends FanOut<void> impleme
   public readonly getSnapshot: () => N = () => this._comp();
 }
 
-export const val = <V>(initial: V): ValueSyncStore<V> => new ValueSyncStore(initial);
+export const val = <V>(initial: V): Value<V> => new Value(initial);
 
 export const comp = <V extends unknown[], N>(
   deps: WrapListInValueSyncStore<V>,
