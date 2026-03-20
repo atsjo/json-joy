@@ -18,7 +18,7 @@ export class FmtManagePaneState {
 
   public getFormattings$(inline: Inline | undefined = this.inline): sync.Computed<SavedFmt[]> {
     const state = this.state;
-    const computed = sync.comp([state.surface.render$], () => {
+    const computed = sync.comp([state.surface.renders], () => {
       const slices = inline?.p1.layers;
       const res: SavedFmt[] = [];
       if (!slices) return res;

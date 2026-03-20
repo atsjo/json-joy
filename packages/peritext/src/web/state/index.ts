@@ -12,16 +12,16 @@ export class PeritextSurfaceState implements UiLifeCycles {
   public readonly peritext: Peritext;
   public readonly dom: DomController;
   public readonly log: Log;
-  public readonly render$ = new Value<number>(0);
+  public readonly renders = new Value<number>(0);
   public readonly events: PeritextEventDefaults;
 
   /** Overlay portal container element. */
   public portalEl: HTMLDivElement | undefined = void 0;
 
   public readonly rerender = (): void => {
-    const {peritext, render$} = this;
+    const {peritext, renders} = this;
     peritext.refresh();
-    render$.next(render$.value + 1);
+    renders.next(renders.value + 1);
   };
 
   constructor(

@@ -111,7 +111,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   const {state, div} = props;
 
   // Subscribe to re-render events.
-  useSyncStore(state.render$);
+  useSyncStore(state.renders);
 
   // Render the main body of the editor.
   const block = state.peritext.blocks.root;
