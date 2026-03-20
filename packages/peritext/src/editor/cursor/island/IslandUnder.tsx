@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FormattingsManagePane} from '../../inline/FormattingsManagePane';
+import {FmtManagePane} from '../../inline/FmtManagePane';
 import {BottomPanePortal} from '../util/BottomPanePortal';
 import {IslandProps} from './Island';
 
@@ -14,7 +14,7 @@ export const IslandUnder: React.FC<IslandUnderProps> = (props) => {
 
   return (
     <BottomPanePortal>
-      <FormattingsManagePane inline={inline} />
+      <FmtManagePane inline={inline} />
     </BottomPanePortal>
   );
 };

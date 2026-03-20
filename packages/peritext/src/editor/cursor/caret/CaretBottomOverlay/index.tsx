@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FormattingsManagePane} from '../../../inline/FormattingsManagePane';
+import {FmtManagePane} from '../../../inline/FmtManagePane';
 import {BottomPanePortal} from '../../util/BottomPanePortal';
 import {useEditor} from '../../../context';
 import type {PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
@@ -35,7 +35,7 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
 
   return (
     <BottomPanePortal>
-      <FormattingsManagePane inline={inline} />
+      <FmtManagePane inline={inline} />
     </BottomPanePortal>
   );
 };

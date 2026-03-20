@@ -7,11 +7,11 @@ import {context} from './context';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 
-export interface FormattingsManagePaneProps {
+export interface FmtManagePaneProps {
   inline: Inline;
 }
 
-export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inline}) => {
+export const FmtManagePane: React.FC<FmtManagePaneProps> = ({inline}) => {
   const editorState = useEditor();
   // biome-ignore lint: too many dependencies
   const state = React.useMemo(() => new FormattingManageState(editorState, inline), [editorState, inline?.key()]);
