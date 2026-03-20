@@ -198,3 +198,11 @@ export type SequenceBindingShorthand = [
   action: SequenceAction,
   options?: SequenceBindingOptions,
 ];
+
+export type AnyBinding =
+  | KeyBinding
+  | KeyBindingShorthand
+  | ChordBinding
+  | ChordBindingShorthand
+  | SequenceBinding
+  | SequenceBindingShorthand;

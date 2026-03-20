@@ -35,6 +35,7 @@
     "@codemirror/lang-markdown": "^6.3.2",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.36.5",
+    "@jsonjoy.com/keyboard": "workspace:*",
     "clipboard-copy": "^4.0.1",
     "code-colors-react": "^3.4.0",
     "codemirror": "^6.0.1",

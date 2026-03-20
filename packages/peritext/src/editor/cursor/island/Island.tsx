@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as sync from 'thingies/lib/sync';
 import {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
+import {Kbd} from '@jsonjoy.com/ui/lib/context/kbd';
 import {IslandFrame, IslandFrameProps} from './IslandFrame';
 import {IslandUnder} from './IslandUnder';
 import {Char} from '../../../web/constants';
@@ -19,6 +20,7 @@ export interface IslandProps extends IslandFrameProps {
  */
 export const Island: React.FC<IslandProps> = (props) => {
   const {children, inline, attr, ...rest} = props;
+  const [hide, setHide] = React.useState(false);
   const managePaneStateVal = React.useMemo(() => sync.val<FmtManagePaneState | undefined>(void 0), []);
   const managePaneState = useSyncStoreOpt(managePaneStateVal);
   const editor = useEditor();
@@ -39,12 +41,16 @@ export const Island: React.FC<IslandProps> = (props) => {
   }, [isExactSelection, editor, inline]);
 
   return (
-    <>
+    <Kbd bind={[
+      ['Escape', () => {
+        setHide(true);
+      }]
+    ]}>
       {Char.ZeroLengthSpace}
       <IslandFrame {...rest}
         selected={selected}
         outline={isExactSelection}
-        under={!!managePaneState && <IslandUnder {...props} state={managePaneState} />}
+        under={!!managePaneState && !hide && <IslandUnder {...props} state={managePaneState} />}
         onMouseDown={() => {
           editor.et.cursor({at: attr.slice, flip: true});
         }}
@@ -53,6 +59,6 @@ export const Island: React.FC<IslandProps> = (props) => {
         {children}
       </IslandFrame>
       {Char.ZeroLengthSpace}
-    </>
+    </Kbd>
   );
 };

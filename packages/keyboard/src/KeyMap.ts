@@ -6,18 +6,16 @@ import type {
   ChordAction,
   ChordBinding,
   ChordBindingOptions,
-  ChordBindingShorthand,
   ChordSignature,
   KeyAction,
   KeyBinding,
   KeyBindingOptions,
-  KeyBindingShorthand,
   Signature,
   SequenceAction,
   SequenceBinding,
   SequenceBindingOptions,
-  SequenceBindingShorthand,
   SequenceSignature,
+  AnyBinding,
 } from './types';
 
 export class KeyMap {
@@ -42,16 +40,7 @@ export class KeyMap {
     }
   }
 
-  public bind(
-    definitions: (
-      | KeyBinding
-      | KeyBindingShorthand
-      | ChordBinding
-      | ChordBindingShorthand
-      | SequenceBinding
-      | SequenceBindingShorthand
-    )[],
-  ): () => void {
+  public bind(definitions: AnyBinding[]): () => void {
     const pressDefs: KeyBinding[] = [];
     const releaseDefs: KeyBinding[] = [];
     const chordDefs: ChordBinding[] = [];

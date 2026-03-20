@@ -21,5 +21,10 @@
     "src/**/__stories__/**/*.*",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
+  ],
+  "references": [
+    {
+      "path": "../keyboard/tsconfig.build.json"
+    }
   ]
 }

@@ -8,13 +8,10 @@ import {KeySequenceMatcher} from './KeySequenceMatcher';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Printable} from 'tree-dump';
 import type {
+  AnyBinding,
   ChordAction,
-  ChordBinding,
   ChordBindingOptions,
-  ChordBindingShorthand,
   ChordSignature,
-  KeyBinding,
-  KeyBindingShorthand,
   KeySink,
   KeySource,
 } from './types';
@@ -123,7 +120,7 @@ export class KeyContext implements KeySink, Printable {
     }
   }
 
-  public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): () => void {
+  public bind(definitions: AnyBinding[]): () => void {
     return this.map.bind(definitions);
   }
 
