@@ -2,23 +2,23 @@ import {SavedFmt} from '../../state/formattings';
 import {SynthFmt} from '../../state/formattings/SynthFmt';
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
 import {JsonCrdtDiff} from 'json-joy/lib/json-crdt-diff/JsonCrdtDiff';
-import * as rx from 'json-joy/lib/util/events/sync-store';
+import * as sync from 'thingies/lib/sync';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 import type {EditorState} from '../../state';
 
 export class FormattingManageState {
-  public readonly selected = rx.val<SavedFmt | null>(null);
-  public readonly view = rx.val<'view' | 'edit'>('view');
-  public readonly editing = rx.val<SynthFmt | undefined>(undefined);
+  public readonly selected = sync.val<SavedFmt | null>(null);
+  public readonly view = sync.val<'view' | 'edit'>('view');
+  public readonly editing = sync.val<SynthFmt | undefined>(undefined);
 
   public constructor(
     public readonly state: EditorState,
     public readonly inline: Inline | undefined,
   ) {}
 
-  public getFormattings$(inline: Inline | undefined = this.inline): rx.Computed<SavedFmt[]> {
+  public getFormattings$(inline: Inline | undefined = this.inline): sync.Computed<SavedFmt[]> {
     const state = this.state;
-    const computed = rx.comp([state.surface.render$], () => {
+    const computed = sync.comp([state.surface.render$], () => {
       const slices = inline?.p1.layers;
       const res: SavedFmt[] = [];
       if (!slices) return res;
