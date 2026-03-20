@@ -66,6 +66,8 @@ export interface ViewProps {
 export interface EditProps {
   /**
    * The formatting slice to be edited.
+   * 
+   * @todo Rename to `fmt`.
    */
   formatting: EditableFmt;
 

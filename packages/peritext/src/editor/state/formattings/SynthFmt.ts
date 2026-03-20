@@ -1,16 +1,13 @@
 import {SavedFmt} from '.';
 import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
-import {Value} from 'json-joy/lib/util/events/sync-store';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 
 export class SynthFmt<Node extends ObjNode = ObjNode> extends SavedFmt<Node> {
   private readonly _conf: ObjApi<Node> | undefined;
-  public readonly str: Value<string>;
   
   constructor(public readonly saved: SavedFmt<Node>) {
     super(saved.behavior, saved.range, saved.state);
     const sourceModel = saved.range.txt.model;
-    this.str = new Value(saved.range.text());
     const clone = sourceModel.clone();
     const confId = saved.conf()?.node.id;
     if (!confId) return;

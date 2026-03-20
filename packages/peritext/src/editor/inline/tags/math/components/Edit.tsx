@@ -1,81 +1,54 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {useT} from 'use-t';
+import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import type {EditProps} from '../../../InlineSliceBehavior';
-import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 
 import 'mathlive';
 import 'mathlive/fonts.css';
 import 'mathlive/static.css';
 
+const blockClass = rule({
+  minW: '320px',
+  maxW: '800px',
+});
+
 const fieldWrapClass = rule({
   d: 'block',
   '& math-field': {
     w: '100%',
-    fz: '1.1em',
-    pd: '8px',
-    bdr: '1px solid rgba(128,128,128,.3)',
+    bd: '1px solid rgba(128,128,128,.16)',
     bdrad: '6px',
-    outline: 'none',
-    d: 'block',
-    boxSizing: 'border-box',
   },
-  '& math-field:focus': {
-    bdr: '1px solid rgba(0,120,212,.6)',
-  },
-});
-
-const actionsClass = rule({
-  d: 'flex',
-  gap: '4px',
-  pd: '10px 0 0',
-  jc: 'flex-end',
 });
 
 export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const [t] = useT();
   const fieldRef = React.useRef<HTMLElement | null>(null);
-
-  const initialTex = React.useMemo(
-    () => (formatting.range as unknown as Slice<string>).text?.() ?? '',
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
-
-  const handleSave = () => {
-    const el = fieldRef.current as any;
-    if (!el) return;
-    const newTex: string = el.value ?? '';
-    const editor = formatting.state.txt.editor;
-    const range = formatting.range as unknown as Slice<string>;
-    editor.insert0(range, newTex);
-    onSave();
-  };
+  const tex = useSyncStore(formatting.str);
 
   return (
-    <div>
+    <div className={blockClass}>
       <div className={fieldWrapClass}>
         {React.createElement('math-field', {
           ref: fieldRef,
-          value: initialTex,
-          // 'virtual-keyboard-mode': 'onfocus',
-          onKeyDown: (e: React.KeyboardEvent) => {
+          value: tex,
+          onInput: () => {
             const el = fieldRef.current as any;
             if (!el) return;
             const newTex: string = el.value ?? '';
-            console.log({newTex});
-            // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-            //   e.preventDefault();
-            //   handleSave();
-            // }
+            formatting.str.next(newTex);
           },
         })}
       </div>
-      <div className={actionsClass}>
-        <BasicButton fill size={-1} onClick={handleSave}>
-          {t('Save')}
-        </BasicButton>
+      <Space size={1} />
+      <div>
+        <MiniTitle literal>LaTeX</MiniTitle>
+        <Space size={-3} />
+        <Input multiline mono size={-2} value={tex} onChange={(v) => formatting.str.next(v)} />
       </div>
     </div>
   );

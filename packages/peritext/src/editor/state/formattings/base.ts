@@ -1,4 +1,5 @@
 import {ObjApi} from 'json-joy/lib/json-crdt/model';
+import {Value} from 'thingies/lib/sync';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {InlineSliceBehavior, ValidationResult} from '../../inline/InlineSliceBehavior';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
@@ -18,11 +19,15 @@ export interface Fmt<R extends Range<string> = Range<string>, Node extends ObjNo
 export abstract class EditableFmt<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
   implements Fmt<R, Node>
 {
+  public readonly str: Value<string>;
+
   public constructor(
     public readonly behavior: InlineSliceBehavior<any, any, any>,
     public readonly range: R,
     public readonly state: EditorState,
-  ) {}
+  ) {
+    this.str = new Value(range.text());
+  }
 
   public conf(): ObjApi<Node> | undefined {
     return;
