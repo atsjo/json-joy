@@ -16,6 +16,12 @@ export const FmtManagePane: React.FC<FmtManagePaneProps> = ({inline, state: _sta
   const editorState = useEditor();
   // biome-ignore lint: too many dependencies
   const state = React.useMemo(() => _state || new FmtManagePaneState(editorState, inline), [editorState, inline?.key(), _state]);
+  React.useEffect(() => {
+    if (!state) return;
+    return () => {
+      state.dispose();
+    };
+  }, [state]);
   const formattings = useSyncStore(React.useMemo(() => state.getFormattings$(), [state]));
   // biome-ignore lint: manually manage dependencies
   React.useLayoutEffect(() => {

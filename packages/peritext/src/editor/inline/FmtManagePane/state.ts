@@ -6,16 +6,34 @@ import * as str from 'json-joy/lib/util/diff/str';
 import * as sync from 'thingies/lib/sync';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 import type {EditorState} from '../../state';
+import type {KeyContext} from '@jsonjoy.com/keyboard';
 
 export class FmtManagePaneState {
   public readonly selected = sync.val<SavedFmt | null>(null);
   public readonly view = sync.val<'view' | 'edit'>('view');
   public readonly editing = sync.val<SynthFmt | undefined>(undefined);
+  public readonly kbd: KeyContext;
 
   public constructor(
     public readonly state: EditorState,
     public readonly inline: Inline | undefined,
-  ) {}
+    kbd: KeyContext = state.surface.headless.kbd,
+  ) {
+    this.kbd = kbd.child('fmt');
+    this.kbd.focus();
+
+    this.kbd.bind([
+      ['Escape', () => {
+        if (this.view.value === 'edit') {
+          this.switchToViewPanel();
+        }
+      }]
+    ]);
+  }
+
+  public dispose(): void {
+    this.kbd.dispose();
+  }
 
   public getFormattings$(inline: Inline | undefined = this.inline): sync.Computed<SavedFmt[]> {
     const state = this.state;
