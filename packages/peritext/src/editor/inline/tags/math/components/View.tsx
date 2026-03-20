@@ -4,14 +4,11 @@ import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {TextBlock} from '@jsonjoy.com/ui/lib/5-block/TextBlock';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {MathSpan} from '../mathlive';
 import {useT} from 'use-t';
-import type {ViewProps} from '../../../InlineSliceBehavior';
-
-import 'mathlive';
 import {convertLatexToAsciiMath, convertLatexToMathMl, convertLatexToMarkup} from 'mathlive';
 import {ComputeEngine} from '@cortex-js/compute-engine';
-import 'mathlive/fonts.css';
-import 'mathlive/static.css';
+import type {ViewProps} from '../../../InlineSliceBehavior';
 
 const ce = new ComputeEngine();
 
@@ -59,7 +56,7 @@ export const View: React.FC<ViewProps> = ({formatting, onEdit}) => {
     <div className={blockClass}>
       <div style={{textAlign: 'center', margin: '-16px'}}>
         <BasicButton display rounder onClick={onEdit}>
-          {React.createElement('math-span', {mode: "textstyle"}, tex)}
+          <MathSpan tex={tex} mode={'textstyle'} />
         </BasicButton>
       </div>
       {/* {React.createElement('math-field', {readonly: true, style: {width: '100%'}}, tex)} */}
