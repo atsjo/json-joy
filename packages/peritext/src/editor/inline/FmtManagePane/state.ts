@@ -6,7 +6,7 @@ import * as sync from 'thingies/lib/sync';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 import type {EditorState} from '../../state';
 
-export class FormattingManageState {
+export class FmtManagePaneState {
   public readonly selected = sync.val<SavedFmt | null>(null);
   public readonly view = sync.val<'view' | 'edit'>('view');
   public readonly editing = sync.val<SynthFmt | undefined>(undefined);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {FormattingManageState} from './state';
+import type {FmtManagePaneState} from './state';
 
-export const context = React.createContext<FormattingManageState>(null!);
+export const context = React.createContext<FmtManagePaneState>(null!);
 export const useFormattingPane = () => React.useContext(context);

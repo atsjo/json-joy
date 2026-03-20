@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FormattingManageState} from './state';
+import {FmtManagePaneState} from './state';
 import {FormattingList} from './FormattingList';
 import {FormattingDisplay} from './FormattingDisplay';
 import {useEditor} from '../../context';
@@ -9,12 +9,13 @@ import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 
 export interface FmtManagePaneProps {
   inline: Inline;
+  state?: FmtManagePaneState;
 }
 
-export const FmtManagePane: React.FC<FmtManagePaneProps> = ({inline}) => {
+export const FmtManagePane: React.FC<FmtManagePaneProps> = ({inline, state: _state}) => {
   const editorState = useEditor();
   // biome-ignore lint: too many dependencies
-  const state = React.useMemo(() => new FormattingManageState(editorState, inline), [editorState, inline?.key()]);
+  const state = React.useMemo(() => _state || new FmtManagePaneState(editorState, inline), [editorState, inline?.key(), _state]);
   const formattings = useSyncStore(React.useMemo(() => state.getFormattings$(), [state]));
   // biome-ignore lint: manually manage dependencies
   React.useLayoutEffect(() => {
