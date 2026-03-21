@@ -7,7 +7,7 @@ import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {FormattingTitle} from '../FormattingTitle';
 import {FormattingView} from '../views/view/FormattingView';
-import {useEditor} from '../../context';
+import {useEditor} from '../../state/context';
 import {FormattingPane} from '../FormattingPane';
 import {ContextMenu, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';

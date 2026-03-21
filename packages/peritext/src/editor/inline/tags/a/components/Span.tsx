@@ -29,13 +29,13 @@ const blockClass = rule({
   },
 });
 
-export interface LinkProps {
+export interface SpanProps {
   children: React.ReactNode;
   layers?: number;
   stack: InlineAttrStack;
 }
 
-export const Link: React.FC<LinkProps> = (props) => {
+export const Span: React.FC<SpanProps> = (props) => {
   const {children, layers = 1, stack} = props;
   const style: React.CSSProperties | undefined =
     layers < 2

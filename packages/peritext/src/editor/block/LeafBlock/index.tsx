@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
-import {useEditor} from '../../context';
+import {useEditor} from '../../state/context';
 import {AutoExpandableToolbar} from './AutoExpandableToolbar';
 import {compare} from 'json-joy/lib/json-crdt-patch';
 import {EntangledPortal, type EntangledPortalStateOpts} from '../../components/EntangledPortal';

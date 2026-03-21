@@ -5,7 +5,7 @@ import {Span as InlineMath} from './tags/math/components/Span';
 import {Kbd} from './Kbd';
 import {Ins} from './Ins';
 import {Del} from './Del';
-import {Link} from './Link';
+import {Span as Link} from './tags/a/components/Span';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import type {InlineViewProps} from '../../web/react/InlineView';
 

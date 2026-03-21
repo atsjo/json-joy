@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {useEditor} from '../context';
+import {useEditor} from '../state/context';
 import {FormattingNew} from './views/new/FormattingNew';
 import {FormattingTitle} from './FormattingTitle';
 import {rule} from 'nano-theme';

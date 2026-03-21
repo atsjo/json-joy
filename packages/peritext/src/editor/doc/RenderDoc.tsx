@@ -1,17 +1,16 @@
 import * as React from 'react';
-import {Chrome} from './components/Chrome';
-import {context} from './context';
-import {EditorState} from './state';
-import type {PeritextSurfaceState} from '../web/state';
-import type {EditorPluginOpts} from './EditorPlugin';
+import {Chrome} from '../components/Chrome';
+import {EditorState, context} from '../state';
+import type {PeritextSurfaceState} from '../../web/state';
+import type {EditorPluginOpts} from '../plugin';
 
-export interface RenderPeritextProps {
+export interface RenderDocProps {
   surface: PeritextSurfaceState;
   children: React.ReactNode;
   opts: EditorPluginOpts;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, opts, children}) => {
+export const RenderDoc: React.FC<RenderDocProps> = ({surface, opts, children}) => {
   const value: EditorState = React.useMemo(() => new EditorState(surface, opts), [surface, opts]);
 
   React.useLayoutEffect(() => value.start(), [value]);

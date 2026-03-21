@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
-import {useEditor} from '../../context';
+import {useEditor} from '../../state/context';
 import {CaretFrame} from '../util/CaretFrame';
 import {FormattingsNewPane} from '../../inline/FormattingsNewPane';
 import {BottomPanePortal} from '../util/BottomPanePortal';

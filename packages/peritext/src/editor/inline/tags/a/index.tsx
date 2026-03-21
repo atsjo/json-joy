@@ -11,7 +11,7 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
-import {getDomain} from '../../../util';
+import {getDomain} from '../../../util/url';
 import {Favicon} from '../../../components/Favicon';
 import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
 import type {Fmt} from '../../../state/formattings';

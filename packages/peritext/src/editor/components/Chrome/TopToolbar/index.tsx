@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEditor} from '../../../context';
+import {useEditor} from '../../../state/context';
 import {useSyncStore, useSyncStoreOpt} from '../../../../web/react/hooks';
 import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import type {PeritextSurfaceState} from '../../../../web/state';

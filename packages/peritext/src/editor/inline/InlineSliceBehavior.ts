@@ -3,8 +3,9 @@ import {SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
+import type {RenderInlineProps} from './RenderInline';
 
-export class InlineSliceBehavior<
+export abstract class InlineSliceBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
@@ -38,6 +39,11 @@ export class InlineSliceBehavior<
    * formatting.
    */
   renderIcon?: (props: IconProps) => React.ReactNode = void 0;
+
+  /**
+   * View of this formatting, inline in the main content.
+   */
+  Span?: React.FC<RenderInlineProps> = void 0;
 
   /**
    * Render a small card-sized view, which can be placed in a popup, to

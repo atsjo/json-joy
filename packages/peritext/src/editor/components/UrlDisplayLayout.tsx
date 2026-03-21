@@ -7,7 +7,7 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {Favicon} from './Favicon';
-import {parseUrl} from '../util';
+import {parseUrl} from '../util/url';
 import {CopyButton} from './CopyButton';
 
 const ExternalLinkIcon = makeIcon({set: 'lucide', icon: 'external-link'});

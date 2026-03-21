@@ -2,7 +2,7 @@ import * as React from 'react';
 import {FmtManagePaneState} from './state';
 import {FormattingList} from './FormattingList';
 import {FormattingDisplay} from './FormattingDisplay';
-import {useEditor} from '../../context';
+import {useEditor} from '../../state/context';
 import {context} from './context';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
