@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
-import {Kbd} from '@jsonjoy.com/ui/lib/context/kbd';
 import {IslandFrame, IslandFrameProps} from './IslandFrame';
 import {IslandUnder} from './IslandUnder';
 import {Char} from '../../../web/constants';
@@ -27,11 +26,7 @@ export const Island: React.FC<IslandProps> = (props) => {
   }, [selected]);
 
   return (
-    <Kbd bind={[
-      ['Escape', () => {
-        editor.islandUnder.next(null);
-      }]
-    ]}>
+    <>
       {Char.ZeroLengthSpace}
       <IslandFrame {...rest}
         selected={selected}
@@ -45,6 +40,6 @@ export const Island: React.FC<IslandProps> = (props) => {
         {children}
       </IslandFrame>
       {Char.ZeroLengthSpace}
-    </Kbd>
+    </>
   );
 };

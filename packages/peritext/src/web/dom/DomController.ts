@@ -1,6 +1,6 @@
 import {printTree, type Printable} from 'tree-dump';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
-import {KeyContext} from '@jsonjoy.com/keyboard';
+import {KeyContext, KeySourceEl} from '@jsonjoy.com/keyboard';
 import {InputController} from './controllers/InputController';
 import {CursorController} from './controllers/CursorController';
 import {RichTextController} from './controllers/RichTextController';
@@ -72,8 +72,9 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public start() {
     const {et, facade} = this;
     const el = facade.el;
-    const headless = this.headless;
-    this.kbd = headless.kbd.child('peritext-input', el as HTMLElement);
+    this.kbd = new KeyContext(void 0, 'peritext-input');
+    const source = new KeySourceEl(el as HTMLElement);
+    const unbindKeys = source.bind(this.kbd);
     (el as any).contentEditable = 'true';
     const style = el.style;
     style.setProperty('--jsonjoy-peritext-id', et.id + '');
@@ -90,6 +91,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
       stopInput();
       stopCursor();
       stopRichText();
+      unbindKeys();
     };
   }
 

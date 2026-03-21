@@ -6,7 +6,7 @@ import * as str from 'json-joy/lib/util/diff/str';
 import * as sync from 'thingies/lib/sync';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 import type {EditorState} from '../../state';
-import type {KeyContext} from '@jsonjoy.com/keyboard';
+import type {KeyContext, Key} from '@jsonjoy.com/keyboard';
 
 export class FmtManagePaneState {
   public readonly selected = sync.val<SavedFmt | null>(null);
@@ -23,9 +23,11 @@ export class FmtManagePaneState {
     this.kbd.focus();
 
     this.kbd.bind([
-      ['Escape', () => {
+      ['Escape', (press: Key) => {
         if (this.view.value === 'edit') {
           this.switchToViewPanel();
+        } else {
+          press.propagate = true;
         }
       }]
     ]);

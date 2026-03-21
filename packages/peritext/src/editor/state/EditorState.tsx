@@ -1,5 +1,4 @@
 import {Value} from 'json-joy/lib/util/events/sync-store';
-import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {NewFmt} from './formattings/NewFmt';
@@ -7,6 +6,7 @@ import {inlines} from '../inline/tags';
 import {FmtManagePaneState} from '../inline/FmtManagePane/state';
 import {Menu} from './menus/Menu';
 import * as sync from 'thingies/lib/sync';
+import {Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/src/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
@@ -212,7 +212,17 @@ export class EditorState implements UiLifeCycles {
     document.addEventListener('keydown', onKeyDownDocument);
     et.addEventListener('cursor', onCursor);
 
-    const unsubscribeKeyBind = dom.kbd?.bind([
+    const unbindHotkeys = this.surface.headless.kbd.bind([
+      ['Escape', (press: Key) => {
+        if (islandUnder.value) {
+          islandUnder.next(null);
+        } else {
+          press.propagate = true;
+        }
+      }],
+    ]);
+
+    const unbindHotkeysSurface = dom.kbd?.bind([
       ['Meta Meta', () => {
         et.cursor({flip: true});
       }],
@@ -227,7 +237,8 @@ export class EditorState implements UiLifeCycles {
       el.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keydown', onKeyDownDocument);
       et.removeEventListener('cursor', onCursor);
-      unsubscribeKeyBind?.();
+      unbindHotkeys();
+      unbindHotkeysSurface?.();
     };
   }
 }
