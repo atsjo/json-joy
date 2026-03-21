@@ -1,0 +1,294 @@
+import {FanOut} from 'thingies/lib/fanout';
+import {Key} from './Key';
+import {KeySourceDoc, type KeySourceDocOpts} from './KeySourceDoc';
+import {KeySourceEl} from './KeySourceEl';
+import {KeyMap} from './KeyMap';
+import {KeySet} from './KeySet';
+import {KeySequenceMatcher} from './KeySequenceMatcher';
+import {printTree} from 'tree-dump/lib/printTree';
+import type {Printable} from 'tree-dump';
+import type {AnyBinding, ChordAction, ChordBindingOptions, ChordSignature, KeySink, KeySource} from './types';
+
+const enum KeyControllerConstants {
+  HistoryLimit = 25,
+}
+
+export class KeyContext implements KeySink, Printable {
+  /**
+   * Creates a root `KeyContext` which binds to `window` and `document` key
+   * events.
+   *
+   * @param name Provide for debugging, used in `.toString()`.
+   */
+  public static global(name?: string, opts?: KeySourceDocOpts): [context: KeyContext, unbind: () => void] {
+    const ctx = new KeyContext(void 0, name);
+    const source = new KeySourceDoc(opts);
+    const unbind = source.bind(ctx);
+    return [ctx, unbind];
+  }
+
+  public readonly onChange = new FanOut<void>();
+
+  /** Shortcut/hotkey definition map. */
+  public readonly map: KeyMap;
+
+  /** All currently pressed keys. */
+  public readonly pressed: KeySet = new KeySet();
+
+  /** History of last N pressed keys. */
+  public readonly history: Key[] = [];
+  public historyLimit: number = KeyControllerConstants.HistoryLimit;
+
+  /** All live child contexts. */
+  public readonly children: Set<KeyContext> = new Set();
+
+  /** The child currently receiving fed events (focus target). */
+  public active: KeyContext | undefined = undefined;
+
+  /** True when this context has no own source and relies on parent to feed it. */
+  public _fed: boolean = true;
+
+  /** Unbind callback for this context's own KeySource, if any. */
+  public _sourceUnbind: (() => void) | undefined = undefined;
+
+  /** Optional remap of raw `event.key` values to canonical key names. */
+  public remap: Map<string, string> | undefined = undefined;
+
+  /** Timeout (ms) between consecutive sequence steps. Default: 1000. */
+  public seqTimeout: number = 1000;
+
+  public readonly seqMatcher: KeySequenceMatcher;
+
+  public constructor(
+    public readonly parent: KeyContext | undefined = void 0,
+    public readonly name: string = parent ? 'child' : 'root',
+  ) {
+    this.map = new KeyMap();
+    this.seqMatcher = new KeySequenceMatcher(this.map.sequenceMap.root, this.seqTimeout);
+  }
+
+  public child(name?: string, source?: KeySource | HTMLElement): KeyContext {
+    const child = new KeyContext(this, name);
+    this.children.add(child);
+    const keySource: KeySource | undefined =
+      typeof HTMLElement !== 'undefined' && source instanceof HTMLElement
+        ? new KeySourceEl(source)
+        : source != null && typeof source === 'object' && 'bind' in source
+          ? (source as KeySource)
+          : undefined;
+    child._fed = !keySource;
+    child._sourceUnbind = keySource?.bind(child);
+    // Auto-activate first fed child so parent events reach it without explicit focus()
+    if (child._fed && !this.active) this.active = child;
+    return child;
+  }
+
+  /** Mark this context as the active child up the ancestor chain. */
+  public focus(): void {
+    const parent = this.parent;
+    if (parent) {
+      parent.active = this;
+      parent.focus();
+    }
+  }
+
+  public dispose(): void {
+    // 1. Take snapshot and clear children first (prevents re-entrant removal)
+    const children = [...this.children];
+    this.children.clear();
+    this.active = undefined;
+
+    // 2. Recursively dispose children
+    for (const child of children) child.dispose();
+
+    // 3. Unbind own source
+    this._sourceUnbind?.();
+    this._sourceUnbind = undefined;
+
+    // 4. Remove self from parent
+    const parent = this.parent;
+    if (parent) {
+      parent.children.delete(this);
+      if (parent.active === this) parent.active = undefined;
+    }
+  }
+
+  public bind(definitions: AnyBinding[]): () => void {
+    return this.map.bind(definitions);
+  }
+
+  public setChord(sig: ChordSignature, action: ChordAction, options?: ChordBindingOptions): void {
+    this.map.setChord(sig, action, options);
+  }
+
+  public delChord(sig: ChordSignature, action: ChordAction): void {
+    this.map.delChord(sig, action);
+  }
+
+  public setRemap(from: string, to: string): void {
+    (this.remap ??= new Map()).set(from, to);
+  }
+
+  public delRemap(from: string): void {
+    this.remap?.delete(from);
+    if (this.remap?.size === 0) this.remap = undefined;
+  }
+
+  // ------------------------------------------------------- pausing / resuming
+
+  public paused: boolean = false;
+
+  public pause(): void {
+    this.paused = true;
+  }
+
+  public resume(): void {
+    this.paused = false;
+  }
+
+  /** ------------------------------------------------------- {@link KeySink} */
+
+  public onPress(press: Key): void {
+    const child = this.active;
+    if (child) {
+      if (child._fed) {
+        let leaf: KeyContext = child;
+        while (leaf.active && leaf.active._fed) leaf = leaf.active;
+        leaf.onPress_(press);
+      }
+    } else {
+      this.onPress_(press);
+    }
+  }
+
+  /** Propagate up on press. */
+  protected onPress_(press: Key): void {
+    if (this.paused) return;
+    if (press.event?.isComposing || press.key === 'Dead') return;
+    const original = press;
+    const remapTo = this.remap?.get(press.key);
+    if (remapTo) press = new Key(remapTo, press.ts, press.mod, press.event, press.code);
+    const {pressed, history} = this;
+    pressed.add(press);
+    history.push(press);
+    while (history.length > this.historyLimit) history.shift();
+
+    // Chord check runs first. If a chord is matched the key that completed
+    // it does NOT fire its single-key binding (eager chord, silent single).
+    const chordMatches = this.map.matchChord(pressed);
+    if (chordMatches) {
+      press.propagate = false;
+      for (const match of chordMatches) {
+        match.action(pressed);
+        if (match.propagate) press.propagate = true;
+      }
+    } else {
+      const matches = this.map.matchPress(press);
+      if (matches) {
+        press.propagate = false;
+        for (const match of matches) {
+          match.action(press);
+          if (match.propagate) press.propagate = true;
+        }
+      }
+    }
+
+    // Sequence matching.
+    if (!this.map.sequenceMap.isEmpty()) {
+      const seqMatches = this.seqMatcher.advance(press.sig(), press.ts);
+      if (seqMatches) {
+        press.propagate = false;
+        for (const match of seqMatches) {
+          match.action();
+          if (match.propagate) press.propagate = true;
+        }
+      }
+    }
+
+    this.onChange.emit();
+    if (press.propagate) {
+      const parent = this.parent;
+      if (parent) {
+        original.propagate = press.propagate;
+        parent.onPress_(original);
+      }
+    }
+  }
+
+  public onRelease(release: Key): void {
+    const child = this.active;
+    if (child) {
+      if (child._fed) {
+        let leaf: KeyContext = child;
+        while (leaf.active && leaf.active._fed) leaf = leaf.active;
+        leaf.onRelease_(release);
+      }
+    } else {
+      this.onRelease_(release);
+    }
+  }
+
+  /** Propagate up on release. */
+  protected onRelease_(release: Key): void {
+    const original = release;
+    const remapTo = this.remap?.get(release.key);
+    if (remapTo) release = new Key(remapTo, release.ts, release.mod, release.event, release.code);
+    this.pressed.remove(release);
+    if (release.key === 'Meta') this.pressed.clearNonMods();
+    if (this.paused) return;
+    if (release.event?.isComposing || release.key === 'Dead') return;
+    const matches = this.map.matchRelease(release);
+    if (matches) {
+      release.propagate = false;
+      for (const match of matches) {
+        match.action(release);
+        if (match.propagate) release.propagate = true;
+      }
+    }
+    this.onChange.emit();
+    if (release.propagate) {
+      const parent = this.parent;
+      if (parent) {
+        original.propagate = release.propagate;
+        parent.onRelease_(original);
+      }
+    }
+  }
+
+  public onReset(): void {
+    this.pressed.reset();
+    const child = this.active;
+    if (child) {
+      if (child._fed) child.onReset();
+    } else {
+      this.onReset_();
+    }
+  }
+
+  protected onReset_(): void {
+    this.seqMatcher.reset();
+    this.onChange.emit();
+  }
+
+  /** Called when underlying DOM element gains focus. */
+  public onFocus(): void {
+    this.onReset();
+    this.focus();
+  }
+
+  /** ----------------------------------------------------- {@link Printable} */
+
+  public toString(tab?: string): string {
+    return (
+      'ctx (' +
+      this.name +
+      (this.active ? ' → ' + this.active.name : '') +
+      ')' +
+      printTree(tab, [
+        () => 'history: ' + this.history.map((k) => k.sig()).join(', '),
+        (tab) => this.pressed.toString(tab),
+        ...[...this.children].map((child) => (tab: string | undefined) => child.toString(tab)),
+      ])
+    );
+  }
+}

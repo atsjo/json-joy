@@ -382,19 +382,33 @@ describe('.viewPos()', () => {
     const p1Before = peritext.point(chunk1.id, Anchor.Before);
     const p1After = peritext.point(chunk1.id, Anchor.After);
     expect(p1Before.viewPos()).toBe(3);
-    expect(p1After.viewPos()).toBe(4);
+    expect(p1After.viewPos()).toBe(3);
     const p2Before = peritext.point(chunk2.id, Anchor.Before);
     const p2After = peritext.point(chunk2.id, Anchor.After);
     expect(p2Before.viewPos()).toBe(3);
-    expect(p2After.viewPos()).toBe(4);
+    expect(p2After.viewPos()).toBe(3);
     const p4Before = peritext.point(chunk4.id, Anchor.Before);
     const p4After = peritext.point(chunk4.id, Anchor.After);
     expect(p4Before.viewPos()).toBe(7);
-    expect(p4After.viewPos()).toBe(8);
+    expect(p4After.viewPos()).toBe(7);
     const p5Before = peritext.point(chunk5.id, Anchor.Before);
     const p5After = peritext.point(chunk5.id, Anchor.After);
     expect(p5Before.viewPos()).toBe(7);
-    expect(p5After.viewPos()).toBe(8);
+    expect(p5After.viewPos()).toBe(7);
+  });
+
+  test('resolves correctly on deleted characters', () => {
+    const {peritext} = setupWithText();
+    const twoThree = peritext.rangeAt(2, 2);
+    peritext.del(twoThree);
+    expect(peritext.rangeAt(1, 1).start.viewPos()).toBe(1);
+    expect(peritext.rangeAt(1, 1).end.viewPos()).toBe(2);
+    expect(twoThree.start.viewPos()).toBe(2);
+    twoThree.start.anchor = Anchor.After;
+    expect(twoThree.start.viewPos()).toBe(2);
+    expect(twoThree.end.viewPos()).toBe(2);
+    const end2 = twoThree.end.copy((p) => (p.anchor = Anchor.Before));
+    expect(end2.viewPos()).toBe(2);
   });
 });
 
@@ -1020,6 +1034,76 @@ describe('.refAfter()', () => {
   });
 });
 
+describe('.refAfter(deleted = true)', () => {
+  test('stays on same char when already anchored After on visible chunk', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(4, Anchor.After);
+    expect(p.leftChar()!.view()).toBe('5');
+    expect(p.anchor).toBe(Anchor.After);
+    const clone = p.clone();
+    p.refAfter(true);
+    expect(p.leftChar()!.view()).toBe('5');
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.cmpSpatial(clone)).toBe(0);
+    expect(p.cmp(clone)).toBe(0);
+  });
+
+  test('stays on same char when already anchored After on deleted chunk', () => {
+    const {peritext, chunkD1} = setupWithChunkedText();
+    const p = peritext.point(chunkD1.id, Anchor.After);
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.chunk()!.del).toBe(true);
+    const clone = p.clone();
+    p.refAfter(true);
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.cmpSpatial(clone)).toBe(0);
+    expect(p.cmp(clone)).toBe(0);
+  });
+
+  test('converts Before to After from deleted chunk', () => {
+    const {peritext, chunkD1, chunk1} = setupWithChunkedText();
+    const pBefore = peritext.point(chunkD1.id, Anchor.Before);
+    expect(pBefore.anchor).toBe(Anchor.Before);
+    pBefore.refAfter(true);
+    expect(pBefore.anchor).toBe(Anchor.After);
+    // It should now reference the last char of chunk1 (the '3')
+    expect(pBefore.id.sid).toBe(chunk1.id.sid);
+    expect(pBefore.id.time).toBe(chunk1.id.time + chunk1.span - 1);
+    expect(pBefore.leftChar()!.view()).toBe('3');
+  });
+
+  test('converts Before to After without skipping deleted chars (unlike refAfter)', () => {
+    const {peritext, chunkD1} = setupWithChunkedText();
+    // chunkD1 is the deleted 'd' between '123' and '456'
+    // Point Before on first char after chunkD1 (the '4')
+    const p1 = peritext.point(chunkD1.id, Anchor.After);
+    p1.refAfter(true);
+    expect(p1.anchor).toBe(Anchor.After);
+    expect(p1.chunk()!.del).toBe(true);
+    const p2 = peritext.point(chunkD1.id, Anchor.After);
+    p2.refAfter();
+    expect(p2.chunk()!.del).toBe(false);
+  });
+
+  test('should handle absolute end', () => {
+    const {peritext} = setup();
+    const point = peritext.pointAbsEnd();
+    expect(point.anchor).toBe(Anchor.Before);
+    point.refAfter(true);
+    expect(point.anchor).toBe(Anchor.After);
+  });
+
+  test('handles point at start of string (Before on first chunk)', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(0, Anchor.Before);
+    expect(p.rightChar()!.view()).toBe('1');
+    expect(p.anchor).toBe(Anchor.Before);
+    p.refAfter(true);
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.isAbsStart()).toBe(true);
+  });
+});
+
 describe('.refVisible()', () => {
   test('skips deleted chars, attaches to visible char', () => {
     const {peritext} = setupWithChunkedText();
@@ -1044,6 +1128,113 @@ describe('.refVisible()', () => {
     expect(mid2.cmp(right) < 0).toBe(true);
     mid2.refVisible();
     expect(mid2.cmp(right) === 0).toBe(true);
+  });
+});
+
+describe('.refNext()', () => {
+  test('goes to next anchor (visible)', () => {
+    const {peritext} = setupWithChunkedText();
+    const expected = [
+      peritext.pointAt(0, Anchor.Before),
+      peritext.pointAt(0, Anchor.After),
+      peritext.pointAt(1, Anchor.Before),
+      peritext.pointAt(1, Anchor.After),
+      peritext.pointAt(2, Anchor.Before),
+      peritext.pointAt(2, Anchor.After),
+      peritext.pointAt(3, Anchor.Before),
+      peritext.pointAt(3, Anchor.After),
+      peritext.pointAt(4, Anchor.Before),
+      peritext.pointAt(4, Anchor.After),
+      peritext.pointAt(5, Anchor.Before),
+      peritext.pointAt(5, Anchor.After),
+      peritext.pointAt(6, Anchor.Before),
+      peritext.pointAt(6, Anchor.After),
+      peritext.pointAt(7, Anchor.Before),
+      peritext.pointAt(7, Anchor.After),
+      peritext.pointAt(8, Anchor.Before),
+      peritext.pointAt(8, Anchor.After),
+    ];
+    const point = peritext.pointAbsStart();
+    for (let i = 0; i < expected.length; i++) {
+      point.refNext();
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refNext(true);
+    expect(point.cmp(peritext.pointAbsEnd())).toBe(0);
+  });
+
+  test('goes to next anchor (deleted)', () => {
+    const {peritext} = setupWithChunkedText();
+    const rga = peritext.str;
+    let id = rga.first()!.id;
+    const expected: Point[] = [];
+    while (true) {
+      expected.push(peritext.point(id, Anchor.Before), peritext.point(id, Anchor.After));
+      const next = rga.nextId(id);
+      if (!next) break;
+      id = next[0];
+    }
+    const point = peritext.pointAbsStart();
+    for (let i = 0; i < expected.length; i++) {
+      point.refNext(true);
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refNext(true);
+    expect(point.cmp(peritext.pointAbsEnd())).toBe(0);
+  });
+});
+
+describe('.refPrev()', () => {
+  test('goes to previous anchor (visible)', () => {
+    const {peritext} = setupWithChunkedText();
+    const expected = [
+      peritext.pointAt(0, Anchor.Before),
+      peritext.pointAt(0, Anchor.After),
+      peritext.pointAt(1, Anchor.Before),
+      peritext.pointAt(1, Anchor.After),
+      peritext.pointAt(2, Anchor.Before),
+      peritext.pointAt(2, Anchor.After),
+      peritext.pointAt(3, Anchor.Before),
+      peritext.pointAt(3, Anchor.After),
+      peritext.pointAt(4, Anchor.Before),
+      peritext.pointAt(4, Anchor.After),
+      peritext.pointAt(5, Anchor.Before),
+      peritext.pointAt(5, Anchor.After),
+      peritext.pointAt(6, Anchor.Before),
+      peritext.pointAt(6, Anchor.After),
+      peritext.pointAt(7, Anchor.Before),
+      peritext.pointAt(7, Anchor.After),
+      peritext.pointAt(8, Anchor.Before),
+      peritext.pointAt(8, Anchor.After),
+    ];
+    expected.reverse();
+    const point = peritext.pointAbsEnd();
+    for (let i = 0; i < expected.length; i++) {
+      point.refPrev();
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refPrev(true);
+    expect(point.cmp(peritext.pointAbsStart())).toBe(0);
+  });
+
+  test('goes to previous anchor (deleted)', () => {
+    const {peritext} = setupWithChunkedText();
+    const rga = peritext.str;
+    let id = rga.last()!.id;
+    const expected: Point[] = [];
+    while (true) {
+      expected.push(peritext.point(id, Anchor.After), peritext.point(id, Anchor.Before));
+      const next = rga.prevId(id);
+      if (!next) break;
+      id = next[0];
+    }
+    const point = peritext.pointAbsEnd();
+    for (let i = 0; i < expected.length; i++) {
+      point.refPrev(true);
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refPrev(true);
+    expect(point.cmp(peritext.pointAbsStart())).toBe(0);
   });
 });
 
@@ -1230,6 +1421,22 @@ describe('.halfstep()', () => {
       expect(points[i * 2].anchor).toBe(Anchor.After);
       expect(points[i * 2 + 1].rightChar()?.view()).toBe(view[i]);
       expect(points[i * 2 + 1].anchor).toBe(Anchor.Before);
+    }
+  });
+
+  test('conformance test: 2x half-step should equal 1 step', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointStart()!;
+    const p2 = peritext.pointStart()!;
+    expect(p1.viewPos()).toBe(0);
+    expect(p2.viewPos()).toBe(0);
+    for (let i = 1; i <= 8; i++) {
+      p1.halfstep(2);
+      p2.step(1);
+      expect(p1.cmp(p2)).toBe(0);
+      expect(p1.cmpSpatial(p2)).toBe(0);
+      expect(p1.viewPos()).toBe(i);
+      expect(p2.viewPos()).toBe(i);
     }
   });
 });

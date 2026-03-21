@@ -82,6 +82,10 @@ export type SelectionMoveInstruction = [
    * - `'point'`: Moves by one Peritext anchor point. Each character has two
    *   anchor points, one from each side of the character.
    * - `'char'`: Moves by one character. Skips one visible character.
+   * - `'vchar'`: Similar to 'char', moves by one character at a time, except
+   *   in presence of formatting. At edges of formatting moves 'point' (half-step)
+   *   to express affinity to formatted vs unformatted text. For empty formattings
+   *   also attaches to tombstone characters, which 'char' movement ignores.
    * - `'word'`: Moves by one word. Skips all visible characters until the end
    *   of a word.
    * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
@@ -98,7 +102,7 @@ export type SelectionMoveInstruction = [
    *
    * @todo Introduce 'vline', "visual line" - soft line break.
    */
-  to: Position | 'point' | 'char' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
+  to: Position | 'point' | 'char' | 'vchar' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
   /**
    * Specify the length of the movement (the number of steps) in units
    * specified by the `to` field. If not specified, the default value is `0`,
@@ -335,12 +339,16 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
   /**
    * Specifies the stacking behavior of the annotation.
    *
-   * - If `'many'`, the annotation of this type will be stacked on top of each
-   *   other, and all of them will be applied to the text, with the last
-   *   annotation on top.
    * - If `'one'`, the annotation is not stacked, only one such annotation can
    *   be applied per character. The last annotation "wins", i.e. the last
    *   annotation in the document will be applied to the text.
+   * - If `'many'`, the annotation of this type will be stacked on top of each
+   *   other, and all of them will be applied to the text, with the last
+   *   annotation on top.
+   * - If `'atomic'`, the annotation will be applied with "Atomic" stacking
+   *   behavior, which means that the cursor cannot be placed inside the
+   *   annotation, it will move around it. When deleted, the whole annotation
+   *   is deleted all at once.
    * - The `'erase'` behavior is used to logically remove the `'many`' or
    *   `'one'` annotation from the the given range. It works by logically
    *   "erasing" all `'many'` or `'one'` annotations with the same `type`,
@@ -348,7 +356,7 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
    *
    * @default 'one'
    */
-  stack?: 'one' | 'many' | 'erase';
+  stack?: 'one' | 'many' | 'atomic' | 'erase';
 
   /**
    * The slice set where the annotation will be stored. `'saved'` is the main
@@ -360,6 +368,14 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
    * @default 'saved'
    */
   store?: 'saved' | 'extra' | 'local';
+
+  /**
+   * If `true`, the slice will be inserted with padding, which means that a
+   * single space character will be inserted before and after the slice. The
+   * padding characters are immediately deleted. The padding characters are
+   * used to prevent the slice boundary IDs from colliding with content IDs.
+   */
+  padded?: boolean;
 }
 
 /**

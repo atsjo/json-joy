@@ -12,7 +12,7 @@ import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types'
 import type {UndoCollector} from './types';
 import type {UiHandle} from './ui/UiHandle';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
-import type {EditorUi} from '../../../../json-crdt-extensions/peritext/editor/types';
+import type {EditorUi, TextRangeUnit} from '../../../../json-crdt-extensions/peritext/editor/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -28,6 +28,16 @@ const getEdge = (start: Point, end: Point, anchor: CursorAnchor, edge: events.Se
         : anchor === CursorAnchor.Start
           ? start
           : end;
+
+/**
+ * Returns true if the movement is precise up to Peritext anchor point, i.e.
+ * movement can happen on sub-character level.
+ *
+ * @param unit Movement unit
+ * @returns Whether the movement is precise
+ */
+const isPointPreciseUnit = (unit: TextRangeUnit | unknown): boolean =>
+  typeof unit === 'string' && (unit === 'point' || unit === 'vchar');
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -105,7 +115,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       if (point === start) start = point2;
       else end = point2;
       if (collapse) {
-        if (to !== 'point') point2.refAfter();
+        if (!isPointPreciseUnit(to)) point2.refAfter();
         if (point === start0) end = point2.clone();
         else start = point2.clone();
       }
@@ -137,8 +147,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly insert = ({detail}: CustomEvent<events.InsertDetail>) => {
     const {move, text} = detail;
-    const set = [...this.getSelSet(detail)];
-    if (move) this.moveSelSet(set, detail);
+    let set: events.SelectionSet | undefined;
+    if (move) {
+      set = [...this.getSelSet(detail)];
+      this.moveSelSet(set, detail);
+    }
     this.txt.editor.insert(text, set);
     this.undo?.capture();
   };
@@ -184,8 +197,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       this.moveSelSet(selection, detail);
 
       // Collapse cursors if there are no visible characters between edges.
-      // (Only for relative focus edge moves.)
-      if (move && move.length === 1 && move[0][0] === 'focus')
+      // (But only for relative focus edge moves, except 'point' and 'vchar`
+      // moves, which are intra-char moves, and need to preserve exact anchor
+      // positioning.)
+      if (move && move.length === 1 && move[0][0] === 'focus' && !isPointPreciseUnit(move[0][1]))
         for (const range of selection) if (range.length() === 0) range.collapseToStart();
 
       // Swap anchor and focus edges.
@@ -206,7 +221,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public readonly format = ({detail}: CustomEvent<events.FormatDetail>) => {
     const selection = [...this.getSelSet(detail)];
     this.moveSelSet(selection, detail);
-    const {action, type: tag, store = 'saved'} = detail;
+    const {action, type: tag, store = 'saved', padded} = detail;
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
     switch (action) {
@@ -216,16 +231,21 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         if (tag === undefined) throw new Error('TYPE_REQUIRED');
         switch (stack) {
           case 'many': {
-            slices.insStack(tag, data, selection);
+            slices.insStack(tag, data, selection, padded);
             break;
           }
           case 'one': {
-            if (action === 'ins') slices.insOne(tag, data, selection);
-            else editor.toggleExclFmt(tag, data, slices, selection);
+            if (action === 'ins') slices.insOne(tag, data, selection, padded);
+            else editor.toggleExclFmt(tag, data, slices, selection, padded);
+            break;
+          }
+          case 'atomic': {
+            const newSlices = slices.insAtomic(tag, data, selection, padded);
+            if (newSlices.length === 1) editor.cursor.setRange(newSlices[0]);
             break;
           }
           case 'erase': {
-            slices.insOne(tag, data, selection);
+            slices.insErase(tag, data, selection);
             break;
           }
         }

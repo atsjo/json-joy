@@ -41,6 +41,8 @@ export interface InputProps {
   style?: any;
   waiting?: boolean;
   center?: boolean;
+  multiline?: boolean;
+  mono?: boolean;
   right?: React.ReactNode;
   inp?: (input: HTMLInputElement | null) => void;
   onChange?: (value: string) => void;
@@ -49,6 +51,7 @@ export interface InputProps {
   onPaste?: () => void;
   onEsc?: React.KeyboardEventHandler;
   onEnter?: React.KeyboardEventHandler;
+  onKeyDown?: React.KeyboardEventHandler;
 }
 
 export const Input: React.FC<InputProps> = (props) => {
@@ -66,7 +69,10 @@ export const Input: React.FC<InputProps> = (props) => {
     waiting,
     center,
     right,
+    multiline,
+    mono,
     onChange,
+    onKeyDown,
   } = props;
   const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
@@ -93,15 +99,16 @@ export const Input: React.FC<InputProps> = (props) => {
     },
     [props.onBlur],
   );
-  const onKeyDown = useCallback(
+  const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!ref.current) return;
       if (props.isInForm && e.key === 'Enter') {
         ref.current.blur();
       } else if (e.key === 'Escape') onEsc?.(e);
       else if (e.key === 'Enter') onEnter?.(e);
+      else onKeyDown?.(e);
     },
-    [ref.current],
+    [onEsc, onEnter, onKeyDown, props.isInForm],
   );
 
   let rightElement: React.ReactNode = null;
@@ -115,6 +122,10 @@ export const Input: React.FC<InputProps> = (props) => {
   const style: React.CSSProperties = {
     color: value !== undefined && !value && !!placeholder ? styles.g(0.6) : styles.g(0.1),
   };
+
+  if (mono) {
+    style.fontFamily = fonts.get('mono').ff;
+  }
 
   if (size) {
     const factor = size < 0 ? 1 : 2;
@@ -142,7 +153,7 @@ export const Input: React.FC<InputProps> = (props) => {
     readOnly,
     onFocus,
     onBlur,
-    onKeyDown,
+    onKeyDown: handleKeyDown,
     onPaste,
   };
 
@@ -158,7 +169,10 @@ export const Input: React.FC<InputProps> = (props) => {
       }}
     >
       <Split style={{alignItems: 'center'}}>
-        <input {...inputAttr} onChange={onChange ? (e) => onChange(e.target.value) : undefined} />
+        {React.createElement(multiline ? 'textarea' : 'input', {
+          ...inputAttr,
+          onChange: onChange ? (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value) : undefined,
+        })}
         {rightElement}
       </Split>
     </Outline>

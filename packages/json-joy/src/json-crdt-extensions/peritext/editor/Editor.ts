@@ -4,14 +4,24 @@ import {formatStep} from '../slice/util';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
-import {SliceRegistry} from '../registry/SliceRegistry';
+import type {SliceRegistry} from '../registry/SliceRegistry';
 import {Slice} from '../slice/Slice';
 import {toLine} from 'pojo-dump/lib/toLine';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
-import {ValueSyncStore} from '../../../util/events/sync-store';
+import {Value} from '../../../util/events/sync-store';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
-import {type Patch, tick, Timespan, type ITimespanStruct, tss, PatchBuilder, s} from '../../../json-crdt-patch';
+import {
+  type Patch,
+  tick,
+  Timespan,
+  type ITimespanStruct,
+  tss,
+  PatchBuilder,
+  s,
+  ts,
+  equal,
+} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import {ArrApi} from '../../../json-crdt/model';
 import * as schema from '../slice/schema';
@@ -35,6 +45,8 @@ import type {
 import type {ApiOperation} from '../../../json-crdt/model/api/types';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {OverlayPoint} from '../overlay/OverlayPoint';
+import {OverlayRefSliceEnd, OverlayRefSliceStart} from '../overlay/refs';
+import {createDefaultRegistry} from '../registry/createDefaultRegistry';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -71,7 +83,7 @@ export class Editor<T = string> implements Printable {
    * for {@link SliceStacking.One} formatting which is set as "pending" when
    * user toggles it while cursor is caret.
    */
-  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
+  public readonly pending = new Value<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
@@ -81,7 +93,7 @@ export class Editor<T = string> implements Printable {
 
   public getRegistry(): SliceRegistry {
     let registry = this.registry;
-    if (!registry) this.registry = registry = SliceRegistry.withCommon();
+    if (!registry) this.registry = registry = createDefaultRegistry();
     return registry;
   }
 
@@ -191,9 +203,12 @@ export class Editor<T = string> implements Printable {
    * the contents is removed and the cursor is set at the start of the range
    * as caret.
    */
-  public collapseCursor(cursor: Range<T>): void {
-    this.delRange(cursor);
-    cursor.collapseToStart();
+  public collapseCursor(range: Range<T>): void {
+    const start = this.expandToAtomEdge(range.start, -1);
+    const end = this.expandToAtomEdge(range.end, 1);
+    const effectiveRange = this.txt.range(start, end);
+    this.delRange(effectiveRange);
+    range.collapseToStart();
   }
 
   public collapseCursors(): void {
@@ -236,11 +251,63 @@ export class Editor<T = string> implements Printable {
   /**
    * Inserts text at the cursor positions and collapses cursors, if necessary.
    * Then applies any pending inline formatting to the inserted text.
+   *
+   * @returns Returns an array of timespan structs for the inserted text, one
+   *     per cursor.
    */
   public insert(text: string, ranges?: IterableIterator<Range<T>> | Range<T>[]): ITimespanStruct[] {
     const spans: ITimespanStruct[] = [];
     if (!ranges) {
-      if (!this.hasCursor()) this.addCursor();
+      const cardinality = this.cursorCard();
+      if (!cardinality) this.addCursor();
+      else {
+        AFFINITY_BASED_INSERT: {
+          if (!text || cardinality !== 1) break AFFINITY_BASED_INSERT;
+          const cursor = this.cursor;
+          const point = cursor.start;
+          if (point.cmp(cursor.end) !== 0 || point.isAbs()) break AFFINITY_BASED_INSERT;
+          const txt = this.txt;
+          FORWARD_AFFINITY: {
+            if (point.anchor !== Anchor.Before) break FORWARD_AFFINITY;
+            const ref = txt.overlay.get(point)?.refs[0];
+            let fwdAffinity = false;
+            if (ref instanceof OverlayRefSliceStart && ref.slice.isSaved()) {
+              fwdAffinity = true;
+            } else {
+              const layer1 = this.getFirstSavedLayer(point);
+              const prevHalfPoint = point.copy((p) => p.halfstep(-1));
+              const layer2 = this.getFirstSavedLayer(prevHalfPoint);
+              fwdAffinity = layer1 !== layer2;
+            }
+            if (!fwdAffinity) break AFFINITY_BASED_INSERT;
+            const rightChar = point.rightChar()?.view();
+            if (!rightChar) break AFFINITY_BASED_INSERT;
+            const api = txt.model.api;
+            const insertedText = text + rightChar;
+            const builder = api.builder;
+            const strId = txt.str.id;
+            builder.del(strId, [tss(point.id.sid, point.id.time, 1)]);
+            const textId = builder.insStr(strId, point.id, insertedText);
+            api.apply();
+            const span = tss(textId.sid, textId.time, insertedText.length);
+            cursor.set(txt.point(ts(textId.sid, textId.time + insertedText.length - 2), Anchor.After));
+            return [span];
+          }
+          IN_THE_MIDDLE_AFFINITY: {
+            // Inserting in the middle of empty <code></code>
+            if (point.anchor !== Anchor.After) break IN_THE_MIDDLE_AFFINITY;
+            const pointIsTombstone = point.chunk()?.del === true;
+            if (!pointIsTombstone) break IN_THE_MIDDLE_AFFINITY;
+            const api = txt.model.api;
+            const builder = api.builder;
+            const {sid, time} = builder.insStr(txt.str.id, point.id, text);
+            api.apply();
+            const span = tss(sid, time, text.length);
+            cursor.set(txt.point(ts(span.sid, span.time + span.span - 1), Anchor.After));
+            return [span];
+          }
+        }
+      }
       ranges = this.cursors();
     }
     if (!ranges) return [];
@@ -297,6 +364,8 @@ export class Editor<T = string> implements Printable {
         point1 = this.skip(point1, -1, unit);
         point2 = this.skip(point2, 1, unit);
       }
+      point1 = this.expandToAtomEdge(point1, -1);
+      point2 = this.expandToAtomEdge(point2, 1);
       const range = txt.range(point1, point2);
       this.delRange(range);
       point1.refAfter();
@@ -304,7 +373,200 @@ export class Editor<T = string> implements Printable {
     }
   }
 
+  /**
+   * If the point is inside an atomic slice, expand it to the atom's edge in the
+   * given direction.
+   */
+  private expandToAtomEdge(point: Point<T>, direction: 0 | -1 | 1): Point<T> {
+    const atom = this.atomAt(point);
+    if (!atom) return point;
+    if (direction <= 0) {
+      const p = atom.start.clone();
+      p.refAfter();
+      return p;
+    } else {
+      const p = atom.end.clone();
+      p.refBefore();
+      return p;
+    }
+  }
+
   // ----------------------------------------------------------------- movement
+
+  /**
+   * Same as {@link Point#step}, but around inline formatting boundaries moves
+   * at half-step intervals, allowing the point to be attached to either side of
+   * the formatting boundary, i.e. express affinity to either the formatted or
+   * unformatted text when moving across a formatting boundary.
+   *
+   * Also, vstep allows to move the point inside empty inline elements, which is
+   * not possible with step, as there are no visible characters to step on.
+   *
+   * It also considers a move of a deleted character to a visible character as
+   * a distinct step, even though their spatial positions are the same.
+   *
+   * @param length How many characters to move by. Positive number moves the
+   *     point to the right, negative number moves the point to the left.
+   * @returns Returns `true` if the absolute end of the string is reached.
+   */
+  public vstep(point: Point<T>, length: number): boolean {
+    const direction = length > 0 ? 1 : -1;
+    let iterations = Math.abs(length);
+    let end: boolean = false;
+    LOOP: while (iterations-- && !end) {
+      STEP: {
+        // If anchored to deleted character, our step is to move off to a visible character.
+        if (point.deleted()) {
+          if (direction > 0) point.refBefore();
+          else point.refAfter();
+          end = point.isAbs();
+          break STEP;
+        }
+        const layer1: Slice<T> | undefined = this.getFirstSavedLayer(point);
+        const ref1 = this.isSliceEdge(point);
+        const doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge =
+          iterations === 0 &&
+          direction === -1 &&
+          point.anchor === Anchor.Before &&
+          ref1 instanceof OverlayRefSliceEnd &&
+          ref1.slice.start.cmp(ref1.slice.end) !== 0 &&
+          ref1.slice.isCollapsed();
+        if (doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge) {
+          point.refAfter(true);
+          return false;
+        }
+        const p0 = point.clone();
+        end = point.halfstep(direction);
+        if (end) break LOOP;
+        if (ref1) break STEP;
+        const layer2: Slice<T> | undefined = this.getFirstSavedLayer(point);
+        if (layer1 !== layer2) break STEP;
+        const ref2 = this.isSliceEdge(point);
+        if (ref2) {
+          const doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge =
+            iterations === 0 &&
+            direction === 1 &&
+            point.anchor === Anchor.Before &&
+            ref2 instanceof OverlayRefSliceEnd &&
+            ref2.slice.start.cmp(ref2.slice.end) !== 0 &&
+            ref2.slice.isCollapsed();
+          if (doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge) {
+            point.refAfter(true);
+            return false;
+          }
+          break STEP;
+        }
+        MOVE_INTO_DELETED_SLICE: {
+          if (!this.didSkipDeleted(point, direction)) break MOVE_INTO_DELETED_SLICE;
+          const txt = this.txt;
+          const range = txt.range(p0, point);
+          // TODO: Make sure points are sorted correctly
+          const slice = txt.overlay.findFirstContained(range, true, true);
+          if (!slice) break MOVE_INTO_DELETED_SLICE;
+          const {start, end} = slice;
+          if (!start.deleted() && !end.deleted()) break MOVE_INTO_DELETED_SLICE;
+          if (equal(start.id, end.id)) break MOVE_INTO_DELETED_SLICE;
+          end.refPrev(true);
+          point.set(end);
+          break STEP;
+        }
+        end = point.halfstep(direction);
+        if (end) break LOOP;
+        const ref3 = this.isSliceEdge(point);
+        if (ref3) {
+          const pointIsLastAnchorInSliceBoundary =
+            direction > 0 ? point.anchor === Anchor.Before : point.anchor === Anchor.After;
+          if (pointIsLastAnchorInSliceBoundary) {
+            point.halfstep(-direction);
+            break STEP;
+          }
+        } else {
+          const layer3: Slice<T> | undefined = this.getFirstSavedLayer(point);
+          if (layer2 !== layer3) {
+            point.halfstep(-direction);
+            break STEP;
+          }
+          // console.log('check if skipped fully deleted slices (2)');
+        }
+      }
+      // If after the step we landed inside an atomic slice, jump to its edge.
+      const skippedTo = this.skipAtom(point, direction);
+      if (skippedTo !== point) point.set(skippedTo);
+    }
+    return end;
+  }
+
+  private didSkipDeleted(point: Point<T>, direction: number): boolean {
+    if (direction > 0 && point.anchor === Anchor.Before) {
+      const leftChar = point.copy((p) => p.refAfter(true));
+      return !!leftChar.chunk()?.del;
+    } else if (direction < 0 && point.anchor === Anchor.After) {
+      const rightChar = point.copy((p) => p.refBefore(true));
+      return !!rightChar.chunk()?.del;
+    }
+    return false;
+  }
+
+  private getFirstSavedLayer(point: Point<T>): Slice<T> | undefined {
+    const overlayPoint = this.txt.overlay.getOrNextLower(point);
+    if (!overlayPoint) return;
+    const layers = overlayPoint.layers;
+    const length = layers.length;
+    for (let i = 0; i < length; i++) {
+      const slice = layers[i];
+      if (slice.isSaved()) return slice;
+    }
+    return;
+  }
+
+  private isSliceEdge(point: Point<T>): OverlayRefSliceStart<T> | OverlayRefSliceEnd<T> | undefined {
+    const overlayPoint = this.txt.overlay.get(point);
+    const firstRef = overlayPoint?.refs[0]; // We only check the first one (heuristic), for performance.
+    if (!(firstRef instanceof OverlayRefSliceStart) && !(firstRef instanceof OverlayRefSliceEnd)) return;
+    const slice = firstRef.slice;
+    return slice.isSaved() ? firstRef : void 0;
+  }
+
+  /**
+   * Returns the {@link SliceStacking.Atomic} slice that contains the given
+   * point, or `undefined` if the point is not inside an atomic slice.
+   *
+   * @param point The point to check.
+   * @returns The atomic slice containing the point, or `undefined`.
+   */
+  public atomAt(point: Point<T>): Slice<T> | undefined {
+    const overlayPoint = this.txt.overlay.getOrNextLower(point);
+    if (!overlayPoint) return;
+    const layers = overlayPoint.layers;
+    const length = layers.length;
+    for (let i = 0; i < length; i++) {
+      const slice = layers[i];
+      if (slice.stacking === SliceStacking.Atomic) return slice;
+    }
+    return;
+  }
+
+  /**
+   * If the point is inside an atomic slice, moves it to the appropriate edge
+   * of the atom in the given direction.
+   *
+   * @param point The point to adjust.
+   * @param direction Positive for forward, negative for backward.
+   * @returns The adjusted point (same reference if no atom, new point if inside atom).
+   */
+  private skipAtom(point: Point<T>, direction: number): Point<T> {
+    const atom = this.atomAt(point);
+    if (!atom) return point;
+    if (direction > 0) {
+      const p = atom.end.clone();
+      p.refBefore();
+      return p;
+    } else {
+      const p = atom.start.clone();
+      p.refAfter();
+      return p;
+    }
+  }
 
   /**
    * Returns an iterator through visible text, one `step`, one character at a
@@ -505,14 +767,22 @@ export class Editor<T = string> implements Printable {
    */
   public skip(point: Point<T>, steps: number, unit: TextRangeUnit, ui?: EditorUi<T>): Point<T> {
     if (!steps) return point;
+    const direction = steps > 0 ? 1 : -1;
     switch (unit) {
       case 'point': {
         const p = point.clone();
-        return p.halfstep(steps), p;
+        p.halfstep(steps);
+        return this.skipAtom(p, direction);
       }
       case 'char': {
         const p = point.clone();
-        return p.step(steps), p;
+        p.step(steps);
+        return this.skipAtom(p, direction);
+      }
+      case 'vchar': {
+        const p = point.clone();
+        this.vstep(p, steps);
+        return p;
       }
       case 'word': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = this.eow(point);
@@ -682,7 +952,11 @@ export class Editor<T = string> implements Printable {
     overlay.refresh();
     for (const range of selection) {
       const overlapping = overlay.findOverlapping(range);
-      for (const slice of overlapping) store.del(slice.id);
+      for (const slice of overlapping) {
+        // Atomic slices are content, not formatting — do not clear them.
+        if (slice.stacking === SliceStacking.Atomic) continue;
+        store.del(slice.id);
+      }
     }
   }
 
@@ -693,6 +967,7 @@ export class Editor<T = string> implements Printable {
     type: CommonSliceType | string | number,
     data?: unknown,
     store: EditorSlices<T> = this.saved,
+    padded?: boolean,
   ): void {
     if (range.isCollapsed()) throw new Error('Range is collapsed');
     const txt = this.txt;
@@ -720,7 +995,7 @@ export class Editor<T = string> implements Printable {
         if (end.cmpSpatial(range.start) <= 0) return;
         range.end = end;
       }
-      store.slices.insOne(range, type, data);
+      store.slices.insOne(range, type, data, padded);
     }
   }
 
@@ -729,6 +1004,7 @@ export class Editor<T = string> implements Printable {
     data?: unknown,
     store: EditorSlices<T> = this.saved,
     selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    padded?: boolean,
   ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     this.txt.overlay.refresh();
@@ -740,7 +1016,7 @@ export class Editor<T = string> implements Printable {
         this.pending.next(pending);
         continue SELECTION;
       }
-      this.toggleRangeExclFmt(range, type, data, store);
+      this.toggleRangeExclFmt(range, type, data, store, padded);
     }
   }
 
@@ -1028,7 +1304,8 @@ export class Editor<T = string> implements Printable {
         case SliceStacking.One:
         case SliceStacking.Many:
         case SliceStacking.Erase:
-        case SliceStacking.Marker: {
+        case SliceStacking.Marker:
+        case SliceStacking.Atomic: {
           const viewSlice = this.exportSlice(slice);
           viewSlices.push(viewSlice);
         }
@@ -1059,7 +1336,8 @@ export class Editor<T = string> implements Printable {
       switch (stacking) {
         case SliceStacking.One:
         case SliceStacking.Many:
-        case SliceStacking.Erase: {
+        case SliceStacking.Erase:
+        case SliceStacking.Atomic: {
           const sliceFormatting: ViewStyle = [stacking, slice.type()];
           const data = slice.data();
           if (data !== void 0) sliceFormatting.push(data);

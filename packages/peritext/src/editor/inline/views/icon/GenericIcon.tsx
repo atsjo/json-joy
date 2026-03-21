@@ -1,0 +1,15 @@
+import * as React from 'react';
+import {Avatar} from '@jsonjoy.com/ui/lib/1-inline/Avatar';
+import type {FormattingIconProps} from './FormattingIcon';
+
+export interface GenericIconProps extends FormattingIconProps {}
+
+export const GenericIcon: React.FC<GenericIconProps> = ({formatting}) => {
+  const id = formatting.range.start.id;
+  const time = id.time + '';
+  const name =
+    formatting.behavior?.previewText?.(formatting) ||
+    time[time.length - 1] + time[time.length - 2] + time + '.' + id.sid;
+
+  return <Avatar name={name} width={16} height={16} />;
+};

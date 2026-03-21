@@ -4,14 +4,19 @@ import * as mdExport from '../export-markdown';
 import * as mdImport from '../import-markdown';
 import {PeritextDataTransfer} from '../PeritextDataTransfer';
 import {setupKit} from '../../__tests__/setup';
+import {createDefaultRegistry} from '../../registry/createDefaultRegistry';
 
 export const setup = () => {
   const kit = setupKit();
-  const transfer = new PeritextDataTransfer(kit.peritext, {
-    htmlExport,
-    htmlImport,
-    mdExport,
-    mdImport,
-  });
+  const transfer = new PeritextDataTransfer(
+    kit.peritext,
+    {
+      htmlExport,
+      htmlImport,
+      mdExport,
+      mdImport,
+    },
+    createDefaultRegistry(),
+  );
   return {...kit, transfer};
 };

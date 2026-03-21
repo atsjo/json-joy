@@ -185,7 +185,8 @@ export class Inline<T = string> extends Range<T> implements Printable {
             stack.push(this.createAttr(slice));
             break;
           }
-          case SliceStacking.One: {
+          case SliceStacking.One:
+          case SliceStacking.Atomic: {
             attr[type] = [this.createAttr(slice)];
             break;
           }
@@ -259,6 +260,16 @@ export class Inline<T = string> extends Range<T> implements Printable {
     return;
   }
 
+  public isSelected(): boolean {
+    const attributes = this.attr();
+    const stack = attributes[SliceTypeName.Cursor];
+    if (!stack) return false;
+    const attribute = stack[0];
+    const cursor = attribute.slice;
+    if (!(cursor instanceof Cursor)) return false;
+    return true;
+  }
+
   public texts(limit: number = 1e6): ChunkSlice<T>[] {
     const texts: ChunkSlice<T>[] = [];
     const txt = this.txt;
@@ -271,6 +282,22 @@ export class Inline<T = string> extends Range<T> implements Printable {
       if (cnt === limit) return true;
     });
     return texts;
+  }
+
+  /**
+   * @returns Returns the first atomic attribute for this inline, if any.
+   */
+  public atomic(): InlineAttr<T> | undefined {
+    const attr = this.attr();
+    for (const key in attr) {
+      const stack = attr[key];
+      const length = stack.length;
+      for (let i = 0; i < length; i++) {
+        const a = stack[i];
+        if (a.slice.stacking === SliceStacking.Atomic) return a;
+      }
+    }
+    return;
   }
 
   // ------------------------------------------------------------------- export

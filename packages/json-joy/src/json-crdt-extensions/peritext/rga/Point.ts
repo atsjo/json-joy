@@ -142,12 +142,18 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Returns the view position of the point, as if it is a caret in
    *          the text pointing between characters (0 is before the first
    *          character, 1 is after the first character, etc.).
+   * @todo Rename to `gap()`.
    */
   public viewPos(): number {
     const isAbs = equal(this.rga.id, this.id);
     if (isAbs) return this.anchor === Anchor.After ? 0 : this.rga.length();
     const pos = this.pos();
-    return this.anchor === Anchor.Before ? pos : pos + 1;
+    return this.anchor === Anchor.Before ? pos : pos + (this.deleted() ? 0 : 1);
+  }
+
+  public deleted(): boolean {
+    const chunk = this.chunk();
+    return chunk ? !!chunk.del : false;
   }
 
   /**
@@ -168,16 +174,19 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * the end of the string, it will return `undefined`.
    *
    * @param skip How many characters to move by.
+   * @param deleted If `true`, the search will NOT skip deleted characters.
    * @returns Next visible ID in string.
+   *
+   * @todo PERF: Make this also return the chunk.
    */
-  public nextId(skip: number = 1): ITimestampStruct | undefined {
+  public nextId(skip: number = 1, deleted?: boolean): ITimestampStruct | undefined {
     if (this.isAbsEnd()) return;
     let remaining: number = skip;
     const {id, rga} = this;
     let chunk: Chunk<T> | undefined;
     if (this.isAbsStart()) {
       chunk = rga.first();
-      while (chunk && chunk.del) chunk = rga.next(chunk);
+      while (chunk && chunk.del && !deleted) chunk = rga.next(chunk);
       if (!chunk) return;
       const span = chunk.span;
       if (remaining <= span) return tick(chunk.id, remaining - 1);
@@ -186,7 +195,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     } else {
       chunk = this.chunk();
       if (!chunk) return undefined;
-      if (!chunk.del) {
+      if (!chunk.del || !!deleted) {
         const offset = id.time - chunk.id.time;
         const span = chunk.span;
         if (offset + remaining < span) return tick(id, remaining);
@@ -194,41 +203,45 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       }
       chunk = rga.next(chunk);
     }
-    let lastVisibleChunk: Chunk<T> | undefined;
+    let lastChunk: Chunk<T> | undefined;
     while (chunk && remaining >= 0) {
-      if (chunk.del) {
+      if (chunk.del && !deleted) {
         chunk = rga.next(chunk);
         continue;
       }
-      lastVisibleChunk = chunk;
+      lastChunk = chunk;
       const span = chunk.span;
       if (remaining <= span) return remaining > 1 ? tick(chunk.id, remaining - 1) : chunk.id;
       remaining -= span;
       chunk = rga.next(chunk);
     }
     if (remaining > 0) return;
-    return lastVisibleChunk ? tick(lastVisibleChunk.id, lastVisibleChunk.span - 1) : undefined;
+    return lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : undefined;
   }
 
   /**
+   * @param skip How many characters to move by.
+   * @param deleted If `true`, the search will NOT skip deleted characters.
    * @returns ID of the character that is `move` characters before the
    *          character referenced by the point, or `undefined` if there is no
    *          such character.
+   *
+   * @todo PERF: Make this also return the chunk.
    */
-  public prevId(skip: number = 1): ITimestampStruct | undefined {
+  public prevId(skip: number = 1, deleted?: boolean): ITimestampStruct | undefined {
     if (this.isAbsStart()) return;
     let remaining: number = skip;
     const {id, rga} = this;
     let chunk = this.chunk();
     if (!chunk) return rga.id;
-    if (!chunk.del) {
+    if (!chunk.del || !!deleted) {
       const offset = id.time - chunk.id.time;
       if (offset >= remaining) return tick(id, -remaining);
       remaining -= offset;
     }
     chunk = rga.prev(chunk);
     while (chunk) {
-      if (chunk.del) {
+      if (chunk.del && !deleted) {
         chunk = rga.prev(chunk);
         continue;
       }
@@ -286,6 +299,11 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return new ChunkSlice(chunk, off, 1);
   }
 
+  /**
+   * Returns a chunk slice that wraps the character referenced by this point.
+   *
+   * @returns A chunk slice that wraps character referenced by this point.
+   */
   public char(): ChunkSlice<T> | undefined {
     return this.anchor === Anchor.Before ? this.rightChar() : this.leftChar();
   }
@@ -381,8 +399,11 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * the same, but ensures that it is anchored before a character. Skips any
    * deleted characters (chunks), attaching the point to the next visible
    * character.
+   *
+   * @param deleted If `true`, the point will NOT skip deleted characters, and
+   *     will be anchored after the next character even if it is deleted.
    */
-  public refBefore(): void {
+  public refBefore(deleted?: boolean): void {
     const chunk = this.chunk();
     if (!chunk) {
       if (this.isAbsStart()) {
@@ -396,9 +417,9 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       this.refAbsEnd();
       return;
     }
-    if (!chunk.del && this.anchor === Anchor.Before) return;
+    if ((!chunk.del || !!deleted) && this.anchor === Anchor.Before) return;
     this.anchor = Anchor.Before;
-    this.id = this.nextId() || this.rga.id;
+    this.id = this.nextId(1, deleted) || this.rga.id;
   }
 
   /**
@@ -406,8 +427,11 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * the same, but ensures that it is anchored after a character. Skips any
    * deleted characters (chunks), attaching the point to the next visible
    * character.
+   *
+   * @param deleted If `true`, the point will NOT skip deleted characters, and
+   *     will be anchored after the next character even if it is deleted.
    */
-  public refAfter(): void {
+  public refAfter(deleted?: boolean): void {
     const chunk = this.chunk();
     if (!chunk) {
       if (this.isAbsEnd()) {
@@ -425,9 +449,9 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       this.refAbsStart();
       return;
     }
-    if (!chunk.del && this.anchor === Anchor.After) return;
+    if ((!chunk.del || !!deleted) && this.anchor === Anchor.After) return;
     this.anchor = Anchor.After;
-    this.id = this.prevId() || this.rga.id;
+    this.id = this.prevId(1, deleted) || this.rga.id;
   }
 
   /**
@@ -438,6 +462,86 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   public refVisible(): void {
     if (this.anchor === Anchor.Before) this.refBefore();
     else this.refAfter();
+  }
+
+  /**
+   * Modifies the location of the point, such that it references the next
+   * anchor point in the string.
+   *
+   * @param deleted If `true`, the point will NOT skip deleted characters, and
+   *     will be anchored after the next character even if it is deleted.
+   */
+  public refNext(deleted?: boolean): void {
+    const anchor = this.anchor;
+    if (deleted) {
+      if (this.isAbs()) {
+        if (anchor === Anchor.Before) return;
+        const chunk = this.rga.first();
+        if (!chunk) return;
+        this.id = chunk.id;
+        this.anchor = Anchor.Before;
+        this._chunk = chunk;
+        return;
+      }
+      if (anchor === Anchor.Before) {
+        this.anchor = Anchor.After;
+        return;
+      }
+      const next = this.rga.nextId(this.id, this.chunk());
+      if (!next) {
+        this.refAbsEnd();
+        return;
+      }
+      this.id = next[0];
+      this.anchor = Anchor.Before;
+      this._chunk = next[1];
+      return;
+    }
+    if (anchor === Anchor.After) this.refBefore();
+    else {
+      if (!this.deleted()) this.anchor = Anchor.After;
+      else this.refBefore();
+    }
+  }
+
+  /**
+   * Modifies the location of the point, such that it references the previous
+   * anchor point in the string.
+   *
+   * @param deleted If `true`, the point will NOT skip deleted characters, and
+   *     will be anchored after the previous character even if it is deleted.
+   */
+  public refPrev(deleted?: boolean): void {
+    const anchor = this.anchor;
+    if (deleted) {
+      if (this.isAbs()) {
+        if (anchor === Anchor.After) return;
+        const chunk = this.rga.last();
+        if (!chunk) return;
+        this.id = chunk.id;
+        this.anchor = Anchor.After;
+        this._chunk = chunk;
+        return;
+      }
+      if (anchor === Anchor.After) {
+        this.anchor = Anchor.Before;
+        return;
+      }
+      const prev = this.rga.prevId(this.id, this.chunk());
+      if (!prev) {
+        this.refAbsStart();
+        return;
+      }
+      this.id = prev[0];
+      this.anchor = Anchor.After;
+      this._chunk = prev[1];
+      return;
+    }
+    if (anchor === Anchor.Before) this.refAfter();
+    else {
+      if (!this.deleted()) this.anchor = Anchor.Before;
+      else this.refAfter();
+    }
   }
 
   /**
@@ -522,7 +626,9 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const id = printTs(this.id);
     let char: string | undefined = this.char()?.view() as string | undefined;
     char = typeof char === 'string' ? JSON.stringify(char) : '▢';
-    const anchor = this.anchor === Anchor.Before ? '.' + char : char + '.';
+    const isTombstone = this.chunk()?.del;
+    const anchor =
+      this.anchor === Anchor.Before ? '.' + (isTombstone ? '♦ ' : '') + char : char + (isTombstone ? ' ♦' : '') + '.';
     return `${name}{ ${pos === Position.AbsEnd ? '∞' : pos}, ${id}, ${anchor} }`;
   }
 }

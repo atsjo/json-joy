@@ -1,0 +1,61 @@
+import * as React from 'react';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {rule} from 'nano-theme';
+import type {Fmt} from '../state/formattings';
+
+const blockClass = rule({
+  d: 'flex',
+  ai: 'center',
+  fz: '14px',
+  us: 'none',
+});
+
+const iconClass = rule({
+  fz: '15.7px',
+  w: '24px',
+  h: '24px',
+  bdrad: '6px',
+  pd: '0',
+  mr: '1px 9px 1px 1px',
+  d: 'flex',
+  ai: 'center',
+  jc: 'center',
+  bg: 'rgba(0,0,0,.08)',
+  o: 0.7,
+  '&>div': {
+    transform: 'scale(.9)',
+    transformOrigin: 'center',
+    d: 'flex',
+    ai: 'center',
+    jc: 'center',
+  },
+});
+
+export interface FormattingTitleProps {
+  formatting: Fmt;
+  onClick?: React.MouseEventHandler;
+}
+
+export const FormattingTitle: React.FC<FormattingTitleProps> = ({formatting, onClick}) => {
+  const behavior = formatting.behavior;
+  const menu = behavior.menu;
+
+  const icon = menu?.icon?.();
+  const name = menu?.name ?? behavior.name;
+
+  return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: Non-a11y onClick is fine here
+    <div className={blockClass} onClick={onClick}>
+      {icon ? (
+        <Flex style={{alignItems: 'center'}}>
+          <div className={iconClass}>
+            <div>{icon}</div>
+          </div>
+          {name}
+        </Flex>
+      ) : (
+        name
+      )}
+    </div>
+  );
+};
