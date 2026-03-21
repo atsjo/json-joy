@@ -99,7 +99,13 @@ export const View: React.FC<ViewProps> = ({formatting, onEdit}) => {
               <Space size={0} />
               <MiniTitle literal>HTML</MiniTitle>
               <Space size={-3} />
-              <TextBlock src={'<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mathlive/mathlive-static.css" />\n' + mathHTML} select />
+              <TextBlock
+                src={
+                  '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mathlive/mathlive-static.css" />\n' +
+                  mathHTML
+                }
+                select
+              />
             </>
           )}
         </>

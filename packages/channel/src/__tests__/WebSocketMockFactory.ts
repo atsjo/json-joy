@@ -7,7 +7,7 @@ export interface WebSocketMockFactoryParams {
 }
 
 export class WebSocketMockFactory {
-  constructor (public readonly params: WebSocketMockFactoryParams) {}
+  constructor(public readonly params: WebSocketMockFactoryParams) {}
 
   public create(): [socket: WebSocketMock, connection: WebSocketMockServerConnection] {
     const params = this.params;

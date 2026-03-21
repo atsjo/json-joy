@@ -38,9 +38,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
    */
   public readonly inlines = new AvlMap<Point, HTMLSpanElement>((a, b) => a.cmpSpatial(b));
 
-  constructor(
-    public readonly headless: PeritextHeadless,
-  ) {
+  constructor(public readonly headless: PeritextHeadless) {
     const events = headless.defaults;
     const {txt} = events;
     this.txt = txt;

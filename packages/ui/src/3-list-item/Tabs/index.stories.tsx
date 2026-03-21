@@ -35,12 +35,11 @@ const THREE_TABS = [
   {key: 'history', label: 'History', content: card('History log.')},
 ];
 
-const decorator = (width: number) => (Story: any) =>
-  (
-    <div style={{width}}>
-      <Story />
-    </div>
-  );
+const decorator = (width: number) => (Story: any) => (
+  <div style={{width}}>
+    <Story />
+  </div>
+);
 
 export const Primary: StoryObj<typeof meta> = {
   args: {

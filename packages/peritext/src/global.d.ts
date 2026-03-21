@@ -1,4 +1,4 @@
-import type {MathfieldElement} from "mathlive";
+import type {MathfieldElement} from 'mathlive';
 
 // biome-ignore lint/style/noNamespace: required module ambient declarations
 declare module 'mathlive/fonts.css' {}

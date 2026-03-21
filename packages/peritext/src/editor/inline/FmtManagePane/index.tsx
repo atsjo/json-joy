@@ -15,7 +15,10 @@ export interface FmtManagePaneProps {
 export const FmtManagePane: React.FC<FmtManagePaneProps> = ({inline, state: _state}) => {
   const editorState = useEditor();
   // biome-ignore lint: too many dependencies
-  const state = React.useMemo(() => _state || new FmtManagePaneState(editorState, inline), [editorState, inline?.key(), _state]);
+  const state = React.useMemo(
+    () => _state || new FmtManagePaneState(editorState, inline),
+    [editorState, inline?.key(), _state],
+  );
   React.useEffect(() => {
     if (!state) return;
     return () => {

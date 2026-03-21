@@ -7,14 +7,7 @@ import {KeySet} from './KeySet';
 import {KeySequenceMatcher} from './KeySequenceMatcher';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Printable} from 'tree-dump';
-import type {
-  AnyBinding,
-  ChordAction,
-  ChordBindingOptions,
-  ChordSignature,
-  KeySink,
-  KeySource,
-} from './types';
+import type {AnyBinding, ChordAction, ChordBindingOptions, ChordSignature, KeySink, KeySource} from './types';
 
 const enum KeyControllerConstants {
   HistoryLimit = 25,
@@ -287,7 +280,10 @@ export class KeyContext implements KeySink, Printable {
 
   public toString(tab?: string): string {
     return (
-      'ctx (' + this.name + (this.active ? ' → ' + this.active.name : '') + ')' +
+      'ctx (' +
+      this.name +
+      (this.active ? ' → ' + this.active.name : '') +
+      ')' +
       printTree(tab, [
         () => 'history: ' + this.history.map((k) => k.sig()).join(', '),
         (tab) => this.pressed.toString(tab),

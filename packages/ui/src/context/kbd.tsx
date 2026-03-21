@@ -8,7 +8,7 @@ export const useKbd = (): KeyContext => {
   const disposeRef = React.useRef<(() => void) | undefined>(void 0);
   const kbd1 = React.useMemo(() => {
     if (kbd0) return kbd0;
-    const [kbd, dispose] = KeyContext.global()
+    const [kbd, dispose] = KeyContext.global();
     disposeRef.current = dispose;
     return kbd;
   }, [kbd0]);
@@ -22,11 +22,11 @@ export const useKbd = (): KeyContext => {
 
 export interface KbdProps {
   child?: string;
-  bind?: AnyBinding[],
+  bind?: AnyBinding[];
   children?: React.ReactNode;
 }
 
-export const Kbd: React.FC<KbdProps> = ({ child, bind, children }) => {
+export const Kbd: React.FC<KbdProps> = ({child, bind, children}) => {
   const kbd0 = useKbd();
   const kbd1 = React.useMemo(() => {
     return child ? kbd0.child(child) : kbd0;
@@ -44,9 +44,5 @@ export const Kbd: React.FC<KbdProps> = ({ child, bind, children }) => {
     };
   }, []);
 
-  return (
-    <ctx.Provider value={kbd1}>
-      {children}
-    </ctx.Provider>
-  );
+  return <ctx.Provider value={kbd1}>{children}</ctx.Provider>;
 };

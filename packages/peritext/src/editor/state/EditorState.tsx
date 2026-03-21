@@ -145,7 +145,7 @@ export class EditorState implements UiLifeCycles {
       const islandUnderValue = islandUnder.value;
       if (islandUnderValue) {
         const editor = txt.editor;
-        if (editor.cursorCard() !== 1 || (!islandUnderValue.inline || editor.cursor.cmp(islandUnderValue.inline) !== 0)) {
+        if (editor.cursorCard() !== 1 || !islandUnderValue.inline || editor.cursor.cmp(islandUnderValue.inline) !== 0) {
           islandUnder.next(null);
         }
       }
@@ -213,19 +213,25 @@ export class EditorState implements UiLifeCycles {
     et.addEventListener('cursor', onCursor);
 
     const unbindHotkeys = this.surface.headless.kbd.bind([
-      ['Escape', (press: Key) => {
-        if (islandUnder.value) {
-          islandUnder.next(null);
-        } else {
-          press.propagate = true;
-        }
-      }],
+      [
+        'Escape',
+        (press: Key) => {
+          if (islandUnder.value) {
+            islandUnder.next(null);
+          } else {
+            press.propagate = true;
+          }
+        },
+      ],
     ]);
 
     const unbindHotkeysSurface = dom.kbd?.bind([
-      ['Meta Meta', () => {
-        et.cursor({flip: true});
-      }],
+      [
+        'Meta Meta',
+        () => {
+          et.cursor({flip: true});
+        },
+      ],
     ]);
 
     return () => {

@@ -7,9 +7,7 @@ const UndoIcon = makeIcon({set: 'lucide', icon: 'undo'});
 const RedoIcon = makeIcon({set: 'lucide', icon: 'redo'});
 
 export class DocMenu {
-  constructor(
-    public readonly state: EditorState,
-  ) {}
+  constructor(public readonly state: EditorState) {}
 
   public build(): MenuItem {
     const menu: MenuItem = {

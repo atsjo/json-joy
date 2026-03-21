@@ -19,10 +19,16 @@ const setup = <T extends string | Uint8Array = string | Uint8Array>(
       const connection = new WebSocketMockServerConnection();
       ws = new WebSocketMock({connection}, 'http://example.com');
       const origClose = ws.close.bind(ws);
-      ws.close = (code?: number, reason?: string) => { onClose(code, reason); origClose(code, reason); };
+      ws.close = (code?: number, reason?: string) => {
+        onClose(code, reason);
+        origClose(code, reason);
+      };
       const origSend = ws.send.bind(ws);
-      ws.send = (data: any) => { onSend(data); origSend(data); };
-      return new WebSocketChannel({ newSocket: () => ws }) as unknown as PhysicalChannel<T>;
+      ws.send = (data: any) => {
+        onSend(data);
+        origSend(data);
+      };
+      return new WebSocketChannel({newSocket: () => ws}) as unknown as PhysicalChannel<T>;
     },
   });
   return {
@@ -207,9 +213,7 @@ describe('.stop() edge cases', () => {
     persistent.open$.subscribe({complete: () => completions.push('open$')});
     persistent.error$.subscribe({complete: () => completions.push('error$')});
     persistent.stop();
-    expect(completions).toEqual(
-      expect.arrayContaining(['active$', 'channel$', 'open$', 'error$']),
-    );
+    expect(completions).toEqual(expect.arrayContaining(['active$', 'channel$', 'open$', 'error$']));
   });
 });
 

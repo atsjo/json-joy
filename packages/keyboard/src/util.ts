@@ -76,8 +76,7 @@ const MOD_ALIASES: Record<string, string> = {
   primary: 'Primary',
 };
 
-export const isMod = (key: string): boolean =>
-  key === 'Alt' || key === 'Control' || key === 'Meta' || key === 'Shift';
+export const isMod = (key: string): boolean => key === 'Alt' || key === 'Control' || key === 'Meta' || key === 'Shift';
 
 /**
  * Returns `true` when `sig` is a multi-step sequence signature — i.e. it

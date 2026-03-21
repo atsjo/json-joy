@@ -23,13 +23,16 @@ export class FmtManagePaneState {
     this.kbd.focus();
 
     this.kbd.bind([
-      ['Escape', (press: Key) => {
-        if (this.view.value === 'edit') {
-          this.switchToViewPanel();
-        } else {
-          press.propagate = true;
-        }
-      }]
+      [
+        'Escape',
+        (press: Key) => {
+          if (this.view.value === 'edit') {
+            this.switchToViewPanel();
+          } else {
+            press.propagate = true;
+          }
+        },
+      ],
     ]);
   }
 
@@ -87,7 +90,7 @@ export class FmtManagePaneState {
     const differ = new JsonCrdtDiff(model);
     const newData = fmt.conf()?.view();
     const originalData = original.conf();
-    if (originalData && newData && (typeof newData === 'object')) {
+    if (originalData && newData && typeof newData === 'object') {
       differ.diffAny(originalData.node, newData);
     }
     const originalText = range.text();

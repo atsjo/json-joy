@@ -16,7 +16,7 @@ export class CursorState implements UiLifeCycles {
 
   constructor(
     public readonly ctx: PeritextSurfaceState,
-    public readonly color = new HslColor(210 / 360, 1, .5),
+    public readonly color = new HslColor(210 / 360, 1, 0.5),
   ) {}
 
   /** -------------------------------------------------- {@link UiLifeCycles} */

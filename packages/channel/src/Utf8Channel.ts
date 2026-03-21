@@ -22,7 +22,7 @@ export class Utf8Channel implements PhysicalChannel<string> {
     this.close$ = channel.close$;
     this.error$ = channel.error$;
     this.message$ = channel.message$.pipe(
-      map((data) => (typeof data === 'string' ? data : decodeUtf8(data, 0, data.length)))
+      map((data) => (typeof data === 'string' ? data : decodeUtf8(data, 0, data.length))),
     );
   }
 

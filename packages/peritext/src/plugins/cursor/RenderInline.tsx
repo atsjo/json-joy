@@ -15,7 +15,9 @@ const RenderInlineSelection: React.FC<RenderInlineSelectionProps> = (props) => {
 
   const [left, right] = selection;
   const style: React.CSSProperties = {
-    backgroundColor: focus ? `var(--${CursorConstants.SelectionColor})` : `var(--${CursorConstants.SelectionColorBlurred})`,
+    backgroundColor: focus
+      ? `var(--${CursorConstants.SelectionColor})`
+      : `var(--${CursorConstants.SelectionColorBlurred})`,
     borderRadius: left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px',
   };
 

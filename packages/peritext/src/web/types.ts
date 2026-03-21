@@ -1,4 +1,3 @@
-
 /**
  * @todo Unify this with {@link UiLifeCycles}, join interfaces.
  * @todo Rename this to something like "disposable", as it does not have to be

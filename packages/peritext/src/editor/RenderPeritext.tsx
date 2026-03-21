@@ -12,10 +12,7 @@ export interface RenderPeritextProps {
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, opts, children}) => {
-  const value: EditorState = React.useMemo(
-    () => new EditorState(surface, opts),
-    [surface, opts],
-  );
+  const value: EditorState = React.useMemo(() => new EditorState(surface, opts), [surface, opts]);
 
   React.useLayoutEffect(() => value.start(), [value]);
 

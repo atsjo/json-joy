@@ -20,9 +20,7 @@ export interface BufferMenuCtx {
 
 /** Clipboard (buffer) menu. */
 export class BufferMenu {
-  constructor(
-    public readonly state: EditorState,
-  ) {}
+  constructor(public readonly state: EditorState) {}
 
   public readonly copyAsMenu = (action: 'copy' | 'cut', ctx: BufferMenuCtx = {}): MenuItem => {
     const icon =

@@ -9,7 +9,7 @@ export class CloseEvent {
   constructor(
     public readonly code: number,
     public readonly reason: string,
-    public readonly wasClean: boolean
+    public readonly wasClean: boolean,
   ) {}
 }
 
@@ -17,11 +17,14 @@ export interface WebSocketMockParams {
   connection?: WebSocketMockServerConnection;
 }
 
-export class WebSocketMock implements Pick<WebSocket, 'binaryType' | 'readyState' | 'bufferedAmount' | 'onopen' | 'onclose' | 'onerror' | 'onmessage' | 'close' | 'send'> {
-  public static create(
-    params: Partial<WebSocketMockParams>,
-    url: string = 'http://127.0.0.1',
-  ) {
+export class WebSocketMock
+  implements
+    Pick<
+      WebSocket,
+      'binaryType' | 'readyState' | 'bufferedAmount' | 'onopen' | 'onclose' | 'onerror' | 'onmessage' | 'close' | 'send'
+    >
+{
+  public static create(params: Partial<WebSocketMockParams>, url: string = 'http://127.0.0.1') {
     const ws = new WebSocketMock(params, url);
     return [ws, ws.controller];
   }
@@ -78,7 +81,7 @@ export class WebSocketMock implements Pick<WebSocket, 'binaryType' | 'readyState
       if (!this.onmessage) return;
       const event = {type: 'message', data: message} as any;
       this.onmessage(event);
-    }
+    },
   };
 
   constructor(
@@ -87,7 +90,7 @@ export class WebSocketMock implements Pick<WebSocket, 'binaryType' | 'readyState
   ) {
     const {connection} = params;
     if (connection) {
-      this._connectionSub = connection.outgoing$.subscribe(data => {
+      this._connectionSub = connection.outgoing$.subscribe((data) => {
         this.controller.message(data);
       });
     }
@@ -111,7 +114,7 @@ export class WebSocketMock implements Pick<WebSocket, 'binaryType' | 'readyState
     }
     if (this.params.connection) {
       if (data instanceof Blob) {
-        data.bytes().then(buf => {
+        data.bytes().then((buf) => {
           this.params.connection?.incoming$.next(new Uint8Array(buf));
         });
       } else {
@@ -120,5 +123,4 @@ export class WebSocketMock implements Pick<WebSocket, 'binaryType' | 'readyState
       }
     }
   }
-
 }

@@ -29,9 +29,7 @@ const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic'});
 const KeyboardIcon = makeIcon({set: 'lucide', icon: 'keyboard'});
 
 export class RangeMenu {
-  constructor(
-    public readonly state: EditorState,
-  ) {}
+  constructor(public readonly state: EditorState) {}
 
   public build(): MenuItem {
     return {
@@ -350,7 +348,13 @@ export class RangeMenu {
     const track = (item: MenuItem): MenuItem => {
       const orig = item.onSelect;
       return orig
-        ? {...item, onSelect: (e) => { this.trackRecent(item); orig(e); }}
+        ? {
+            ...item,
+            onSelect: (e) => {
+              this.trackRecent(item);
+              orig(e);
+            },
+          }
         : item;
     };
     return {

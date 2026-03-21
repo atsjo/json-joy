@@ -31,10 +31,11 @@ export class PeritextHeadless implements UiLifeCycles {
 
   private _kbdUnbind?: () => void = void 0;
 
-  constructor(public readonly txt: Peritext, opts: PeritextHeadlessOpts = {}) {
-    const {
-      log = Log.from(txt.model),
-    } = opts;
+  constructor(
+    public readonly txt: Peritext,
+    opts: PeritextHeadlessOpts = {},
+  ) {
+    const {log = Log.from(txt.model)} = opts;
     const registry = new SliceRegistry();
     const transfer = createDataTransfer(txt, registry);
     const et = new PeritextEventTarget();
@@ -58,7 +59,7 @@ export class PeritextHeadless implements UiLifeCycles {
     }
     kbd!.focus();
     this.kbd = kbd;
-    
+
     this.log = log;
     this.registry = registry;
     this.transfer = transfer;
@@ -80,13 +81,16 @@ export class PeritextHeadless implements UiLifeCycles {
   }
 
   /** ----------------------------------------------------- {@link Printable} */
-  
+
   public toString(tab?: string): string {
-    return 'Headless' + printTree(tab, [
-      (tab: string) => this.registry.toString(tab),
-      (tab: string) => this.annals.toString(tab),
-      (tab: string) => this.kbd.toString(tab),
-      (tab: string) => this.txt.toString(tab),
-    ]);
+    return (
+      'Headless' +
+      printTree(tab, [
+        (tab: string) => this.registry.toString(tab),
+        (tab: string) => this.annals.toString(tab),
+        (tab: string) => this.kbd.toString(tab),
+        (tab: string) => this.txt.toString(tab),
+      ])
+    );
   }
 }

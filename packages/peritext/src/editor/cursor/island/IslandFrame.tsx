@@ -43,8 +43,7 @@ export const IslandFrame: React.FC<IslandFrameProps> = ({selected, focused, outl
   if (selected) {
     if (outline) {
       style.outline = '2px solid ' + (focused ? 'var(--caret-color)' : 'var(--caret-color-blurred)');
-      style.animation = outlineAnimation + ' .1s ease-out',
-      style.animationFillMode = 'forwards';
+      (style.animation = outlineAnimation + ' .1s ease-out'), (style.animationFillMode = 'forwards');
       style.borderRadius = '2px';
     }
     style.background = focused ? 'var(--selection-color)' : 'var(--selection-color-blurred)';
@@ -55,11 +54,7 @@ export const IslandFrame: React.FC<IslandFrameProps> = ({selected, focused, outl
       <span {...rest} style={style}>
         {children}
       </span>
-      {!!under && (
-        <span className={underClass}>
-          {under}
-        </span>
-      )}
+      {!!under && <span className={underClass}>{under}</span>}
     </span>
   );
 };

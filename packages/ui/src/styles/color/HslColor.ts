@@ -128,14 +128,14 @@ export class HslColor {
    * luminance and tapers Saturation for design system harmony.
    */
   public norm(): HslColor {
-    const { h, s, l } = this;
+    const {h, s, l} = this;
 
     // 1. Calculate Hue-based Luminance Weight
     const h6 = h * 6;
     const rw = Math.max(0, Math.min(1, Math.abs(h6 - 3) - 1));
     const gw = Math.max(0, Math.min(1, 2 - Math.abs(h6 - 2)));
     const bw = Math.max(0, Math.min(1, 2 - Math.abs(h6 - 4)));
-    const hueWeight = (rw * 0.2126) + (gw * 0.7152) + (bw * 0.0722);
+    const hueWeight = rw * 0.2126 + gw * 0.7152 + bw * 0.0722;
 
     // 2. Adjust Lightness (L)
     // Ensures a "500" Blue and "500" Yellow have the same perceived weight
@@ -147,7 +147,7 @@ export class HslColor {
     // We apply a "bell curve" to saturation based on the target lightness.
     // Near L=0.5, we allow 100% of the input S. At L=0 or L=1, we taper it down.
     const saturationTaper = Math.pow(Math.sin(this.l * Math.PI), 0.8);
-    
+
     // Boost saturation for darker tones (600-800) to keep them from looking grey
     // but keep it very low for the "950" and "25" levels.
     this.s = clamp(s * saturationTaper);
@@ -160,8 +160,8 @@ export class HslColor {
     const H = +(h * 360).toFixed(3);
     const S = +(s * 100).toFixed(3);
     const L = +(l * 100).toFixed(3);
-    let str= 'hsl(' + H + ' ' + S + '% ' + L + '%';
-    str += (a === 1 ? ')' : ' / ' + +(a * 100).toFixed(3) + '%)');
+    let str = 'hsl(' + H + ' ' + S + '% ' + L + '%';
+    str += a === 1 ? ')' : ' / ' + +(a * 100).toFixed(3) + '%)';
     return str;
   }
 }

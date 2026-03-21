@@ -15,7 +15,7 @@ export interface InlineMathProps extends IslandFrameProps {
 
 export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
   const editor = useEditor();
-  const focused = useSyncStoreOpt(editor.surface.dom?.cursor.focus)
+  const focused = useSyncStoreOpt(editor.surface.dom?.cursor.focus);
 
   if (!attr.isStart()) return;
 

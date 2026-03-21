@@ -697,8 +697,12 @@ describe('multi-child', () => {
     let hits2 = 0;
     const child1 = kit.ctx.child('c1');
     const child2 = kit.ctx.child('c2');
-    child1.map.setPress('a', () => { hits1++; });
-    child2.map.setPress('a', () => { hits2++; });
+    child1.map.setPress('a', () => {
+      hits1++;
+    });
+    child2.map.setPress('a', () => {
+      hits2++;
+    });
     // child1 is auto-active (first fed child); child2 is not active yet
     kit.src.press('a');
     expect(hits1).toBe(1);
@@ -741,8 +745,12 @@ describe('multi-child', () => {
     let hits2 = 0;
     const child1 = kit.ctx.child('c1');
     const child2 = kit.ctx.child('c2');
-    child1.map.setPress('x', () => { hits1++; });
-    child2.map.setPress('x', () => { hits2++; });
+    child1.map.setPress('x', () => {
+      hits1++;
+    });
+    child2.map.setPress('x', () => {
+      hits2++;
+    });
     // child1 is auto-active
     kit.src.press('x');
     expect(hits1).toBe(1);
@@ -757,10 +765,14 @@ describe('multi-child', () => {
     await using kit = await setup();
     let parentHits = 0;
     let childHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const ownSrc = new KeySourceManual();
     const child = kit.ctx.child('ownSrc', ownSrc as any);
-    child.map.setPress('a', () => { childHits++; });
+    child.map.setPress('a', () => {
+      childHits++;
+    });
     // child._fed is false → ctx.active is not set → parent handles its own event
     kit.src.press('a');
     expect(parentHits).toBe(1); // parent handles its own source directly
@@ -802,11 +814,35 @@ describe('multi-child', () => {
     let rootHits = 0;
     let childHits = 0;
     let grandchildHits = 0;
-    kit.ctx.bind([['b', () => { rootHits++; }, {propagate: true}]]);
+    kit.ctx.bind([
+      [
+        'b',
+        () => {
+          rootHits++;
+        },
+        {propagate: true},
+      ],
+    ]);
     const child = kit.ctx.child('child');
-    child.bind([['b', () => { childHits++; }, {propagate: true}]]);
+    child.bind([
+      [
+        'b',
+        () => {
+          childHits++;
+        },
+        {propagate: true},
+      ],
+    ]);
     const grandchild = child.child('grandchild');
-    grandchild.bind([['b', () => { grandchildHits++; }, {propagate: true}]]);
+    grandchild.bind([
+      [
+        'b',
+        () => {
+          grandchildHits++;
+        },
+        {propagate: true},
+      ],
+    ]);
     // grandchild is auto-active in child; child is auto-active in ctx
     kit.src.press('b');
     expect(grandchildHits).toBe(1);

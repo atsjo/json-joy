@@ -32,9 +32,7 @@ export interface LeafBlockMenuCtx {
 }
 
 export class BlockMenu {
-  constructor(
-    public readonly state: EditorState,
-  ) {}
+  constructor(public readonly state: EditorState) {}
 
   public readonly blockTypeMenu = (): MenuItem => {
     const et = this.state.surface.events.et;

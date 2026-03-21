@@ -69,9 +69,7 @@ const ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
 const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
 
 export class CaretMenu {
-  constructor(
-    public readonly state: EditorState,
-  ) {}
+  constructor(public readonly state: EditorState) {}
 
   public readonly build = (): MenuItem => {
     return {

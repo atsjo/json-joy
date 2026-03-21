@@ -160,9 +160,7 @@ export const Tabs: React.FC<TabsProps> = ({
   const arrowDyn = useArrow();
 
   // Uncontrolled state
-  const [internal, setInternal] = React.useState<string>(
-    () => defaultActive ?? items[0]?.key ?? '',
-  );
+  const [internal, setInternal] = React.useState<string>(() => defaultActive ?? items[0]?.key ?? '');
   const active = activeProp !== undefined ? activeProp : internal;
 
   // Pill geometry

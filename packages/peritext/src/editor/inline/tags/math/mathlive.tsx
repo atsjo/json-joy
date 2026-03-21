@@ -33,8 +33,14 @@ export const MathSpan: React.FC<MathSpanProps> = ({tex, mode = 'textstyle', focu
 
   if (ref.current && ref.current.textContent !== tex) {
     ref.current.textContent = tex;
-    try {(ref.current as any).render?.();} catch {}
+    try {
+      (ref.current as any).render?.();
+    } catch {}
   }
 
-  return React.createElement('math-span', {...props, ref, mode, className: selected ? (focused ? equationFocusedClass : equationSelectedClass) : ''}, tex);
+  return React.createElement(
+    'math-span',
+    {...props, ref, mode, className: selected ? (focused ? equationFocusedClass : equationSelectedClass) : ''},
+    tex,
+  );
 };

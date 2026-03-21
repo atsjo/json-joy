@@ -1,5 +1,5 @@
-import type {BehaviorSubject, Observable} from "rxjs";
-import type {ChannelState} from "./constants";
+import type {BehaviorSubject, Observable} from 'rxjs';
+import type {ChannelState} from './constants';
 
 export interface CloseEventBase {
   readonly code: number;

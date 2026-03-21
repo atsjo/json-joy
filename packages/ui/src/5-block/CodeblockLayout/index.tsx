@@ -36,5 +36,9 @@ export const CodeblockLayout: React.FC<CodeblockLayoutProps> = ({compact, childr
     },
   }));
 
-  return <div {...rest} className={blockClass + dynamicBlockClass + (compact ? blockCompactClass : '')}>{children}</div>;
+  return (
+    <div {...rest} className={blockClass + dynamicBlockClass + (compact ? blockCompactClass : '')}>
+      {children}
+    </div>
+  );
 };

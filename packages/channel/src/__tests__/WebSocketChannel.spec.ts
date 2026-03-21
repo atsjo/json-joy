@@ -76,7 +76,7 @@ test('passes through "close" event', () => {
 test('passes through "error" event', () => {
   const t1 = setup();
   const onerror = jest.fn();
-  t1.channel.error$.subscribe(err => onerror(err));
+  t1.channel.error$.subscribe((err) => onerror(err));
   expect(onerror).toHaveBeenCalledTimes(0);
   t1.ws.controller.error('msg');
   expect(onerror).toHaveBeenCalledTimes(1);
@@ -173,10 +173,7 @@ describe('.close$', () => {
     rx.close$.subscribe(close);
     ws.controller.close(123, 'test', true);
     expect(close).toHaveBeenCalledTimes(1);
-    expect(close).toHaveBeenCalledWith([
-      rx,
-      new CloseEvent(123, 'test', true),
-    ]);
+    expect(close).toHaveBeenCalledWith([rx, new CloseEvent(123, 'test', true)]);
   });
 
   test('when constructor fails closes with "INIT" reason', async () => {

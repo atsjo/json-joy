@@ -43,7 +43,12 @@ export class JsonCrdtDiff {
     );
   }
 
-  public applyStrPatch(patch: str.Patch, src: StrNode, start: ITimestampStruct = src.id, length: number = src.length()): void {
+  public applyStrPatch(
+    patch: str.Patch,
+    src: StrNode,
+    start: ITimestampStruct = src.id,
+    length: number = src.length(),
+  ): void {
     const builder = this.builder;
     const offset = start === src.id ? 0 : (src.posById(start) ?? 0);
     str.apply(

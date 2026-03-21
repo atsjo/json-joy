@@ -310,17 +310,18 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
       if (op instanceof InsValOp) {
         const nodeId = op.obj;
         const val = model.index.get(nodeId);
-        if (val instanceof ValNode)
-          builder.setVal(nodeId, toSchema(val.node()).build(builder));
+        if (val instanceof ValNode) builder.setVal(nodeId, toSchema(val.node()).build(builder));
       } else if (op instanceof InsObjOp || op instanceof InsVecOp) {
         const data: (typeof op)['data'] = [];
         const nodeId = op.obj;
         const container = model.index.get(nodeId);
         for (const [key] of op.data) {
-          let oldValueNode: JsonNode | undefined = container instanceof ObjNode
-            ? container.get(key + '')
-            : container instanceof VecNode
-              ? container.get(+key) : undefined;
+          let oldValueNode: JsonNode | undefined =
+            container instanceof ObjNode
+              ? container.get(key + '')
+              : container instanceof VecNode
+                ? container.get(+key)
+                : undefined;
           if (oldValueNode) data.push([key, toSchema(oldValueNode).build(builder)] as any);
           else data.push([key, builder.con(undefined)] as any);
         }

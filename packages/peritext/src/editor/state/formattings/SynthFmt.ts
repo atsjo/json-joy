@@ -5,7 +5,7 @@ import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 
 export class SynthFmt<Node extends ObjNode = ObjNode> extends SavedFmt<Node> {
   private readonly _conf!: ObjApi<Node>;
-  
+
   constructor(public readonly saved: SavedFmt<Node>) {
     super(saved.behavior, saved.range, saved.state);
     const sourceModel = saved.range.txt.model;

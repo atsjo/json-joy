@@ -44,7 +44,9 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({left, italic, children}
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
 
-  const style: React.CSSProperties = focus ? {} : {background: `var(--${CursorConstants.CaretColorBlurred})`, animation: 'none'};
+  const style: React.CSSProperties = focus
+    ? {}
+    : {background: `var(--${CursorConstants.CaretColorBlurred})`, animation: 'none'};
 
   if (italic) {
     style.rotate = '11deg';

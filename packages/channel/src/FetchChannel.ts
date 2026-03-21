@@ -37,7 +37,7 @@ export class FetchChannel<T extends string | Uint8Array = string | Uint8Array> i
   }
 
   public send(data: T): number {
-    const uint8 = typeof data === 'string' ? toUint8Array(data) : data as Uint8Array;
+    const uint8 = typeof data === 'string' ? toUint8Array(data) : (data as Uint8Array);
     this._fetch(uint8)
       .then((response) => {
         const message: T = (typeof response === 'string' ? response : toUint8Array(response)) as unknown as T;

@@ -22,7 +22,8 @@ describe('normalize()', () => {
 
   describe('multiple modifiers sorted canonically (Alt < Control < Meta < Shift)', () => {
     test('Alt+Shift+F5', () => expect(normalize('Alt+Shift+F5')).toBe('Alt+Shift+F5'));
-    test('Shift+Ctrl is Control+Shift+, not Shift+Control+', () => expect(normalize('Shift+Ctrl+z')).toBe('Control+Shift+z'));
+    test('Shift+Ctrl is Control+Shift+, not Shift+Control+', () =>
+      expect(normalize('Shift+Ctrl+z')).toBe('Control+Shift+z'));
     test('all four', () => expect(normalize('Alt+Ctrl+Meta+Shift+x')).toBe('Alt+Control+Meta+Shift+x'));
   });
 

@@ -41,8 +41,8 @@ const Svg: React.FC<Props> = ({set, icon, getUrl = getUrlDefault, ...rest}) => {
       }
       const url = getUrl({set, icon} as Icon);
       fetch(url, {cache: 'force-cache'})
-        .then(r => r.text())
-        .then(text => {
+        .then((r) => r.text())
+        .then((text) => {
           if (!mounted()) return;
           const parser = new DOMParser();
           const doc = parser.parseFromString(text, 'application/xml');
@@ -62,7 +62,6 @@ const Svg: React.FC<Props> = ({set, icon, getUrl = getUrlDefault, ...rest}) => {
 
   return <svg ref={ref} {...rest} />;
 };
-
 
 export type IconistaProps = Icon &
   React.SVGAttributes<any> & {
