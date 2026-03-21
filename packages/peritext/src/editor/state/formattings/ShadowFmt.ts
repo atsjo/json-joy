@@ -1,4 +1,4 @@
-import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
+import {Model, type ObjApi} from 'json-joy/lib/json-crdt/model';
 import {toSchema} from 'json-joy/lib/json-crdt/schema/toSchema';
 import {SavedFmt} from './SavedFmt';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';

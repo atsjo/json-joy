@@ -715,7 +715,7 @@ describe('multi-child', () => {
   });
 
   test('calling .focus() sets active up the chain', async () => {
-    await using kit = await setup();
+    await using _kit = await setup();
     const [global] = KeyContext.global('g');
     const view = global.child('view');
     const editor1 = view.child('editor1');
@@ -727,7 +727,7 @@ describe('multi-child', () => {
   });
 
   test('auto-focus via onFocus() propagates up', async () => {
-    await using kit = await setup();
+    await using _kit = await setup();
     const [global] = KeyContext.global('g');
     const view = global.child('view');
     const editor1 = view.child('editor1');

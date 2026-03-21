@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Island} from '../cursor/island/Island';
-import {IslandFrameProps} from '../cursor/island/IslandFrame';
+import type {IslandFrameProps} from '../cursor/island/IslandFrame';
 import {MathSpan} from './tags/math/mathlive';
 import {useSyncStoreOpt} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import {useEditor} from '../context';

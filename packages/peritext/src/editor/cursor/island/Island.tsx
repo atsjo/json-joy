@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
-import {IslandFrame, IslandFrameProps} from './IslandFrame';
+import type {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
+import {IslandFrame, type IslandFrameProps} from './IslandFrame';
 import {IslandUnder} from './IslandUnder';
 import {Char} from '../../../web/constants';
 import {useEditor} from '../../context';
@@ -24,7 +24,7 @@ export const Island: React.FC<IslandProps> = (props) => {
 
   React.useEffect(() => {
     if (selected) editor.islandSelected(inline, attr);
-  }, [selected]);
+  }, [selected, attr, editor.islandSelected, inline]);
 
   return (
     <>

@@ -6,7 +6,7 @@ import {inlines} from '../inline/tags';
 import {FmtManagePaneState} from '../inline/FmtManagePane/state';
 import {Menu} from './menus/Menu';
 import * as sync from 'thingies/lib/sync';
-import {Key} from '@jsonjoy.com/keyboard';
+import type {Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/src/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';

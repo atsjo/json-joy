@@ -1,4 +1,4 @@
-import {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
+import type {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
 import {WebSocketMock} from './WebSocketMock';
 
 export interface WebSocketMockFactoryParams {

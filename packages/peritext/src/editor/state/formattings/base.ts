@@ -1,4 +1,4 @@
-import {ObjApi} from 'json-joy/lib/json-crdt/model';
+import type {ObjApi} from 'json-joy/lib/json-crdt/model';
 import {Value} from 'thingies/lib/sync';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {InlineSliceBehavior, ValidationResult} from '../../inline/InlineSliceBehavior';

@@ -1,5 +1,5 @@
 import {s} from 'json-joy/lib/json-crdt-patch';
-import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
+import {Model, type ObjApi} from 'json-joy/lib/json-crdt/model';
 import {EditableFmt} from './base';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {InlineSliceBehavior} from '../../inline/InlineSliceBehavior';

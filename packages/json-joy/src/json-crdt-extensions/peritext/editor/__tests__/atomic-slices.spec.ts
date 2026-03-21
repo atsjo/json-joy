@@ -171,7 +171,7 @@ const testSuite = (setup: () => Kit): void => {
         });
 
         test('move() forward from inside atom skips to atom end', () => {
-          const {peritext, editor} = setupWithAtom(setup);
+          const {editor} = setupWithAtom(setup);
           // Place cursor inside the atom at position 4 (char "4")
           editor.cursor.setAt(4);
           editor.move(1, 'char');
@@ -181,7 +181,7 @@ const testSuite = (setup: () => Kit): void => {
         });
 
         test('move() across atom in backward direction', () => {
-          const {peritext, editor} = setupWithAtom(setup);
+          const {editor} = setupWithAtom(setup);
           editor.cursor.setAt(6); // cursor at position 6 (char "6")
           editor.move(-1, 'char');
           const pos = editor.cursor.start.viewPos();

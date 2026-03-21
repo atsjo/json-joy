@@ -1,4 +1,4 @@
-import {Log} from 'json-joy/lib/json-crdt/log/Log';
+import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
 import {Value} from 'json-joy/lib/util/events/sync-store';
 import {WebFacade} from '../dom/facade/WebFacade';

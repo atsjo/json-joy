@@ -57,7 +57,7 @@ const Svg: React.FC<Props> = ({set, icon, getUrl = getUrlDefault, ...rest}) => {
 
   if (error) {
     const url = getUrl({set, icon} as Icon);
-    return <img {...rest} src={url} title={error.message} />;
+    return <img {...rest} src={url} alt={`${set}/${icon}`} title={error.message} />;
   }
 
   return <svg ref={ref} {...rest} />;

@@ -11,7 +11,7 @@ export interface RenderPeritextProps {
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, opts, children}) => {
-  const state = React.useMemo(() => new CursorState(ctx, opts.caret), [ctx]);
+  const state = React.useMemo(() => new CursorState(ctx, opts.caret), [ctx, opts.caret]);
   React.useEffect(() => state.start(), [state]);
 
   return <context.Provider value={state}>{children}</context.Provider>;

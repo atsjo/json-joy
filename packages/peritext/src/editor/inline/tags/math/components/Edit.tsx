@@ -26,7 +26,7 @@ const fieldWrapClass = rule({
 });
 
 export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
-  const [t] = useT();
+  const [_t] = useT();
   const fieldRef = React.useRef<HTMLElement | null>(null);
   const tex = useSyncStore(formatting.str);
 

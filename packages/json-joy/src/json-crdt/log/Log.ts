@@ -316,7 +316,7 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
         const nodeId = op.obj;
         const container = model.index.get(nodeId);
         for (const [key] of op.data) {
-          let oldValueNode: JsonNode | undefined =
+          const oldValueNode: JsonNode | undefined =
             container instanceof ObjNode
               ? container.get(key + '')
               : container instanceof VecNode

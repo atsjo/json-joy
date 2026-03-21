@@ -1,8 +1,8 @@
 import {utf8Size} from '@jsonjoy.com/util/lib/strings/utf8';
 import {WebSocketState} from '../constants';
-import {Subscription} from 'rxjs';
+import type {Subscription} from 'rxjs';
 import {toUint8Array} from '@jsonjoy.com/buffers/lib/toUint8Array';
-import {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
+import type {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
 
 export class CloseEvent {
   public readonly type = 'close';

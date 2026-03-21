@@ -1,7 +1,7 @@
 import {Peritext} from './Peritext';
 import {printTree} from 'tree-dump/lib/printTree';
 import {ExtensionApi} from '../../json-crdt/extensions/ExtensionApi';
-import {PeritextHeadless, PeritextHeadlessOpts} from './PeritextHeadless';
+import {PeritextHeadless, type PeritextHeadlessOpts} from './PeritextHeadless';
 import type {PeritextNode} from './PeritextNode';
 import type {StrApi, ArrApi, ArrNode, ModelApi} from '../../json-crdt';
 import type {SliceNode} from './slice/types';

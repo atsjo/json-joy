@@ -5,7 +5,6 @@ import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {TextBlock} from '@jsonjoy.com/ui/lib/5-block/TextBlock';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {MathSpan} from '../mathlive';
-import {useT} from 'use-t';
 import {convertLatexToAsciiMath, convertLatexToMathMl, convertLatexToMarkup} from 'mathlive';
 import {ComputeEngine} from '@cortex-js/compute-engine';
 import type {ViewProps} from '../../../InlineSliceBehavior';
@@ -21,33 +20,32 @@ const blockClass = rule({
 });
 
 export const View: React.FC<ViewProps> = ({formatting, onEdit}) => {
-  const [t] = useT();
   const tex = (formatting.range as unknown as {text(): string}).text?.() ?? '';
   const mathJson = React.useMemo(() => {
     try {
       return JSON.stringify(ce.parse(tex).toJSON());
-    } catch (e) {
+    } catch {
       return '';
     }
   }, [tex]);
   const ascii = React.useMemo(() => {
     try {
       return convertLatexToAsciiMath(tex);
-    } catch (e) {
+    } catch {
       return '';
     }
   }, [tex]);
   const mathMl = React.useMemo(() => {
     try {
       return convertLatexToMathMl(tex);
-    } catch (e) {
+    } catch {
       return '';
     }
   }, [tex]);
   const mathHTML = React.useMemo(() => {
     try {
       return convertLatexToMarkup(tex);
-    } catch (e) {
+    } catch {
       return '';
     }
   }, [tex]);

@@ -16,7 +16,7 @@ export const useKbd = (): KeyContext => {
     return () => {
       disposeRef.current?.();
     };
-  }, [kbd1]);
+  }, []);
   return kbd1;
 };
 
@@ -35,14 +35,14 @@ export const Kbd: React.FC<KbdProps> = ({child, bind, children}) => {
     return () => {
       if (kbd0 !== kbd1) kbd1.dispose();
     };
-  }, [kbd1]);
+  }, [kbd1, kbd0]);
   React.useEffect(() => {
     if (!bind) return;
     const unbind = kbd1.bind(bind);
     return () => {
       unbind();
     };
-  }, []);
+  }, [kbd1.bind, bind]);
 
   return <ctx.Provider value={kbd1}>{children}</ctx.Provider>;
 };

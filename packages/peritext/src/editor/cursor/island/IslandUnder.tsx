@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {FmtManagePane} from '../../inline/FmtManagePane';
 import {BottomPanePortal} from '../util/BottomPanePortal';
-import {IslandProps} from './Island';
-import {FmtManagePaneState} from '../../inline/FmtManagePane/state';
+import type {IslandProps} from './Island';
+import type {FmtManagePaneState} from '../../inline/FmtManagePane/state';
 
 export interface IslandUnderProps extends IslandProps {
   state: FmtManagePaneState;

@@ -1,10 +1,10 @@
 import {WebSocketMock} from './WebSocketMock';
 import {firstValueFrom} from 'rxjs';
-import {take, toArray} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 import {of} from './of';
-import {PersistentChannel, PersistentChannelParams} from '../PersistentChannel';
+import {PersistentChannel, type PersistentChannelParams} from '../PersistentChannel';
 import {WebSocketChannel} from '../WebSocketChannel';
-import {PhysicalChannel} from '../types';
+import type {PhysicalChannel} from '../types';
 import {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
 
 const setup = <T extends string | Uint8Array = string | Uint8Array>(

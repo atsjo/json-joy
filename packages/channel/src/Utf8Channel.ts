@@ -1,8 +1,8 @@
-import {BehaviorSubject, map, type Observable} from 'rxjs';
+import {type BehaviorSubject, map, type Observable} from 'rxjs';
 import {toUint8Array} from '@jsonjoy.com/buffers/lib/toUint8Array';
 import {decodeUtf8} from '@jsonjoy.com/buffers/lib/utf8/decodeUtf8';
 import {toBuf} from '@jsonjoy.com/buffers/lib/toBuf';
-import {ChannelState} from './constants';
+import type {ChannelState} from './constants';
 import type {CloseEventBase, PhysicalChannel} from './types';
 
 /**

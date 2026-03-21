@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {put} from 'nano-theme';
-import {KeyContext} from '@jsonjoy.com/keyboard';
+import type {KeyContext} from '@jsonjoy.com/keyboard';
 import {CssClass} from '../constants';
 import {CursorPlugin} from '../../plugins/cursor';
 import {defaultPlugin} from '../../plugins/minimal';
@@ -73,7 +73,7 @@ export const PeritextWebUi: React.FC<PeritextWebUiProps> = React.memo((props) =>
     const headless = node.headless({kbd});
     const state = new PeritextSurfaceState(headless, plugins);
     return state;
-  }, [node, plugins]);
+  }, [node, plugins, kbd]);
 
   /** Call `.start()` of {@link PeritextSurfaceState} and setup HTML element. */
   const ref = (el: HTMLDivElement | null) => {
