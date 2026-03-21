@@ -1,5 +1,6 @@
 import {KeyContext} from '../KeyContext';
 import {KeySourceManual} from '../KeySourceManual';
+import type {Key} from '../Key';
 
 const setup = async () => {
   const ctx = new KeyContext();
@@ -267,7 +268,7 @@ describe('KeyContext.bind()', () => {
     kit.ctx.bind([
       [
         'a',
-        (k) => {
+        (k: Key) => {
           received = k;
         },
       ],

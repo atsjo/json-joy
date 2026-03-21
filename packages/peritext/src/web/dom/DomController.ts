@@ -9,7 +9,7 @@ import {ElementAttr} from '../constants';
 import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {UiHandle} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/ui/UiHandle';
-import type {PeritextHeadless} from 'json-joy/src/json-crdt-extensions/peritext';
+import type {PeritextHeadless} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
 import type {Rect, UiLifeCycles} from '../types';
 import type {Inline, Peritext} from 'json-joy/lib/json-crdt-extensions';

@@ -2,7 +2,7 @@ import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
 import {Value} from 'json-joy/lib/util/events/sync-store';
 import {WebFacade} from '../dom/facade/WebFacade';
-import type {PeritextHeadless} from 'json-joy/src/json-crdt-extensions/peritext';
+import type {PeritextHeadless} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {PeritextPlugin} from '../react/types';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions/peritext/Peritext';
 import type {PeritextEventDefaults} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/PeritextEventDefaults';

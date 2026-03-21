@@ -9,7 +9,7 @@ import {context} from './context';
 import {BlockView} from './BlockView';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import type {PeritextPlugin} from './types';
-import type {PeritextApi} from 'json-joy/src/json-crdt-extensions/peritext';
+import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions/peritext';
 
 put('.' + CssClass.Editable, {
   pos: 'relative',
