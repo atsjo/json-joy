@@ -4,6 +4,7 @@ import type {Node} from 'prosemirror-model';
 import {doc, p, strong} from 'prosemirror-test-builder';
 import {setup} from './setup';
 import {create} from 'json-joy/lib/json-crdt-extensions/peritext/transfer/create';
+import {createDefaultRegistry} from 'json-joy/lib/json-crdt-extensions/peritext/registry/createDefaultRegistry';
 import {onlyNode24AndHigher} from './test-helpers';
 
 const typeAt = (view: ReturnType<typeof setup>['view'], pos: number, text: string) => {
@@ -40,7 +41,7 @@ onlyNode24AndHigher('ProseMirrorFacade — mark boundary handling', () => {
       expect(pmJson).toEqual(expected.toJSON());
 
       txt.refresh();
-      const transfer = create(txt);
+      const transfer = create(txt, createDefaultRegistry());
       const md = transfer.toMarkdown(txt.rangeAll()!);
       expect(md).toContain('<strong>boldX</strong>');
     });
@@ -86,7 +87,7 @@ onlyNode24AndHigher('ProseMirrorFacade — mark boundary handling', () => {
       expect(pmJson).toEqual(expected.toJSON());
 
       txt.refresh();
-      const transfer = create(txt);
+      const transfer = create(txt, createDefaultRegistry());
       const md = transfer.toMarkdown(txt.rangeAll()!);
       expect(md).toContain('<strong>bold</strong>');
       expect(md).not.toContain('<strong>boldY</strong>');
