@@ -9,6 +9,13 @@ import 'mathlive/static.css';
 
 const equationSelectedClass = rule({
   '&::part(render)': {
+    bg: 'var(--selection-color-blurred)',
+    bdrad: '2px',
+  },
+});
+
+const equationFocusedClass = rule({
+  '&::part(render)': {
     bg: 'var(--selection-color)',
     bdrad: '2px',
   },
@@ -17,10 +24,11 @@ const equationSelectedClass = rule({
 export interface MathSpanProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
   tex: string;
   mode?: 'display' | 'textstyle' | 'scriptstyle' | 'scriptscriptstyle';
+  focused?: boolean;
   selected?: boolean;
 }
 
-export const MathSpan: React.FC<MathSpanProps> = ({tex, mode = 'textstyle', selected, ...props}) => {
+export const MathSpan: React.FC<MathSpanProps> = ({tex, mode = 'textstyle', focused, selected, ...props}) => {
   const ref = React.useRef<HTMLInputElement>(null);
 
   if (ref.current && ref.current.textContent !== tex) {
@@ -28,5 +36,5 @@ export const MathSpan: React.FC<MathSpanProps> = ({tex, mode = 'textstyle', sele
     try {(ref.current as any).render?.();} catch {}
   }
 
-  return React.createElement('math-span', {...props, ref, mode, className: selected ? equationSelectedClass : ''}, tex);
+  return React.createElement('math-span', {...props, ref, mode, className: selected ? (focused ? equationFocusedClass : equationSelectedClass) : ''}, tex);
 };

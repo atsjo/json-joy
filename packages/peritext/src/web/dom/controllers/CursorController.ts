@@ -1,5 +1,5 @@
 import {throttle} from 'json-joy/lib/util/throttle';
-import {Value} from 'json-joy/lib/util/events/sync-store';
+import {val} from 'thingies/lib/sync';
 import {getCursorPosition, unit} from '../../util';
 import {ElementAttr} from '../../constants';
 import type {Printable} from 'tree-dump';
@@ -65,7 +65,7 @@ export class CursorController implements UiLifeCycles, Printable {
     };
   }
 
-  public readonly focus = new Value<boolean>(false);
+  public readonly focus = val<boolean>(false);
 
   private readonly onFocus = (ev: FocusEvent): void => {
     if (!this.dom.isEditable(ev.target as Element)) return;
@@ -79,7 +79,7 @@ export class CursorController implements UiLifeCycles, Printable {
 
   private x = 0;
   private y = 0;
-  public readonly mouseDown = new Value<boolean>(false);
+  public readonly mouseDown = val<boolean>(false);
 
   private readonly onMouseDown = (ev: MouseEvent): void => {
     if (!this.dom.isEditable(ev.target as Element)) return;

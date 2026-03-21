@@ -19,6 +19,7 @@ export const Island: React.FC<IslandProps> = (props) => {
   const {children, inline, attr, ...rest} = props;
   const editor = useEditor();
   const selected = inline?.isSelected();
+  const focused = useSyncStoreOpt(editor.surface.dom?.cursor.focus)
   const managePaneState = useSyncStoreOpt(selected ? editor.islandUnder : void 0);
 
   React.useEffect(() => {
@@ -30,6 +31,7 @@ export const Island: React.FC<IslandProps> = (props) => {
       {Char.ZeroLengthSpace}
       <IslandFrame {...rest}
         selected={selected}
+        focused={focused}
         outline={!!managePaneState}
         under={!!managePaneState && <IslandUnder {...props} state={managePaneState} />}
         onMouseDown={() => {

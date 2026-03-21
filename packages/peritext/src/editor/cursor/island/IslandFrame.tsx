@@ -28,12 +28,13 @@ const underClass = rule({
 
 export interface IslandFrameProps extends React.HTMLAttributes<HTMLSpanElement> {
   selected?: boolean;
+  focused?: boolean;
   outline?: boolean;
   under?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-export const IslandFrame: React.FC<IslandFrameProps> = ({selected, outline, under, children, ...rest}) => {
+export const IslandFrame: React.FC<IslandFrameProps> = ({selected, focused, outline, under, children, ...rest}) => {
   const style: React.CSSProperties = {
     cursor: 'pointer',
     ...rest.style,
@@ -41,12 +42,12 @@ export const IslandFrame: React.FC<IslandFrameProps> = ({selected, outline, unde
 
   if (selected) {
     if (outline) {
-      style.outline = '2px solid var(--caret-color)';
+      style.outline = '2px solid ' + (focused ? 'var(--caret-color)' : 'var(--caret-color-blurred)');
       style.animation = outlineAnimation + ' .1s ease-out',
       style.animationFillMode = 'forwards';
       style.borderRadius = '2px';
     }
-    style.background = 'var(--selection-color)';
+    style.background = focused ? 'var(--selection-color)' : 'var(--selection-color-blurred)';
   }
 
   return (
