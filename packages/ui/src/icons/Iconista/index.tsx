@@ -36,7 +36,7 @@ const Svg: React.FC<Props> = ({set, icon, getUrl = getUrlDefault, ...rest}) => {
     if (cache[key]) applyDoc(cache[key]);
     else {
       const el = ref.current;
-      if (el && rest.width && rest.height) {
+      if (el && typeof rest.width === 'number' && typeof rest.height === 'number') {
         el.innerHTML = `<circle cx="${rest.width / 2}" cy="${rest.height / 2}" r="${Math.min(rest.width as number, rest.height as number) / 2}" fill="rgba(127,127,127,0.2)" />`;
       }
       const url = getUrl({set, icon} as Icon);
