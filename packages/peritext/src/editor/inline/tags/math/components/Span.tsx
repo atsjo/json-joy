@@ -1,19 +1,19 @@
 import * as React from 'react';
-import {Island} from '../cursor/island/Island';
-import type {IslandFrameProps} from '../cursor/island/IslandFrame';
-import {MathSpan} from './tags/math/mathlive';
 import {useSyncStoreOpt} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
-import {useEditor} from '../context';
+import {Island} from '../../../../cursor/island/Island';
+import {MathSpan} from '../../../tags/math/mathlive';
+import {useEditor} from '../../../../context';
+import type {IslandFrameProps} from '../../../../cursor/island/IslandFrame';
 import type {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 
-export interface InlineMathProps extends IslandFrameProps {
+export interface SpanProps extends IslandFrameProps {
   inline: Inline;
   attr: InlineAttr;
   children: React.ReactNode;
 }
 
-export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
+export const Span: React.FC<SpanProps> = ({inline, attr}) => {
   const editor = useEditor();
   const focused = useSyncStoreOpt(editor.surface.dom?.cursor.focus);
 

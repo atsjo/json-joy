@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Spoiler} from './Spoiler';
 import {Code} from './Code';
-import {InlineMath} from './InlineMath';
+import {Span as InlineMath} from './tags/math/components/Span';
 import {Kbd} from './Kbd';
 import {Ins} from './Ins';
 import {Del} from './Del';
