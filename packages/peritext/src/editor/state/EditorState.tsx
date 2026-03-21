@@ -34,7 +34,7 @@ export class EditorState implements UiLifeCycles {
   /**
    * The ID of the active (where the main cursor or focus is placed) leaf block.
    */
-  public readonly activeLeafBlockId$ = new BehaviorSubject<ITimestampStruct | null>(null);
+  public readonly activeLeafBlockId$ = sync.val<ITimestampStruct | null>(null);
 
   /** State of the active (exactly selected) island "under" cursor popup, if any. */
   public readonly islandUnder = sync.val<FmtManagePaneState | null>(null);
@@ -52,7 +52,7 @@ export class EditorState implements UiLifeCycles {
   private _setActiveLeafBlockId = () => {
     const {activeLeafBlockId$, txt} = this;
     const {overlay, editor} = txt;
-    const value = activeLeafBlockId$.getValue();
+    const value = activeLeafBlockId$.value;
     const cardinality = editor.cursorCard();
     if (cardinality !== 1 || (cardinality === 1 && !editor.mainCursor()?.isCollapsed())) {
       if (value) activeLeafBlockId$.next(null);

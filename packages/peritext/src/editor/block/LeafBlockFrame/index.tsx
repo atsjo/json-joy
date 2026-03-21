@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import {useEditor} from '../../context';
 import {AutoExpandableToolbar} from './AutoExpandableToolbar';
 import {compare} from 'json-joy/lib/json-crdt-patch';
@@ -51,7 +51,7 @@ export interface LeafBlockFrameProps extends RenderBlockProps {}
 
 export const LeafBlockFrame: React.FC<LeafBlockFrameProps> = ({block, children}) => {
   const state = useEditor();
-  const activeLeafBlockId = useBehaviorSubject(state.activeLeafBlockId$);
+  const activeLeafBlockId = useSyncStore(state.activeLeafBlockId$);
   const menu = React.useMemo(() => state.menu.block.leafBlockSmallMenu({block}), [state, block]);
 
   const isBlockActive = !!activeLeafBlockId && compare(activeLeafBlockId, block.marker?.id ?? block.txt.str.id) === 0;
