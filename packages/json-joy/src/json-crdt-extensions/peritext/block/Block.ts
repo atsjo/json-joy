@@ -57,6 +57,10 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
     return tagStep[2] as Attr | undefined;
   }
 
+  public isTop(): boolean {
+    return !this.parent?.parent;
+  }
+
   public isLeaf(): boolean {
     return false;
   }

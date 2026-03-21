@@ -1,8 +1,10 @@
 import * as React from 'react';
-import {LeafBlockFrame} from './LeafBlockFrame';
-import {CommonSliceType} from 'json-joy/lib/json-crdt-extensions';
+import {LeafBlock} from './LeafBlock';
+import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {Blockquote} from './blocks/Blockquote';
 import {Codeblock} from './blocks/Codeblock';
+import {TopBlock} from './TopBlock';
+import {MidBlock} from './MidBlock';
 import type {BlockViewProps} from '../../web/react/BlockView';
 
 export interface RenderBlockProps extends BlockViewProps {
@@ -19,43 +21,49 @@ export const RenderBlock: React.FC<RenderBlockProps> = (props) => {
   switch (tag) {
     case '':
       break;
-    case CommonSliceType.p:
+    case SliceTypeCon.p:
       element = <p>{element}</p>;
       break;
-    case CommonSliceType.codeblock:
+    case SliceTypeCon.codeblock:
       element = <Codeblock {...props} />;
       break;
-    case CommonSliceType.blockquote:
+    case SliceTypeCon.blockquote:
       element = <Blockquote {...props} />;
       break;
-    case CommonSliceType.h1:
+    case SliceTypeCon.h1:
       element = <h1>{element}</h1>;
       break;
-    case CommonSliceType.h2:
+    case SliceTypeCon.h2:
       element = <h2>{element}</h2>;
       break;
-    case CommonSliceType.h3:
+    case SliceTypeCon.h3:
       element = <h3>{element}</h3>;
       break;
-    case CommonSliceType.h4:
+    case SliceTypeCon.h4:
       element = <h4>{element}</h4>;
       break;
-    case CommonSliceType.h5:
+    case SliceTypeCon.h5:
       element = <h5>{element}</h5>;
       break;
-    case CommonSliceType.h6:
+    case SliceTypeCon.h6:
       element = <h6>{element}</h6>;
       break;
-    case CommonSliceType.title:
+    case SliceTypeCon.title:
       element = <h1>{element}</h1>;
       break;
-    case CommonSliceType.subtitle:
+    case SliceTypeCon.subtitle:
       element = <h2>{element}</h2>;
       break;
   }
 
   if (block.isLeaf()) {
-    element = <LeafBlockFrame {...props}>{children}</LeafBlockFrame>;
+    element = <LeafBlock {...props}>{element}</LeafBlock>;
+  }
+
+  if (block.isTop()) {
+    element = <TopBlock {...props}>{element}</TopBlock>;
+  } else {
+    element = <MidBlock {...props}>{element}</MidBlock>;
   }
 
   return element;

@@ -47,9 +47,9 @@ const position: EntangledPortalStateOpts['position'] = (base, dest) => {
   return [x, y];
 };
 
-export interface LeafBlockFrameProps extends RenderBlockProps {}
+export interface LeafBlockProps extends RenderBlockProps {}
 
-export const LeafBlockFrame: React.FC<LeafBlockFrameProps> = ({block, children}) => {
+export const LeafBlock: React.FC<LeafBlockProps> = ({block, children}) => {
   const state = useEditor();
   const activeLeafBlockId = useSyncStore(state.activeLeafBlockId$);
   const menu = React.useMemo(() => state.menu.block.leafBlockSmallMenu({block}), [state, block]);
