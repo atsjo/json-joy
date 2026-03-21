@@ -36,6 +36,12 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
         {React.createElement('math-field', {
           ref: fieldRef,
           value: tex,
+          onKeyDown: (e: React.KeyboardEvent) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              onSave();
+            }
+          },
           onInput: () => {
             const el = fieldRef.current as any;
             if (!el) return;
