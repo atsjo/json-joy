@@ -43,11 +43,9 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
           size={-1}
           label={t('Link')}
           placeholder={'https://'}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              onSave();
-            }
+          onEnter={(e) => {
+            e.preventDefault();
+            onSave();
           }}
           right={
             <div style={{visibility: data.href ? 'visible' : 'hidden'}}>
