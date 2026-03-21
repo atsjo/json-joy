@@ -4,8 +4,10 @@ import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {NewFmt} from './formattings/NewFmt';
 import {inlines} from '../inline/tags';
+import {FmtManagePaneState} from '../inline/FmtManagePane/state';
 import {Menu} from './menus/Menu';
-import type {PeritextEventTarget} from 'json-joy/src/json-crdt-extensions';
+import * as sync from 'thingies/lib/sync';
+import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/src/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {MenuItem} from '../types';
@@ -33,6 +35,9 @@ export class EditorState implements UiLifeCycles {
    * The ID of the active (where the main cursor or focus is placed) leaf block.
    */
   public readonly activeLeafBlockId$ = new BehaviorSubject<ITimestampStruct | null>(null);
+
+  /** State of the active (exactly selected) island "under" cursor popup, if any. */
+  public readonly islandUnder = sync.val<FmtManagePaneState | null>(null);
 
   public readonly et: PeritextEventTarget;
 
@@ -63,6 +68,23 @@ export class EditorState implements UiLifeCycles {
   private setLastEv(lastEvent: PeritextEventDetailMap['change']['ev']) {
     this.lastEvent = lastEvent;
     this.lastEventTs = Date.now();
+  }
+
+  public islandSelected(inline: Inline, attr: InlineAttr): void {
+    const {islandUnder, txt, surface} = this;
+    const editor = txt.editor;
+    if (editor.cursorCard() !== 1) {
+      islandUnder.next(null);
+      return;
+    }
+    const selection = inline.selection();
+    const isExactSelection = !!selection?.[0] && !!selection?.[1];
+    if (!isExactSelection) {
+      islandUnder.next(null);
+      return;
+    }
+    const state = new FmtManagePaneState(this, inline, surface.headless.kbd);
+    islandUnder.next(state);
   }
 
   // private doShowInlineToolbar(): boolean {
@@ -116,6 +138,17 @@ export class EditorState implements UiLifeCycles {
       const lastEvent = ev.detail.ev;
       this.setLastEv(lastEvent);
       this._setActiveLeafBlockId();
+    });
+
+    const {txt, islandUnder} = this;
+    const cursorUnsubscribe = et.subscribe('cursor', (ev) => {
+      const islandUnderValue = islandUnder.value;
+      if (islandUnderValue) {
+        const editor = txt.editor;
+        if (editor.cursorCard() !== 1 || (!islandUnderValue.inline || editor.cursor.cmp(islandUnderValue.inline) !== 0)) {
+          islandUnder.next(null);
+        }
+      }
     });
 
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
@@ -187,6 +220,7 @@ export class EditorState implements UiLifeCycles {
 
     return () => {
       changeUnsubscribe();
+      cursorUnsubscribe();
       unsubscribeMouseDown?.();
       el.removeEventListener('mousedown', mouseDownListener);
       el.removeEventListener('mouseup', mouseUpListener);

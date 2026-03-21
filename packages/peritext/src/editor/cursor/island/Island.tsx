@@ -1,12 +1,10 @@
 import * as React from 'react';
-import * as sync from 'thingies/lib/sync';
 import {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import {Kbd} from '@jsonjoy.com/ui/lib/context/kbd';
 import {IslandFrame, IslandFrameProps} from './IslandFrame';
 import {IslandUnder} from './IslandUnder';
 import {Char} from '../../../web/constants';
 import {useEditor} from '../../context';
-import {FmtManagePaneState} from '../../inline/FmtManagePane/state';
 import {useSyncStoreOpt} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 
 export interface IslandProps extends IslandFrameProps {
@@ -20,37 +18,25 @@ export interface IslandProps extends IslandFrameProps {
  */
 export const Island: React.FC<IslandProps> = (props) => {
   const {children, inline, attr, ...rest} = props;
-  const [hide, setHide] = React.useState(false);
-  const managePaneStateVal = React.useMemo(() => sync.val<FmtManagePaneState | undefined>(void 0), []);
-  const managePaneState = useSyncStoreOpt(managePaneStateVal);
   const editor = useEditor();
-
   const selected = inline?.isSelected();
-  let isExactSelection = false;
-  if (selected) {
-    const selection = inline?.selection();
-    isExactSelection = !!selection?.[0] && !!selection?.[1];
-  }
+  const managePaneState = useSyncStoreOpt(selected ? editor.islandUnder : void 0);
 
   React.useEffect(() => {
-    if (!isExactSelection) {
-      if (managePaneState) managePaneStateVal.next(void 0);
-    } else {
-      if (!managePaneState) managePaneStateVal.next(new FmtManagePaneState(editor, inline));
-    }
-  }, [isExactSelection, editor, inline]);
+    if (selected) editor.islandSelected(inline, attr);
+  }, [selected]);
 
   return (
     <Kbd bind={[
       ['Escape', () => {
-        setHide(true);
+        editor.islandUnder.next(null);
       }]
     ]}>
       {Char.ZeroLengthSpace}
       <IslandFrame {...rest}
         selected={selected}
-        outline={isExactSelection}
-        under={!!managePaneState && !hide && <IslandUnder {...props} state={managePaneState} />}
+        outline={!!managePaneState}
+        under={!!managePaneState && <IslandUnder {...props} state={managePaneState} />}
         onMouseDown={() => {
           editor.et.cursor({at: attr.slice, flip: true});
         }}
