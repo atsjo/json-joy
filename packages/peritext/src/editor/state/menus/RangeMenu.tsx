@@ -343,10 +343,36 @@ export class RangeMenu {
     if (recent.length > 4) recent.length = 4;
   }
 
+  private trackFmt(item: MenuItem): void {
+    const orig = item.onSelect;
+    const onSelect = (e: any) => {
+      this.trackRecent(item);
+      orig?.(e);
+    };
+    item.onSelect = onSelect;
+  };
+
+  private buildFmtGroup(group: MenuItem): void {
+    const {id, children = []} = group;
+    const state = this.state;
+    const {spans} = state;
+    const spanLength = spans.length;
+    for (let i = 0; i < spanLength; i++) {
+      const span = spans[i];
+      if (span.menuId === id) {
+        const item = typeof span.menu === 'function' ? span.menu(state) : span.menu;
+        if (item) {
+          this.trackFmt(item);
+          children.push(item);
+        }
+      }
+    }
+    if (children.length) children.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }
+
   public formattingMenu(): MenuItem {
     const state = this.state;
     const {et, spans} = state;
-    const spanLength = spans.length;
     const track = (item: MenuItem): MenuItem => {
       const orig = item.onSelect;
       return orig
@@ -359,22 +385,14 @@ export class RangeMenu {
           }
         : item;
     };
-    const technicalId = 'fmt-technical';
-    const technicalChildren: MenuItem[] = [];
     const technical: MenuItem = {
-      id: technicalId,
+      id: 'fmt-technical',
       name: 'Technical',
       sepBefore: true,
       expand: 8,
-      children: technicalChildren,
+      children: [],
     };
-    for (let i = 0; i < spanLength; i++) {
-      const span = spans[i];
-      if (span.menuId === technicalId) {
-        const item = typeof span.menu === 'function' ? span.menu(state) : span.menu;
-        if (item) technicalChildren.push(track(item));
-      }
-    }
+    this.buildFmtGroup(technical);
     const formatting: MenuItem = {
       name: 'Formatting',
       expandChild: 0,
@@ -419,10 +437,7 @@ export class RangeMenu {
         },
       ] as MenuItem[],
     };
-    if (technicalChildren.length) {
-      technicalChildren.sort((a, b) => (a.order || 0) - (b.order || 0));
-      formatting.children!.push(technical);
-    }
+    if (technical.children?.length) formatting.children!.push(technical);
     formatting.children!.push({
       name: 'Artistic',
       expand: 8,
