@@ -11,7 +11,7 @@ import type {RenderInlineProps} from './RenderInline';
  * @todo Add text() plugin behavior override.
  * @todo Add context menu registration system.
  */
-export abstract class SpanBehavior<
+export class SpanBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
