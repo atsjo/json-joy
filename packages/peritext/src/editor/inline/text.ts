@@ -1,9 +1,10 @@
-import type * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import type {PeritextPlugin} from '../../web/react/types';
-import type {InlineAttrStack} from 'json-joy/lib/json-crdt-extensions/peritext/block/Inline';
+import type * as React from 'react';
+import type {SpanProps} from '../../web/react/types';
+import type {Inline, InlineAttrStack} from 'json-joy/lib/json-crdt-extensions/peritext/block/Inline';
+import type {EditorState} from '../state';
 
-export const text: PeritextPlugin['text'] = (props, inline) => {
+export const text = (props: SpanProps, inline: Inline, state: EditorState): void => {
   const style = (props.style || (props.style = {})) as React.CSSProperties;
   const attrs = inline.attr();
 
@@ -27,6 +28,4 @@ export const text: PeritextPlugin['text'] = (props, inline) => {
   }
 
   style.textDecoration = textDecoration;
-
-  return props;
 };

@@ -7,6 +7,7 @@ import {RenderCaret} from './cursor/caret/RenderCaret';
 import {RenderFocus} from './cursor/focus/RenderFocus';
 import type {DebugState} from '../plugins/debug/state';
 import type {PeritextPlugin} from '../web/react/types';
+import type {EditorState} from './state';
 
 const h = React.createElement;
 
@@ -15,9 +16,14 @@ export interface EditorPluginOpts {
 }
 
 export class EditorPlugin implements PeritextPlugin {
+  public state?: EditorState = void 0;
   constructor(public readonly opts: EditorPluginOpts = {}) {}
 
-  public readonly text: PeritextPlugin['text'] = text;
+  public readonly text: PeritextPlugin['text'] = (props, inline) => {
+    const state = this.state;
+    if (state) text(props, inline, state);
+    return props;
+  };
   public readonly inline: PeritextPlugin['inline'] = (props, children) => h(RenderInline, props as any, children);
   public readonly block: PeritextPlugin['block'] = (props, children) => h(RenderBlock, props as any, children);
   public readonly doc: PeritextPlugin['doc'] = (children, surface) =>
