@@ -10,6 +10,7 @@ export const behavior = spanOne(SliceTypeCon.s, name, {
   menuId: 'fmt-common',
   menu: (state: EditorState) => ({
     name,
+    order: 4,
     icon: () => <Icon width={16} height={16} />,
     onSelect: () => {
       state.et.format('tog', SliceTypeCon.s);

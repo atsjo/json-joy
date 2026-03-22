@@ -11,6 +11,7 @@ export const behavior = spanOne(SliceTypeCon.u, name, {
   menuId: 'fmt-common',
   menu: (state: EditorState) => ({
     name,
+    order: 3,
     icon: () => <Icon width={16} height={16} />,
     right: () => <Sidetip small>⌘ U</Sidetip>,
     keys: ['⌘', 'u'],

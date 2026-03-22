@@ -3,17 +3,20 @@ import {InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Spoiler} from './Spoiler';
+import type {EditorState} from '../../../state';
 
 export const name = 'Spoiler';
 export const Icon = makeIcon({set: 'tabler', icon: 'lock-password'});
 export const behavior = spanOne(SliceTypeCon.spoiler, name, {
-  menu: {
+  menuId: 'fmt-common',
+  menu: (state: EditorState) => ({
     name,
+    order: 7,
     icon: () => <Icon width={16} height={16} />,
     onSelect: () => {
-      // et.format('tog', CommonSliceType.spoiler);
+      state.et.format('tog', SliceTypeCon.spoiler);
     },
-  },
+  }),
   render: (children: React.ReactNode, attr: InlineAttrStack) =>
     <Spoiler attr={attr[attr.length - 1]}>{children}</Spoiler>,
 });
