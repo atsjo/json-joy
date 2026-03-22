@@ -7,7 +7,7 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {MathSpan} from '../mathlive';
 import {convertLatexToAsciiMath, convertLatexToMathMl, convertLatexToMarkup} from 'mathlive';
 import {ComputeEngine} from '@cortex-js/compute-engine';
-import type {ViewProps} from '../../../InlineSliceBehavior';
+import type {ViewProps} from '../../../SpanBehavior';
 
 const ce = new ComputeEngine();
 

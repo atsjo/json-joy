@@ -5,7 +5,7 @@ import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
-import type {EditProps} from '../../../InlineSliceBehavior';
+import type {EditProps} from '../../../SpanBehavior';
 
 import 'mathlive';
 import 'mathlive/fonts.css';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ColorDisplayLayout} from '../../../../components/color-display/ColorDisplayLayout';
 import type {Data} from '../index';
-import type {ViewProps} from '../../../InlineSliceBehavior';
+import type {ViewProps} from '../../../SpanBehavior';
 
 export const View: React.FC<ViewProps> = ({formatting, onEdit}) => {
   const data = formatting.range.data() as Data;

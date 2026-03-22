@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {EditProps} from '../../InlineSliceBehavior';
+import type {EditProps} from '../../SpanBehavior';
 
 export interface FormattingNewGenericProps extends EditProps {}
 
