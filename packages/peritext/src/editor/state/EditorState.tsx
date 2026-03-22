@@ -6,7 +6,7 @@ import {spans as defaultSpans} from '../inline/spans';
 import {FmtManagePaneState} from '../inline/components/FmtManagePane/state';
 import {Menu} from './menus/Menu';
 import type {SpanBehavior} from '../inline/SpanBehavior';
-import type {Key} from '@jsonjoy.com/keyboard';
+import type {AnyBinding, Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
@@ -245,6 +245,13 @@ export class EditorState implements UiLifeCycles {
           et.cursor({flip: true});
         },
       ],
+      ...this.spans.filter((b) => b.keys).map((b) => [
+        b.keys!.join('+'),
+        (press: Key) => {
+          press.event?.preventDefault();
+          b.action?.(this);
+        },
+      ] as AnyBinding),
     ]);
 
     return () => {

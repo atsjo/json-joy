@@ -282,9 +282,9 @@ export class RangeMenu implements UiLifeCycles {
     };
   }
 
-  private et() {
-    return this.state.surface.events.et;
-  };
+  // private et() {
+  //   return this.state.surface.events.et;
+  // };
 
   private trackRecent(item: MenuItem): void {
     const recent = this.recent;
@@ -311,7 +311,7 @@ export class RangeMenu implements UiLifeCycles {
     for (let i = 0; i < spanLength; i++) {
       const span = spans[i];
       if (span.menuId === id) {
-        const item = typeof span.menu === 'function' ? span.menu(state) : span.menu;
+        const item = span.getMenu(state);
         if (item) {
           this.trackFmt(item);
           children.push(item);
