@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {FmtManagePane} from '../../../inline/FmtManagePane';
+import {FmtManagePane} from '../../../inline/components/FmtManagePane';
 import {BottomPanePortal} from '../../util/BottomPanePortal';
-import {useEditor} from '../../../context';
+import {useEditor} from '../../../state/context';
 import type {PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
 

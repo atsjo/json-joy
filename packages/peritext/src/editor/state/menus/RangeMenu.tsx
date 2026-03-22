@@ -1,35 +1,34 @@
 import * as React from 'react';
-import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {CommonSliceType} from 'json-joy/lib/json-crdt-extensions';
-import * as a from '../../inline/tags/a';
-import * as col from '../../inline/tags/col';
-import * as bg from '../../inline/tags/bg';
+import {CommonSliceType, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
+import * as a from '../../inline/spans/a';
 import type {MenuItem} from '../../types';
 import type {EditorState} from '../EditorState';
+import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
-const FontBoldIcon = makeIcon({set: 'radix', icon: 'font-bold'});
 const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
-const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline'});
-const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough'});
-const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline'});
-const HighlightIcon = makeIcon({set: 'tabler', icon: 'highlight'});
-const LockPasswordIcon = makeIcon({set: 'tabler', icon: 'lock-password'});
-const CodeIcon = makeIcon({set: 'tabler', icon: 'code'});
-const MathIntegralXIcon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
-const SuperscriptIcon = makeIcon({set: 'tabler', icon: 'superscript'});
-const SubscriptIcon = makeIcon({set: 'tabler', icon: 'subscript'});
-const PencilPlusIcon = makeIcon({set: 'tabler', icon: 'pencil-plus'});
-const PencilMinusIcon = makeIcon({set: 'tabler', icon: 'pencil-minus'});
 const BoxAlignRightIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
 const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
 const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
-const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic'});
-const KeyboardIcon = makeIcon({set: 'lucide', icon: 'keyboard'});
 
-export class RangeMenu {
+export class RangeMenu implements UiLifeCycles {
+  public recent: MenuItem[] = [];
+
   constructor(public readonly state: EditorState) {}
+
+  public start() {
+    const {state, recent} = this;
+    recent.push(
+      ...([
+        state.spanMap[SliceTypeCon.b]?.getMenu(state),
+        state.spanMap[SliceTypeCon.i]?.getMenu(state),
+        state.spanMap[SliceTypeCon.u]?.getMenu(state),
+        state.spanMap[SliceTypeCon.code]?.getMenu(state),
+      ].filter(Boolean) as any),
+    );
+    return () => {};
+  }
 
   public build(): MenuItem {
     return {
@@ -285,55 +284,9 @@ export class RangeMenu {
     };
   }
 
-  private et() {
-    return this.state.surface.events.et;
-  }
-
-  public readonly bold: MenuItem = {
-    name: 'Bold',
-    icon: () => <FontBoldIcon width={15} height={15} />,
-    right: () => <Sidetip small>⌘ B</Sidetip>,
-    keys: ['⌘', 'b'],
-    onSelect: () => {
-      this.trackRecent(this.bold);
-      this.et().format('tog', CommonSliceType.b);
-    },
-  };
-
-  public readonly italic: MenuItem = {
-    name: 'Italic',
-    icon: () => <ItalicIcon width={14} height={14} />,
-    right: () => <Sidetip small>⌘ I</Sidetip>,
-    keys: ['⌘', 'i'],
-    onSelect: () => {
-      this.trackRecent(this.italic);
-      this.et().format('tog', CommonSliceType.i);
-    },
-  };
-
-  public readonly underline: MenuItem = {
-    name: 'Underline',
-    icon: () => <UnderlineIcon width={16} height={16} />,
-    right: () => <Sidetip small>⌘ U</Sidetip>,
-    keys: ['⌘', 'u'],
-    onSelect: () => {
-      this.trackRecent(this.underline);
-      this.et().format('tog', CommonSliceType.u);
-    },
-  };
-
-  public readonly inlineCode: MenuItem = {
-    name: 'Code',
-    icon: () => <CodeIcon width={16} height={16} />,
-    right: () => <Sidetip small>⌘ E</Sidetip>,
-    keys: ['⌘', 'e'],
-    onSelect: () => {
-      this.trackRecent(this.inlineCode);
-      this.et().format('tog', CommonSliceType.code);
-    },
-  };
-
-  public recent: MenuItem[] = [this.bold, this.italic, this.underline, this.inlineCode];
+  // private et() {
+  //   return this.state.surface.events.et;
+  // };
 
   private trackRecent(item: MenuItem): void {
     const recent = this.recent;
@@ -343,166 +296,97 @@ export class RangeMenu {
     if (recent.length > 4) recent.length = 4;
   }
 
-  public formattingMenu(): MenuItem {
-    const et = this.state.et;
-    const track = (item: MenuItem): MenuItem => {
-      const orig = item.onSelect;
-      return orig
-        ? {
-            ...item,
-            onSelect: (e) => {
-              this.trackRecent(item);
-              orig(e);
-            },
-          }
-        : item;
+  private trackFmt(item: MenuItem): void {
+    const orig = item.onSelect;
+    const onSelect = (e: any) => {
+      this.trackRecent(item);
+      orig?.(e);
     };
-    return {
+    item.onSelect = onSelect;
+  }
+
+  private buildFmtGroup(group: MenuItem): void {
+    const {id, children = []} = group;
+    const state = this.state;
+    const {spans} = state;
+    const spanLength = spans.length;
+    for (let i = 0; i < spanLength; i++) {
+      const span = spans[i];
+      if (span.menuId === id) {
+        const item = span.getMenu(state);
+        if (item) {
+          this.trackFmt(item);
+          children.push(item);
+        }
+      }
+    }
+    if (children.length) children.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }
+
+  public formattingMenu(): MenuItem {
+    const common: MenuItem = {
+      id: 'fmt-common',
+      name: 'Common',
+      expand: 8,
+      children: [],
+    };
+    const technical: MenuItem = {
+      id: 'fmt-technical',
+      name: 'Technical',
+      sepBefore: true,
+      expand: 8,
+      children: [],
+    };
+    const artistic: MenuItem = {
+      id: 'fmt-artistic',
+      name: 'Artistic',
+      sepBefore: true,
+      expand: 8,
+      children: [],
+    };
+    this.buildFmtGroup(common);
+    this.buildFmtGroup(technical);
+    this.buildFmtGroup(artistic);
+    const formatting: MenuItem = {
       name: 'Formatting',
       expandChild: 0,
       preview: this.recent,
-      children: [
-        {
-          name: 'Common',
-          expand: 8,
-          children: [
-            this.bold,
-            this.italic,
-            this.underline,
-            track({
-              name: 'Strikethrough',
-              icon: () => <StrikethroughIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.s);
-              },
-            }),
-            track({
-              name: 'Overline',
-              icon: () => <OverlineIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.overline);
-              },
-            }),
-            track({
-              name: 'Highlight',
-              icon: () => <HighlightIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.mark);
-              },
-            }),
-            track({
-              name: 'Spoiler',
-              icon: () => <LockPasswordIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.spoiler);
-              },
-            }),
-          ],
-        },
-        {
-          name: 'Technical separator',
-          sep: true,
-        },
-        {
-          name: 'Technical',
-          expand: 8,
-          children: [
-            this.inlineCode,
-            track({
-              name: 'Math',
-              icon: () => <MathIntegralXIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format({
-                  action: 'tog',
-                  type: CommonSliceType.math,
-                  stack: 'atomic',
-                  padded: true,
-                });
-              },
-            }),
-            track({
-              name: 'Superscript',
-              icon: () => <SuperscriptIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.sup);
-              },
-            }),
-            track({
-              name: 'Subscript',
-              icon: () => <SubscriptIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.sub);
-              },
-            }),
-            track({
-              name: 'Keyboard key',
-              icon: () => <KeyboardIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.kbd);
-              },
-            }),
-            track({
-              name: 'Insertion',
-              icon: () => <PencilPlusIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.ins);
-              },
-            }),
-            track({
-              name: 'Deletion',
-              icon: () => <PencilMinusIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.del);
-              },
-            }),
-          ],
-        },
-        {
-          name: 'Artistic separator',
-          sep: true,
-        },
-        {
-          name: 'Artistic',
-          expand: 8,
-          children: [
-            track(this.colorMenuItem()),
-            track(this.bgMenuItem()),
-            // {
-            //   name: 'Border',
-            //   icon: () => <BorderLeftIcon width={16} height={16} />,
-            //   onSelect: () => {},
-            // },
-          ],
-        },
-      ],
+      children: [] as MenuItem[],
     };
+    const children = formatting.children!;
+    if (common.children?.length) children.push(common);
+    else technical.sepBefore = false;
+    if (technical.children?.length) children.push(technical);
+    else artistic.sepBefore = false;
+    if (artistic.children?.length) children.push(artistic);
+    return formatting;
   }
 
-  public readonly colorMenuItem = (): MenuItem => {
-    const colorItem: MenuItem = {
-      ...col.behavior.menu,
-      onSelect: () => {
-        this.state.startSliceConfig(CommonSliceType.col, colorItem);
-      },
-    };
-    return colorItem;
-  };
+  // public readonly colorMenuItem = (): MenuItem => {
+  //   const colorItem: MenuItem = {
+  //     ...col.behavior.menu,
+  //     onSelect: () => {
+  //       this.state.startSliceConfig(CommonSliceType.col, colorItem);
+  //     },
+  //   };
+  //   return colorItem;
+  // };
 
-  public readonly bgMenuItem = (): MenuItem => {
-    const bgItem: MenuItem = {
-      ...bg.behavior.menu,
-      onSelect: () => {
-        this.state.startSliceConfig(CommonSliceType.bg, bgItem);
-      },
-    };
-    return bgItem;
-  };
+  // public readonly bgMenuItem = (): MenuItem => {
+  //   const bgItem: MenuItem = {
+  //     ...bg.behavior.menu,
+  //     onSelect: () => {
+  //       this.state.startSliceConfig(CommonSliceType.bg, bgItem);
+  //     },
+  //   };
+  //   return bgItem;
+  // };
 
   public readonly linkMenuItem = (): MenuItem => {
     const linkAction: MenuItem = {
       ...a.behavior.menu,
       onSelect: () => {
-        this.state.startSliceConfig(CommonSliceType.a, linkAction);
+        this.state.startSliceConfig(CommonSliceType.a);
       },
     };
     return linkAction;

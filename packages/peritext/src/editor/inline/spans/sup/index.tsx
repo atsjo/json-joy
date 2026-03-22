@@ -1,0 +1,20 @@
+import * as React from 'react';
+import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {spanOne} from '../util';
+import type {EditorState} from '../../../state/EditorState';
+
+export const name = 'Superscript';
+export const Icon = makeIcon({set: 'tabler', icon: 'superscript'});
+export const behavior = spanOne(SliceTypeCon.sup, name, {
+  menuId: 'fmt-technical',
+  menu: (state: EditorState) => ({
+    name,
+    order: 3,
+    icon: () => <Icon width={16} height={16} />,
+    onSelect: () => {
+      state.et.format('tog', SliceTypeCon.sup);
+    },
+  }),
+  render: (children: React.ReactNode) => <sup>{children}</sup>,
+});

@@ -3,7 +3,6 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {KeyContext, KeySourceEl} from '@jsonjoy.com/keyboard';
 import {InputController} from './controllers/InputController';
 import {CursorController} from './controllers/CursorController';
-import {RichTextController} from './controllers/RichTextController';
 import {CompositionController} from './controllers/CompositionController';
 import {ElementAttr} from '../constants';
 import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
@@ -24,7 +23,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly comp: CompositionController;
   public readonly input: InputController;
   public readonly cursor: CursorController;
-  public readonly richText: RichTextController;
   public kbd?: KeyContext;
 
   /**
@@ -46,7 +44,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     this.comp = new CompositionController(this);
     this.input = new InputController(this);
     this.cursor = new CursorController(this);
-    this.richText = new RichTextController(this);
     const uiHandle = new UiHandle(txt, <PeritextUiApi>this);
     events.ui = uiHandle;
   }
@@ -81,14 +78,12 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     const stopComp = this.comp.start();
     const stopInput = this.input.start();
     const stopCursor = this.cursor.start();
-    const stopRichText = this.richText.start();
     return () => {
       (el as any).contentEditable = 'false';
       stopHeadless();
       stopComp();
       stopInput();
       stopCursor();
-      stopRichText();
       unbindKeys();
     };
   }

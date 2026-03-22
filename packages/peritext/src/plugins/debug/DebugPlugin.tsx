@@ -18,7 +18,7 @@ export class DebugPlugin implements PeritextPlugin {
     <RenderBlock {...props}>{children}</RenderBlock>
   );
 
-  public readonly peritext: PeritextPlugin['peritext'] = (children, ctx) => (
+  public readonly doc: PeritextPlugin['doc'] = (children, ctx) => (
     <RenderPeritext {...this.opts} {...{children, ctx}} />
   );
 

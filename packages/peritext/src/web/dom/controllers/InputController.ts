@@ -152,26 +152,34 @@ export class InputController implements UiLifeCycles {
         }
         // case 'historyUndo': {}
         // case 'historyRedo': {}
-        case 'formatBold': {
-          event.preventDefault();
-          et.format('tog', SliceTypeName.b);
-          break;
-        }
-        case 'formatItalic': {
+        case 'formatBold':
+        case 'formatItalic':
+        case 'formatStrikeThrough':
+        case 'formatUnderline': {
           event.preventDefault();
           et.format('tog', SliceTypeName.i);
           break;
         }
-        case 'formatUnderline': {
-          event.preventDefault();
-          et.format('tog', SliceTypeName.u);
-          break;
-        }
-        case 'formatStrikeThrough': {
-          event.preventDefault();
-          et.format('tog', SliceTypeName.s);
-          break;
-        }
+        // case 'formatBold': {
+        //   event.preventDefault();
+        //   et.format('tog', SliceTypeName.b);
+        //   break;
+        // }
+        // case 'formatItalic': {
+        //   event.preventDefault();
+        //   et.format('tog', SliceTypeName.i);
+        //   break;
+        // }
+        // case 'formatUnderline': {
+        //   event.preventDefault();
+        //   et.format('tog', SliceTypeName.u);
+        //   break;
+        // }
+        // case 'formatStrikeThrough': {
+        //   event.preventDefault();
+        //   et.format('tog', SliceTypeName.s);
+        //   break;
+        // }
         case 'formatSuperscript': {
           event.preventDefault();
           et.format('tog', SliceTypeName.sup);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {TopToolbar} from './TopToolbar';
-import {useEditor} from '../../context';
+import {useEditor} from '../../state/context';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const blockClass = rule({

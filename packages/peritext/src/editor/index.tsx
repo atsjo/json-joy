@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
-import {CursorPlugin} from '../plugins/cursor';
 import {PeritextWebUi, type PeritextWebUiProps} from '../web';
-import {EditorPlugin} from './EditorPlugin';
+import {CursorPlugin} from '../plugins/cursor';
+import {EditorPlugin} from './plugin';
 
 export interface PeritextEditorProps extends PeritextWebUiProps {
   /**

@@ -6,7 +6,7 @@ import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 /**
  * Formatting is a specific application of known formatting option to a range of
  * text. Formatting is composed of a specific {@link Slice} which stores the
- * state (location, data) of the formatting and a {@link EditorInlineSliceBehavior}
+ * state (location, data) of the formatting and a {@link SpanBehavior}
  * which defines the formatting behavior.
  */
 export class SavedFmt<Node extends ObjNode = ObjNode> extends EditableFmt<Slice<string>, Node> {

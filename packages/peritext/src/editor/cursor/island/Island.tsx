@@ -3,7 +3,7 @@ import type {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import {IslandFrame, type IslandFrameProps} from './IslandFrame';
 import {IslandUnder} from './IslandUnder';
 import {Char} from '../../../web/constants';
-import {useEditor} from '../../context';
+import {useEditor} from '../../state/context';
 import {useSyncStoreOpt} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 
 export interface IslandProps extends IslandFrameProps {

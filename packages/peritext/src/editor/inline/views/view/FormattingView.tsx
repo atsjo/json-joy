@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {ViewProps} from '../../InlineSliceBehavior';
+import type {ViewProps} from '../../SpanBehavior';
 
 export interface FormattingViewProps extends ViewProps {}
 

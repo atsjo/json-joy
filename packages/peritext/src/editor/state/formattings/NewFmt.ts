@@ -2,7 +2,7 @@ import {s} from 'json-joy/lib/json-crdt-patch';
 import {Model, type ObjApi} from 'json-joy/lib/json-crdt/model';
 import {EditableFmt} from './base';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
-import type {InlineSliceBehavior} from '../../inline/InlineSliceBehavior';
+import type {SpanBehavior} from '../../inline/SpanBehavior';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 import type {EditorState} from '../EditorState';
 
@@ -14,7 +14,7 @@ export class NewFmt<Node extends ObjNode = ObjNode> extends EditableFmt<Range<st
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(
-    public readonly behavior: InlineSliceBehavior<any, any, any>,
+    public readonly behavior: SpanBehavior<any, any, any>,
     public readonly range: Range<string>,
     public readonly state: EditorState,
   ) {

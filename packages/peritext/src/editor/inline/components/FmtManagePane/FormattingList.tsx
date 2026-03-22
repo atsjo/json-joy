@@ -1,0 +1,44 @@
+import * as React from 'react';
+import {ContextPane, ContextItem, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {SYMBOL} from 'nano-theme';
+import {FormattingIcon} from '../../views/icon/FormattingIcon';
+import {useEditor} from '../../../state';
+import type {SavedFmt} from '../../../state/formattings';
+
+export interface FormattingListProps {
+  formattings: SavedFmt[];
+  onSelect: (formatting: SavedFmt) => void;
+}
+
+export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSelect}) => {
+  const state = useEditor();
+
+  if (!formattings.length) return;
+
+  return (
+    <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))'}}>
+      <ContextSep />
+      {formattings.map((formatting) => {
+        const {behavior} = formatting;
+        const menu = behavior.getMenu(state);
+        const previewText = behavior.previewText?.(formatting) || '';
+        const previewTextFormatted =
+          previewText.length < 20 ? previewText : `${previewText.slice(0, 20)}${SYMBOL.ELLIPSIS}`;
+        return (
+          <ContextItem
+            inset
+            key={formatting.key()}
+            icon={menu?.icon?.()}
+            right={<FormattingIcon formatting={formatting} />}
+            onClick={() => onSelect(formatting)}
+            style={{justifyContent: 'space-between'}}
+          >
+            {menu?.name ?? behavior.name}
+            {!!previewTextFormatted && <span style={{opacity: 0.5, fontSize: '.96em'}}>{previewTextFormatted}</span>}
+          </ContextItem>
+        );
+      })}
+      <ContextSep />
+    </ContextPane>
+  );
+};

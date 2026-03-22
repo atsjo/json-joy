@@ -27,7 +27,7 @@ export interface PeritextPlugin {
    * @param state The state manager of the editor.
    * @returns Must return a React node.
    */
-  peritext?: (children: React.ReactNode, state: PeritextSurfaceState) => React.ReactNode;
+  doc?: (children: React.ReactNode, state: PeritextSurfaceState) => React.ReactNode;
 
   /**
    * Renders a rich-text block element. This extension point allows the plugin
