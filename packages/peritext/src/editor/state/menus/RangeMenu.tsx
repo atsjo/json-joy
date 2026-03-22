@@ -19,14 +19,12 @@ export class RangeMenu implements UiLifeCycles {
 
   public start() {
     const {state, recent} = this;
-    const bold = state.spans.find(s => s.tag === SliceTypeCon.b)?.getMenu(state);
-    const italic = state.spans.find(s => s.tag === SliceTypeCon.i)?.getMenu(state);
-    const underline = state.spans.find(s => s.tag === SliceTypeCon.u)?.getMenu(state);
-    const inlineCode = state.spans.find(s => s.tag === SliceTypeCon.code)?.getMenu(state);
-    if (bold) recent.push(bold);
-    if (italic) recent.push(italic);
-    if (underline) recent.push(underline);
-    if (inlineCode) recent.push(inlineCode);
+    recent.push(...[
+      state.spanMap[SliceTypeCon.b]?.getMenu(state),
+      state.spanMap[SliceTypeCon.i]?.getMenu(state),
+      state.spanMap[SliceTypeCon.u]?.getMenu(state),
+      state.spanMap[SliceTypeCon.code]?.getMenu(state),
+    ].filter(Boolean) as any);
     return () => {};
   }
 
