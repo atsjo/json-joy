@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
-import {formatKeys} from '../util/keys';
+import {formatKeys, remap} from '../util/keys';
 import {type Inline, InlineAttrStack, SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
@@ -89,8 +89,8 @@ export class SpanBehavior<
     let menuItem = typeof menu === 'function' ? menu(state) : menu;
     menuItem.onSelect ??= () => this.action?.(state);
     const keys = this.keys;
-    menuItem.keys ??= keys;
-    menuItem.right ??= keys ? (() => <Sidetip small>{formatKeys(keys)}</Sidetip>) : void 0;
+    if (keys) menuItem.keys ??= keys.map(k => remap[k] ?? k);
+    if (keys) menuItem.right ??= () => <Sidetip small>{formatKeys(keys)}</Sidetip>;
     return menuItem;
   }
 }
