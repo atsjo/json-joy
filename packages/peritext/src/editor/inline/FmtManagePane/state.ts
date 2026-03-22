@@ -52,7 +52,7 @@ export class FmtManagePaneState {
         if (!slice.isSaved()) continue;
         const tag = slice.type();
         if (typeof tag !== 'number' && typeof tag !== 'string') continue;
-        const behavior = registry.get(tag);
+        const behavior = state.spanMap[tag];
         if (!behavior) continue;
         const isConfigurable = !!behavior.schema;
         if (!isConfigurable) continue;

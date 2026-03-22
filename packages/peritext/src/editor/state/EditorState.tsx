@@ -10,7 +10,6 @@ import type {Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
-import type {MenuItem} from '../types';
 import type {EditorPluginOpts} from '../plugin';
 import type {PeritextCursorEvent, PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
@@ -132,11 +131,13 @@ export class EditorState implements UiLifeCycles {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const {surface, showInlineToolbar, newSlice: newSliceConfig} = this;
+    const {surface, showInlineToolbar, newSlice: newSliceConfig, menu} = this;
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
     const el = dom.facade.el;
+
+    const stopMenu = menu.start();
 
     const registry = this.txt.editor.getRegistry();
     for (const behavior of defaultSpans) {
@@ -247,6 +248,7 @@ export class EditorState implements UiLifeCycles {
     ]);
 
     return () => {
+      stopMenu();
       changeUnsubscribe();
       cursorUnsubscribe();
       unsubscribeMouseDown?.();

@@ -4,8 +4,9 @@ import {RangeMenu} from './RangeMenu';
 import {BlockMenu} from './BlockMenu';
 import {DocMenu} from './DocMenu';
 import type {EditorState} from '../EditorState';
+import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
-export class Menu {
+export class Menu implements UiLifeCycles {
   public readonly buffer: BufferMenu;
   public readonly caret: CaretMenu;
   public readonly range: RangeMenu;
@@ -18,5 +19,12 @@ export class Menu {
     this.range = new RangeMenu(state);
     this.block = new BlockMenu(state);
     this.doc = new DocMenu(state);
+  }
+  
+  public start() {
+    const stopRangeMenu = this.range.start();
+    return () => {
+      stopRangeMenu();
+    };
   }
 }
