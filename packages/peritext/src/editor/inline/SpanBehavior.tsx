@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {formatKeys} from '../util/keys';
 import {type Inline, InlineAttrStack, SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
@@ -15,6 +17,12 @@ export class SpanBehavior<
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
 > extends SliceBehavior<Stacking, Tag, Schema> {
+  /** Keys that have to be pressed together to trigger `action` of this behavior. */
+  keys?: string[] = void 0;
+
+  /** Action to be performed when the keys are pressed. */
+  action?: (state: EditorState) => void = void 0;
+
   /**
    * Defines how this formatting should be displayed in the toolbar and context
    * menus.
@@ -78,7 +86,12 @@ export class SpanBehavior<
   public getMenu(state: EditorState): MenuItem | undefined {
     const menu = this.menu;
     if (!menu) return;
-    return typeof menu === 'function' ? menu(state) : menu;
+    let menuItem = typeof menu === 'function' ? menu(state) : menu;
+    menuItem.onSelect ??= () => this.action?.(state);
+    const keys = this.keys;
+    menuItem.keys ??= keys;
+    menuItem.right ??= keys ? (() => <Sidetip small>{formatKeys(keys)}</Sidetip>) : void 0;
+    return menuItem;
   }
 }
 

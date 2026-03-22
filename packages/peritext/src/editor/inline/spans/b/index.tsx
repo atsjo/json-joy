@@ -8,17 +8,17 @@ import type {EditorState} from '../../../state/EditorState';
 export const name = 'Bold';
 export const Icon = makeIcon({set: 'radix', icon: 'font-bold'});
 export const behavior = spanOne(SliceTypeCon.b, name, {
+  keys: ['⌘', 'b'],
+  action: (state: EditorState) => {
+    state.et.format('tog', SliceTypeCon.b);
+  },
   menuId: 'fmt-common',
-  menu: (state: EditorState) => ({
+  menu: {
     name,
     order: 1,
     icon: () => <Icon width={15} height={15} />,
-    right: () => <Sidetip small>⌘ B</Sidetip>,
-    keys: ['⌘', 'b'],
-    onSelect: () => {
-      state.et.format('tog', SliceTypeCon.b);
-    },
-  }),
+    // right: () => <Sidetip small>⌘ B</Sidetip>,
+  },
   text: (style) => {
     style.fontWeight = 'bold';
   },
