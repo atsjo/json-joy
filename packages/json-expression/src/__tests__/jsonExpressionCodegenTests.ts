@@ -707,7 +707,7 @@ export const jsonExpressionCodegenTests = (
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
           expect(() => check(['%', 1] as any, '')).toThrowErrorMatchingInlineSnapshot(
-            `""%" operator expects at least two operands."`,
+            `[Error: "%" operator expects at least two operands.]`,
           );
         });
       }

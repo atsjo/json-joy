@@ -89,10 +89,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few arguments', () => {
         expect(() => check(['multiply', 1], 2)).toThrowErrorMatchingInlineSnapshot(
-          `""*" operator expects at least two operands."`,
+          `[Error: "*" operator expects at least two operands.]`,
         );
         expect(() => check(['*', 1], 2)).toThrowErrorMatchingInlineSnapshot(
-          `""*" operator expects at least two operands."`,
+          `[Error: "*" operator expects at least two operands.]`,
         );
       });
     });
@@ -120,10 +120,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few arguments', () => {
         expect(() => check(['divide', 1], 2)).toThrowErrorMatchingInlineSnapshot(
-          `""/" operator expects at least two operands."`,
+          `[Error: "/" operator expects at least two operands.]`,
         );
         expect(() => check(['/', 1], 2)).toThrowErrorMatchingInlineSnapshot(
-          `""/" operator expects at least two operands."`,
+          `[Error: "/" operator expects at least two operands.]`,
         );
       });
 
@@ -213,7 +213,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few arguments', () => {
         expect(() => check(['round', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""round" operator expects 1 operands."`,
+          `[Error: "round" operator expects 1 operands.]`,
         );
       });
     });
@@ -231,7 +231,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['ceil', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""ceil" operator expects 1 operands."`,
+          `[Error: "ceil" operator expects 1 operands.]`,
         );
       });
     });
@@ -249,7 +249,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['floor', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""floor" operator expects 1 operands."`,
+          `[Error: "floor" operator expects 1 operands.]`,
         );
       });
     });
@@ -267,7 +267,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['trunc', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""trunc" operator expects 1 operands."`,
+          `[Error: "trunc" operator expects 1 operands.]`,
         );
       });
     });
@@ -286,7 +286,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['abs', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""abs" operator expects 1 operands."`,
+          `[Error: "abs" operator expects 1 operands.]`,
         );
       });
     });
@@ -304,7 +304,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['sqrt', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""sqrt" operator expects 1 operands."`,
+          `[Error: "sqrt" operator expects 1 operands.]`,
         );
       });
     });
@@ -322,7 +322,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['exp', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""exp" operator expects 1 operands."`,
+          `[Error: "exp" operator expects 1 operands.]`,
         );
       });
     });
@@ -340,7 +340,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['ln', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""ln" operator expects 1 operands."`,
+          `[Error: "ln" operator expects 1 operands.]`,
         );
       });
     });
@@ -358,7 +358,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too few or too many arguments', () => {
         expect(() => check(['log10', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""log10" operator expects 1 operands."`,
+          `[Error: "log10" operator expects 1 operands.]`,
         );
       });
     });
@@ -378,7 +378,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too many arguments', () => {
         expect(() => check(['log', 1, 2, 3, 4] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""log" operator expects 2 operands."`,
+          `[Error: "log" operator expects 2 operands.]`,
         );
       });
     });
@@ -398,7 +398,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too many arguments', () => {
         expect(() => check(['pow', 1, 2, 3, 4] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""**" operator expects 2 operands."`,
+          `[Error: "**" operator expects 2 operands.]`,
         );
       });
     });
@@ -443,10 +443,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['eq', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""==" operator expects 2 operands."`,
+          `[Error: "==" operator expects 2 operands.]`,
         );
         expect(() => check(['eq', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""==" operator expects 2 operands."`,
+          `[Error: "==" operator expects 2 operands.]`,
         );
       });
     });
@@ -490,10 +490,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['ne', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""!=" operator expects 2 operands."`,
+          `[Error: "!=" operator expects 2 operands.]`,
         );
         expect(() => check(['!=', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""!=" operator expects 2 operands."`,
+          `[Error: "!=" operator expects 2 operands.]`,
         );
       });
     });
@@ -514,10 +514,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['gt', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `"">" operator expects 2 operands."`,
+          `[Error: ">" operator expects 2 operands.]`,
         );
         expect(() => check(['>', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `"">" operator expects 2 operands."`,
+          `[Error: ">" operator expects 2 operands.]`,
         );
       });
     });
@@ -542,10 +542,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['ge', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `"">=" operator expects 2 operands."`,
+          `[Error: ">=" operator expects 2 operands.]`,
         );
         expect(() => check(['>=', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `"">=" operator expects 2 operands."`,
+          `[Error: ">=" operator expects 2 operands.]`,
         );
       });
     });
@@ -575,10 +575,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['lt', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""<" operator expects 2 operands."`,
+          `[Error: "<" operator expects 2 operands.]`,
         );
         expect(() => check(['<', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""<" operator expects 2 operands."`,
+          `[Error: "<" operator expects 2 operands.]`,
         );
       });
     });
@@ -603,10 +603,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['le', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""<=" operator expects 2 operands."`,
+          `[Error: "<=" operator expects 2 operands.]`,
         );
         expect(() => check(['<=', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""<=" operator expects 2 operands."`,
+          `[Error: "<=" operator expects 2 operands.]`,
         );
       });
     });
@@ -626,10 +626,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['cmp', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""cmp" operator expects 2 operands."`,
+          `[Error: "cmp" operator expects 2 operands.]`,
         );
         expect(() => check(['cmp', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""cmp" operator expects 2 operands."`,
+          `[Error: "cmp" operator expects 2 operands.]`,
         );
       });
     });
@@ -651,13 +651,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['=><=', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""=><=" operator expects 3 operands."`,
+          `[Error: "=><=" operator expects 3 operands.]`,
         );
         expect(() => check(['=><=', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""=><=" operator expects 3 operands."`,
+          `[Error: "=><=" operator expects 3 operands.]`,
         );
         expect(() => check(['between', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""=><=" operator expects 3 operands."`,
+          `[Error: "=><=" operator expects 3 operands.]`,
         );
       });
     });
@@ -676,13 +676,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['><', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""><" operator expects 3 operands."`,
+          `[Error: "><" operator expects 3 operands.]`,
         );
         expect(() => check(['><', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""><" operator expects 3 operands."`,
+          `[Error: "><" operator expects 3 operands.]`,
         );
         expect(() => check(['><', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""><" operator expects 3 operands."`,
+          `[Error: "><" operator expects 3 operands.]`,
         );
       });
     });
@@ -703,13 +703,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['=><', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""=><" operator expects 3 operands."`,
+          `[Error: "=><" operator expects 3 operands.]`,
         );
         expect(() => check(['=><', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""=><" operator expects 3 operands."`,
+          `[Error: "=><" operator expects 3 operands.]`,
         );
         expect(() => check(['=><', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""=><" operator expects 3 operands."`,
+          `[Error: "=><" operator expects 3 operands.]`,
         );
       });
     });
@@ -730,13 +730,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['><=', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""><=" operator expects 3 operands."`,
+          `[Error: "><=" operator expects 3 operands.]`,
         );
         expect(() => check(['><=', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""><=" operator expects 3 operands."`,
+          `[Error: "><=" operator expects 3 operands.]`,
         );
         expect(() => check(['><=', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""><=" operator expects 3 operands."`,
+          `[Error: "><=" operator expects 3 operands.]`,
         );
       });
     });
@@ -784,10 +784,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['and', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""&&" operator expects at least two operands."`,
+          `[Error: "&&" operator expects at least two operands.]`,
         );
         expect(() => check(['&&', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""&&" operator expects at least two operands."`,
+          `[Error: "&&" operator expects at least two operands.]`,
         );
       });
     });
@@ -828,10 +828,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['||', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""||" operator expects at least two operands."`,
+          `[Error: "||" operator expects at least two operands.]`,
         );
         expect(() => check(['or', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""||" operator expects at least two operands."`,
+          `[Error: "||" operator expects at least two operands.]`,
         );
       });
     });
@@ -859,10 +859,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['!', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""!" operator expects 1 operands."`,
+          `[Error: "!" operator expects 1 operands.]`,
         );
         expect(() => check(['not', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""!" operator expects 1 operands."`,
+          `[Error: "!" operator expects 1 operands.]`,
         );
       });
     });
@@ -903,7 +903,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['len', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""len" operator expects 1 operands."`,
+          `[Error: "len" operator expects 1 operands.]`,
         );
       });
     });
@@ -944,10 +944,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['member', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""[]" operator expects 2 operands."`,
+          `[Error: "[]" operator expects 2 operands.]`,
         );
         expect(() => check(['[]', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""[]" operator expects 2 operands."`,
+          `[Error: "[]" operator expects 2 operands.]`,
         );
       });
     });
@@ -970,7 +970,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['type', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""type" operator expects 1 operands."`,
+          `[Error: "type" operator expects 1 operands.]`,
         );
       });
     });
@@ -992,7 +992,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['bool', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""bool" operator expects 1 operands."`,
+          `[Error: "bool" operator expects 1 operands.]`,
         );
       });
     });
@@ -1017,7 +1017,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['num', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""num" operator expects 1 operands."`,
+          `[Error: "num" operator expects 1 operands.]`,
         );
       });
     });
@@ -1042,7 +1042,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['str', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""str" operator expects 1 operands."`,
+          `[Error: "str" operator expects 1 operands.]`,
         );
       });
     });
@@ -1061,7 +1061,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['und?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""und?" operator expects 1 operands."`,
+          `[Error: "und?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1079,7 +1079,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['nil?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""nil?" operator expects 1 operands."`,
+          `[Error: "nil?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1097,7 +1097,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['bool?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""bool?" operator expects 1 operands."`,
+          `[Error: "bool?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1115,7 +1115,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['num?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""num?" operator expects 1 operands."`,
+          `[Error: "num?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1133,7 +1133,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['str?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""str?" operator expects 1 operands."`,
+          `[Error: "str?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1151,7 +1151,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['arr?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""arr?" operator expects 1 operands."`,
+          `[Error: "arr?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1169,7 +1169,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['bin?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""bin?" operator expects 1 operands."`,
+          `[Error: "bin?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1187,7 +1187,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['obj?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""obj?" operator expects 1 operands."`,
+          `[Error: "obj?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1216,7 +1216,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['cat', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""." operator expects at least two operands."`,
+          `[Error: "." operator expects at least two operands.]`,
         );
       });
     });
@@ -1234,10 +1234,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['contains', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""contains" operator expects 2 operands."`,
+          `[Error: "contains" operator expects 2 operands.]`,
         );
         expect(() => check(['contains', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""contains" operator expects 2 operands."`,
+          `[Error: "contains" operator expects 2 operands.]`,
         );
       });
     });
@@ -1258,10 +1258,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['starts', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""starts" operator expects 2 operands."`,
+          `[Error: "starts" operator expects 2 operands.]`,
         );
         expect(() => check(['starts', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""starts" operator expects 2 operands."`,
+          `[Error: "starts" operator expects 2 operands.]`,
         );
       });
     });
@@ -1283,10 +1283,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['ends', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""ends" operator expects 2 operands."`,
+          `[Error: "ends" operator expects 2 operands.]`,
         );
         expect(() => check(['ends', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""ends" operator expects 2 operands."`,
+          `[Error: "ends" operator expects 2 operands.]`,
         );
       });
     });
@@ -1298,13 +1298,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['substr', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""substr" operator expects 3 operands."`,
+          `[Error: "substr" operator expects 3 operands.]`,
         );
         expect(() => check(['substr', 'a', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""substr" operator expects 3 operands."`,
+          `[Error: "substr" operator expects 3 operands.]`,
         );
         expect(() => check(['substr', 'a', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""substr" operator expects 3 operands."`,
+          `[Error: "substr" operator expects 3 operands.]`,
         );
       });
     });
@@ -1329,16 +1329,16 @@ export const jsonExpressionUnitTests = (
           check(['matches', 'abc', ['get', '']], true, 'bc', {
             createPattern,
           }),
-        ).toThrowErrorMatchingInlineSnapshot(`""matches" second argument should be a regular expression string."`);
+        ).toThrowErrorMatchingInlineSnapshot(`[Error: "matches" second argument should be a regular expression string.]`);
       });
 
       test('throws on invalid operand count', () => {
         expect(() => check(['matches', 'a'] as any, false, null, {createPattern})).toThrowErrorMatchingInlineSnapshot(
-          `""matches" operator expects 2 operands."`,
+          `[Error: "matches" operator expects 2 operands.]`,
         );
         expect(() =>
           check(['matches', 'a', 'b', 'c'] as any, false, null, {createPattern}),
-        ).toThrowErrorMatchingInlineSnapshot(`""matches" operator expects 2 operands."`);
+        ).toThrowErrorMatchingInlineSnapshot(`[Error: "matches" operator expects 2 operands.]`);
       });
     });
 
@@ -1358,7 +1358,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['email?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""email?" operator expects 1 operands."`,
+          `[Error: "email?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1381,7 +1381,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['hostname?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""hostname?" operator expects 1 operands."`,
+          `[Error: "hostname?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1403,7 +1403,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['ip4?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""ip4?" operator expects 1 operands."`,
+          `[Error: "ip4?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1425,7 +1425,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['ip6?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""ip6?" operator expects 1 operands."`,
+          `[Error: "ip6?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1448,7 +1448,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['uuid?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""uuid?" operator expects 1 operands."`,
+          `[Error: "uuid?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1472,7 +1472,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['uri?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""uri?" operator expects 1 operands."`,
+          `[Error: "uri?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1494,7 +1494,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['duration?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""duration?" operator expects 1 operands."`,
+          `[Error: "duration?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1516,7 +1516,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['date?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""date?" operator expects 1 operands."`,
+          `[Error: "date?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1538,7 +1538,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['time?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""time?" operator expects 1 operands."`,
+          `[Error: "time?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1560,7 +1560,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['dateTime?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""dateTime?" operator expects 1 operands."`,
+          `[Error: "dateTime?" operator expects 1 operands.]`,
         );
       });
     });
@@ -1580,19 +1580,19 @@ export const jsonExpressionUnitTests = (
 
       test('throws when reading out of bounds', () => {
         expect(() => check(['u8', new Uint8Array([1, 2, 3]), -1], 0)).toThrowErrorMatchingInlineSnapshot(
-          `"OUT_OF_BOUNDS"`,
+          `[Error: OUT_OF_BOUNDS]`,
         );
         expect(() => check(['u8', new Uint8Array([1, 2, 3]), 3], 0)).toThrowErrorMatchingInlineSnapshot(
-          `"OUT_OF_BOUNDS"`,
+          `[Error: OUT_OF_BOUNDS]`,
         );
       });
 
       test('throws on invalid operand count', () => {
         expect(() => check(['u8', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""u8" operator expects 2 operands."`,
+          `[Error: "u8" operator expects 2 operands.]`,
         );
         expect(() => check(['u8', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""u8" operator expects 2 operands."`,
+          `[Error: "u8" operator expects 2 operands.]`,
         );
       });
     });
@@ -1620,10 +1620,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['concat', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""concat" operator expects at least two operands."`,
+          `[Error: "concat" operator expects at least two operands.]`,
         );
         expect(() => check(['++', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""concat" operator expects at least two operands."`,
+          `[Error: "concat" operator expects at least two operands.]`,
         );
       });
     });
@@ -1658,10 +1658,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['push', [[]]] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""push" operator expects at least two operands."`,
+          `[Error: "push" operator expects at least two operands.]`,
         );
         expect(() => check(['push', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""push" operator expects at least two operands."`,
+          `[Error: "push" operator expects at least two operands.]`,
         );
       });
     });
@@ -1711,10 +1711,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['head', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""head" operator expects 2 operands."`,
+          `[Error: "head" operator expects 2 operands.]`,
         );
         expect(() => check(['head', 'a', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""head" operator expects 2 operands."`,
+          `[Error: "head" operator expects 2 operands.]`,
         );
       });
     });
@@ -1733,7 +1733,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['sort', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""sort" operator expects 1 operands."`,
+          `[Error: "sort" operator expects 1 operands.]`,
         );
       });
     });
@@ -1752,7 +1752,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['reverse', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""reverse" operator expects 1 operands."`,
+          `[Error: "reverse" operator expects 1 operands.]`,
         );
       });
     });
@@ -1775,10 +1775,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['in', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""in" operator expects 2 operands."`,
+          `[Error: "in" operator expects 2 operands.]`,
         );
         expect(() => check(['in', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""in" operator expects 2 operands."`,
+          `[Error: "in" operator expects 2 operands.]`,
         );
       });
     });
@@ -1798,7 +1798,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['fromEntries', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""fromEntries" operator expects 1 operands."`,
+          `[Error: "fromEntries" operator expects 1 operands.]`,
         );
       });
     });
@@ -1819,10 +1819,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['indexOf', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""indexOf" operator expects 2 operands."`,
+          `[Error: "indexOf" operator expects 2 operands.]`,
         );
         expect(() => check(['indexOf', 'a', 'a', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""indexOf" operator expects 2 operands."`,
+          `[Error: "indexOf" operator expects 2 operands.]`,
         );
       });
     });
@@ -1841,13 +1841,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['slice', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""slice" operator expects 3 operands."`,
+          `[Error: "slice" operator expects 3 operands.]`,
         );
         expect(() => check(['slice', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""slice" operator expects 3 operands."`,
+          `[Error: "slice" operator expects 3 operands.]`,
         );
         expect(() => check(['slice', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""slice" operator expects 3 operands."`,
+          `[Error: "slice" operator expects 3 operands.]`,
         );
       });
     });
@@ -1873,10 +1873,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['zip', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""zip" operator expects 2 operands."`,
+          `[Error: "zip" operator expects 2 operands.]`,
         );
         expect(() => check(['zip', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""zip" operator expects 2 operands."`,
+          `[Error: "zip" operator expects 2 operands.]`,
         );
       });
     });
@@ -1892,13 +1892,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['filter', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""filter" operator expects 3 operands."`,
+          `[Error: "filter" operator expects 3 operands.]`,
         );
         expect(() => check(['filter', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""filter" operator expects 3 operands."`,
+          `[Error: "filter" operator expects 3 operands.]`,
         );
         expect(() => check(['filter', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""filter" operator expects 3 operands."`,
+          `[Error: "filter" operator expects 3 operands.]`,
         );
       });
     });
@@ -1917,13 +1917,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['map', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""map" operator expects 3 operands."`,
+          `[Error: "map" operator expects 3 operands.]`,
         );
         expect(() => check(['map', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""map" operator expects 3 operands."`,
+          `[Error: "map" operator expects 3 operands.]`,
         );
         expect(() => check(['map', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""map" operator expects 3 operands."`,
+          `[Error: "map" operator expects 3 operands.]`,
         );
       });
     });
@@ -1939,19 +1939,19 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['reduce', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""reduce" operator expects 5 operands."`,
+          `[Error: "reduce" operator expects 5 operands.]`,
         );
         expect(() => check(['reduce', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""reduce" operator expects 5 operands."`,
+          `[Error: "reduce" operator expects 5 operands.]`,
         );
         expect(() => check(['reduce', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""reduce" operator expects 5 operands."`,
+          `[Error: "reduce" operator expects 5 operands.]`,
         );
         expect(() => check(['reduce', '', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""reduce" operator expects 5 operands."`,
+          `[Error: "reduce" operator expects 5 operands.]`,
         );
         expect(() => check(['reduce', '', '', '', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""reduce" operator expects 5 operands."`,
+          `[Error: "reduce" operator expects 5 operands.]`,
         );
       });
     });
@@ -1969,7 +1969,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['keys', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""keys" operator expects 1 operands."`,
+          `[Error: "keys" operator expects 1 operands.]`,
         );
       });
     });
@@ -1985,7 +1985,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['values', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""values" operator expects 1 operands."`,
+          `[Error: "values" operator expects 1 operands.]`,
         );
       });
     });
@@ -2001,7 +2001,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['entries', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""entries" operator expects 1 operands."`,
+          `[Error: "entries" operator expects 1 operands.]`,
         );
       });
     });
@@ -2103,13 +2103,13 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['?', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""?" operator expects 3 operands."`,
+          `[Error: "?" operator expects 3 operands.]`,
         );
         expect(() => check(['if', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""?" operator expects 3 operands."`,
+          `[Error: "?" operator expects 3 operands.]`,
         );
         expect(() => check(['?', 'a', 'b', 'c', 'd'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""?" operator expects 3 operands."`,
+          `[Error: "?" operator expects 3 operands.]`,
         );
       });
     });
@@ -2135,7 +2135,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['throw', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""throw" operator expects 1 operands."`,
+          `[Error: "throw" operator expects 1 operands.]`,
         );
       });
     });
@@ -2163,16 +2163,16 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws when value not found', () => {
-        expect(() => check(['$', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`"NOT_FOUND"`);
-        expect(() => check(['get', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`"NOT_FOUND"`);
+        expect(() => check(['$', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`[Error: NOT_FOUND]`);
+        expect(() => check(['get', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`[Error: NOT_FOUND]`);
       });
 
       test('throws on invalid operand count', () => {
         expect(() => check(['get', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""$" operator expects at most 2 operands."`,
+          `[Error: "$" operator expects at most 2 operands.]`,
         );
         expect(() => check(['$', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""$" operator expects at most 2 operands."`,
+          `[Error: "$" operator expects at most 2 operands.]`,
         );
       });
     });
@@ -2199,10 +2199,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['get?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""$?" operator expects 1 operands."`,
+          `[Error: "$?" operator expects 1 operands.]`,
         );
         expect(() => check(['$?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""$?" operator expects 1 operands."`,
+          `[Error: "$?" operator expects 1 operands.]`,
         );
       });
     });
@@ -2227,10 +2227,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['&', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""&" operator expects at least two operands."`,
+          `[Error: "&" operator expects at least two operands.]`,
         );
         expect(() => check(['bitAnd', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""&" operator expects at least two operands."`,
+          `[Error: "&" operator expects at least two operands.]`,
         );
       });
     });
@@ -2254,10 +2254,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['|', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""|" operator expects at least two operands."`,
+          `[Error: "|" operator expects at least two operands.]`,
         );
         expect(() => check(['bitOr', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""|" operator expects at least two operands."`,
+          `[Error: "|" operator expects at least two operands.]`,
         );
       });
     });
@@ -2281,10 +2281,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['^', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""^" operator expects at least two operands."`,
+          `[Error: "^" operator expects at least two operands.]`,
         );
         expect(() => check(['bitXor', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""^" operator expects at least two operands."`,
+          `[Error: "^" operator expects at least two operands.]`,
         );
       });
     });
@@ -2298,10 +2298,10 @@ export const jsonExpressionUnitTests = (
 
       test('throws on invalid operand count', () => {
         expect(() => check(['~', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""~" operator expects 1 operands."`,
+          `[Error: "~" operator expects 1 operands.]`,
         );
         expect(() => check(['bitNot', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-          `""~" operator expects 1 operands."`,
+          `[Error: "~" operator expects 1 operands.]`,
         );
       });
     });

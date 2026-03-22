@@ -1,10 +1,10 @@
 import {Vars} from '../Vars';
 import {JsonExpressionCodegen} from '../codegen';
 import {operatorsMap} from '../operators';
-import type {Expr, JsonExpressionCodegenContext} from '../types';
 import {jsonExpressionCodegenTests} from './jsonExpressionCodegenTests';
 import {jsonExpressionEvaluateTests} from './jsonExpressionEvaluateTests';
 import {jsonExpressionUnitTests} from './jsonExpressionUnitTests';
+import type {Expr, JsonExpressionCodegenContext} from '../types';
 
 const check = (
   expression: Expr,
