@@ -392,7 +392,15 @@ export class RangeMenu {
       expand: 8,
       children: [],
     };
+    const artistic: MenuItem = {
+      id: 'fmt-artistic',
+      name: 'Artistic',
+      sepBefore: true,
+      expand: 8,
+      children: [],
+    };
     this.buildFmtGroup(technical);
+    this.buildFmtGroup(artistic);
     const formatting: MenuItem = {
       name: 'Formatting',
       expandChild: 0,
@@ -438,42 +446,29 @@ export class RangeMenu {
       ] as MenuItem[],
     };
     if (technical.children?.length) formatting.children!.push(technical);
-    formatting.children!.push({
-      name: 'Artistic',
-      expand: 8,
-      sepBefore: true,
-      children: [
-        track(this.colorMenuItem()),
-        track(this.bgMenuItem()),
-        // {
-        //   name: 'Border',
-        //   icon: () => <BorderLeftIcon width={16} height={16} />,
-        //   onSelect: () => {},
-        // },
-      ],
-    } as MenuItem);
+    if (artistic.children?.length) formatting.children!.push(artistic);
     return formatting;
   }
 
-  public readonly colorMenuItem = (): MenuItem => {
-    const colorItem: MenuItem = {
-      ...col.behavior.menu,
-      onSelect: () => {
-        this.state.startSliceConfig(CommonSliceType.col, colorItem);
-      },
-    };
-    return colorItem;
-  };
+  // public readonly colorMenuItem = (): MenuItem => {
+  //   const colorItem: MenuItem = {
+  //     ...col.behavior.menu,
+  //     onSelect: () => {
+  //       this.state.startSliceConfig(CommonSliceType.col, colorItem);
+  //     },
+  //   };
+  //   return colorItem;
+  // };
 
-  public readonly bgMenuItem = (): MenuItem => {
-    const bgItem: MenuItem = {
-      ...bg.behavior.menu,
-      onSelect: () => {
-        this.state.startSliceConfig(CommonSliceType.bg, bgItem);
-      },
-    };
-    return bgItem;
-  };
+  // public readonly bgMenuItem = (): MenuItem => {
+  //   const bgItem: MenuItem = {
+  //     ...bg.behavior.menu,
+  //     onSelect: () => {
+  //       this.state.startSliceConfig(CommonSliceType.bg, bgItem);
+  //     },
+  //   };
+  //   return bgItem;
+  // };
 
   public readonly linkMenuItem = (): MenuItem => {
     const linkAction: MenuItem = {

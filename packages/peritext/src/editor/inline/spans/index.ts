@@ -1,3 +1,8 @@
+import {behavior as b} from './b';
+import {behavior as i} from './i';
+import {behavior as u} from './u';
+import {behavior as overline} from './overline';
+import {behavior as s} from './s';
 import {behavior as math} from './math';
 import {behavior as a} from './a';
 import {behavior as mark} from './mark';
@@ -19,6 +24,11 @@ export const spans = [
   a,
 
   // One
+  b,
+  i,
+  u,
+  overline,
+  s,
   mark,
   sup,
   sub,

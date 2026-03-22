@@ -110,7 +110,8 @@ export class EditorState implements UiLifeCycles {
   /** Open popup to start configuring a new slice. */
   public startSliceConfig(tag: SliceTypeName | string | number, menu?: MenuItem): NewFmt | undefined {
     const editor = this.txt.editor;
-    const behavior = editor.getRegistry().get(tag);
+    const behavior = this.spanMap[tag];
+    if (!behavior) return;
     const range = editor.mainCursor()?.range();
     if (!range) return;
     const newSlice = this.newSlice;

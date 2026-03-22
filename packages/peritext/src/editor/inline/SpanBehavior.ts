@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {InlineAttrStack, SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
+import {type Inline, InlineAttrStack, SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
 import type {RenderInlineProps} from './RenderInline';
 import type {EditorState} from '../state';
+import type {SpanProps} from '../../web/react/types';
 
 /**
  * Inline slice behavior.
@@ -57,6 +58,12 @@ export class SpanBehavior<
    * View of this formatting, inline in the main content.
    */
   render?: (children: React.ReactNode, attr: InlineAttrStack, props: RenderInlineProps) => React.ReactNode = void 0;
+
+  /**
+   * A function that applies text-level changes to the formatted text, based on
+   * the formatting attributes.
+   */
+  text?: (style: React.CSSProperties, attr: InlineAttrStack, props: SpanProps, inline: Inline, state: EditorState) => void = void 0;
 
   /**
    * Render a small card-sized view, which can be placed in a popup, to
