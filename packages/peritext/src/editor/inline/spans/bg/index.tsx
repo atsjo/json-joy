@@ -6,7 +6,7 @@ import {
   type FromHtmlBehavior,
   type PeritextMlElement,
 } from 'json-joy/lib/json-crdt-extensions';
-import {InlineSliceBehavior} from '../../InlineSliceBehavior';
+import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {behavior as col} from '../col';
 
@@ -28,7 +28,7 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.bg, typeof sch
   },
 };
 
-export const behavior = new (class BgBehavior extends InlineSliceBehavior<
+export const behavior = new (class BgBehavior extends SpanBehavior<
   SliceStacking.Many,
   SliceTypeCon.bg,
   typeof schema

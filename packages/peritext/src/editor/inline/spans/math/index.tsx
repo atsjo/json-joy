@@ -7,11 +7,11 @@ import {
   type PeritextMlElement,
 } from 'json-joy/lib/json-crdt-extensions';
 import {convertLatexToMarkup} from 'mathlive';
-import {InlineSliceBehavior} from '../../InlineSliceBehavior';
+import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
-import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
+import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 
@@ -33,7 +33,7 @@ const fromHtml: FromHtmlBehavior<SliceStacking.One, SliceTypeCon.math, typeof sc
 };
 
 /** Inline math mark. The marked text content is the LaTeX formula source. */
-export const behavior = new (class MathBehavior extends InlineSliceBehavior<
+export const behavior = new (class MathBehavior extends SpanBehavior<
   SliceStacking.One,
   SliceTypeCon.math,
   typeof schema

@@ -5,7 +5,13 @@ import type {MenuItem} from '../types';
 import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
 import type {RenderInlineProps} from './RenderInline';
 
-export abstract class InlineSliceBehavior<
+/**
+ * Inline slice behavior.
+ * 
+ * @todo Add text() plugin behavior override.
+ * @todo Add context menu registration system.
+ */
+export abstract class SpanBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
@@ -43,7 +49,7 @@ export abstract class InlineSliceBehavior<
   /**
    * View of this formatting, inline in the main content.
    */
-  render?: (children: React.ReactNode, attr: InlineAttrStack, props: RenderInlineProps) => React.ReactNode;
+  render?: (children: React.ReactNode, attr: InlineAttrStack, props: RenderInlineProps) => React.ReactNode = void 0;
 
   /**
    * Render a small card-sized view, which can be placed in a popup, to

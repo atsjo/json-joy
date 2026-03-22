@@ -6,12 +6,12 @@ import {
   type FromHtmlBehavior,
   type PeritextMlElement,
 } from 'json-joy/lib/json-crdt-extensions';
-import {InlineSliceBehavior} from '../../InlineSliceBehavior';
+import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
 import {isValid} from '../../../util/color';
-import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
+import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'paintbrush'});
@@ -32,7 +32,7 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.col, typeof sc
   },
 };
 
-export const behavior = new (class ColBehavior extends InlineSliceBehavior<
+export const behavior = new (class ColBehavior extends SpanBehavior<
   SliceStacking.Many,
   SliceTypeCon.col,
   typeof schema

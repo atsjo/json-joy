@@ -3,9 +3,9 @@ import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {CommonSliceType} from 'json-joy/lib/json-crdt-extensions';
-import * as a from '../../inline/tags/a';
-import * as col from '../../inline/tags/col';
-import * as bg from '../../inline/tags/bg';
+import * as a from '../../inline/spans/a';
+import * as col from '../../inline/spans/col';
+import * as bg from '../../inline/spans/bg';
 import type {MenuItem} from '../../types';
 import type {EditorState} from '../EditorState';
 

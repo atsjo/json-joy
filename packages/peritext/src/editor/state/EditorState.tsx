@@ -2,10 +2,10 @@ import * as sync from 'thingies/lib/sync';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {NewFmt} from './formattings/NewFmt';
-import {inlines as defaultSpans} from '../inline/tags';
+import {spans as defaultSpans} from '../inline/spans';
 import {FmtManagePaneState} from '../inline/FmtManagePane/state';
 import {Menu} from './menus/Menu';
-import type {InlineSliceBehavior} from '../inline/InlineSliceBehavior';
+import type {SpanBehavior} from '../inline/SpanBehavior';
 import type {Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
@@ -42,12 +42,12 @@ export class EditorState implements UiLifeCycles {
   public readonly et: PeritextEventTarget;
 
   public readonly spanOrder: Record<string | number, number> = {};
-  public readonly spanMap: Record<string | number, InlineSliceBehavior> = {};
+  public readonly spanMap: Record<string | number, SpanBehavior> = {};
   
   constructor(
     public readonly surface: PeritextSurfaceState,
     public readonly opts: EditorPluginOpts,
-    public readonly spans: InlineSliceBehavior[] = defaultSpans as InlineSliceBehavior[]
+    public readonly spans: SpanBehavior[] = defaultSpans as SpanBehavior[]
   ) {
     this.txt = this.surface.dom.txt;
     this.et = surface.headless.et;

@@ -7,7 +7,7 @@ import {
   type FromHtmlBehavior,
   type InlineAttrStack,
 } from 'json-joy/lib/json-crdt-extensions';
-import {InlineSliceBehavior} from '../../InlineSliceBehavior';
+import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {View} from './components/View';
@@ -15,7 +15,7 @@ import {Edit} from './components/Edit';
 import {getDomain} from '../../../util/url';
 import {Favicon} from '../../../components/Favicon';
 import {Span} from './components/Span';
-import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
+import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {RenderInlineProps} from '../../RenderInline';
 
@@ -44,7 +44,7 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.a, typeof sche
 };
 
 /** Inline URL, like `<a>` tag in HTML. */
-export const behavior = new (class ABehavior extends InlineSliceBehavior<
+export const behavior = new (class ABehavior extends SpanBehavior<
   SliceStacking.Many,
   SliceTypeCon.a,
   typeof schema
