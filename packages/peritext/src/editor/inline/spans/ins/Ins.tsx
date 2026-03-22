@@ -2,8 +2,8 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 
 const blockClass = rule({
-  bg: '#dafbe1',
-  bxsh: '0 2px 0 0 #aceebb',
+  bg: 'rgba(152,235,167,.3)',
+  bxsh: '0 2px 0 0 rgba(152,225,167,.6)',
   td: 'none',
 });
 

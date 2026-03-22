@@ -2,8 +2,6 @@ import * as React from 'react';
 import {Spoiler} from './Spoiler';
 import {Code} from './Code';
 import {Kbd} from './Kbd';
-import {Ins} from './Ins';
-import {Del} from './Del';
 import {SliceStacking, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {useEditor} from '../state';
 import type {InlineViewProps} from '../../web/react/InlineView';
@@ -33,11 +31,6 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
       if (behavior.stacking === SliceStacking.Atomic) break;
     }
   }
-
-  if (attrs[SliceTypeCon.ins]) element = <Ins>{element}</Ins>;
-  if (attrs[SliceTypeCon.del]) element = <Del>{element}</Del>;
-
-  // TODO: for exclusive layers, only render one decoration.
 
   let layers = attrs[SliceTypeCon.code];
   if (layers) {
