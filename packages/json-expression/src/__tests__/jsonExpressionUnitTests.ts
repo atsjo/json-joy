@@ -1329,7 +1329,9 @@ export const jsonExpressionUnitTests = (
           check(['matches', 'abc', ['get', '']], true, 'bc', {
             createPattern,
           }),
-        ).toThrowErrorMatchingInlineSnapshot(`[Error: "matches" second argument should be a regular expression string.]`);
+        ).toThrowErrorMatchingInlineSnapshot(
+          `[Error: "matches" second argument should be a regular expression string.]`,
+        );
       });
 
       test('throws on invalid operand count', () => {
@@ -2163,8 +2165,12 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws when value not found', () => {
-        expect(() => check(['$', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`[Error: NOT_FOUND]`);
-        expect(() => check(['get', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`[Error: NOT_FOUND]`);
+        expect(() => check(['$', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(
+          `[Error: NOT_FOUND]`,
+        );
+        expect(() => check(['get', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(
+          `[Error: NOT_FOUND]`,
+        );
       });
 
       test('throws on invalid operand count', () => {
