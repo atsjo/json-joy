@@ -11,7 +11,7 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
 import {Span} from './components/Span';
-import type {IconProps, ValidationResult} from '../../SpanBehavior';
+import type {ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {InlineAttrStack, Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {RenderInlineProps} from '../../RenderInline';

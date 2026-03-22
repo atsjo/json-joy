@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
+import {type InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Kbd} from './Kbd';
@@ -17,6 +17,5 @@ export const behavior = spanOne(SliceTypeCon.kbd, name, {
       state.et.format('tog', SliceTypeCon.kbd);
     },
   }),
-  render: (children: React.ReactNode, attr: InlineAttrStack) =>
-    <Kbd attr={attr[attr.length - 1]}>{children}</Kbd>,
+  render: (children: React.ReactNode, attr: InlineAttrStack) => <Kbd attr={attr[attr.length - 1]}>{children}</Kbd>,
 });

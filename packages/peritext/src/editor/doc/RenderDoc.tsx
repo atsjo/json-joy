@@ -13,7 +13,7 @@ export interface RenderDocProps {
 export const RenderDoc: React.FC<RenderDocProps> = ({surface, opts, children}) => {
   const value: EditorState = React.useMemo(() => {
     const state = new EditorState(surface, opts);
-    const plugin = surface.plugins.find(p => p instanceof EditorPlugin);
+    const plugin = surface.plugins.find((p) => p instanceof EditorPlugin);
     if (plugin) plugin.state = state;
     return state;
   }, [surface, opts]);

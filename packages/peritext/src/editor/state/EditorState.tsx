@@ -42,11 +42,11 @@ export class EditorState implements UiLifeCycles {
 
   public readonly spanOrder: Record<string | number, number> = {};
   public readonly spanMap: Record<string | number, SpanBehavior> = {};
-  
+
   constructor(
     public readonly surface: PeritextSurfaceState,
     public readonly opts: EditorPluginOpts,
-    public readonly spans: SpanBehavior[] = defaultSpans as SpanBehavior[]
+    public readonly spans: SpanBehavior[] = defaultSpans as SpanBehavior[],
   ) {
     this.txt = this.surface.dom.txt;
     this.et = surface.headless.et;
@@ -245,13 +245,18 @@ export class EditorState implements UiLifeCycles {
           et.cursor({flip: true});
         },
       ],
-      ...this.spans.filter((b) => b.keys).map((b) => [
-        b.keys!.join('+'),
-        (press: Key) => {
-          press.event?.preventDefault();
-          b.action?.(this);
-        },
-      ] as AnyBinding),
+      ...this.spans
+        .filter((b) => b.keys)
+        .map(
+          (b) =>
+            [
+              b.keys!.join('+'),
+              (press: Key) => {
+                press.event?.preventDefault();
+                b.action?.(this);
+              },
+            ] as AnyBinding,
+        ),
     ]);
 
     return () => {

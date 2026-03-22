@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {type JsonNodeView, s, type SchemaToJsonNode} from 'json-joy/lib/json-crdt';
 import {
-  InlineAttrStack,
+  type InlineAttrStack,
   SliceStacking,
   SliceTypeCon,
   type FromHtmlBehavior,
@@ -31,11 +31,7 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.bg, typeof sch
   },
 };
 
-export const behavior = new (class BgBehavior extends SpanBehavior<
-  SliceStacking.Many,
-  SliceTypeCon.bg,
-  typeof schema
-> {
+export const behavior = new (class BgBehavior extends SpanBehavior<SliceStacking.Many, SliceTypeCon.bg, typeof schema> {
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.bg, name, schema, false, void 0, fromHtml);
   }
@@ -49,7 +45,7 @@ export const behavior = new (class BgBehavior extends SpanBehavior<
       state.startSliceConfig(SliceTypeCon.bg);
     },
   });
-  
+
   public readonly text = (style: React.CSSProperties, attr: InlineAttrStack) => {
     const data = attr[attr.length - 1].slice.data();
     const color: string | undefined = typeof data === 'object' && data ? String((data as any).col) : void 0;

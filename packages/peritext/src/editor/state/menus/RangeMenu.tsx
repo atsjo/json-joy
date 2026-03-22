@@ -19,12 +19,14 @@ export class RangeMenu implements UiLifeCycles {
 
   public start() {
     const {state, recent} = this;
-    recent.push(...[
-      state.spanMap[SliceTypeCon.b]?.getMenu(state),
-      state.spanMap[SliceTypeCon.i]?.getMenu(state),
-      state.spanMap[SliceTypeCon.u]?.getMenu(state),
-      state.spanMap[SliceTypeCon.code]?.getMenu(state),
-    ].filter(Boolean) as any);
+    recent.push(
+      ...([
+        state.spanMap[SliceTypeCon.b]?.getMenu(state),
+        state.spanMap[SliceTypeCon.i]?.getMenu(state),
+        state.spanMap[SliceTypeCon.u]?.getMenu(state),
+        state.spanMap[SliceTypeCon.code]?.getMenu(state),
+      ].filter(Boolean) as any),
+    );
     return () => {};
   }
 
@@ -301,7 +303,7 @@ export class RangeMenu implements UiLifeCycles {
       orig?.(e);
     };
     item.onSelect = onSelect;
-  };
+  }
 
   private buildFmtGroup(group: MenuItem): void {
     const {id, children = []} = group;

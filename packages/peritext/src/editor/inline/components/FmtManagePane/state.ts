@@ -46,7 +46,6 @@ export class FmtManagePaneState {
       const slices = inline?.p1.layers;
       const res: SavedFmt[] = [];
       if (!slices) return res;
-      const registry = state.txt.editor.getRegistry();
       for (const slice of slices) {
         if (slice.isMarker()) continue;
         if (!slice.isSaved()) continue;

@@ -2,12 +2,12 @@ const isMac = /mac/i.test(navigator.platform) || /macintosh/i.test(navigator.use
 const separator = isMac ? ' ' : ' + ';
 
 export const remap: Record<string, string> = {
-  'Primary': isMac ? '⌘' : 'Ctrl',
-  'Shift': isMac ? '⇧' : 'Shift',
+  Primary: isMac ? '⌘' : 'Ctrl',
+  Shift: isMac ? '⇧' : 'Shift',
   // 'Command': isMac ? '⌘' : 'Command',
-  'Alt': isMac ? '⌥' : 'Alt',
+  Alt: isMac ? '⌥' : 'Alt',
   // 'Control': isMac ? '⌃' : 'Control',
-  'Ctrl': isMac ? '⌃' : 'Ctrl',
+  Ctrl: isMac ? '⌃' : 'Ctrl',
 };
 
 export const formatKeys = (keys: string[]): string => {

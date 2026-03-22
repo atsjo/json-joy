@@ -12,7 +12,7 @@ export interface FormattingListProps {
 
 export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSelect}) => {
   const state = useEditor();
-  
+
   if (!formattings.length) return;
 
   return (

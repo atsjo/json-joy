@@ -44,11 +44,7 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.a, typeof sche
 };
 
 /** Inline URL, like `<a>` tag in HTML. */
-export const behavior = new (class ABehavior extends SpanBehavior<
-  SliceStacking.Many,
-  SliceTypeCon.a,
-  typeof schema
-> {
+export const behavior = new (class ABehavior extends SpanBehavior<SliceStacking.Many, SliceTypeCon.a, typeof schema> {
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.a, 'Link', schema, false, void 0, fromHtml);
   }
@@ -84,11 +80,7 @@ export const behavior = new (class ABehavior extends SpanBehavior<
   };
 
   public readonly render = (children: React.ReactNode, attr: InlineAttrStack, props: RenderInlineProps) => {
-    return (
-      <Span attr={attr}>
-        {children}
-      </Span>
-    );
+    return <Span attr={attr}>{children}</Span>;
   };
   public readonly Edit = Edit;
   public readonly View = View;

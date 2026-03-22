@@ -20,7 +20,7 @@ export class Menu implements UiLifeCycles {
     this.block = new BlockMenu(state);
     this.doc = new DocMenu(state);
   }
-  
+
   public start() {
     const stopRangeMenu = this.range.start();
     return () => {

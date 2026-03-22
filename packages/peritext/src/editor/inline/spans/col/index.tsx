@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {type JsonNodeView, s, type SchemaToJsonNode} from 'json-joy/lib/json-crdt';
 import {
-  InlineAttrStack,
+  type InlineAttrStack,
   SliceStacking,
   SliceTypeCon,
   type FromHtmlBehavior,

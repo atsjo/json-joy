@@ -1,7 +1,13 @@
 import * as React from 'react';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys, remap} from '../util/keys';
-import {type Inline, InlineAttrStack, SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
+import {
+  type Inline,
+  type InlineAttrStack,
+  SliceBehavior,
+  type SliceStacking,
+  type TypeTag,
+} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
@@ -69,7 +75,13 @@ export class SpanBehavior<
    * A function that applies text-level changes to the formatted text, based on
    * the formatting attributes.
    */
-  text?: (style: React.CSSProperties, attr: InlineAttrStack, props: SpanProps, inline: Inline, state: EditorState) => void = void 0;
+  text?: (
+    style: React.CSSProperties,
+    attr: InlineAttrStack,
+    props: SpanProps,
+    inline: Inline,
+    state: EditorState,
+  ) => void = void 0;
 
   /**
    * Render a small card-sized view, which can be placed in a popup, to
@@ -86,10 +98,10 @@ export class SpanBehavior<
   public getMenu(state: EditorState): MenuItem | undefined {
     const menu = this.menu;
     if (!menu) return;
-    let menuItem = typeof menu === 'function' ? menu(state) : menu;
+    const menuItem = typeof menu === 'function' ? menu(state) : menu;
     menuItem.onSelect ??= () => this.action?.(state);
     const keys = this.keys;
-    if (keys) menuItem.keys ??= keys.map(k => remap[k] ?? k);
+    if (keys) menuItem.keys ??= keys.map((k) => remap[k] ?? k);
     if (keys) menuItem.right ??= () => <Sidetip small>{formatKeys(keys)}</Sidetip>;
     return menuItem;
   }
