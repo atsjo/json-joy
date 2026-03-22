@@ -5,8 +5,8 @@ import {Span as InlineMath} from './tags/math/components/Span';
 import {Kbd} from './Kbd';
 import {Ins} from './Ins';
 import {Del} from './Del';
-import {Span as Link} from './tags/a/components/Span';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
+import {useEditor} from '../state';
 import type {InlineViewProps} from '../../web/react/InlineView';
 
 export interface RenderInlineProps extends InlineViewProps {
@@ -14,16 +14,24 @@ export interface RenderInlineProps extends InlineViewProps {
 }
 
 export const RenderInline: React.FC<RenderInlineProps> = (props) => {
+  const editor = useEditor();
   const {inline, children} = props;
   const attrs = inline.attr();
+  const tags = Object.keys(attrs);
+  const length = tags.length;
   let element = children;
-  const a = attrs[SliceTypeCon.a];
-  if (a)
-    element = (
-      <Link layers={a.length} stack={a}>
-        {element}
-      </Link>
-    );
+  if (length === 0) return element;
+  const {spanMap, spanOrder} = editor;
+  tags.sort((a, b) => (spanOrder[a] ?? 0) - (spanOrder[b] ?? 0));
+  for (let i = 0; i < length; i++) {
+    const behavior = spanMap[tags[i]];
+    if (!behavior) continue;
+    const attr = attrs[behavior.tag];
+    if (!attr) continue;
+    const render = behavior.render;
+    if (render) element = render(element, attr, props);
+  }
+
   if (attrs[SliceTypeCon.mark]) element = <mark>{element}</mark>;
   if (attrs[SliceTypeCon.sup]) element = <sup>{element}</sup>;
   if (attrs[SliceTypeCon.sub]) element = <sub>{element}</sub>;

@@ -31,12 +31,12 @@ const blockClass = rule({
 
 export interface SpanProps {
   children: React.ReactNode;
-  layers?: number;
-  stack: InlineAttrStack;
+  attr: InlineAttrStack;
 }
 
 export const Span: React.FC<SpanProps> = (props) => {
-  const {children, layers = 1, stack} = props;
+  const {children, attr} = props;
+  const layers = attr.length;
   const style: React.CSSProperties | undefined =
     layers < 2
       ? void 0
@@ -45,7 +45,7 @@ export const Span: React.FC<SpanProps> = (props) => {
         };
 
   return (
-    <span className={blockClass} style={style} title={(stack[0].slice.data() as {title?: string})?.title}>
+    <span className={blockClass} style={style} title={(attr[0].slice.data() as {title?: string})?.title}>
       {children}
     </span>
   );

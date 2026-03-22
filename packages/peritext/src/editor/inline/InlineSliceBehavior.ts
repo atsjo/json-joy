@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
+import {InlineAttrStack, SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
@@ -43,7 +43,7 @@ export abstract class InlineSliceBehavior<
   /**
    * View of this formatting, inline in the main content.
    */
-  Span?: React.FC<RenderInlineProps> = void 0;
+  render?: (children: React.ReactNode, attr: InlineAttrStack, props: RenderInlineProps) => React.ReactNode;
 
   /**
    * Render a small card-sized view, which can be placed in a popup, to

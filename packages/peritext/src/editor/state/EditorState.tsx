@@ -1,17 +1,17 @@
-import {Value} from 'json-joy/lib/util/events/sync-store';
+import * as sync from 'thingies/lib/sync';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {NewFmt} from './formattings/NewFmt';
-import {inlines} from '../inline/tags';
+import {inlines as defaultSpans} from '../inline/tags';
 import {FmtManagePaneState} from '../inline/FmtManagePane/state';
 import {Menu} from './menus/Menu';
-import * as sync from 'thingies/lib/sync';
+import type {InlineSliceBehavior} from '../inline/InlineSliceBehavior';
 import type {Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {MenuItem} from '../types';
-import type {EditorPluginOpts} from '../EditorPlugin';
+import type {EditorPluginOpts} from '../plugin';
 import type {PeritextCursorEvent, PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
@@ -19,7 +19,7 @@ export class EditorState implements UiLifeCycles {
   public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
-  public readonly showInlineToolbar = new Value<[show: boolean, time: number]>([false, 0]);
+  public readonly showInlineToolbar = sync.val<[show: boolean, time: number]>([false, 0]);
 
   public readonly menu = new Menu(this);
 
@@ -27,9 +27,9 @@ export class EditorState implements UiLifeCycles {
    * New slice configuration. This is used for new slices which are not yet
    * applied to the text as they need to be configured first.
    */
-  public readonly newSlice = new Value<NewFmt | undefined>(void 0);
+  public readonly newSlice = sync.val<NewFmt | undefined>(void 0);
 
-  public readonly activeSlice = new Value<undefined>(void 0);
+  public readonly activeSlice = sync.val<undefined>(void 0);
 
   /**
    * The ID of the active (where the main cursor or focus is placed) leaf block.
@@ -41,12 +41,22 @@ export class EditorState implements UiLifeCycles {
 
   public readonly et: PeritextEventTarget;
 
+  public readonly spanOrder: Record<string | number, number> = {};
+  public readonly spanMap: Record<string | number, InlineSliceBehavior> = {};
+  
   constructor(
     public readonly surface: PeritextSurfaceState,
     public readonly opts: EditorPluginOpts,
+    public readonly spans: InlineSliceBehavior[] = defaultSpans as InlineSliceBehavior[]
   ) {
     this.txt = this.surface.dom.txt;
     this.et = surface.headless.et;
+    const length = spans.length;
+    for (let i = 0; i < length; i++) {
+      const tag = spans[i].tag;
+      this.spanOrder[tag] = i;
+      this.spanMap[tag] = spans[i];
+    }
   }
 
   private _setActiveLeafBlockId = () => {
@@ -97,6 +107,7 @@ export class EditorState implements UiLifeCycles {
   //   return true;
   // }
 
+  /** Open popup to start configuring a new slice. */
   public startSliceConfig(tag: SliceTypeName | string | number, menu?: MenuItem): NewFmt | undefined {
     const editor = this.txt.editor;
     const behavior = editor.getRegistry().get(tag);
@@ -117,7 +128,7 @@ export class EditorState implements UiLifeCycles {
   //   const entry = registry.get(tag);
   // }
 
-  /** ------------------------------------------- {@link UiLifeCycles} */
+  /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
     const {surface, showInlineToolbar, newSlice: newSliceConfig} = this;
@@ -127,7 +138,7 @@ export class EditorState implements UiLifeCycles {
     const el = dom.facade.el;
 
     const registry = this.txt.editor.getRegistry();
-    for (const behavior of inlines) {
+    for (const behavior of defaultSpans) {
       registry.add(behavior);
     }
     // Object.assign(registry.get(SliceTypeName.a)?.data() || {}, behavior.a);

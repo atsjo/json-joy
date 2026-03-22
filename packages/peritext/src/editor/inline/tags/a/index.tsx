@@ -5,6 +5,7 @@ import {
   SliceTypeCon,
   type PeritextMlElement,
   type FromHtmlBehavior,
+  type InlineAttrStack,
 } from 'json-joy/lib/json-crdt-extensions';
 import {InlineSliceBehavior} from '../../InlineSliceBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
@@ -13,8 +14,10 @@ import {View} from './components/View';
 import {Edit} from './components/Edit';
 import {getDomain} from '../../../util/url';
 import {Favicon} from '../../../components/Favicon';
+import {Span} from './components/Span';
 import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
 import type {Fmt} from '../../../state/formattings';
+import type {RenderInlineProps} from '../../RenderInline';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'link'});
 
@@ -81,6 +84,13 @@ export const behavior = new (class ABehavior extends InlineSliceBehavior<
     return href ? <Favicon url={data.href ?? ''} /> : null;
   };
 
+  public readonly render = (children: React.ReactNode, attr: InlineAttrStack, props: RenderInlineProps) => {
+    return (
+      <Span attr={attr}>
+        {children}
+      </Span>
+    );
+  };
   public readonly Edit = Edit;
   public readonly View = View;
 })();
