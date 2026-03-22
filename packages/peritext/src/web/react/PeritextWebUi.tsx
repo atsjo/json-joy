@@ -123,7 +123,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   );
 
   // Run the plugins to decorate our content body.
-  for (const plugin of state.plugins) children = plugin.peritext?.(children, state) ?? children;
+  for (const plugin of state.plugins) children = plugin.doc?.(children, state) ?? children;
 
   // Return the final result.
   return children;

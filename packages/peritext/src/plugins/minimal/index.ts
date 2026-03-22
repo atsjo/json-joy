@@ -17,5 +17,5 @@ export const defaultPlugin: PeritextPlugin = {
   anchor: (props) => h(RenderAnchor, props as any),
   inline: (props, children) => h(RenderInline, props as any, children),
   block: (props, children) => h(RenderBlock, props as any, children),
-  peritext: (children, ctx) => h(RenderPeritext, {children, ctx}),
+  doc: (children, ctx) => h(RenderPeritext, {children, ctx}),
 };

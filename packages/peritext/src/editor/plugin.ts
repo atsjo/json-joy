@@ -20,7 +20,7 @@ export class EditorPlugin implements PeritextPlugin {
   public readonly text: PeritextPlugin['text'] = text;
   public readonly inline: PeritextPlugin['inline'] = (props, children) => h(RenderInline, props as any, children);
   public readonly block: PeritextPlugin['block'] = (props, children) => h(RenderBlock, props as any, children);
-  public readonly peritext: PeritextPlugin['peritext'] = (children, surface) =>
+  public readonly doc: PeritextPlugin['doc'] = (children, surface) =>
     h(RenderDoc, {children, surface, opts: this.opts} satisfies RenderDocProps);
   public readonly caret: PeritextPlugin['caret'] = (props, children) => h(RenderCaret, <any>props, children);
   public readonly focus: PeritextPlugin['focus'] = (props, children) => h(RenderFocus, <any>props, children);

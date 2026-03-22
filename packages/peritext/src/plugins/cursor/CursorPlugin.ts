@@ -53,6 +53,6 @@ export class CursorPlugin implements PeritextPlugin {
   public readonly focus: PeritextPlugin['focus'] = (props, children) => h(RenderFocus, props as any, children);
   public readonly anchor: PeritextPlugin['anchor'] = (props, children) => h(RenderAnchor, props as any, children);
   public readonly inline: PeritextPlugin['inline'] = (props, children) => h(RenderInline, props as any, children);
-  public readonly peritext: PeritextPlugin['peritext'] = (children, ctx) =>
+  public readonly doc: PeritextPlugin['doc'] = (children, ctx) =>
     h(RenderPeritext, {children, ctx, opts: this.opts});
 }
