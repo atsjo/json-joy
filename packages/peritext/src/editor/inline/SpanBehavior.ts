@@ -10,6 +10,7 @@ import type {RenderInlineProps} from './RenderInline';
  * 
  * @todo Add text() plugin behavior override.
  * @todo Add context menu registration system.
+ * @tood Add opt-in for tracking in "recently used formattings".
  */
 export class SpanBehavior<
   Stacking extends SliceStacking = SliceStacking,

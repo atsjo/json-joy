@@ -34,8 +34,6 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
     }
   }
 
-  if (attrs[SliceTypeCon.sup]) element = <sup>{element}</sup>;
-  if (attrs[SliceTypeCon.sub]) element = <sub>{element}</sub>;
   if (attrs[SliceTypeCon.ins]) element = <Ins>{element}</Ins>;
   if (attrs[SliceTypeCon.del]) element = <Del>{element}</Del>;
 
