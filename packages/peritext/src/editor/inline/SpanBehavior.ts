@@ -9,10 +9,6 @@ import type {SpanProps} from '../../web/react/types';
 
 /**
  * Inline slice behavior.
- * 
- * @todo Add text() plugin behavior override.
- * @todo Add context menu registration system.
- * @tood Add opt-in for tracking in "recently used formattings".
  */
 export class SpanBehavior<
   Stacking extends SliceStacking = SliceStacking,

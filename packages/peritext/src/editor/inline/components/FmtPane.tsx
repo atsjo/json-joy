@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {ContextPane, type ContextPaneProps} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextPane';
 
-export interface FormattingPaneProps extends ContextPaneProps {
+export interface FmtPaneProps extends ContextPaneProps {
   onEsc?: () => void;
   children?: React.ReactNode;
 }
 
-export const FormattingPane: React.FC<FormattingPaneProps> = ({onEsc, children, ...rest}) => {
+export const FmtPane: React.FC<FmtPaneProps> = ({onEsc, children, ...rest}) => {
   return (
     <div
       onKeyDown={

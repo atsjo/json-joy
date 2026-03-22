@@ -2,7 +2,7 @@ import * as React from 'react';
 import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useEditor} from '../../state/context';
 import {CaretFrame} from '../util/CaretFrame';
-import {FormattingsNewPane} from '../../inline/FormattingsNewPane';
+import {FmtNewPane} from '../../inline/components/FmtNewPane';
 import {BottomPanePortal} from '../util/BottomPanePortal';
 import {TopPanePortal} from '../util/TopPanePortal';
 import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
@@ -45,7 +45,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   if (!!formatting && showInlineToolbarValue && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
     under = (
       <BottomPanePortal>
-        <FormattingsNewPane formatting={formatting} onSave={() => formatting.save()} />
+        <FmtNewPane formatting={formatting} onSave={() => formatting.save()} />
       </BottomPanePortal>
     );
   }

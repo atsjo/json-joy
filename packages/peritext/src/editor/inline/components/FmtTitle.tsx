@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {rule} from 'nano-theme';
-import {useEditor} from '../state';
-import type {Fmt} from '../state/formattings';
+import {useEditor} from '../../state';
+import type {Fmt} from '../../state/formattings';
 
 const blockClass = rule({
   d: 'flex',
@@ -32,12 +32,12 @@ const iconClass = rule({
   },
 });
 
-export interface FormattingTitleProps {
+export interface FmtTitleProps {
   formatting: Fmt;
   onClick?: React.MouseEventHandler;
 }
 
-export const FormattingTitle: React.FC<FormattingTitleProps> = ({formatting, onClick}) => {
+export const FmtTitle: React.FC<FmtTitleProps> = ({formatting, onClick}) => {
   const state = useEditor();
   const behavior = formatting.behavior;
   const menu = behavior.getMenu(state);

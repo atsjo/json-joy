@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {FormattingEdit} from '../views/edit/FormattingEdit';
-import {useSyncStoreOpt} from '../../../web/react/hooks';
-import type {SavedFmt} from '../../state/formattings';
+import {FormattingEdit} from '../../views/edit/FormattingEdit';
+import {useSyncStoreOpt} from '../../../../web/react/hooks';
+import type {SavedFmt} from '../../../state/formattings';
 
 const blockClass = rule({
   maxW: '600px',

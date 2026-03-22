@@ -5,19 +5,19 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {FormattingTitle} from '../FormattingTitle';
-import {FormattingView} from '../views/view/FormattingView';
-import {useEditor} from '../../state/context';
-import {FormattingPane} from '../FormattingPane';
+import {FmtTitle} from '../FmtTitle';
+import {FormattingView} from '../../views/view/FormattingView';
+import {useEditor} from '../../../state/context';
+import {FmtPane} from '../FmtPane';
 import {ContextMenu, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {FormattingEditForm} from './FormattingEditForm';
 import {useFormattingPane} from './context';
-import {ContextPaneHeader} from '../../components/ContextPaneHeader';
-import {ContextPaneHeaderSep} from '../../components/ContextPaneHeaderSep';
+import {ContextPaneHeader} from '../../../components/ContextPaneHeader';
+import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
-import type {SavedFmt} from '../../state/formattings';
+import type {SavedFmt} from '../../../state/formattings';
 
 const PencilIcon = makeIcon({set: 'lucide', icon: 'pencil'});
 const TrashIcon = makeIcon({set: 'lucide', icon: 'trash'});
@@ -88,9 +88,9 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
   );
 
   return (
-    <FormattingPane onEsc={() => onClose?.()}>
+    <FmtPane onEsc={() => onClose?.()}>
       <ContextPaneHeader short onBackClick={onClose} right={right}>
-        <FormattingTitle
+        <FmtTitle
           formatting={formatting}
           onClick={() => {
             if (state.view.value === 'view') state.switchToEditPanel();
@@ -110,6 +110,6 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       ) : (
         <FormattingEditForm formatting={formatting} onSave={onClose || (() => {})} />
       )}
-    </FormattingPane>
+    </FmtPane>
   );
 };

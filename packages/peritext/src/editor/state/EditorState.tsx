@@ -3,7 +3,7 @@ import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {NewFmt} from './formattings/NewFmt';
 import {spans as defaultSpans} from '../inline/spans';
-import {FmtManagePaneState} from '../inline/FmtManagePane/state';
+import {FmtManagePaneState} from '../inline/components/FmtManagePane/state';
 import {Menu} from './menus/Menu';
 import type {SpanBehavior} from '../inline/SpanBehavior';
 import type {Key} from '@jsonjoy.com/keyboard';

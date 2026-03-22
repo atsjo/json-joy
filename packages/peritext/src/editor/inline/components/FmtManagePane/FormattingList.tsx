@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {SYMBOL} from 'nano-theme';
-import {FormattingIcon} from '../views/icon/FormattingIcon';
-import {useEditor} from '../../state';
-import type {SavedFmt} from '../../state/formattings';
+import {FormattingIcon} from '../../views/icon/FormattingIcon';
+import {useEditor} from '../../../state';
+import type {SavedFmt} from '../../../state/formattings';
 
 export interface FormattingListProps {
   formattings: SavedFmt[];

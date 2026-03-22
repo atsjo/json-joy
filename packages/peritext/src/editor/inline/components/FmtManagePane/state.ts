@@ -1,11 +1,11 @@
-import {SavedFmt} from '../../state/formattings';
-import {SynthFmt} from '../../state/formattings/SynthFmt';
+import {SavedFmt} from '../../../state/formattings';
+import {SynthFmt} from '../../../state/formattings/SynthFmt';
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
 import {JsonCrdtDiff} from 'json-joy/lib/json-crdt-diff/JsonCrdtDiff';
 import * as str from 'json-joy/lib/util/diff/str';
 import * as sync from 'thingies/lib/sync';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
-import type {EditorState} from '../../state';
+import type {EditorState} from '../../../state';
 import type {KeyContext, Key} from '@jsonjoy.com/keyboard';
 
 export class FmtManagePaneState {
