@@ -344,7 +344,9 @@ export class RangeMenu {
   }
 
   public formattingMenu(): MenuItem {
-    const et = this.state.et;
+    const state = this.state;
+    const {et, spans} = state;
+    const spanLength = spans.length;
     const track = (item: MenuItem): MenuItem => {
       const orig = item.onSelect;
       return orig
@@ -357,7 +359,23 @@ export class RangeMenu {
           }
         : item;
     };
-    return {
+    const technicalId = 'fmt-technical';
+    const technicalChildren: MenuItem[] = [];
+    const technical: MenuItem = {
+      id: technicalId,
+      name: 'Technical',
+      sepBefore: true,
+      expand: 8,
+      children: technicalChildren,
+    };
+    for (let i = 0; i < spanLength; i++) {
+      const span = spans[i];
+      if (span.menuId === technicalId) {
+        const item = typeof span.menu === 'function' ? span.menu(state) : span.menu;
+        if (item) technicalChildren.push(track(item));
+      }
+    }
+    const formatting: MenuItem = {
       name: 'Formatting',
       expandChild: 0,
       preview: this.recent,
@@ -399,83 +417,27 @@ export class RangeMenu {
             }),
           ],
         },
-        {
-          name: 'Technical separator',
-          sep: true,
-        },
-        {
-          name: 'Technical',
-          expand: 8,
-          children: [
-            this.inlineCode,
-            track({
-              name: 'Math',
-              icon: () => <MathIntegralXIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format({
-                  action: 'tog',
-                  type: CommonSliceType.math,
-                  stack: 'atomic',
-                  padded: true,
-                });
-              },
-            }),
-            track({
-              name: 'Superscript',
-              icon: () => <SuperscriptIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.sup);
-              },
-            }),
-            track({
-              name: 'Subscript',
-              icon: () => <SubscriptIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.sub);
-              },
-            }),
-            track({
-              name: 'Keyboard key',
-              icon: () => <KeyboardIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.kbd);
-              },
-            }),
-            track({
-              name: 'Insertion',
-              icon: () => <PencilPlusIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.ins);
-              },
-            }),
-            track({
-              name: 'Deletion',
-              icon: () => <PencilMinusIcon width={16} height={16} />,
-              onSelect: () => {
-                et.format('tog', CommonSliceType.del);
-              },
-            }),
-          ],
-        },
-        {
-          name: 'Artistic separator',
-          sep: true,
-        },
-        {
-          name: 'Artistic',
-          expand: 8,
-          children: [
-            track(this.colorMenuItem()),
-            track(this.bgMenuItem()),
-            // {
-            //   name: 'Border',
-            //   icon: () => <BorderLeftIcon width={16} height={16} />,
-            //   onSelect: () => {},
-            // },
-          ],
-        },
-      ],
+      ] as MenuItem[],
     };
+    if (technicalChildren.length) {
+      technicalChildren.sort((a, b) => (a.order || 0) - (b.order || 0));
+      formatting.children!.push(technical);
+    }
+    formatting.children!.push({
+      name: 'Artistic',
+      expand: 8,
+      sepBefore: true,
+      children: [
+        track(this.colorMenuItem()),
+        track(this.bgMenuItem()),
+        // {
+        //   name: 'Border',
+        //   icon: () => <BorderLeftIcon width={16} height={16} />,
+        //   onSelect: () => {},
+        // },
+      ],
+    } as MenuItem);
+    return formatting;
   }
 
   public readonly colorMenuItem = (): MenuItem => {

@@ -11,6 +11,9 @@ export interface MenuItem {
   /** Whether to add a separator before this item. */
   sepBefore?: boolean;
 
+  /** Order of the item within its parent. */
+  order?: number;
+
   /** Extra small description or UI element, displayed next to the name. */
   note?: () => React.ReactNode;
 

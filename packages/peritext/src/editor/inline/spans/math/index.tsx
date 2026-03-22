@@ -15,6 +15,7 @@ import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {InlineAttrStack, Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {RenderInlineProps} from '../../RenderInline';
+import type {EditorState} from '../../../state';
 
 export const Icon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
 
@@ -43,18 +44,20 @@ export const behavior = new (class MathBehavior extends SpanBehavior<
     super(SliceStacking.Atomic, SliceTypeCon.math, 'Math', schema, false, void 0, fromHtml);
   }
 
-  public readonly menu = {
+  public readonly menuId = 'fmt-technical';
+  public readonly menu = (state: EditorState) => ({
     name: 'Math',
+    order: 2,
     icon: () => <Icon width={16} height={16} />,
     onSelect: () => {
-      // et.format({
-      //   action: 'tog',
-      //   type: CommonSliceType.math,
-      //   stack: 'atomic',
-      //   padded: true,
-      // });
+      state.et.format({
+        action: 'tog',
+        type: SliceTypeCon.math,
+        stack: 'atomic',
+        padded: true,
+      });
     },
-  };
+  });
 
   public readonly validate = (formatting: Fmt<any, any>): ValidationResult => {
     const tex = (formatting.range as unknown as Slice<string>).text?.() ?? '';

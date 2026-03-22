@@ -4,6 +4,7 @@ import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
 import type {RenderInlineProps} from './RenderInline';
+import type {EditorState} from '../state';
 
 /**
  * Inline slice behavior.
@@ -21,7 +22,12 @@ export class SpanBehavior<
    * Defines how this formatting should be displayed in the toolbar and context
    * menus.
    */
-  menu?: MenuItem = void 0;
+  menu?: MenuItem | ((state: EditorState) => MenuItem) = void 0;
+
+  /**
+   * Menu group which this formatting belongs to.
+   */
+  menuId?: string = void 0;
 
   /**
    * @param formatting The formatting slice.

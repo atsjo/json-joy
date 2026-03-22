@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {Spoiler} from './Spoiler';
-import {Kbd} from './Kbd';
-import {SliceStacking, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
+import {SliceStacking} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {useEditor} from '../state';
 import type {InlineViewProps} from '../../web/react/InlineView';
 

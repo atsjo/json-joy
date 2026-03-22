@@ -4,20 +4,22 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Code} from './Code';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import type {EditorState} from '../../../state';
 
 export const name = 'Code';
 export const Icon = makeIcon({set: 'tabler', icon: 'code'});
 export const behavior = spanOne(SliceTypeCon.code, name, {
-  menu: {
+  menuId: 'fmt-technical',
+  menu: (state: EditorState) => ({
     name,
+    order: 1,
     icon: () => <Icon width={16} height={16} />,
     right: () => <Sidetip small>⌘ E</Sidetip>,
     keys: ['⌘', 'e'],
     onSelect: () => {
-      // this.trackRecent(this.inlineCode);
-      // this.et().format('tog', CommonSliceType.code);
+      state.et.format('tog', SliceTypeCon.code);
     },
-  },
+  }),
   render: (children: React.ReactNode, attr: InlineAttrStack) =>
     <Code attr={attr[attr.length - 1]}>{children}</Code>,
 });
