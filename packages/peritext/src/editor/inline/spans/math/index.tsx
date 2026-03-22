@@ -46,6 +46,14 @@ export const behavior = new (class MathBehavior extends SpanBehavior<
   public readonly menu = {
     name: 'Math',
     icon: () => <Icon width={16} height={16} />,
+    onSelect: () => {
+      // et.format({
+      //   action: 'tog',
+      //   type: CommonSliceType.math,
+      //   stack: 'atomic',
+      //   padded: true,
+      // });
+    },
   };
 
   public readonly validate = (formatting: Fmt<any, any>): ValidationResult => {

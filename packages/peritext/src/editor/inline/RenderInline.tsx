@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {Spoiler} from './Spoiler';
-import {Code} from './Code';
 import {Kbd} from './Kbd';
 import {SliceStacking, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {useEditor} from '../state';
@@ -30,23 +29,6 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
       element = render(element, attr, props);
       if (behavior.stacking === SliceStacking.Atomic) break;
     }
-  }
-
-  let layers = attrs[SliceTypeCon.code];
-  if (layers) {
-    const attr = layers[layers.length - 1];
-    if (attr) element = <Code attr={attr}>{element}</Code>;
-  }
-
-  layers = attrs[SliceTypeCon.kbd];
-  if (layers) {
-    const attr = layers[layers.length - 1];
-    if (attr) element = <Kbd attr={attr}>{element}</Kbd>;
-  }
-  layers = attrs[SliceTypeCon.spoiler];
-  if (layers) {
-    const attr = layers[layers.length - 1];
-    if (attr) element = <Spoiler attr={attr}>{element}</Spoiler>;
   }
   return element;
 };

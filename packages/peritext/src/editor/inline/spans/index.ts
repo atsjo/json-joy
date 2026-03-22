@@ -7,6 +7,9 @@ import {behavior as ins} from './ins';
 import {behavior as del} from './del';
 import {behavior as col} from './col';
 import {behavior as bg} from './bg';
+import {behavior as code} from './code';
+import {behavior as kbd} from './kbd';
+import {behavior as spoiler} from './spoiler';
 
 export const spans = [
   // Atomic
@@ -23,4 +26,7 @@ export const spans = [
   del,
   col,
   bg,
+  code,
+  kbd,
+  spoiler,
 ];
