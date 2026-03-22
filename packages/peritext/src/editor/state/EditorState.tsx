@@ -108,7 +108,7 @@ export class EditorState implements UiLifeCycles {
   // }
 
   /** Open popup to start configuring a new slice. */
-  public startSliceConfig(tag: SliceTypeName | string | number, menu?: MenuItem): NewFmt | undefined {
+  public startSliceConfig(tag: SliceTypeName | string | number): NewFmt | undefined {
     const editor = this.txt.editor;
     const behavior = this.spanMap[tag];
     if (!behavior) return;
@@ -200,7 +200,7 @@ export class EditorState implements UiLifeCycles {
             ) {
               event.stopPropagation();
               event.preventDefault;
-              this.startSliceConfig(SliceTypeName.a, this.menu.range.linkMenuItem());
+              this.startSliceConfig(SliceTypeName.a);
               return;
             }
           }

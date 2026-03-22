@@ -30,6 +30,8 @@ export class SpanBehavior<
    */
   menuId?: string = void 0;
 
+  // icon?: (size: number) => React.ReactNode = void 0;
+
   /**
    * @param formatting The formatting slice.
    * @returns Validation result. If the formatting is valid, return 'good'
@@ -76,6 +78,12 @@ export class SpanBehavior<
    * formatting.
    */
   Edit?: React.FC<EditProps> = void 0;
+
+  public getMenu(state: EditorState): MenuItem | undefined {
+    const menu = this.menu;
+    if (!menu) return;
+    return typeof menu === 'function' ? menu(state) : menu;
+  }
 }
 
 export interface IconProps {

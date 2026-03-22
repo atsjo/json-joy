@@ -1,8 +1,9 @@
 import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {SYMBOL} from 'nano-theme';
-import type {SavedFmt} from '../../state/formattings';
 import {FormattingIcon} from '../views/icon/FormattingIcon';
+import {useEditor} from '../../state';
+import type {SavedFmt} from '../../state/formattings';
 
 export interface FormattingListProps {
   formattings: SavedFmt[];
@@ -10,6 +11,8 @@ export interface FormattingListProps {
 }
 
 export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSelect}) => {
+  const state = useEditor();
+  
   if (!formattings.length) return;
 
   return (
@@ -17,7 +20,7 @@ export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSe
       <ContextSep />
       {formattings.map((formatting) => {
         const {behavior} = formatting;
-        const menu = behavior.menu;
+        const menu = behavior.getMenu(state);
         const previewText = behavior.previewText?.(formatting) || '';
         const previewTextFormatted =
           previewText.length < 20 ? previewText : `${previewText.slice(0, 20)}${SYMBOL.ELLIPSIS}`;
