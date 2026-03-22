@@ -1,11 +1,10 @@
 import * as React from 'react';
 import {Spoiler} from './Spoiler';
 import {Code} from './Code';
-import {Span as InlineMath} from './spans/math/components/Span';
 import {Kbd} from './Kbd';
 import {Ins} from './Ins';
 import {Del} from './Del';
-import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
+import {SliceStacking, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {useEditor} from '../state';
 import type {InlineViewProps} from '../../web/react/InlineView';
 
@@ -29,7 +28,10 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
     const attr = attrs[behavior.tag];
     if (!attr) continue;
     const render = behavior.render;
-    if (render) element = render(element, attr, props);
+    if (render) {
+      element = render(element, attr, props);
+      if (behavior.stacking === SliceStacking.Atomic) break;
+    }
   }
 
   if (attrs[SliceTypeCon.mark]) element = <mark>{element}</mark>;
@@ -44,18 +46,6 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   if (layers) {
     const attr = layers[layers.length - 1];
     if (attr) element = <Code attr={attr}>{element}</Code>;
-  }
-
-  // TODO: Make atomic slice annotations exclusive.
-  layers = attrs[SliceTypeCon.math];
-  if (layers) {
-    const attr = layers[layers.length - 1];
-    if (attr)
-      element = (
-        <InlineMath inline={inline} attr={attr}>
-          {element}
-        </InlineMath>
-      );
   }
 
   layers = attrs[SliceTypeCon.kbd];

@@ -56,7 +56,6 @@ export const behavior = new (class ABehavior extends SpanBehavior<
   public readonly menu = {
     name: 'Link',
     icon: () => <Icon width={15} height={15} />,
-    // icon: () => <LinkRadixIcon width={15} height={15} />,
     right: () => <Sidetip small>⌘ K</Sidetip>,
     keys: ['⌘', 'k'],
   };

@@ -6,14 +6,15 @@ import {
   type FromHtmlBehavior,
   type PeritextMlElement,
 } from 'json-joy/lib/json-crdt-extensions';
-import {convertLatexToMarkup} from 'mathlive';
 import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
+import {Span} from './components/Span';
 import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
-import type {Slice} from 'json-joy/lib/json-crdt-extensions';
+import type {InlineAttrStack, Slice} from 'json-joy/lib/json-crdt-extensions';
+import type {RenderInlineProps} from '../../RenderInline';
 
 export const Icon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
 
@@ -26,7 +27,7 @@ export const schema = s.obj(
 
 export type Data = JsonNodeView<SchemaToJsonNode<typeof schema>>;
 
-const fromHtml: FromHtmlBehavior<SliceStacking.One, SliceTypeCon.math, typeof schema> = {
+const fromHtml: FromHtmlBehavior<SliceStacking.Atomic, SliceTypeCon.math, typeof schema> = {
   math: (jsonml) => {
     return [SliceTypeCon.math, {inline: true}] as PeritextMlElement<SliceTypeCon.math, Data, true>;
   },
@@ -34,12 +35,12 @@ const fromHtml: FromHtmlBehavior<SliceStacking.One, SliceTypeCon.math, typeof sc
 
 /** Inline math mark. The marked text content is the LaTeX formula source. */
 export const behavior = new (class MathBehavior extends SpanBehavior<
-  SliceStacking.One,
+  SliceStacking.Atomic,
   SliceTypeCon.math,
   typeof schema
 > {
   constructor() {
-    super(SliceStacking.One, SliceTypeCon.math, 'Math', schema, false, void 0, fromHtml);
+    super(SliceStacking.Atomic, SliceTypeCon.math, 'Math', schema, false, void 0, fromHtml);
   }
 
   public readonly menu = {
@@ -58,22 +59,11 @@ export const behavior = new (class MathBehavior extends SpanBehavior<
     return tex.length > 32 ? tex.slice(0, 32) + '…' : tex;
   };
 
-  public readonly renderIcon = ({formatting}: IconProps) => {
-    const tex = (formatting.range as unknown as Slice<string>).text?.() ?? '';
-    if (!tex) return <Icon width={16} height={16} />;
-    try {
-      const html = convertLatexToMarkup(tex);
-      return (
-        <span
-          style={{fontSize: '10px', lineHeight: 1, display: 'inline-flex', alignItems: 'center'}}
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: mathlive produces safe sanitized HTML
-          dangerouslySetInnerHTML={{__html: html}}
-        />
-      );
-    } catch {
-      return <Icon width={16} height={16} />;
-    }
-  };
+  public readonly render = (children: React.ReactNode, attr: InlineAttrStack, props: RenderInlineProps) => (
+    <Span inline={props.inline} attr={attr[attr.length - 1]}>
+      {children}
+    </Span>
+  );
 
   public readonly View = View;
   public readonly Edit = Edit;
