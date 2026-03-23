@@ -18,6 +18,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   release:
@@ -33,6 +34,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24.x
+          registry-url: https://registry.npmjs.org
 
       - name: Enable corepack
         run: corepack enable
@@ -117,6 +119,8 @@ jobs:
 
       - name: Publish to NPM with provenance
         if: steps.version-bump.outputs.bump != 'no-bump'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           for pkg in packages/*/; do
             if [ -f "$pkg/package.json" ] && [ "$(jq -r '.private // false' "$pkg/package.json")" != "true" ]; then
