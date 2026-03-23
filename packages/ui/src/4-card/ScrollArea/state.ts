@@ -1,3 +1,4 @@
+import * as React from 'react';
 import * as sync from 'thingies/lib/sync';
 import {DEFAULT_RAIL_WIDTH, DEFAULT_MIN_THUMB_SIZE, DEFAULT_HIDE_DELAY} from './constants';
 import type {ScrollStateOpts} from './types';
@@ -161,38 +162,49 @@ export class ScrollState implements UiLifeCycles {
     this._resetHideTimer();
   }
 
-  public onRailPointerDown(clientY: number): void {
+  public readonly onScrollbarPointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (e.button !== 0) return;
+    if (e.target !== e.currentTarget) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
     const rail = this.railEl;
     if (!rail) return;
     const railRect = rail.getBoundingClientRect();
-    const ratio = (clientY - railRect.top) / railRect.height;
+    const ratio = (e.clientY - railRect.top) / railRect.height;
     this.scrollToRatio(Math.max(0, Math.min(1, ratio)));
     this._railDragging = true;
     this._prevWebkitUserSelect = document.body.style.webkitUserSelect;
     document.body.style.webkitUserSelect = 'none';
     if (this.viewportEl) this.viewportEl.style.scrollBehavior = 'auto';
-  }
+  };
 
-  public onRailPointerMove(clientY: number): void {
+  public readonly onScrollbarPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (!this._railDragging) return;
     const rail = this.railEl;
     if (!rail) return;
     const railRect = rail.getBoundingClientRect();
-    const ratio = (clientY - railRect.top) / railRect.height;
+    const ratio = (e.clientY - railRect.top) / railRect.height;
     this.scrollToRatio(Math.max(0, Math.min(1, ratio)));
-  }
+  };
 
-  public onRailPointerUp(): void {
+  public readonly onScrollbarPointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
     if (!this._railDragging) return;
     this._railDragging = false;
     document.body.style.webkitUserSelect = this._prevWebkitUserSelect;
     if (this.viewportEl) this.viewportEl.style.scrollBehavior = '';
     this._resetHideTimer();
-  }
+  };
 
-  public onRailWheel(deltaY: number): void {
-    this.scrollBy(deltaY);
-  }
+  public readonly onScrollbarWheel = (e: React.WheelEvent<HTMLDivElement>): void => {
+    this.scrollBy(e.deltaY);
+    e.preventDefault();
+  };
+
+  public readonly onScrollbarPointerEnter = (): void => {
+    this.showScrollbar();
+  };
 
   public start(): () => void {
     const el = this.viewportEl;

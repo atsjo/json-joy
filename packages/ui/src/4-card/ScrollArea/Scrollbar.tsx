@@ -22,59 +22,12 @@ export const Scrollbar: React.FC<ScrollAreaScrollbarProps> = ({children, classNa
   const canScroll = useSyncStore(state.canScroll$);
   const isVisible = alwaysVisible || visible;
 
-  const ref = React.useCallback(
-    (el: HTMLDivElement | null) => {
-      state.setRail(el);
-    },
-    [state],
-  );
-
-  const handlePointerDown = React.useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      // Only respond to primary button clicks on the rail itself (not children).
-      if (e.button !== 0) return;
-      if (e.target !== e.currentTarget) return;
-      e.currentTarget.setPointerCapture(e.pointerId);
-      state.onRailPointerDown(e.clientY);
-    },
-    [state],
-  );
-
-  const handlePointerMove = React.useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      state.onRailPointerMove(e.clientY);
-    },
-    [state],
-  );
-
-  const handlePointerUp = React.useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      }
-      state.onRailPointerUp();
-    },
-    [state],
-  );
-
-  const handleWheel = React.useCallback(
-    (e: React.WheelEvent<HTMLDivElement>) => {
-      state.onRailWheel(e.deltaY);
-      e.preventDefault();
-    },
-    [state],
-  );
-
-  const handlePointerEnter = React.useCallback(() => {
-    state.showScrollbar();
-  }, [state]);
-
   if (!canScroll && !alwaysVisible) return null;
 
   return (
     <div
       {...rest}
-      ref={ref}
+      ref={state.setRail}
       className={scrollbarClass + (className ? ' ' + className : '')}
       data-state={isVisible ? 'visible' : 'hidden'}
       style={{
@@ -84,11 +37,11 @@ export const Scrollbar: React.FC<ScrollAreaScrollbarProps> = ({children, classNa
         background: theme.isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)',
         ...style,
       }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onWheel={handleWheel}
-      onPointerEnter={handlePointerEnter}
+      onPointerDown={state.onScrollbarPointerDown}
+      onPointerMove={state.onScrollbarPointerMove}
+      onPointerUp={state.onScrollbarPointerUp}
+      onWheel={state.onScrollbarWheel}
+      onPointerEnter={state.onScrollbarPointerEnter}
     >
       {children}
     </div>
