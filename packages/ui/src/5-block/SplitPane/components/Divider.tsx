@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import { DividerProps } from 'react-split-pane';
 import {cn} from '../utils/classNames';
-import type { CSSProperties } from 'react';
+import type {DividerProps} from '../types';
+import type {CSSProperties} from 'react';
 
 export const WIDTH = 10;
 const PADDING = 3;
@@ -53,7 +53,6 @@ export const Divider: React.FC<DividerProps> = (props: DividerProps) => {
     currentSize,
     minSize,
     maxSize,
-    children,
   } = props;
 
   const orientation = direction === 'horizontal' ? 'vertical' : 'horizontal';
@@ -99,8 +98,8 @@ export const Divider: React.FC<DividerProps> = (props: DividerProps) => {
 
   return (
     <div
-      className={combinedClassName}
       contentEditable={false}
+      className={combinedClassName}
       role="separator"
       aria-orientation={orientation}
       aria-label={label}

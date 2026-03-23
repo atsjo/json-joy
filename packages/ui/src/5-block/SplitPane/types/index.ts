@@ -59,7 +59,7 @@ export interface SplitPaneProps {
   children: ReactNode;
 }
 
-export interface PaneProps {
+export interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Initial size (uncontrolled mode) */
   defaultSize?: Size;
 
@@ -129,7 +129,4 @@ export interface DividerProps {
   currentSize?: number | undefined;
   minSize?: number | undefined;
   maxSize?: number | undefined;
-
-  /** Custom content */
-  children?: ReactNode | undefined;
 }

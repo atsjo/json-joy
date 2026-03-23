@@ -2692,7 +2692,6 @@ __metadata:
     "@uiw/react-color-saturation": "npm:^2.9.5"
     json-joy: "workspace:*"
     mathlive: "npm:^0.109.0"
-    react-split-pane: "npm:^3.2.0"
   peerDependencies:
     react: "*"
     tslib: "*"
@@ -12572,16 +12571,6 @@ __metadata:
     react: "*"
     react-dom: "*"
   checksum: 10c0/eccd8910b563739814820e2e329335b1fd8224a313daf7be54f8ff391c5cb952b6887d0948480968c447da72b41e8f3c8cac0a7df89cdfa5ebaa0d03f738b47a
-  languageName: node
-  linkType: hard
-
-"react-split-pane@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "react-split-pane@npm:3.2.0"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/f0eb0d488ca71a71919cc350d35a0c2db1c2232545e937efa45959f59119c5a966ac58ea0a6cb3ca212eee74bb326c41ed57a3d461d600cc38e3b01c287879ab
   languageName: node
   linkType: hard
 

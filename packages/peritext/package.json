@@ -48,8 +48,7 @@
     "@uiw/react-color-hue": "^2.9.5",
     "@uiw/react-color-saturation": "^2.9.5",
     "json-joy": "workspace:*",
-    "mathlive": "^0.109.0",
-    "react-split-pane": "^3.2.0"
+    "mathlive": "^0.109.0"
   },
   "peerDependencies": {
     "react": "*",
