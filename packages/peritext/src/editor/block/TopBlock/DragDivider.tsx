@@ -12,6 +12,10 @@ const blockClass = rule({
   ai: 'center',
   jc: 'center',
   bxz: 'border-box',
+  us: 'none',
+  '&:focus': {
+    out: 'none',
+  },
 });
 
 const handleClass = rule({
@@ -22,6 +26,11 @@ const handleClass = rule({
   bdrad: '2px',
   [`.${blockClass.trim()}:hover &`]: {
     bg: 'rgba(127,127,127,.1)',
+  },
+  [`.${blockClass.trim()}:focus &`]: {
+    w: (WIDTH - PADDING - PADDING - 2) + 'px',
+    h: 'calc(100% - 6px)',
+    bg: 'var(--caret-color)',
   },
   [`.${blockClass.trim()}:active &`]: {
     w: (WIDTH - PADDING - PADDING - 2) + 'px',
@@ -108,7 +117,7 @@ export function DragDivider(props: DividerProps) {
       onKeyDown={disabled ? undefined : onKeyDown}
       data-divider-index={index}
     >
-      <div className={handleClass} />
+      <div className={handleClass} contentEditable={false} />
     </div>
   );
 }
