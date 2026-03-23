@@ -43,6 +43,10 @@ export class EditorState implements UiLifeCycles {
   public readonly spanOrder: Record<string | number, number> = {};
   public readonly spanMap: Record<string | number, SpanBehavior> = {};
 
+  public readonly docSize: sync.Value<ResizeObserverEntry | null>;
+  public readonly docWidth: sync.Computed<number>;
+  public readonly docSizer: ResizeObserver;
+
   constructor(
     public readonly surface: PeritextSurfaceState,
     public readonly opts: EditorPluginOpts,
@@ -56,6 +60,15 @@ export class EditorState implements UiLifeCycles {
       this.spanOrder[tag] = i;
       this.spanMap[tag] = spans[i];
     }
+
+    const docSize = this.docSize = sync.val<ResizeObserverEntry | null>(null);
+    this.docWidth = sync.comp([docSize], ([entry]) => {
+      return entry?.contentRect?.width || 0;
+    });
+    this.docSizer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) docSize.next(entry);
+    });
   }
 
   private _setActiveLeafBlockId = () => {
@@ -260,6 +273,7 @@ export class EditorState implements UiLifeCycles {
     ]);
 
     return () => {
+      this.docSizer.disconnect();
       stopMenu();
       changeUnsubscribe();
       cursorUnsubscribe();

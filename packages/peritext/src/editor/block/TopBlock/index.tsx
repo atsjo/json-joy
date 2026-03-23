@@ -34,7 +34,6 @@ export const TopBlock: React.FC<TopBlockProps> = ({children}) => {
     const el = ref.current;
     if (!el) return;
     const divider = el.querySelector('.split-pane-divider') as HTMLDivElement | null;
-    console.log('divider', divider);
     if (divider) {
       divider.contentEditable = 'false';
     }
