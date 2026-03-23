@@ -1,0 +1,418 @@
+import * as React from 'react';
+import type { CSSProperties, ReactElement } from 'react';
+import {
+  Children,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import type { SplitPaneProps, PaneProps, ResizeEvent } from '../types';
+import { Pane } from './Pane';
+import { Divider, WIDTH as DIVIDER_WIDTH } from './Divider';
+import { useResizer } from '../hooks/useResizer';
+import { useKeyboardResize } from '../hooks/useKeyboardResize';
+import { convertToPixels, distributeSizes } from '../utils/calculations';
+import { cn } from '../utils/classNames';
+
+const DEFAULT_CLASSNAME = 'split-pane';
+const MIN_PANES = 2;
+
+/**
+ * A flexible split pane component that allows resizable pane layouts.
+ *
+ * Supports horizontal (side-by-side) and vertical (stacked) layouts with
+ * mouse, touch, and keyboard interactions. Fully accessible with ARIA attributes.
+ *
+ * @example
+ * ```tsx
+ * // Basic horizontal split
+ * <SplitPane direction="horizontal">
+ *   <Pane minSize="200px" defaultSize="300px">
+ *     <Sidebar />
+ *   </Pane>
+ *   <Pane>
+ *     <MainContent />
+ *   </Pane>
+ * </SplitPane>
+ *
+ * // Controlled mode with state
+ * const [sizes, setSizes] = useState([300, 500]);
+ * <SplitPane onResize={setSizes}>
+ *   <Pane size={sizes[0]}>Left</Pane>
+ *   <Pane size={sizes[1]}>Right</Pane>
+ * </SplitPane>
+ * ```
+ */
+export function SplitPane(props: SplitPaneProps) {
+  const {
+    direction = 'horizontal',
+    resizable = true,
+    snapPoints,
+    snapTolerance = 10,
+    step,
+    onResizeStart,
+    onResize,
+    onResizeEnd,
+    className,
+    style,
+    divider: CustomDivider,
+    dividerStyle,
+    dividerClassName,
+    dividerSize = DIVIDER_WIDTH,
+    children,
+  } = props;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState(0);
+  const prevContainerSizeRef = useRef(0);
+
+  // Extract pane configuration from children - memoized to avoid recreating on every render
+  const paneConfigs = useMemo(() => {
+    const paneElements = Children.toArray(children).filter(
+      (child): child is ReactElement<PaneProps> =>
+        typeof child === 'object' && child !== null && 'props' in child
+    );
+
+    return paneElements.map((pane) => ({
+      props: pane.props,
+      size: pane.props.size,
+      defaultSize: pane.props.defaultSize,
+      minSize: pane.props.minSize ?? 0,
+      maxSize: pane.props.maxSize ?? Infinity,
+    }));
+  }, [children]);
+
+  const paneCount = paneConfigs.length;
+  const warnedRef = useRef(false);
+
+  // Warn once if fewer than 2 panes
+  if (paneCount < MIN_PANES && !warnedRef.current) {
+    warnedRef.current = true;
+    console.warn(
+      `SplitPane requires at least ${MIN_PANES} Pane children. Received ${paneCount}.`
+    );
+  }
+
+  // Calculate min/max sizes from pane configs
+  const { minSizes, maxSizes } = useMemo(() => {
+    if (containerSize === 0) {
+      return {
+        minSizes: new Array(paneCount).fill(0),
+        maxSizes: new Array(paneCount).fill(Infinity),
+      };
+    }
+
+    const mins: number[] = [];
+    const maxs: number[] = [];
+
+    paneConfigs.forEach((config) => {
+      mins.push(convertToPixels(config.minSize, containerSize));
+      maxs.push(
+        config.maxSize === Infinity
+          ? Infinity
+          : convertToPixels(config.maxSize, containerSize)
+      );
+    });
+
+    return { minSizes: mins, maxSizes: maxs };
+  }, [containerSize, paneCount, paneConfigs]);
+
+  // Calculate initial sizes from pane configs
+  const calculateInitialSizes = useCallback(
+    (containerSz: number): number[] => {
+      if (containerSz === 0) {
+        return new Array(paneCount).fill(0);
+      }
+
+      // Account for divider widths when calculating available space
+      const totalDividerWidth = dividerSize * (paneCount - 1);
+      const availableSpace = containerSz - totalDividerWidth;
+
+      // First pass: calculate sizes for panes with explicit sizes
+      const sizes: (number | null)[] = paneConfigs.map((config) => {
+        const paneSize = config.size ?? config.defaultSize;
+        if (paneSize !== undefined) {
+          return convertToPixels(paneSize, availableSpace);
+        }
+        return null; // Mark as needing auto-size
+      });
+
+      // Calculate remaining space and distribute to auto-sized panes
+      const explicitTotal = sizes.reduce<number>(
+        (sum, size) => sum + (size ?? 0),
+        0
+      );
+      const autoSizedCount = sizes.filter((s) => s === null).length;
+      const remainingSpace = availableSpace - explicitTotal;
+      const autoSize = autoSizedCount > 0 ? remainingSpace / autoSizedCount : 0;
+
+      // Second pass: fill in auto-sized panes
+      return sizes.map((size) => (size === null ? autoSize : size));
+    },
+    [paneCount, paneConfigs, dividerSize]
+  );
+
+  const [paneSizes, setPaneSizes] = useState<number[]>(() =>
+    calculateInitialSizes(containerSize)
+  );
+
+  // Sync paneSizes with controlled size props when they change
+  // This handles the case where parent state is reset (e.g., clicking a "Reset" button)
+  useEffect(() => {
+    if (containerSize === 0) return;
+
+    // Check if any pane has a controlled size prop
+    const hasControlledSizes = paneConfigs.some(
+      (config) => config.size !== undefined
+    );
+    if (!hasControlledSizes) return;
+
+    // Calculate what sizes should be based on current props
+    const expectedSizes = calculateInitialSizes(containerSize);
+
+    // Only update if sizes actually differ (avoid unnecessary re-renders)
+    setPaneSizes((currentSizes) => {
+      const sizesMatch =
+        currentSizes.length === expectedSizes.length &&
+        currentSizes.every((size, i) => size === expectedSizes[i]);
+
+      return sizesMatch ? currentSizes : expectedSizes;
+    });
+  }, [containerSize, paneConfigs, calculateInitialSizes]);
+
+  // Handle container size changes
+  // For controlled panes: maintain fixed pixel sizes from props
+  // For uncontrolled panes: distribute proportionally
+  const handleContainerSizeChange = useCallback(
+    (newContainerSize: number) => {
+      const prevSize = prevContainerSizeRef.current;
+      prevContainerSizeRef.current = newContainerSize;
+
+      if (newContainerSize === 0) return;
+
+      // Check if any pane has a controlled size prop
+      const hasControlledSizes = paneConfigs.some(
+        (config) => config.size !== undefined
+      );
+
+      // Calculate available space after accounting for dividers
+      const totalDividerWidth = dividerSize * (paneCount - 1);
+      const availableSpace = newContainerSize - totalDividerWidth;
+
+      setPaneSizes((currentSizes) => {
+        // If sizes are uninitialized or pane count changed
+        if (
+          currentSizes.every((s) => s === 0) ||
+          currentSizes.length !== paneCount
+        ) {
+          return calculateInitialSizes(newContainerSize);
+        }
+
+        // If container size changed
+        if (prevSize > 0 && prevSize !== newContainerSize) {
+          // For controlled panes, recalculate from props to maintain fixed sizes
+          if (hasControlledSizes) {
+            return calculateInitialSizes(newContainerSize);
+          }
+          // For uncontrolled panes, distribute proportionally using available space
+          return distributeSizes(currentSizes, availableSpace);
+        }
+
+        // First measurement - use initial sizes
+        if (prevSize === 0) {
+          return calculateInitialSizes(newContainerSize);
+        }
+
+        return currentSizes;
+      });
+    },
+    [paneCount, paneConfigs, calculateInitialSizes, dividerSize]
+  );
+
+  // Track the last observed container size to detect meaningful changes
+  const lastObservedSizeRef = useRef(0);
+
+  // Measure container size with ResizeObserver
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateSizeFromRect = (rect: { width: number; height: number }) => {
+      const rawSize = direction === 'horizontal' ? rect.width : rect.height;
+      // Round to nearest integer to prevent sub-pixel variations from causing
+      // resize feedback loops (fixes #873)
+      const size = Math.round(rawSize);
+      if (size > 0 && size !== lastObservedSizeRef.current) {
+        lastObservedSizeRef.current = size;
+        setContainerSize(size);
+        handleContainerSizeChange(size);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        updateSizeFromRect(entry.contentRect);
+      }
+    });
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [direction, handleContainerSizeChange]);
+
+  // Handle resize callback
+  const handleResize = useCallback(
+    (newSizes: number[], event: ResizeEvent) => {
+      setPaneSizes(newSizes);
+      onResize?.(newSizes, event);
+    },
+    [onResize]
+  );
+
+  // Resizer hook
+  const { isDragging, currentSizes, handlePointerDown } = useResizer({
+    direction,
+    sizes: paneSizes,
+    minSizes,
+    maxSizes,
+    snapPoints,
+    snapTolerance,
+    step,
+    onResizeStart,
+    onResize: handleResize,
+    onResizeEnd,
+  });
+
+  // Keyboard resize hook
+  const { handleKeyDown } = useKeyboardResize({
+    direction,
+    sizes: currentSizes,
+    minSizes,
+    maxSizes,
+    step,
+    onResize: handleResize,
+    onResizeEnd,
+  });
+
+  // Deprecated handlers for backwards compatibility
+  // These delegate to the pointer handler so custom dividers using old props still work
+  const createMouseDownHandler = useCallback(
+    (index: number) => (e: React.MouseEvent) => {
+      // Create a synthetic pointer event from the mouse event
+      const pointerEvent = {
+        ...e,
+        pointerId: 1,
+        pointerType: 'mouse',
+        nativeEvent: e.nativeEvent,
+      } as unknown as React.PointerEvent;
+      handlePointerDown(index)(pointerEvent);
+    },
+    [handlePointerDown]
+  );
+
+  const createTouchStartHandler = useCallback(
+    (index: number) => (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      // Create a synthetic pointer event from the touch event
+      const pointerEvent = {
+        ...e,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        pointerId: touch.identifier,
+        pointerType: 'touch',
+        nativeEvent: e.nativeEvent,
+      } as unknown as React.PointerEvent;
+      handlePointerDown(index)(pointerEvent);
+    },
+    [handlePointerDown]
+  );
+
+  // Touch end is now a no-op since pointer events handle cleanup
+  const handleTouchEnd = useCallback(() => {
+    // No-op - pointer events handle the end of drag
+  }, []);
+
+  // Container styles
+  const containerStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: direction === 'horizontal' ? 'row' : 'column',
+    height: '100%',
+    width: '100%',
+    overflow: 'hidden',
+    position: 'relative',
+    ...style,
+  };
+
+  const containerClassName = cn(DEFAULT_CLASSNAME, direction, className);
+
+  // Render panes and dividers
+  const renderChildren = () => {
+    if (paneCount < MIN_PANES) {
+      return null;
+    }
+
+    const elements: React.ReactElement[] = [];
+
+    paneConfigs.forEach((config, index) => {
+      const paneSize = currentSizes[index] ?? 0;
+
+      const paneStyle: CSSProperties = {
+        ...(direction === 'horizontal'
+          ? { width: `${paneSize}px`, height: '100%' }
+          : { height: `${paneSize}px`, width: '100%' }),
+        ...config.props.style,
+      };
+
+      // Render pane
+      elements.push(
+        <Pane key={`pane-${index}`} {...config.props} style={paneStyle}>
+          {config.props.children}
+        </Pane>
+      );
+
+      // Render divider (except after last pane)
+      if (index < paneCount - 1) {
+        const DividerComponent = CustomDivider ?? Divider;
+        const dividerMinSize = minSizes[index];
+        const dividerMaxSize = maxSizes[index];
+
+        elements.push(
+          <DividerComponent
+            key={`divider-${index}`}
+            direction={direction}
+            index={index}
+            isDragging={isDragging}
+            disabled={!resizable}
+            onPointerDown={handlePointerDown(index)}
+            onMouseDown={createMouseDownHandler(index)}
+            onTouchStart={createTouchStartHandler(index)}
+            onTouchEnd={handleTouchEnd}
+            onKeyDown={handleKeyDown(index)}
+            className={dividerClassName}
+            style={dividerStyle}
+            currentSize={paneSize}
+            minSize={dividerMinSize}
+            maxSize={dividerMaxSize === Infinity ? undefined : dividerMaxSize}
+          />
+        );
+      }
+    });
+
+    return elements;
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className={containerClassName}
+      style={containerStyle}
+    >
+      {containerSize > 0 && renderChildren()}
+    </div>
+  );
+}
