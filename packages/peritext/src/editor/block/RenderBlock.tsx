@@ -20,7 +20,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = (props) => {
 
   switch (tag) {
     case '':
-      break;
+      return element;
     case SliceTypeCon.p:
       element = <p>{element}</p>;
       break;
