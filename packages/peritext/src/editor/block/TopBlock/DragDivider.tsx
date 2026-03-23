@@ -113,6 +113,7 @@ export function DragDivider(props: DividerProps) {
       aria-description={instructions}
       tabIndex={disabled ? -1 : 0}
       style={combinedStyle}
+      onMouseDown={(e) => e.stopPropagation()}
       onPointerDown={disabled ? undefined : onPointerDown}
       onKeyDown={disabled ? undefined : onKeyDown}
       data-divider-index={index}

@@ -34,7 +34,25 @@ export const Scrollbar: React.FC<ScrollAreaScrollbarProps> = ({children, classNa
       // Only respond to primary button clicks on the rail itself (not children).
       if (e.button !== 0) return;
       if (e.target !== e.currentTarget) return;
-      state.onRailClick(e.clientY);
+      e.currentTarget.setPointerCapture(e.pointerId);
+      state.onRailPointerDown(e.clientY);
+    },
+    [state],
+  );
+
+  const handlePointerMove = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      state.onRailPointerMove(e.clientY);
+    },
+    [state],
+  );
+
+  const handlePointerUp = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+      state.onRailPointerUp();
     },
     [state],
   );
@@ -67,6 +85,8 @@ export const Scrollbar: React.FC<ScrollAreaScrollbarProps> = ({children, classNa
         ...style,
       }}
       onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
       onWheel={handleWheel}
       onPointerEnter={handlePointerEnter}
     >

@@ -25,6 +25,7 @@ export class ScrollState implements UiLifeCycles {
   private _hideTimer = 0;
   private _dragging = false;
   private _dragPointerOffset = 0;
+  private _railDragging = false;
   private _prevWebkitUserSelect = '';
   private _resizeObserver: ResizeObserver | null = null;
   private _rafId = 0;
@@ -160,12 +161,33 @@ export class ScrollState implements UiLifeCycles {
     this._resetHideTimer();
   }
 
-  public onRailClick(clientY: number): void {
+  public onRailPointerDown(clientY: number): void {
     const rail = this.railEl;
     if (!rail) return;
     const railRect = rail.getBoundingClientRect();
     const ratio = (clientY - railRect.top) / railRect.height;
     this.scrollToRatio(Math.max(0, Math.min(1, ratio)));
+    this._railDragging = true;
+    this._prevWebkitUserSelect = document.body.style.webkitUserSelect;
+    document.body.style.webkitUserSelect = 'none';
+    if (this.viewportEl) this.viewportEl.style.scrollBehavior = 'auto';
+  }
+
+  public onRailPointerMove(clientY: number): void {
+    if (!this._railDragging) return;
+    const rail = this.railEl;
+    if (!rail) return;
+    const railRect = rail.getBoundingClientRect();
+    const ratio = (clientY - railRect.top) / railRect.height;
+    this.scrollToRatio(Math.max(0, Math.min(1, ratio)));
+  }
+
+  public onRailPointerUp(): void {
+    if (!this._railDragging) return;
+    this._railDragging = false;
+    document.body.style.webkitUserSelect = this._prevWebkitUserSelect;
+    if (this.viewportEl) this.viewportEl.style.scrollBehavior = '';
+    this._resetHideTimer();
   }
 
   public onRailWheel(deltaY: number): void {
