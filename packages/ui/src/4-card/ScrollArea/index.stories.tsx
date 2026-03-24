@@ -19,8 +19,8 @@ export const Primary: StoryObj = {
     <ScrollArea style={{width: 400, height: 300, border: '1px solid #ccc'}}>
       <Viewport>
         <div style={{padding: 16}}>
-          {lines.map((line, i) => (
-            <div key={i} style={{padding: '2px 0'}}>
+          {lines.map((line) => (
+            <div key={line} style={{padding: '2px 0'}}>
               {line}
             </div>
           ))}
@@ -36,8 +36,8 @@ export const AlwaysVisible: StoryObj = {
     <ScrollArea alwaysVisible railWidth={14} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
       <Viewport>
         <div style={{padding: 16}}>
-          {lines.map((line, i) => (
-            <div key={i} style={{padding: '2px 0'}}>
+          {lines.map((line) => (
+            <div key={line} style={{padding: '2px 0'}}>
               {line}
             </div>
           ))}
@@ -56,7 +56,7 @@ export const WithMarkers: StoryObj = {
       <Viewport>
         <div style={{padding: 16}}>
           {lines.map((line, i) => (
-            <div key={i} style={{padding: '2px 0', color: i === 14 || i === 71 ? 'red' : undefined}}>
+            <div key={line} style={{padding: '2px 0', color: i === 14 || i === 71 ? 'red' : undefined}}>
               {line}
             </div>
           ))}
@@ -80,8 +80,8 @@ export const WithHeaderFooter: StoryObj = {
       </Header>
       <Viewport>
         <div style={{padding: 16}}>
-          {lines.map((line, i) => (
-            <div key={i} style={{padding: '2px 0'}}>
+          {lines.map((line) => (
+            <div key={line} style={{padding: '2px 0'}}>
               {line}
             </div>
           ))}
@@ -107,7 +107,7 @@ export const Resizable: StoryObj = {
       });
     return (
       <div>
-        <button onClick={randomize} style={{marginBottom: 8}}>
+        <button type="button" onClick={randomize} style={{marginBottom: 8}}>
           Randomize size ({size.width} × {size.height})
         </button>
         <ScrollArea
@@ -122,8 +122,8 @@ export const Resizable: StoryObj = {
         >
           <Viewport>
             <div style={{padding: 16}}>
-              {lines.map((line, i) => (
-                <div key={i} style={{padding: '2px 0'}}>
+              {lines.map((line) => (
+                <div key={line} style={{padding: '2px 0'}}>
                   {line}
                 </div>
               ))}
@@ -143,8 +143,8 @@ export const CustomMarkerRendering: StoryObj = {
     <ScrollArea alwaysVisible railWidth={50} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
       <Viewport>
         <div style={{padding: 16}}>
-          {lines.map((line, i) => (
-            <div key={i} style={{padding: '2px 0'}}>
+          {lines.map((line) => (
+            <div key={line} style={{padding: '2px 0'}}>
               {line}
             </div>
           ))}

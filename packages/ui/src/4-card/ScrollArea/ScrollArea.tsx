@@ -29,6 +29,7 @@ export const ScrollArea: React.FC<ScrollAreaProps> = ({
   className,
   ...rest
 }) => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: props are synced via useLayoutEffect below; only _state should trigger re-creation
   const state = React.useMemo(() => {
     if (_state) return _state;
     return new ScrollState({alwaysVisible, railWidth, hideDelay, minThumbSize});

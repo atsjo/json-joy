@@ -39,7 +39,8 @@
 				"noConstEnum": "off",
 				"noSelfCompare": "off",
 				"noCatchAssign": "off",
-				"noControlCharactersInRegex": "off"
+				"noControlCharactersInRegex": "off",
+				"noArrayIndexKey": "off"
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",

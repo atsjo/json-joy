@@ -39,7 +39,6 @@ export const Highlight: React.FC<Props> = ({text, query}) => {
       typeof part === 'string' ? (
         preserveSpaces(part)
       ) : (
-        // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
         <span key={i} className={highlightClass}>
           {preserveSpaces(part[0])}
         </span>

@@ -36,6 +36,15 @@ export const Marker: React.FC<ScrollAreaMarkerProps> = ({
       className={markerClass + (className ? ' ' + className : '')}
       style={computedStyle}
       onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (e: React.KeyboardEvent) => {
+              if (e.key === 'Enter' || e.key === ' ') onClick();
+            }
+          : undefined
+      }
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     />
   );
 };

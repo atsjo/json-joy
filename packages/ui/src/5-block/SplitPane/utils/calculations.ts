@@ -22,7 +22,7 @@ export function convertToPixels(size: Size, containerSize: number): number {
 
   // Try to parse as number
   const parsed = parseFloat(size);
-  return isNaN(parsed) ? 0 : parsed;
+  return Number.isNaN(parsed) ? 0 : parsed;
 }
 
 /**

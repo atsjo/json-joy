@@ -16,7 +16,7 @@ export const Doc: React.FC<RenderDocProps> = ({children}) => {
       sizer.unobserve(div);
     };
   }, [sizer, ref.current]);
-  const width = useSyncStore(state.docWidth);
+  const _width = useSyncStore(state.docWidth);
 
   return <div ref={ref}>{children}</div>;
 };

@@ -92,6 +92,7 @@ export const Divider: React.FC<DividerProps> = (props: DividerProps) => {
   const ariaValueMax = maxSize === undefined || maxSize === Infinity ? undefined : maxSize;
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: <hr> would require significant restyling; div with role=separator is standard for interactive splitters
     <div
       contentEditable={false}
       className={combinedClassName}

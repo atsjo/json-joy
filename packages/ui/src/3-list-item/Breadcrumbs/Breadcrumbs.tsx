@@ -30,7 +30,6 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({crumbs, compact, style}
       {crumbs.map((item, index) => {
         const isLast = index === crumbs.length - 1;
         return (
-          // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
           <React.Fragment key={index}>
             {item}
             {!isLast && (
