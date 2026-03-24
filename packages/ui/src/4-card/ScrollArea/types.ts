@@ -14,14 +14,6 @@ export interface ScrollAreaViewportProps extends React.HTMLAttributes<HTMLDivEle
   children: React.ReactNode;
 }
 
-export interface ScrollAreaScrollbarProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-export interface ScrollAreaThumbProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  children?: (props: {style: React.CSSProperties; thumbRatio: number}) => React.ReactNode;
-}
-
 export interface ScrollAreaMarkerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Position in document as fraction 0..1. */
   position: number;

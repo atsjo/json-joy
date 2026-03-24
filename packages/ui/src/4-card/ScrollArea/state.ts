@@ -130,37 +130,43 @@ export class ScrollState implements UiLifeCycles {
     return this.scrollRatio$.value * (railHeight - th);
   }
 
-  public onThumbPointerDown(clientY: number): void {
+  public readonly onThumbPointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (e.button !== 0) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    e.stopPropagation();
     const thumb = this.thumbEl;
     if (!thumb) return;
     this._dragging = true;
     const rect = thumb.getBoundingClientRect();
-    this._dragPointerOffset = clientY - rect.top;
+    this._dragPointerOffset = e.clientY - rect.top;
     this._prevWebkitUserSelect = document.body.style.webkitUserSelect;
     document.body.style.webkitUserSelect = 'none';
     if (this.viewportEl) this.viewportEl.style.scrollBehavior = 'auto';
-  }
+  };
 
-  public onThumbPointerMove(clientY: number): void {
+  public readonly onThumbPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (!this._dragging) return;
     const rail = this.railEl;
     if (!rail) return;
     const railRect = rail.getBoundingClientRect();
     const railHeight = railRect.height;
     const th = this.thumbHeight(railHeight);
-    const pointerInRail = clientY - railRect.top;
+    const pointerInRail = e.clientY - railRect.top;
     const thumbTop = pointerInRail - this._dragPointerOffset;
     const maxThumbTop = railHeight - th;
     const ratio = maxThumbTop > 0 ? thumbTop / maxThumbTop : 0;
     this.scrollToRatio(Math.max(0, Math.min(1, ratio)));
-  }
+  };
 
-  public onThumbPointerUp(): void {
+  public readonly onThumbPointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
     this._dragging = false;
     document.body.style.webkitUserSelect = this._prevWebkitUserSelect;
     if (this.viewportEl) this.viewportEl.style.scrollBehavior = '';
     this._resetHideTimer();
-  }
+  };
 
   public readonly onScrollbarPointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (e.button !== 0) return;

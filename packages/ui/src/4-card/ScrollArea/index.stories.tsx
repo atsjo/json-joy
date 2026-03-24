@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Root, Viewport, Scrollbar, Thumb, Marker, Header, Footer} from '.';
+import {Root, Viewport, ScrollRail, Thumb, Marker, Header, Footer} from '.';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta = {
@@ -26,9 +26,9 @@ export const Primary: StoryObj = {
           ))}
         </div>
       </Viewport>
-      <Scrollbar>
+      <ScrollRail>
         <Thumb />
-      </Scrollbar>
+      </ScrollRail>
     </Root>
   ),
 };
@@ -45,9 +45,9 @@ export const AlwaysVisible: StoryObj = {
           ))}
         </div>
       </Viewport>
-      <Scrollbar>
+      <ScrollRail>
         <Thumb />
-      </Scrollbar>
+      </ScrollRail>
     </Root>
   ),
 };
@@ -64,12 +64,12 @@ export const WithMarkers: StoryObj = {
           ))}
         </div>
       </Viewport>
-      <Scrollbar>
+      <ScrollRail>
         <Thumb />
         <Marker position={0.15} color="red" />
         <Marker position={0.72} color="red" />
         <Marker position={0.45} color="orange" height={3} />
-      </Scrollbar>
+      </ScrollRail>
     </Root>
   ),
 };
@@ -91,9 +91,9 @@ export const WithHeaderFooter: StoryObj = {
           ))}
         </div>
       </Viewport>
-      <Scrollbar>
+      <ScrollRail>
         <Thumb />
-      </Scrollbar>
+      </ScrollRail>
       <Footer>
         <div style={{padding: '8px 16px', background: '#f0f0f0', borderTop: '1px solid #ddd'}}>
           Line 1 / 100
@@ -115,7 +115,7 @@ export const CustomMarkerRendering: StoryObj = {
           ))}
         </div>
       </Viewport>
-      <Scrollbar>
+      <ScrollRail>
         <Thumb />
         <Marker position={0.3}>
           {(style) => (
@@ -139,7 +139,7 @@ export const CustomMarkerRendering: StoryObj = {
             </div>
           )}
         </Marker>
-      </Scrollbar>
+      </ScrollRail>
     </Root>
   ),
 };

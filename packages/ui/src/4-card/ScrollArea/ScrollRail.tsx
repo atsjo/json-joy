@@ -2,7 +2,6 @@ import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {useScrollArea} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
-import type {ScrollAreaScrollbarProps} from './types';
 
 const scrollbarClass = rule({
   pos: 'absolute',
@@ -13,7 +12,11 @@ const scrollbarClass = rule({
   z: 1,
 });
 
-export const Scrollbar: React.FC<ScrollAreaScrollbarProps> = ({children, className, style, ...rest}) => {
+export interface ScrollRailProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
+export const ScrollRail: React.FC<ScrollRailProps> = ({children, className, style, ...rest}) => {
   const state = useScrollArea();
   const theme = useTheme();
   const visible = useSyncStore(state.visible$);

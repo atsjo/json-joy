@@ -2,7 +2,8 @@ import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {useScrollArea} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
-import type {ScrollAreaThumbProps} from './types';
+
+const MAX_BORDER_RADIUS = 4;
 
 const thumbClass = rule({
   pos: 'absolute',
@@ -13,10 +14,14 @@ const thumbClass = rule({
   cur: 'pointer',
 });
 
-export const Thumb: React.FC<ScrollAreaThumbProps> = ({children, className, style, ...rest}) => {
+export interface ThumbProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  children?: (props: {style: React.CSSProperties; thumbRatio: number}) => React.ReactNode;
+}
+
+export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest}) => {
   const state = useScrollArea();
   const theme = useTheme();
-  const scrollRatio = useSyncStore(state.scrollRatio$);
+  useSyncStore(state.scrollRatio$);
   const thumbRatio = useSyncStore(state.thumbRatio$);
   const canScroll = useSyncStore(state.canScroll$);
   const railEl = state.railEl;
@@ -24,56 +29,26 @@ export const Thumb: React.FC<ScrollAreaThumbProps> = ({children, className, styl
   const thumbH = state.thumbHeight(railHeight);
   const thumbT = state.thumbTop(railHeight);
 
-  const ref = React.useCallback(
-    (el: HTMLDivElement | null) => {
-      state.setThumb(el);
-    },
-    [state],
-  );
-
-  const handlePointerDown = React.useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      if (e.button !== 0) return;
-      e.currentTarget.setPointerCapture(e.pointerId);
-      state.onThumbPointerDown(e.clientY);
-      e.stopPropagation();
-    },
-    [state],
-  );
-
-  const handlePointerMove = React.useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      state.onThumbPointerMove(e.clientY);
-    },
-    [state],
-  );
-
-  const handlePointerUp = React.useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      }
-      state.onThumbPointerUp();
-    },
-    [state],
-  );
-
   if (!canScroll) return null;
+
+  const topBorderRadius = Math.min(MAX_BORDER_RADIUS, thumbT / 3);
+  const bottomBorderRadius = Math.min(MAX_BORDER_RADIUS, (railHeight - thumbT - thumbH) / 3);
 
   const computedStyle: React.CSSProperties = {
     height: thumbH,
     transform: `translate3d(0, ${thumbT}px, 0)`,
     background: theme.isLight ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.35)',
+    borderRadius: `${topBorderRadius}px ${topBorderRadius}px ${bottomBorderRadius}px ${bottomBorderRadius}px`,
     ...style,
   };
 
   if (typeof children === 'function') {
     return (
       <div
-        ref={ref}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
+        ref={state.setThumb}
+        onPointerDown={state.onThumbPointerDown}
+        onPointerMove={state.onThumbPointerMove}
+        onPointerUp={state.onThumbPointerUp}
       >
         {children({style: computedStyle, thumbRatio})}
       </div>
@@ -83,12 +58,12 @@ export const Thumb: React.FC<ScrollAreaThumbProps> = ({children, className, styl
   return (
     <div
       {...rest}
-      ref={ref}
+      ref={state.setThumb}
       className={thumbClass + (className ? ' ' + className : '')}
       style={computedStyle}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
+      onPointerDown={state.onThumbPointerDown}
+      onPointerMove={state.onThumbPointerMove}
+      onPointerUp={state.onThumbPointerUp}
     />
   );
 };
