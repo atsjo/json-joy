@@ -40,12 +40,7 @@ const innerClass = rule({
   bg: 'var(--caret-color)',
   bdl: `1px dotted var(--${CursorConstants.CaretColorBlurred})`,
   bdrad: '0.0625em',
-  'mix-blend-mode': 'multiply',
   an: moveAnimation + ' .25s ease-out forwards',
-});
-
-const innerClass2 = rule({
-  'mix-blend-mode': 'hard-light',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
@@ -141,9 +136,6 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, bwd, fwd
           }}
         />
       )}
-
-      {/* Two carets overlay, so that they look good, both, on white and black backgrounds. */}
-      <span className={innerClass + innerClass2} style={style} />
       <span className={innerClass} style={style} />
     </span>
   );

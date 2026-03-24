@@ -34,7 +34,7 @@ export class CursorPlugin implements PeritextPlugin {
   public readonly vars: Record<string, string>;
 
   constructor(public readonly opts: CursorPluginOpts = {}) {
-    const {caret = new HslColor(210 / 360, 1, 0.5)} = opts;
+    const {caret = new HslColor(222 / 360, 1, 0.48)} = opts;
     let {selection} = opts;
     if (!selection) {
       selection = caret?.copy();
