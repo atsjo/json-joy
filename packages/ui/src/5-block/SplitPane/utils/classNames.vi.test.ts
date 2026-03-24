@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { cn } from './classNames';
+import {describe, it, expect} from 'vitest';
+import {cn} from './classNames';
 
 describe('cn', () => {
   it('combines multiple class names', () => {
@@ -34,8 +34,6 @@ describe('cn', () => {
   it('handles conditional class names', () => {
     const isActive = true;
     const isDisabled = false;
-    expect(cn('base', isActive && 'active', isDisabled && 'disabled')).toBe(
-      'base active'
-    );
+    expect(cn('base', isActive && 'active', isDisabled && 'disabled')).toBe('base active');
   });
 });

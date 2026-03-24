@@ -30,7 +30,12 @@ export const Viewport: React.FC<ScrollAreaViewportProps> = ({children, className
 
   return (
     <div className={wrapClass}>
-      <div {...rest} ref={state.setViewport} className={viewportClass + (className ? ' ' + className : '')} style={style}>
+      <div
+        {...rest}
+        ref={state.setViewport}
+        className={viewportClass + (className ? ' ' + className : '')}
+        style={style}
+      >
         <div className={contentClass}>{children}</div>
       </div>
     </div>

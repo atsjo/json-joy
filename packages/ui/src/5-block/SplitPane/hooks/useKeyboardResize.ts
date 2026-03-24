@@ -1,7 +1,7 @@
-import { useCallback, useRef } from 'react';
-import type { Direction, ResizeEvent } from '../types';
-import { calculateDraggedSizes, clamp } from '../utils/calculations';
-import { announce, formatSizeForAnnouncement } from '../utils/accessibility';
+import {useCallback, useRef} from 'react';
+import type {Direction, ResizeEvent} from '../types';
+import {calculateDraggedSizes, clamp} from '../utils/calculations';
+import {announce, formatSizeForAnnouncement} from '../utils/accessibility';
 
 /**
  * Options for the useKeyboardResize hook.
@@ -54,16 +54,9 @@ export function useKeyboardResize(options: UseKeyboardResizeOptions) {
   const handleKeyDown = useCallback(
     (dividerIndex: number) => (e: React.KeyboardEvent) => {
       const isHorizontal = direction === 'horizontal';
-      const moveKeys = isHorizontal
-        ? ['ArrowLeft', 'ArrowRight']
-        : ['ArrowUp', 'ArrowDown'];
+      const moveKeys = isHorizontal ? ['ArrowLeft', 'ArrowRight'] : ['ArrowUp', 'ArrowDown'];
 
-      if (
-        !moveKeys.includes(e.key) &&
-        e.key !== 'Home' &&
-        e.key !== 'End' &&
-        e.key !== 'Escape'
-      ) {
+      if (!moveKeys.includes(e.key) && e.key !== 'Home' && e.key !== 'End' && e.key !== 'Escape') {
         return;
       }
 
@@ -122,8 +115,7 @@ export function useKeyboardResize(options: UseKeyboardResizeOptions) {
           const leftPaneIndex = dividerIndex;
           const rightPaneIndex = dividerIndex + 1;
           const minLeft = minSizes[leftPaneIndex] ?? 0;
-          const totalSize =
-            (sizes[leftPaneIndex] ?? 0) + (sizes[rightPaneIndex] ?? 0);
+          const totalSize = (sizes[leftPaneIndex] ?? 0) + (sizes[rightPaneIndex] ?? 0);
 
           newSizes[leftPaneIndex] = minLeft;
           newSizes[rightPaneIndex] = totalSize - minLeft;
@@ -137,8 +129,7 @@ export function useKeyboardResize(options: UseKeyboardResizeOptions) {
           const rightPaneIndex = dividerIndex + 1;
           const maxLeft = maxSizes[leftPaneIndex] ?? Infinity;
           const minRight = minSizes[rightPaneIndex] ?? 0;
-          const totalSize =
-            (sizes[leftPaneIndex] ?? 0) + (sizes[rightPaneIndex] ?? 0);
+          const totalSize = (sizes[leftPaneIndex] ?? 0) + (sizes[rightPaneIndex] ?? 0);
 
           newSizes[leftPaneIndex] = Math.min(maxLeft, totalSize - minRight);
           newSizes[rightPaneIndex] = totalSize - newSizes[leftPaneIndex];
@@ -147,19 +138,11 @@ export function useKeyboardResize(options: UseKeyboardResizeOptions) {
       }
 
       if (delta !== 0) {
-        newSizes = calculateDraggedSizes(
-          sizes,
-          dividerIndex,
-          delta,
-          minSizes,
-          maxSizes
-        );
+        newSizes = calculateDraggedSizes(sizes, dividerIndex, delta, minSizes, maxSizes);
       }
 
       // Ensure constraints are met
-      newSizes = newSizes.map((size, idx) =>
-        clamp(size, minSizes[idx] ?? 0, maxSizes[idx] ?? Infinity)
-      );
+      newSizes = newSizes.map((size, idx) => clamp(size, minSizes[idx] ?? 0, maxSizes[idx] ?? Infinity));
 
       if (onResize) {
         onResize(newSizes, {
@@ -179,38 +162,19 @@ export function useKeyboardResize(options: UseKeyboardResizeOptions) {
 
       // Announce change to screen readers
       if (announcementKey === 'home') {
-        announce(
-          `Pane ${dividerIndex + 1} minimized to ${formatSizeForAnnouncement(
-            newSizes[dividerIndex] ?? 0
-          )}`
-        );
+        announce(`Pane ${dividerIndex + 1} minimized to ${formatSizeForAnnouncement(newSizes[dividerIndex] ?? 0)}`);
       } else if (announcementKey === 'end') {
-        announce(
-          `Pane ${dividerIndex + 1} maximized to ${formatSizeForAnnouncement(
-            newSizes[dividerIndex] ?? 0
-          )}`
-        );
+        announce(`Pane ${dividerIndex + 1} maximized to ${formatSizeForAnnouncement(newSizes[dividerIndex] ?? 0)}`);
       } else {
         // Arrow key - announce the pane that changed
         const changedPaneIndex = delta > 0 ? dividerIndex : dividerIndex + 1;
         announce(
-          `Pane ${changedPaneIndex + 1} resized to ${formatSizeForAnnouncement(
-            newSizes[changedPaneIndex] ?? 0
-          )}`
+          `Pane ${changedPaneIndex + 1} resized to ${formatSizeForAnnouncement(newSizes[changedPaneIndex] ?? 0)}`,
         );
       }
     },
-    [
-      direction,
-      sizes,
-      minSizes,
-      maxSizes,
-      step,
-      largeStep,
-      onResize,
-      onResizeEnd,
-    ]
+    [direction, sizes, minSizes, maxSizes, step, largeStep, onResize, onResizeEnd],
   );
 
-  return { handleKeyDown };
+  return {handleKeyDown};
 }

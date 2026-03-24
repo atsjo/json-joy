@@ -1,6 +1,6 @@
-export { SplitPane } from './components/SplitPane';
-export { Pane } from './components/Pane';
-export { Divider } from './components/Divider';
+export {SplitPane} from './components/SplitPane';
+export {Pane} from './components/Pane';
+export {Divider} from './components/Divider';
 
 export type {
   SplitPaneProps,
@@ -11,5 +11,5 @@ export type {
   ResizeEvent,
 } from './types';
 
-export { useResizer } from './hooks/useResizer';
-export { useKeyboardResize } from './hooks/useKeyboardResize';
+export {useResizer} from './hooks/useResizer';
+export {useKeyboardResize} from './hooks/useKeyboardResize';

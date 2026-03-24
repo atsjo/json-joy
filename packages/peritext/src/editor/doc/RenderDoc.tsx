@@ -25,7 +25,7 @@ export const RenderDoc: React.FC<RenderDocProps> = (props) => {
   return (
     <context.Provider value={value}>
       <Chrome>
-        <Doc {...props} />  
+        <Doc {...props} />
       </Chrome>
     </context.Provider>
   );

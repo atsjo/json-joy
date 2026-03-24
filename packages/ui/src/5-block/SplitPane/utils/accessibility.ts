@@ -2,10 +2,7 @@
  * Announce a message to screen readers.
  * SSR-safe: no-op when document is not available.
  */
-export function announce(
-  message: string,
-  priority: 'polite' | 'assertive' = 'polite'
-): void {
+export function announce(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
   // SSR safety check
   if (typeof document === 'undefined') {
     return;

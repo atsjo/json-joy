@@ -20,7 +20,7 @@ const blockClass = rule({
 });
 
 const handleClass = rule({
-  w: (WIDTH - PADDING - PADDING) + 'px',
+  w: WIDTH - PADDING - PADDING + 'px',
   h: 'calc(100% - 2px)',
   bxz: 'border-box',
   trs: 'background .3s, width .1s, height .1s',
@@ -29,12 +29,12 @@ const handleClass = rule({
     bg: 'rgba(127,127,127,.1)',
   },
   [`.${blockClass.trim()}:focus &`]: {
-    w: (WIDTH - PADDING - PADDING - 2) + 'px',
+    w: WIDTH - PADDING - PADDING - 2 + 'px',
     h: 'calc(100% - 6px)',
     bg: 'var(--caret-color)',
   },
   [`.${blockClass.trim()}:active &`]: {
-    w: (WIDTH - PADDING - PADDING - 2) + 'px',
+    w: WIDTH - PADDING - PADDING - 2 + 'px',
     h: 'calc(100% - 6px)',
     bg: 'var(--caret-color)',
   },
@@ -82,19 +82,14 @@ export const Divider: React.FC<DividerProps> = (props: DividerProps) => {
     width: '10px',
   };
 
-  const combinedClassName = cn(
-    blockClass,
-    direction,
-    isDragging && 'dragging',
-    className
-  );
+  const combinedClassName = cn(blockClass, direction, isDragging && 'dragging', className);
 
   const label = `${orientation} divider ${index + 1}`;
-  const instructions = 'Use arrow keys to resize. Hold Shift for larger steps. Press Home or End to minimize or maximize.';
+  const instructions =
+    'Use arrow keys to resize. Hold Shift for larger steps. Press Home or End to minimize or maximize.';
 
   // Don't pass Infinity to ARIA attributes - screen readers can't handle it
-  const ariaValueMax =
-    maxSize === undefined || maxSize === Infinity ? undefined : maxSize;
+  const ariaValueMax = maxSize === undefined || maxSize === Infinity ? undefined : maxSize;
 
   return (
     <div

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import {vi} from 'vitest';
 
 // Use fake timers globally
 vi.useFakeTimers();
@@ -40,7 +40,7 @@ class MockPointerEvent extends MouseEvent {
   }
 }
 
-(globalThis as unknown as { PointerEvent: typeof PointerEvent }).PointerEvent =
+(globalThis as unknown as {PointerEvent: typeof PointerEvent}).PointerEvent =
   MockPointerEvent as unknown as typeof PointerEvent;
 
 // Mock getBoundingClientRect to return proper dimensions
@@ -66,7 +66,7 @@ const resizeObservers: ObserverEntry[] = [];
 
 // Helper to trigger resize on observed elements
 export function triggerResize(width: number, height: number) {
-  resizeObservers.forEach(({ callback, observer, target }) => {
+  resizeObservers.forEach(({callback, observer, target}) => {
     const mockEntry = {
       target,
       contentRect: {

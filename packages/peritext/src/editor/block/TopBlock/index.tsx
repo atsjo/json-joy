@@ -19,7 +19,7 @@ export interface TopBlockProps extends RenderBlockProps {}
 /**
  * The main content track is managed by {@link TopBlock}, which consists of
  * the following rails:
- * 
+ *
  * - Left gap: padding from sidebar or document left edge.
  * - Metadata rail: fixed size, for block-level metadata, such as block type, drag handle, etc.
  * - Content rail: main editable rich-text content.

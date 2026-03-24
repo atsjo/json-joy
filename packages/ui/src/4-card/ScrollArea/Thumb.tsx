@@ -2,7 +2,7 @@ import * as React from 'react';
 import {drule, useTheme} from 'nano-theme';
 import {useScrollArea} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
-import {ScrollState} from './state';
+import type {ScrollState} from './state';
 
 const MAX_BORDER_RADIUS = 4;
 
@@ -63,7 +63,10 @@ export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest
     <div
       {...rest}
       ref={state.setThumb}
-      className={thumbClass({bg: theme.g(0, isDragging ? .48 : .24), '&:hover': {bg: theme.g(0, .48)}}) + (className ? ' ' + className : '')}
+      className={
+        thumbClass({bg: theme.g(0, isDragging ? 0.48 : 0.24), '&:hover': {bg: theme.g(0, 0.48)}}) +
+        (className ? ' ' + className : '')
+      }
       style={computedStyle}
       onPointerDown={state.onThumbPointerDown}
       onPointerMove={state.onThumbPointerMove}

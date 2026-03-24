@@ -1,4 +1,4 @@
-import type { Size } from '../types';
+import type {Size} from '../types';
 
 /**
  * Convert a size value (string or number) to pixels
@@ -35,11 +35,7 @@ export function clamp(value: number, min: number, max: number): number {
 /**
  * Snap a value to the nearest snap point if within tolerance
  */
-export function snapToPoint(
-  value: number,
-  snapPoints: number[],
-  tolerance: number
-): number {
+export function snapToPoint(value: number, snapPoints: number[], tolerance: number): number {
   for (const point of snapPoints) {
     if (Math.abs(value - point) <= tolerance) {
       return point;
@@ -51,10 +47,7 @@ export function snapToPoint(
 /**
  * Distribute sizes proportionally when container size changes
  */
-export function distributeSizes(
-  currentSizes: number[],
-  newContainerSize: number
-): number[] {
+export function distributeSizes(currentSizes: number[], newContainerSize: number): number[] {
   const totalCurrentSize = currentSizes.reduce((sum, size) => sum + size, 0);
 
   if (totalCurrentSize === 0) {
@@ -64,9 +57,7 @@ export function distributeSizes(
   }
 
   // Proportional distribution
-  return currentSizes.map(
-    (size) => (size / totalCurrentSize) * newContainerSize
-  );
+  return currentSizes.map((size) => (size / totalCurrentSize) * newContainerSize);
 }
 
 /**
@@ -77,7 +68,7 @@ export function calculateDraggedSizes(
   dividerIndex: number,
   delta: number,
   minSizes: number[],
-  maxSizes: number[]
+  maxSizes: number[],
 ): number[] {
   const newSizes = [...sizes];
 

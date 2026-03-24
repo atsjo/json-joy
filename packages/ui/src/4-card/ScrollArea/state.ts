@@ -37,17 +37,14 @@ export class ScrollState implements UiLifeCycles {
     this.hideDelay = opts?.hideDelay ?? DEFAULT_HIDE_DELAY;
     this.alwaysVisible$ = sync.val<boolean>(opts?.alwaysVisible ?? false);
     const {scrollTop$, scrollHeight$, clientHeight$} = this;
-    this.maxScrollTop$ = sync.comp(
-      [scrollHeight$, clientHeight$],
-      ([scrollHeight, clientHeight]) => Math.max(0, scrollHeight - clientHeight),
+    this.maxScrollTop$ = sync.comp([scrollHeight$, clientHeight$], ([scrollHeight, clientHeight]) =>
+      Math.max(0, scrollHeight - clientHeight),
     );
-    this.scrollRatio$ = sync.comp(
-      [scrollTop$, this.maxScrollTop$],
-      ([scrollTop, maxScrollTop]) => (maxScrollTop > 0 ? scrollTop / maxScrollTop : 0),
+    this.scrollRatio$ = sync.comp([scrollTop$, this.maxScrollTop$], ([scrollTop, maxScrollTop]) =>
+      maxScrollTop > 0 ? scrollTop / maxScrollTop : 0,
     );
-    this.thumbRatio$ = sync.comp(
-      [clientHeight$, scrollHeight$],
-      ([clientHeight, scrollHeight]) => (scrollHeight > 0 ? clientHeight / scrollHeight : 1),
+    this.thumbRatio$ = sync.comp([clientHeight$, scrollHeight$], ([clientHeight, scrollHeight]) =>
+      scrollHeight > 0 ? clientHeight / scrollHeight : 1,
     );
     this.canScroll$ = sync.comp(
       [scrollHeight$, clientHeight$],

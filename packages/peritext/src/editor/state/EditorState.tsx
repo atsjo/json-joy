@@ -61,7 +61,7 @@ export class EditorState implements UiLifeCycles {
       this.spanMap[tag] = spans[i];
     }
 
-    const docSize = this.docSize = sync.val<ResizeObserverEntry | null>(null);
+    const docSize = (this.docSize = sync.val<ResizeObserverEntry | null>(null));
     this.docWidth = sync.comp([docSize], ([entry]) => {
       return entry?.contentRect?.width || 0;
     });

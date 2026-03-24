@@ -1,10 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Direction, ResizeEvent } from '../types';
-import {
-  calculateDraggedSizes,
-  snapToPoint,
-  applyStep,
-} from '../utils/calculations';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import type {Direction, ResizeEvent} from '../types';
+import {calculateDraggedSizes, snapToPoint, applyStep} from '../utils/calculations';
 
 /**
  * Options for the useResizer hook.
@@ -75,7 +71,7 @@ export function useResizer(options: UseResizerOptions): UseResizerResult {
 
   const rafRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
-  const lastPositionRef = useRef<{ x: number; y: number } | null>(null);
+  const lastPositionRef = useRef<{x: number; y: number} | null>(null);
 
   // Use refs to avoid stale closures in event handlers
   const currentSizesRef = useRef(currentSizes);
@@ -87,10 +83,7 @@ export function useResizer(options: UseResizerOptions): UseResizerResult {
   // Sync sizes from props when not dragging (React 19 compatible)
   const sizesRef = useRef(sizes);
   useEffect(() => {
-    if (
-      !isDragging &&
-      JSON.stringify(sizes) !== JSON.stringify(sizesRef.current)
-    ) {
+    if (!isDragging && JSON.stringify(sizes) !== JSON.stringify(sizesRef.current)) {
       sizesRef.current = sizes;
       setCurrentSizes(sizes);
     }
@@ -112,8 +105,7 @@ export function useResizer(options: UseResizerOptions): UseResizerResult {
     (clientX: number, clientY: number) => {
       if (!dragStateRef.current || !mountedRef.current) return;
 
-      const { dividerIndex, startPosition, startSizes, pointerType } =
-        dragStateRef.current;
+      const {dividerIndex, startPosition, startSizes, pointerType} = dragStateRef.current;
       const currentPosition = direction === 'horizontal' ? clientX : clientY;
 
       let delta = currentPosition - startPosition;
@@ -123,19 +115,11 @@ export function useResizer(options: UseResizerOptions): UseResizerResult {
         delta = applyStep(delta, step);
       }
 
-      let newSizes = calculateDraggedSizes(
-        startSizes,
-        dividerIndex,
-        delta,
-        minSizes,
-        maxSizes
-      );
+      let newSizes = calculateDraggedSizes(startSizes, dividerIndex, delta, minSizes, maxSizes);
 
       // Apply snap points
       if (snapPoints.length > 0) {
-        newSizes = newSizes.map((size) =>
-          snapToPoint(size, snapPoints, snapTolerance)
-        );
+        newSizes = newSizes.map((size) => snapToPoint(size, snapPoints, snapTolerance));
       }
 
       setCurrentSizes(newSizes);
@@ -148,23 +132,20 @@ export function useResizer(options: UseResizerOptions): UseResizerResult {
         });
       }
     },
-    [direction, step, minSizes, maxSizes, snapPoints, snapTolerance, onResize]
+    [direction, step, minSizes, maxSizes, snapPoints, snapTolerance, onResize],
   );
 
   const handlePointerMove = useCallback(
     (e: PointerEvent) => {
       // Only handle events from the captured pointer
-      if (
-        !dragStateRef.current ||
-        e.pointerId !== dragStateRef.current.pointerId
-      ) {
+      if (!dragStateRef.current || e.pointerId !== dragStateRef.current.pointerId) {
         return;
       }
 
       e.preventDefault();
 
       // Always store the latest position to avoid stale closure in RAF callback
-      lastPositionRef.current = { x: e.clientX, y: e.clientY };
+      lastPositionRef.current = {x: e.clientX, y: e.clientY};
 
       // Use RAF to throttle updates
       if (rafRef.current) return;
@@ -176,20 +157,17 @@ export function useResizer(options: UseResizerOptions): UseResizerResult {
         }
       });
     },
-    [handleDrag]
+    [handleDrag],
   );
 
   const handlePointerUp = useCallback((e: PointerEvent) => {
     // Only handle events from the captured pointer
-    if (
-      !dragStateRef.current ||
-      e.pointerId !== dragStateRef.current.pointerId
-    ) {
+    if (!dragStateRef.current || e.pointerId !== dragStateRef.current.pointerId) {
       return;
     }
 
     // Release pointer capture
-    const { element, pointerId, pointerType } = dragStateRef.current;
+    const {element, pointerId, pointerType} = dragStateRef.current;
     if (element?.hasPointerCapture?.(pointerId)) {
       element.releasePointerCapture(pointerId);
     }
@@ -249,7 +227,7 @@ export function useResizer(options: UseResizerOptions): UseResizerResult {
         });
       }
     },
-    [direction, currentSizes, onResizeStart]
+    [direction, currentSizes, onResizeStart],
   );
 
   // Set up global event listeners for pointer events
