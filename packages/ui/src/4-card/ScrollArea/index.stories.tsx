@@ -101,6 +101,38 @@ export const WithHeaderFooter: StoryObj = {
   ),
 };
 
+export const Resizable: StoryObj = {
+  render: () => {
+    const [size, setSize] = React.useState({width: 400, height: 300});
+    const randomize = () =>
+      setSize({
+        width: 200 + Math.floor(Math.random() * 400),
+        height: 150 + Math.floor(Math.random() * 400),
+      });
+    return (
+      <div>
+        <button onClick={randomize} style={{marginBottom: 8}}>
+          Randomize size ({size.width} × {size.height})
+        </button>
+        <ScrollArea alwaysVisible railWidth={14} style={{width: size.width, height: size.height, border: '1px solid #ccc', transition: 'width .3s, height .3s'}}>
+          <Viewport>
+            <div style={{padding: 16}}>
+              {lines.map((line, i) => (
+                <div key={i} style={{padding: '2px 0'}}>
+                  {line}
+                </div>
+              ))}
+            </div>
+          </Viewport>
+          <ScrollRail>
+            <Thumb />
+          </ScrollRail>
+        </ScrollArea>
+      </div>
+    );
+  },
+};
+
 export const CustomMarkerRendering: StoryObj = {
   render: () => (
     <ScrollArea alwaysVisible railWidth={50} style={{width: 400, height: 300, border: '1px solid #ccc'}}>

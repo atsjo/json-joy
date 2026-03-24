@@ -23,6 +23,7 @@ export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest
   const state = useScrollArea();
   const theme = useTheme();
   useSyncStore(state.scrollRatio$);
+  useSyncStore(state.thumbRatio$);
   const canScroll = useSyncStore(state.canScroll$);
   const dragging = useSyncStore(state.dragging$);
   const railDragging = useSyncStore(state.railDragging$);
