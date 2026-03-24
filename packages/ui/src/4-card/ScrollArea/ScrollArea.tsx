@@ -2,7 +2,6 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {ScrollState} from './state';
 import {ctx} from './context';
-import type {ScrollAreaRootProps} from './types';
 
 const rootClass = rule({
   pos: 'relative',
@@ -11,34 +10,42 @@ const rootClass = rule({
   ov: 'hidden',
 });
 
-export const Root: React.FC<ScrollAreaRootProps> = ({
-  state: externalState,
+export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
+  state?: ScrollState;
+  alwaysVisible?: boolean;
+  railWidth?: number;
+  hideDelay?: number;
+  minThumbSize?: number;
+  children: React.ReactNode;
+}
+
+export const ScrollArea: React.FC<ScrollAreaProps> = ({
+  state: _state,
   alwaysVisible,
   railWidth,
   hideDelay,
   minThumbSize,
   children,
   className,
-  style,
   ...rest
 }) => {
   const state = React.useMemo(() => {
-    if (externalState) return externalState;
+    if (_state) return _state;
     return new ScrollState({alwaysVisible, railWidth, hideDelay, minThumbSize});
-  }, [externalState]);
+  }, [_state]);
 
   React.useLayoutEffect(() => {
-    if (!externalState) {
+    if (!_state) {
       if (alwaysVisible !== undefined) state.alwaysVisible$.next(alwaysVisible);
       if (railWidth !== undefined) state.railWidth$.next(railWidth);
     }
-  }, [alwaysVisible, railWidth, externalState, state]);
+  }, [alwaysVisible, railWidth, _state, state]);
 
   React.useLayoutEffect(() => state.start(), [state]);
 
   return (
     <ctx.Provider value={state}>
-      <div {...rest} className={rootClass + (className ? ' ' + className : '')} style={style}>
+      <div {...rest} className={rootClass + (className ? ' ' + className : '')}>
         {children}
       </div>
     </ctx.Provider>

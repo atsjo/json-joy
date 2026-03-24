@@ -1,14 +1,4 @@
 import type * as React from 'react';
-import type {ScrollState} from './state';
-
-export interface ScrollAreaRootProps extends React.HTMLAttributes<HTMLDivElement> {
-  state?: ScrollState;
-  alwaysVisible?: boolean;
-  railWidth?: number;
-  hideDelay?: number;
-  minThumbSize?: number;
-  children: React.ReactNode;
-}
 
 export interface ScrollAreaViewportProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;

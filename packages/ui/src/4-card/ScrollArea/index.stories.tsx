@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Root, Viewport, ScrollRail, Thumb, Marker, Header, Footer} from '.';
+import {ScrollArea, Viewport, ScrollRail, Thumb, Marker, Header, Footer} from '.';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta = {
@@ -16,7 +16,7 @@ const lines = Array.from({length: 100}, (_, i) => `Line ${i + 1}: Lorem ipsum do
 
 export const Primary: StoryObj = {
   render: () => (
-    <Root style={{width: 400, height: 300, border: '1px solid #ccc'}}>
+    <ScrollArea style={{width: 400, height: 300, border: '1px solid #ccc'}}>
       <Viewport>
         <div style={{padding: 16}}>
           {lines.map((line, i) => (
@@ -27,13 +27,13 @@ export const Primary: StoryObj = {
         </div>
       </Viewport>
       <ScrollRail />
-    </Root>
+    </ScrollArea>
   ),
 };
 
 export const AlwaysVisible: StoryObj = {
   render: () => (
-    <Root alwaysVisible railWidth={14} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
+    <ScrollArea alwaysVisible railWidth={14} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
       <Viewport>
         <div style={{padding: 16}}>
           {lines.map((line, i) => (
@@ -46,13 +46,13 @@ export const AlwaysVisible: StoryObj = {
       <ScrollRail>
         <Thumb />
       </ScrollRail>
-    </Root>
+    </ScrollArea>
   ),
 };
 
 export const WithMarkers: StoryObj = {
   render: () => (
-    <Root alwaysVisible railWidth={40} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
+    <ScrollArea alwaysVisible railWidth={40} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
       <Viewport>
         <div style={{padding: 16}}>
           {lines.map((line, i) => (
@@ -68,13 +68,13 @@ export const WithMarkers: StoryObj = {
         <Marker position={0.72} color="red" />
         <Marker position={0.45} color="orange" height={3} />
       </ScrollRail>
-    </Root>
+    </ScrollArea>
   ),
 };
 
 export const WithHeaderFooter: StoryObj = {
   render: () => (
-    <Root alwaysVisible railWidth={14} style={{width: 400, height: 350, border: '1px solid #ccc'}}>
+    <ScrollArea alwaysVisible railWidth={14} style={{width: 400, height: 350, border: '1px solid #ccc'}}>
       <Header>
         <div style={{padding: '8px 16px', background: '#f0f0f0', borderBottom: '1px solid #ddd'}}>
           Sticky Header
@@ -97,13 +97,13 @@ export const WithHeaderFooter: StoryObj = {
           Line 1 / 100
         </div>
       </Footer>
-    </Root>
+    </ScrollArea>
   ),
 };
 
 export const CustomMarkerRendering: StoryObj = {
   render: () => (
-    <Root alwaysVisible railWidth={50} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
+    <ScrollArea alwaysVisible railWidth={50} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
       <Viewport>
         <div style={{padding: 16}}>
           {lines.map((line, i) => (
@@ -138,6 +138,6 @@ export const CustomMarkerRendering: StoryObj = {
           )}
         </Marker>
       </ScrollRail>
-    </Root>
+    </ScrollArea>
   ),
 };
