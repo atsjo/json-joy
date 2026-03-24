@@ -26,9 +26,7 @@ export const Primary: StoryObj = {
           ))}
         </div>
       </Viewport>
-      <ScrollRail>
-        <Thumb />
-      </ScrollRail>
+      <ScrollRail />
     </Root>
   ),
 };

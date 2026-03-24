@@ -1,22 +1,23 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {drule, useTheme} from 'nano-theme';
 import {useScrollArea} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
+import {Thumb} from './Thumb';
 
-const scrollbarClass = rule({
+const blockClass = drule({
   pos: 'absolute',
   top: 0,
   r: 0,
   b: 0,
-  trs: 'opacity 0.15s ease',
+  trs: 'opacity .2s ease',
   z: 1,
 });
 
 export interface ScrollRailProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export const ScrollRail: React.FC<ScrollRailProps> = ({children, className, style, ...rest}) => {
+export const ScrollRail: React.FC<ScrollRailProps> = ({children = <Thumb />, className, style, ...rest}) => {
   const state = useScrollArea();
   const theme = useTheme();
   const visible = useSyncStore(state.visible$);
@@ -31,13 +32,12 @@ export const ScrollRail: React.FC<ScrollRailProps> = ({children, className, styl
     <div
       {...rest}
       ref={state.setRail}
-      className={scrollbarClass + (className ? ' ' + className : '')}
+      className={blockClass({bg: theme.g(0, .04), '&:hover': {bg: theme.g(0, .06)}}) + (className ? ' ' + className : '')}
       data-state={isVisible ? 'visible' : 'hidden'}
       style={{
         width: railWidth,
         opacity: isVisible ? 1 : 0,
         pointerEvents: isVisible ? 'auto' : 'none',
-        background: theme.isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)',
         ...style,
       }}
       onPointerDown={state.onScrollbarPointerDown}
