@@ -33,7 +33,6 @@ const blockClass = rule({
 
 const innerClass = rule({
   pos: 'absolute',
-  // b: ((-height + 1) / 2) + 'em',
   b: 'calc(var(--' + CursorConstants.CaretHeight + ') / -2 + 0.5em)',
   l: '-.065em',
   w: 'calc(max(.2em, 2px))',
@@ -53,7 +52,7 @@ export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children}) => {
+export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, bwd, fwd, children}) => {
   const ctx = usePeritext();
   const pending = useSyncStore(ctx.peritext.editor.pending);
   const [show, setShow] = React.useState(true);
@@ -86,6 +85,17 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
       }
     }
   }, [point, ctx.dom.getCharRect]);
+  const inline = fwd || bwd;
+
+  let isSmall = false;
+  let isSup = false;
+  let isSub = false;
+  if (inline) {
+    const attr = inline?.attr();
+    isSup ||= !!attr[CommonSliceType.sup];
+    isSub ||= !!attr[CommonSliceType.sub];
+    isSmall ||= isSup || isSub;
+  }
 
   const anchorForward = point.anchor === Anchor.Before;
 
@@ -99,6 +109,16 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
         ? `var(--${CursorConstants.CaretColor})`
         : 'transparent',
   };
+
+  if (isSmall) {
+    style.width = 'calc(max(.15em, 2px))';
+    style.height = `calc(var(--${CursorConstants.CaretHeight}) / 2)`;
+    if (isSup) {
+      style.bottom = 'calc(var(--' + CursorConstants.CaretHeight + ') / -2 + 1.25em)';
+    } else {
+      style.bottom = 'calc(var(--' + CursorConstants.CaretHeight + ') / -4 + 0.25em)';
+    }
+  }
 
   if (italic || pending?.has(CommonSliceType.i)) {
     style.rotate = '11deg';
