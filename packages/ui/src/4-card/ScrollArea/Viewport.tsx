@@ -27,16 +27,10 @@ const contentClass = rule({
 
 export const Viewport: React.FC<ScrollAreaViewportProps> = ({children, className, style, ...rest}) => {
   const state = useScrollArea();
-  const ref = React.useCallback(
-    (el: HTMLDivElement | null) => {
-      state.setViewport(el);
-    },
-    [state],
-  );
 
   return (
     <div className={wrapClass}>
-      <div {...rest} ref={ref} className={viewportClass + (className ? ' ' + className : '')} style={style}>
+      <div {...rest} ref={state.setViewport} className={viewportClass + (className ? ' ' + className : '')} style={style}>
         <div className={contentClass}>{children}</div>
       </div>
     </div>

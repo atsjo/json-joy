@@ -19,14 +19,14 @@ export class ScrollState implements UiLifeCycles {
   public readonly hideDelay: number;
   public readonly headerHeight$ = sync.val<number>(0);
   public readonly footerHeight$ = sync.val<number>(0);
+  public readonly dragging$ = sync.val<boolean>(false);
+  public readonly railDragging$ = sync.val<boolean>(false);
   public viewportEl: HTMLDivElement | null = null;
   public railEl: HTMLDivElement | null = null;
   public thumbEl: HTMLDivElement | null = null;
 
   private _hideTimer = 0;
-  private _dragging = false;
   private _dragPointerOffset = 0;
-  private _railDragging = false;
   private _prevWebkitUserSelect = '';
   private _resizeObserver: ResizeObserver | null = null;
   private _rafId = 0;
@@ -71,15 +71,15 @@ export class ScrollState implements UiLifeCycles {
     el.scrollTop += delta;
   }
 
-  public setViewport = (el: HTMLDivElement | null): void => {
+  public readonly setViewport = (el: HTMLDivElement | null): void => {
     this.viewportEl = el;
   };
 
-  public setRail = (el: HTMLDivElement | null): void => {
+  public readonly setRail = (el: HTMLDivElement | null): void => {
     this.railEl = el;
   };
 
-  public setThumb = (el: HTMLDivElement | null): void => {
+  public readonly setThumb = (el: HTMLDivElement | null): void => {
     this.thumbEl = el;
   };
 
@@ -97,7 +97,7 @@ export class ScrollState implements UiLifeCycles {
     window.clearTimeout(this._hideTimer);
     if (this.alwaysVisible$.value) return;
     this._hideTimer = window.setTimeout(() => {
-      if (!this._dragging) this.visible$.next(false);
+      if (!this.dragging$.value) this.visible$.next(false);
     }, this.hideDelay);
   }
 
@@ -136,7 +136,7 @@ export class ScrollState implements UiLifeCycles {
     e.stopPropagation();
     const thumb = this.thumbEl;
     if (!thumb) return;
-    this._dragging = true;
+    this.dragging$.next(true);
     const rect = thumb.getBoundingClientRect();
     this._dragPointerOffset = e.clientY - rect.top;
     this._prevWebkitUserSelect = document.body.style.webkitUserSelect;
@@ -145,7 +145,7 @@ export class ScrollState implements UiLifeCycles {
   };
 
   public readonly onThumbPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (!this._dragging) return;
+    if (!this.dragging$.value) return;
     const rail = this.railEl;
     if (!rail) return;
     const railRect = rail.getBoundingClientRect();
@@ -159,10 +159,10 @@ export class ScrollState implements UiLifeCycles {
   };
 
   public readonly onThumbPointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-    this._dragging = false;
+    const target = e.currentTarget;
+    if (target.hasPointerCapture(e.pointerId)) target.releasePointerCapture(e.pointerId);
+    this.dragging$.next(false);
+    this.railDragging$.next(false);
     document.body.style.webkitUserSelect = this._prevWebkitUserSelect;
     if (this.viewportEl) this.viewportEl.style.scrollBehavior = '';
     this._resetHideTimer();
@@ -177,14 +177,14 @@ export class ScrollState implements UiLifeCycles {
     const railRect = rail.getBoundingClientRect();
     const ratio = (e.clientY - railRect.top) / railRect.height;
     this.scrollToRatio(Math.max(0, Math.min(1, ratio)));
-    this._railDragging = true;
+    this.railDragging$.next(true);
     this._prevWebkitUserSelect = document.body.style.webkitUserSelect;
     document.body.style.webkitUserSelect = 'none';
     if (this.viewportEl) this.viewportEl.style.scrollBehavior = 'auto';
   };
 
   public readonly onScrollbarPointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (!this._railDragging) return;
+    if (!this.railDragging$.value) return;
     const rail = this.railEl;
     if (!rail) return;
     const railRect = rail.getBoundingClientRect();
@@ -193,11 +193,11 @@ export class ScrollState implements UiLifeCycles {
   };
 
   public readonly onScrollbarPointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-    if (!this._railDragging) return;
-    this._railDragging = false;
+    const target = e.currentTarget;
+    if (target.hasPointerCapture(e.pointerId)) target.releasePointerCapture(e.pointerId);
+    if (!this.railDragging$.value) return;
+    this.railDragging$.next(false);
+    this.dragging$.next(false);
     document.body.style.webkitUserSelect = this._prevWebkitUserSelect;
     if (this.viewportEl) this.viewportEl.style.scrollBehavior = '';
     this._resetHideTimer();

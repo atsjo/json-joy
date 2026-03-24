@@ -1,29 +1,31 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {drule, useTheme} from 'nano-theme';
 import {useScrollArea} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
+import {ScrollState} from './state';
 
 const MAX_BORDER_RADIUS = 4;
 
-const thumbClass = rule({
+const thumbClass = drule({
   pos: 'absolute',
   l: 0,
   r: 0,
   bdrad: '4px',
   trs: 'background 0.1s ease',
-  cur: 'pointer',
+  us: 'none',
 });
 
 export interface ThumbProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  children?: (props: {style: React.CSSProperties; thumbRatio: number}) => React.ReactNode;
+  children?: (style: React.CSSProperties, state: ScrollState) => React.ReactNode;
 }
 
 export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest}) => {
   const state = useScrollArea();
   const theme = useTheme();
   useSyncStore(state.scrollRatio$);
-  const thumbRatio = useSyncStore(state.thumbRatio$);
   const canScroll = useSyncStore(state.canScroll$);
+  const dragging = useSyncStore(state.dragging$);
+  const railDragging = useSyncStore(state.railDragging$);
   const railEl = state.railEl;
   const railHeight = railEl ? railEl.clientHeight : 0;
   const thumbH = state.thumbHeight(railHeight);
@@ -31,13 +33,14 @@ export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest
 
   if (!canScroll) return null;
 
+  const isDragging = dragging || railDragging;
+
   const topBorderRadius = Math.min(MAX_BORDER_RADIUS, thumbT / 3);
   const bottomBorderRadius = Math.min(MAX_BORDER_RADIUS, (railHeight - thumbT - thumbH) / 3);
 
   const computedStyle: React.CSSProperties = {
     height: thumbH,
     transform: `translate3d(0, ${thumbT}px, 0)`,
-    background: theme.isLight ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.35)',
     borderRadius: `${topBorderRadius}px ${topBorderRadius}px ${bottomBorderRadius}px ${bottomBorderRadius}px`,
     ...style,
   };
@@ -50,7 +53,7 @@ export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest
         onPointerMove={state.onThumbPointerMove}
         onPointerUp={state.onThumbPointerUp}
       >
-        {children({style: computedStyle, thumbRatio})}
+        {children(computedStyle, state)}
       </div>
     );
   }
@@ -59,7 +62,7 @@ export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest
     <div
       {...rest}
       ref={state.setThumb}
-      className={thumbClass + (className ? ' ' + className : '')}
+      className={thumbClass({bg: theme.g(0, isDragging ? .48 : .24), '&:hover': {bg: theme.g(0, .48)}}) + (className ? ' ' + className : '')}
       style={computedStyle}
       onPointerDown={state.onThumbPointerDown}
       onPointerMove={state.onThumbPointerMove}
