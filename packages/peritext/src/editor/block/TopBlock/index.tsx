@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {createElement as h} from 'react';
-import { SplitPane, Pane } from '@jsonjoy.com/ui/lib/5-block/SplitPane';
+import {SplitPane, Pane} from '@jsonjoy.com/ui/lib/5-block/SplitPane';
 import type {RenderBlockProps} from '../RenderBlock';
 
 const blockClass = rule({
@@ -12,7 +11,7 @@ const blockClass = rule({
 
 const metaClass = rule({
   w: '40px',
-  bg: '#f0f0f0',
+  // bg: '#f0f0f0',
 });
 
 export interface TopBlockProps extends RenderBlockProps {}
@@ -42,11 +41,15 @@ export const TopBlock: React.FC<TopBlockProps> = ({children}) => {
   return (
     <div className={blockClass} ref={ref}>
       <div contentEditable={false} className={metaClass}>
-        meta
+        {' '}
       </div>
       <SplitPane direction="horizontal">
-        {h(Pane, {minSize: 200, defaultSize: '75%'} as any, children)}
-        {h(Pane, {contentEditable: false, minSize: 200} as any, "aside margin")}
+        <Pane minSize={200} defaultSize="75%">
+          {children}
+        </Pane>
+        <Pane contentEditable={false} minSize={200}>
+          {' '}
+        </Pane>
       </SplitPane>
     </div>
   );
