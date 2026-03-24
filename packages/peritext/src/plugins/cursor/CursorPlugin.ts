@@ -21,6 +21,7 @@ export interface CursorPluginOpts {
  *
  * You can customize cursor colors with the following CSS variables:
  *
+ * - `--caret-height`: The height of the caret.
  * - `--caret-color`: The color of the caret for the focused user.
  * - `--caret-color-blurred`: The color of the caret for unfocused users.
  * - `--selection-color`: The color of the selection for the focused user.
@@ -42,6 +43,7 @@ export class CursorPlugin implements PeritextPlugin {
       selection.a = 0.8;
     }
     this.vars = {
+      [CursorConstants.CaretHeight]: '1.8em',
       [CursorConstants.CaretColor]: caret + '',
       [CursorConstants.CaretColorBlurred]: 'rgba(127,127,127,.7)',
       [CursorConstants.SelectionColor]: selection + '',

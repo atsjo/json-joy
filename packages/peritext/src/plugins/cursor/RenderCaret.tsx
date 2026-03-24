@@ -10,7 +10,6 @@ import {useCursorPlugin} from './context';
 import {CaretScore} from '../../web/components/CaretScore';
 import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 
-const height = 1.8;
 const ms = 350;
 
 const moveAnimation = keyframes({
@@ -34,10 +33,11 @@ const blockClass = rule({
 
 const innerClass = rule({
   pos: 'absolute',
-  b: ((-height + 1) / 2) + 'em',
+  // b: ((-height + 1) / 2) + 'em',
+  b: 'calc(var(--' + CursorConstants.CaretHeight + ') / -2 + 0.5em)',
   l: '-.065em',
   w: 'calc(max(.2em, 2px))',
-  h: `${height}em`,
+  h: `var(--${CursorConstants.CaretHeight})`,
   bg: 'var(--caret-color)',
   bdl: `1px dotted var(--${CursorConstants.CaretColorBlurred})`,
   bdrad: '0.0625em',
