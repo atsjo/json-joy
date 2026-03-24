@@ -4,13 +4,13 @@ import {CursorState} from './state';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {CursorPluginOpts} from './CursorPlugin';
 
-export interface RenderPeritextProps {
+export interface RenderDocProps {
   ctx: PeritextSurfaceState;
   opts: CursorPluginOpts;
   children?: React.ReactNode;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, opts, children}) => {
+export const RenderDoc: React.FC<RenderDocProps> = ({ctx, opts, children}) => {
   const state = React.useMemo(() => new CursorState(ctx, opts.caret), [ctx, opts.caret]);
   React.useEffect(() => state.start(), [state]);
 

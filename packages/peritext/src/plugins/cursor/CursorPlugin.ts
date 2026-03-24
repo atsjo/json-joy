@@ -3,7 +3,7 @@ import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
-import {RenderPeritext} from './RenderPeritext';
+import {RenderDoc} from './RenderDoc';
 import {HslColor} from '@jsonjoy.com/ui';
 import {CursorConstants} from './constants';
 import type {PeritextPlugin} from '../../web/react/types';
@@ -53,5 +53,5 @@ export class CursorPlugin implements PeritextPlugin {
   public readonly focus: PeritextPlugin['focus'] = (props, children) => h(RenderFocus, props as any, children);
   public readonly anchor: PeritextPlugin['anchor'] = (props, children) => h(RenderAnchor, props as any, children);
   public readonly inline: PeritextPlugin['inline'] = (props, children) => h(RenderInline, props as any, children);
-  public readonly doc: PeritextPlugin['doc'] = (children, ctx) => h(RenderPeritext, {children, ctx, opts: this.opts});
+  public readonly doc: PeritextPlugin['doc'] = (children, ctx) => h(RenderDoc, {children, ctx, opts: this.opts});
 }

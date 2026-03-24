@@ -5,15 +5,15 @@ import {CommonSliceType} from 'json-joy/lib/json-crdt-extensions';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
 import {usePeritext} from './context';
-import {CaretView} from './cursor/CaretView';
+import {AnchorView} from './cursor/AnchorView';
 import {FocusView} from './cursor/FocusView';
+import {CaretView} from './cursor/CaretView';
 import {
   type Inline,
   InlineAttrEnd,
   InlineAttrPassing,
   InlineAttrStart,
 } from 'json-joy/lib/json-crdt-extensions/peritext/block/Inline';
-import {AnchorView} from './cursor/AnchorView';
 import type {Block} from 'json-joy/lib/json-crdt-extensions/peritext/block/Block';
 
 export interface BlockViewProps {
