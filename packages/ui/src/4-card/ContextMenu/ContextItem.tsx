@@ -151,7 +151,8 @@ export const ContextItem: React.FC<ContextItemProps> = ({
               : 'transparent',
       },
       '&:focus': {
-        bg: disabled ? 'transparent' : styles.g(0, 0.02),
+        out: 'none',
+        bg: disabled ? 'transparent' : styles.g(0, 0.08),
       },
     }) +
     (smallText
