@@ -28,7 +28,6 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   return (
     <div data-menu-row data-menu-id={id}>
       <ContextItemNested
-        data-menu-row data-menu-id={id}
         key={item.id || item.name}
         open={open}
         inset={state.props.inset}

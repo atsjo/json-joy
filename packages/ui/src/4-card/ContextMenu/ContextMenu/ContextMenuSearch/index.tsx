@@ -55,41 +55,41 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
             {!isFirst && !samePath && <ContextSep line />}
             {!isFirst && !samePath && <ContextSep />}
             {!!path.length && !samePath && <GroupTitle path={path} off={1} />}
-            <ContextItemNested
-              data-menu-row
-              data-menu-id={id}
-              open={isOpen}
-              key={pathStr + (item.id || item.name)}
-              inset={inset}
-              more={item.more}
-              nested={!!item.children}
-              icon={item.icon?.()}
-              right={item.right?.()}
-              danger={item.danger}
-              onClick={
-                item.onSelect
-                  ? (event) => state.execute(item, event)
-                  : children
-                    ? () => {
-                        state.select(path, item);
-                      }
+            <div data-menu-row data-menu-id={id}>
+              <ContextItemNested
+                open={isOpen}
+                key={pathStr + (item.id || item.name)}
+                inset={inset}
+                more={item.more}
+                nested={!!item.children}
+                icon={item.icon?.()}
+                right={item.right?.()}
+                danger={item.danger}
+                onClick={
+                  item.onSelect
+                    ? (event) => state.execute(item, event)
+                    : children
+                      ? () => {
+                          state.select(path, item);
+                        }
+                      : void 0
+                }
+                renderPane={
+                  children
+                    ? () => <ContextMenuPane {...state.props} depth={1} path={path} menu={item} showSearch={false} onEsc={() => openPanel.deselect()} />
                     : void 0
-              }
-              renderPane={
-                children
-                  ? () => <ContextMenuPane {...state.props} depth={1} path={path} menu={item} showSearch={false} onEsc={() => openPanel.deselect()} />
-                  : void 0
-              }
-              onMouseEnter={handleMouseMove}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={openPanel.onMouseLeave}
-              role="menuitem"
-              tabIndex={-1}
-              aria-haspopup={children ? 'menu' : undefined}
-              aria-expanded={children ? isOpen : undefined}
-            >
-              {item.display?.() ?? t(item.name)}
-            </ContextItemNested>
+                }
+                onMouseEnter={handleMouseMove}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={openPanel.onMouseLeave}
+                role="menuitem"
+                tabIndex={-1}
+                aria-haspopup={children ? 'menu' : undefined}
+                aria-expanded={children ? isOpen : undefined}
+              >
+                {item.display?.() ?? t(item.name)}
+              </ContextItemNested>
+            </div>
           </React.Fragment>
         );
       });
