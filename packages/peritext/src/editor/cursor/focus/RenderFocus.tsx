@@ -36,6 +36,9 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
       <TopPanePortal>
         <CaretToolbar
           disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}
+          more={{
+            small: true,
+          }}
           menu={state.menu.range.build()}
           onPopupClose={handleClose}
         />
