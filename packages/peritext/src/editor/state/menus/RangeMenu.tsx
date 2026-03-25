@@ -11,7 +11,6 @@ const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
 const BoxAlignRightIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
 const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
 const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
-const FlipIcon = makeIcon({set: 'tabler', icon: 'flip-vertical'});
 
 export class RangeMenu implements UiLifeCycles {
   public recent: MenuItem[] = [];
@@ -32,16 +31,11 @@ export class RangeMenu implements UiLifeCycles {
   }
 
   public build(): MenuItem {
-    return {
-      name: 'Selection menu',
-      maxToolbarItems: 4,
-      more: true,
-      children: [
+    const children: MenuItem['children'] = [
         this.formattingMenu(),
         this.annotationsMenu(),
         this.modifyMenu(),
         this.state.menu.buffer.clipboardMenu(),
-        this.actionsMenu(),
         /*
         secondBrain(),
         {
@@ -282,7 +276,14 @@ export class RangeMenu implements UiLifeCycles {
           onSelect: () => {},
         },
         */
-      ],
+      ];
+    const commands = this.cmdMenu();
+    if (commands) children.push(commands);
+    return {
+      name: 'Selection menu',
+      maxToolbarItems: 4,
+      more: true,
+      children,
     };
   }
 
@@ -464,24 +465,15 @@ export class RangeMenu implements UiLifeCycles {
     };
   };
 
-  public readonly actionsMenu = (): MenuItem => {
-    const et = this.state.surface.events.et;
+  private cmdMenu(): MenuItem | undefined {
+    const state = this.state;
+    const cmd = state.cmd;
+    if (!cmd) return;
     return {
-      name: 'Actions',
+      name: 'Commands',
       expand: 0,
       sepBefore: true,
-      children: [
-        {
-          name: 'Flip selection',
-          // right: () => (
-          //   <Sidetip>Meta Meta</Sidetip>
-          // ),
-          icon: () => <FlipIcon width={16} height={16} />,
-          onSelect: () => {
-            et.cursor({flip: true});
-          },
-        },
-      ],
+      children: cmd.range,
     };
-  };
+  }
 }

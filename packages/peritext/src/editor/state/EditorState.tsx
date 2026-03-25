@@ -5,6 +5,7 @@ import {NewFmt} from './formattings/NewFmt';
 import {spans as defaultSpans} from '../inline/spans';
 import {FmtManagePaneState} from '../inline/components/FmtManagePane/state';
 import {Menu} from './menus/Menu';
+import {Commands} from './commands/Commands';
 import type {SpanBehavior} from '../inline/SpanBehavior';
 import type {AnyBinding, Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
@@ -21,6 +22,7 @@ export class EditorState implements UiLifeCycles {
   public readonly showInlineToolbar = sync.val<[show: boolean, time: number]>([false, 0]);
 
   public readonly menu = new Menu(this);
+  public cmd?: Commands;
 
   /**
    * New slice configuration. This is used for new slices which are not yet
@@ -150,6 +152,9 @@ export class EditorState implements UiLifeCycles {
     const mouseDown = dom!.cursor.mouseDown;
     const el = dom.facade.el;
 
+    this.cmd = new Commands(this);
+    const stopCommands = this.cmd.start();
+
     const stopMenu = menu.start();
 
     const registry = this.txt.editor.getRegistry();
@@ -275,6 +280,7 @@ export class EditorState implements UiLifeCycles {
     return () => {
       this.docSizer.disconnect();
       stopMenu();
+      stopCommands();
       changeUnsubscribe();
       cursorUnsubscribe();
       unsubscribeMouseDown?.();
