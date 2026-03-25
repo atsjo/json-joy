@@ -19,15 +19,20 @@ const scoreAnimation = keyframes({
   },
 });
 
-// const shakingAnimation = keyframes({
-//   '0%': {tr: 'translateX(0), scale(1.2)', op: 1},
-//   '10%': {tr: 'translateX(-2px)'},
-//   '20%': {tr: 'translateX(2px)'},
-//   '30%': {tr: 'translateX(-1px)'},
-//   '40%': {tr: 'translateX(1px)'},
-//   '50%': {tr: 'translateX(0), scale(1)'},
-//   '100%': {op: 0, vis: 'hidden'},
-// });
+const shakingAnimation = keyframes({
+  '0%': {tr: 'translateX(0), scale(1.2)', op: 1},
+  '10%': {tr: 'translateX(-2px)'},
+  '20%': {tr: 'translateX(2px)'},
+  '30%': {tr: 'translateX(-1px)'},
+  '40%': {tr: 'translateX(1px)'},
+  '50%': {tr: 'translateX(0), scale(1)'},
+  '60%': {tr: 'translateX(-1px)'},
+  '70%': {tr: 'translateX(1px)'},
+  '80%': {tr: 'translateX(-1px)'},
+  '90%': {tr: 'translateX(1px)'},
+  '100%': {tr: 'translateX(0)'},
+  // '100%': {op: 0, vis: 'hidden'},
+});
 
 const scoreClass = rule({
   ff: 'Inter, ui-sans-serif, system-ui, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
@@ -128,13 +133,16 @@ export const CaretScore: React.FC<CaretScoreProps> = React.memo(() => {
 
   return (
     <>
-      {typeof scoreMsg === 'string' || (score > 42 && delta > 1 && timeDiff < 500) ? (
+      {score > 42 && delta > 1 && timeDiff < 500 ? (
         <span contentEditable={false} className={scoreDeltaClass}>
           +{delta}
         </span>
       ) : (
         score >= 24 && (
-          <span contentEditable={false} className={scoreClass} style={{visibility: show ? 'visible' : 'hidden'}}>
+          <span contentEditable={false} className={scoreClass} style={{
+            visibility: show ? 'visible' : 'hidden',
+            animation: typeof scoreMsg !== 'string' ? undefined : shakingAnimation + ' .5s ease-out forwards',
+          }}>
             {scoreMsg}
           </span>
         )
