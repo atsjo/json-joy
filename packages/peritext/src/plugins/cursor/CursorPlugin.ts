@@ -38,6 +38,7 @@ export class CursorPlugin implements PeritextPlugin {
     let {selection} = opts;
     if (!selection) {
       selection = caret?.copy();
+      selection.bump(-0.055);
       selection.s = 0.93;
       selection.l = 0.88;
       selection.a = 0.8;
