@@ -93,8 +93,25 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
           </React.Fragment>
         );
       });
+      const handleResultKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'ArrowRight') {
+          const row = (e.target as HTMLElement).closest?.('[data-menu-row]');
+          const menuId = row?.getAttribute('data-menu-id');
+          if (menuId) {
+            e.preventDefault();
+            e.stopPropagation();
+            openPanel.forceSelect(menuId);
+          }
+        } else if (e.key === 'ArrowLeft') {
+          if (openPanel.deselect()) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }
+      };
       results = (
-        <>
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div onKeyDown={handleResultKeyDown}>
           <Scrollbox
             style={{
               maxHeight:
@@ -104,7 +121,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
             {list}
           </Scrollbox>
           {!!list.length && <ContextSep key={'bottom-pad'} />}
-        </>
+        </div>
       );
     }
   }

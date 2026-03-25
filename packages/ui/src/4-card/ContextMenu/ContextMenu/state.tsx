@@ -193,6 +193,7 @@ export class ContextMenuState {
       }
       case 'ArrowLeft': {
         if (isTextInput) break;
+        if (!depth && this.search$.getValue()) break;
         e.preventDefault();
         e.stopPropagation();
         const currentRow = rows[row];
