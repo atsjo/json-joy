@@ -68,7 +68,7 @@ const scoreDeltaClass = rule({
   us: 'none',
 });
 
-export interface CaretScoreProps {}
+export type CaretScoreProps = {};
 
 export const CaretScore: React.FC<CaretScoreProps> = React.memo(() => {
   const plugin = useCursorPlugin();
@@ -78,15 +78,18 @@ export const CaretScore: React.FC<CaretScoreProps> = React.memo(() => {
   React.useEffect(() => {
     plugin.lastVisScore.value = score;
   }, []);
-    const [show, setShow] = React.useState(true);
+  const [show, setShow] = React.useState(true);
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const now = Date.now();
   const timeDiff = now - plugin.lastScoreTime.value;
   const visible = timeDiff <= 1000;
-  const [cnt, setCnt] = React.useState(0);
-  useInterval(() => {
-    setCnt((c) => c + 1);
-  }, visible ? 100 : null);
+  const [, setCnt] = React.useState(0);
+  useInterval(
+    () => {
+      setCnt((c) => c + 1);
+    },
+    visible ? 100 : null,
+  );
 
   if (!visible) return null;
 
@@ -125,17 +128,13 @@ export const CaretScore: React.FC<CaretScoreProps> = React.memo(() => {
 
   return (
     <>
-      {(typeof scoreMsg === 'string' || (score > 42 && delta > 1 && (timeDiff < 500))) ? (
+      {typeof scoreMsg === 'string' || (score > 42 && delta > 1 && timeDiff < 500) ? (
         <span contentEditable={false} className={scoreDeltaClass}>
           +{delta}
         </span>
       ) : (
         score >= 24 && (
-          <span
-            contentEditable={false}
-            className={scoreClass}
-            style={{visibility: show ? 'visible' : 'hidden'}}
-          >
+          <span contentEditable={false} className={scoreClass} style={{visibility: show ? 'visible' : 'hidden'}}>
             {scoreMsg}
           </span>
         )

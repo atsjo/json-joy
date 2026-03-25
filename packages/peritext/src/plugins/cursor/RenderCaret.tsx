@@ -6,7 +6,6 @@ import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
 import {usePeritext} from '../../web/react/context';
 import {useSyncStore, useSyncStoreOpt} from '../../web/react/hooks';
 import {CursorConstants} from './constants';
-import {useCursorPlugin} from './context';
 import {CaretScore} from './CaretScore';
 import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 
