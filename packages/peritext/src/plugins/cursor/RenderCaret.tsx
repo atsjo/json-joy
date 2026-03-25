@@ -7,7 +7,7 @@ import {usePeritext} from '../../web/react/context';
 import {useSyncStore, useSyncStoreOpt} from '../../web/react/hooks';
 import {CursorConstants} from './constants';
 import {useCursorPlugin} from './context';
-import {CaretScore} from '../../web/components/CaretScore';
+import {CaretScore} from './CaretScore';
 import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 
 const ms = 350;
@@ -54,7 +54,6 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, bwd, fwd
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
-  const plugin = useCursorPlugin();
   const ref = React.useRef<HTMLSpanElement>(null);
 
   // Place caret at the end of line wrap.
@@ -94,9 +93,6 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, bwd, fwd
 
   const anchorForward = point.anchor === Anchor.Before;
 
-  const score = plugin.score.value;
-  const delta = plugin.scoreDelta.value;
-
   const style: React.CSSProperties = {
     background: !focus
       ? `var(--${CursorConstants.CaretColorBlurred})`
@@ -127,15 +123,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, bwd, fwd
   return (
     <span ref={ref} className={blockClass}>
       {children}
-      {score !== plugin.lastVisScore.value && (
-        <CaretScore
-          score={score}
-          delta={delta}
-          onRender={() => {
-            plugin.lastVisScore.value = score;
-          }}
-        />
-      )}
+      <CaretScore />
       <span className={innerClass} style={style} />
     </span>
   );
