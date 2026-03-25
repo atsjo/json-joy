@@ -52,21 +52,28 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
   React.useEffect(openPanel.start, []);
   const selected = useBehaviorSubject(openPanel.selected$);
   const anchor = useAnchorPoint();
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const doShowSearch = showSearch && !depth && !path.length;
 
+  // Auto-focus first item on mount.
   React.useEffect(() => {
-    const onKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.stopPropagation();
-        event.preventDefault();
-        const success = openPanel.deselect();
-        if (!success) onEsc?.();
-      }
-    };
-    document.addEventListener('keydown', onKeydown);
-    return () => {
-      document.removeEventListener('keydown', onKeydown);
-    };
-  }, [openPanel, onEsc]);
+    if (depth > 0) {
+      // Popup panes are inside MoveToViewport which starts visibility:hidden
+      // and reveals via requestAnimationFrame. Delay focus to run after that.
+      let inner: number;
+      const outer = requestAnimationFrame(() => {
+        inner = requestAnimationFrame(() => {
+          state.focusFirstItem(containerRef.current, false, depth);
+        });
+      });
+      return () => {
+        cancelAnimationFrame(outer);
+        cancelAnimationFrame(inner);
+      };
+    }
+    state.focusFirstItem(containerRef.current, doShowSearch, depth);
+    return undefined;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     if (search && openPanel.selected$.getValue()) openPanel.deselect();
@@ -98,7 +105,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
         openPanel={openPanel}
         renderPane={() => (
           <MoveToViewport>
-            <ContextMenuPane {...props} header={void 0} path={[...path, menu]} depth={depth + 1} menu={item} />
+            <ContextMenuPane {...props} header={void 0} path={[...path, menu]} depth={depth + 1} menu={item} onEsc={() => openPanel.deselect()} />
           </MoveToViewport>
         )}
       />
@@ -133,6 +140,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
                 path={[...path, menu]}
                 depth={depth + 1}
                 menu={item}
+                onEsc={() => openPanel.deselect()}
                 header={
                   <>
                     <ContextHeader compact>
@@ -170,7 +178,6 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
 
   bigIcons.flush();
 
-  const doShowSearch = showSearch && !depth && !path.length;
   const searchHeight = doShowSearch ? HEIGHT.SEARCH : 0;
   const doShowHeader = !depth && !!path.length;
   const headerHeight = doShowHeader || !!header ? HEIGHT.HEADER : 0;
@@ -180,7 +187,15 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
   paneStyle.minWidth = minWidth;
 
   return (
-    <ContextPane {...pane} style={paneStyle}>
+    <ContextPane
+      {...pane}
+      ref={containerRef}
+      role="menu"
+      aria-label={menu.name}
+      onKeyDown={(e) => state.handleKeyDown(e, containerRef.current, openPanel, depth, onEsc)}
+      onBlur={(e) => state.handleFocusOut(e, containerRef.current, depth, onEsc)}
+      style={paneStyle}
+    >
       {!doShowHeader && header}
       {(!search || !showSearch) && (
         <>

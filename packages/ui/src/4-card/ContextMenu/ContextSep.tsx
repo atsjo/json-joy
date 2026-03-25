@@ -21,6 +21,7 @@ export const ContextSep: React.FC<ContextSepProps> = ({line, grey, small, noMarg
 
   const props: any = {
     className: separatorClass,
+    role: 'separator',
   };
 
   if (line) {

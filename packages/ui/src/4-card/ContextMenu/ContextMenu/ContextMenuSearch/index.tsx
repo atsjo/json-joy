@@ -48,6 +48,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
         const id = item.id ?? item.name;
         lastPathStr = pathStr;
         const handleMouseMove = () => openPanel.onMouseMove(id);
+        const isOpen = selected === id;
         return (
           <React.Fragment key={id}>
             {!isFirst && !samePath && <ContextSep />}
@@ -55,7 +56,9 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
             {!isFirst && !samePath && <ContextSep />}
             {!!path.length && !samePath && <GroupTitle path={path} off={1} />}
             <ContextItemNested
-              open={selected === id}
+              data-menu-row
+              data-menu-id={id}
+              open={isOpen}
               key={pathStr + (item.id || item.name)}
               inset={inset}
               more={item.more}
@@ -74,12 +77,16 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
               }
               renderPane={
                 children
-                  ? () => <ContextMenuPane {...state.props} depth={1} path={path} menu={item} showSearch={false} />
+                  ? () => <ContextMenuPane {...state.props} depth={1} path={path} menu={item} showSearch={false} onEsc={() => openPanel.deselect()} />
                   : void 0
               }
               onMouseEnter={handleMouseMove}
               onMouseMove={handleMouseMove}
               onMouseLeave={openPanel.onMouseLeave}
+              role="menuitem"
+              tabIndex={-1}
+              aria-haspopup={children ? 'menu' : undefined}
+              aria-expanded={children ? isOpen : undefined}
             >
               {item.display?.() ?? t(item.name)}
             </ContextItemNested>
@@ -104,7 +111,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
 
   return (
     <>
-      <div style={{padding: '0 8px 8px'}}>
+      <div data-menu-row style={{padding: '0 8px 8px'}}>
         <Input
           focus
           size={-2}
@@ -117,13 +124,9 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
               e.preventDefault();
               e.stopPropagation();
               state.search$.next('');
-            } else {
-              e.preventDefault();
-              e.stopPropagation();
-              try {
-                (e.nativeEvent.target as any).blur?.();
-              } catch {}
             }
+            // When search is empty, let the event bubble to the container's
+            // keyboard handler (breadcrumb back-navigation → close menu).
           }}
         />
       </div>

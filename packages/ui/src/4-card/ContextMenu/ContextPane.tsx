@@ -45,7 +45,8 @@ const triangleClass = rule({
   bxsh: '0 -1px 1px rgba(0,0,0,.035)',
 });
 
-export interface ContextPaneProps {
+export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement>;
   right?: boolean;
 
   // Whether to not close the drop down on click event.
@@ -67,7 +68,7 @@ export interface ContextPaneProps {
 
 export type IContextPaneState = {};
 
-export const ContextPane: React.FC<ContextPaneProps> = ({
+export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivElement, ContextPaneProps>(({
   children,
   right,
   triangle,
@@ -77,8 +78,8 @@ export const ContextPane: React.FC<ContextPaneProps> = ({
   style,
   accent,
   className,
-  onClick,
-}) => {
+  ...rest
+}, ref) => {
   const theme = useTheme();
 
   const blockStyle: React.CSSProperties = {
@@ -110,7 +111,7 @@ export const ContextPane: React.FC<ContextPaneProps> = ({
 
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
-    <div className={paneClass + (className || '')} style={blockStyle} onClick={onClick}>
+    <div {...rest} className={paneClass + (className || '')} style={blockStyle} ref={ref}>
       <div className={bodyClass} style={{overflow: canOverflow ? 'visible' : undefined}}>
         {children}
       </div>
@@ -125,4 +126,4 @@ export const ContextPane: React.FC<ContextPaneProps> = ({
       )}
     </div>
   );
-};
+});
