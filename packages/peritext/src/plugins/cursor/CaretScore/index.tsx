@@ -91,7 +91,7 @@ export const CaretScore: React.FC<CaretScoreProps> = React.memo(() => {
     visible ? 100 : null,
   );
 
-  if (!visible) return null;
+  if (!visible || score < 24) return null;
 
   const scoreMsg =
     score > 100 && score <= 120
