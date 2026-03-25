@@ -3,7 +3,7 @@ import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
-import {RenderPeritext} from './RenderPeritext';
+import {RenderDoc} from './RenderDoc';
 import {HslColor} from '@jsonjoy.com/ui';
 import {CursorConstants} from './constants';
 import type {PeritextPlugin} from '../../web/react/types';
@@ -21,6 +21,7 @@ export interface CursorPluginOpts {
  *
  * You can customize cursor colors with the following CSS variables:
  *
+ * - `--caret-height`: The height of the caret.
  * - `--caret-color`: The color of the caret for the focused user.
  * - `--caret-color-blurred`: The color of the caret for unfocused users.
  * - `--selection-color`: The color of the selection for the focused user.
@@ -33,15 +34,17 @@ export class CursorPlugin implements PeritextPlugin {
   public readonly vars: Record<string, string>;
 
   constructor(public readonly opts: CursorPluginOpts = {}) {
-    const {caret = new HslColor(210 / 360, 1, 0.5)} = opts;
+    const {caret = new HslColor(222 / 360, 1, 0.48)} = opts;
     let {selection} = opts;
     if (!selection) {
       selection = caret?.copy();
+      selection.bump(-0.055);
       selection.s = 0.93;
       selection.l = 0.88;
       selection.a = 0.8;
     }
     this.vars = {
+      [CursorConstants.CaretHeight]: '1.8em',
       [CursorConstants.CaretColor]: caret + '',
       [CursorConstants.CaretColorBlurred]: 'rgba(127,127,127,.7)',
       [CursorConstants.SelectionColor]: selection + '',
@@ -53,5 +56,5 @@ export class CursorPlugin implements PeritextPlugin {
   public readonly focus: PeritextPlugin['focus'] = (props, children) => h(RenderFocus, props as any, children);
   public readonly anchor: PeritextPlugin['anchor'] = (props, children) => h(RenderAnchor, props as any, children);
   public readonly inline: PeritextPlugin['inline'] = (props, children) => h(RenderInline, props as any, children);
-  public readonly doc: PeritextPlugin['doc'] = (children, ctx) => h(RenderPeritext, {children, ctx, opts: this.opts});
+  public readonly doc: PeritextPlugin['doc'] = (children, ctx) => h(RenderDoc, {children, ctx, opts: this.opts});
 }

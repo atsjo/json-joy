@@ -31,6 +31,7 @@ put('.' + CssClass.Overlays, {
 
 put('.' + CssClass.Inline, {
   whiteSpace: 'pre-wrap',
+  lh: '1.9em',
 });
 
 export interface PeritextWebUiProps {

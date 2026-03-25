@@ -6,11 +6,9 @@ import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
 import {usePeritext} from '../../web/react/context';
 import {useSyncStore, useSyncStoreOpt} from '../../web/react/hooks';
 import {CursorConstants} from './constants';
-import {useCursorPlugin} from './context';
-import {CaretScore} from '../../web/components/CaretScore';
+import {CaretScore} from './CaretScore';
 import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 
-const height = 1.5;
 const ms = 350;
 
 const moveAnimation = keyframes({
@@ -29,38 +27,32 @@ const blockClass = rule({
   w: '0px',
   h: '100%',
   bg: 'black',
-  va: 'bottom',
+  va: 'baseline',
 });
 
 const innerClass = rule({
   pos: 'absolute',
-  b: '-.18em',
+  b: 'calc(var(--' + CursorConstants.CaretHeight + ') / -2 + 0.5em)',
   l: '-.065em',
   w: 'calc(max(.2em, 2px))',
-  h: `${height}em`,
+  h: `var(--${CursorConstants.CaretHeight})`,
   bg: 'var(--caret-color)',
   bdl: `1px dotted var(--${CursorConstants.CaretColorBlurred})`,
   bdrad: '0.0625em',
-  'mix-blend-mode': 'multiply',
   an: moveAnimation + ' .25s ease-out forwards',
-});
-
-const innerClass2 = rule({
-  'mix-blend-mode': 'hard-light',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children}) => {
+export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, bwd, fwd, children}) => {
   const ctx = usePeritext();
   const pending = useSyncStore(ctx.peritext.editor.pending);
   const [show, setShow] = React.useState(true);
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
-  const plugin = useCursorPlugin();
   const ref = React.useRef<HTMLSpanElement>(null);
 
   // Place caret at the end of line wrap.
@@ -86,11 +78,19 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
       }
     }
   }, [point, ctx.dom.getCharRect]);
+  const inline = fwd || bwd;
+
+  let isSmall = false;
+  let isSup = false;
+  let isSub = false;
+  if (inline) {
+    const attr = inline?.attr();
+    isSup ||= !!attr[CommonSliceType.sup];
+    isSub ||= !!attr[CommonSliceType.sub];
+    isSmall ||= isSup || isSub;
+  }
 
   const anchorForward = point.anchor === Anchor.Before;
-
-  const score = plugin.score.value;
-  const delta = plugin.scoreDelta.value;
 
   const style: React.CSSProperties = {
     background: !focus
@@ -99,6 +99,16 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
         ? `var(--${CursorConstants.CaretColor})`
         : 'transparent',
   };
+
+  if (isSmall) {
+    style.width = 'calc(max(.15em, 2px))';
+    style.height = `calc(var(--${CursorConstants.CaretHeight}) / 2)`;
+    if (isSup) {
+      style.bottom = 'calc(var(--' + CursorConstants.CaretHeight + ') / -2 + 1.25em)';
+    } else {
+      style.bottom = 'calc(var(--' + CursorConstants.CaretHeight + ') / -4 + 0.25em)';
+    }
+  }
 
   if (italic || pending?.has(CommonSliceType.i)) {
     style.rotate = '11deg';
@@ -112,18 +122,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
   return (
     <span ref={ref} className={blockClass}>
       {children}
-      {score !== plugin.lastVisScore.value && (
-        <CaretScore
-          score={score}
-          delta={delta}
-          onRender={() => {
-            plugin.lastVisScore.value = score;
-          }}
-        />
-      )}
-
-      {/* Two carets overlay, so that they look good, both, on white and black backgrounds. */}
-      <span className={innerClass + innerClass2} style={style} />
+      <CaretScore />
       <span className={innerClass} style={style} />
     </span>
   );

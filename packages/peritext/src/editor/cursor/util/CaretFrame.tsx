@@ -8,7 +8,7 @@ const blockClass = rule({
   z: 100,
   w: '0px',
   h: '100%',
-  va: 'bottom',
+  va: 'baseline',
 });
 
 const overClass = rule({

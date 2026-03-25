@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Chrome} from '../components/Chrome';
 import {EditorState, context} from '../state';
 import {EditorPlugin, type EditorPluginOpts} from '../plugin';
+import {Doc} from './Doc';
 import type {PeritextSurfaceState} from '../../web/state';
 
 export interface RenderDocProps {
@@ -10,7 +11,8 @@ export interface RenderDocProps {
   opts: EditorPluginOpts;
 }
 
-export const RenderDoc: React.FC<RenderDocProps> = ({surface, opts, children}) => {
+export const RenderDoc: React.FC<RenderDocProps> = (props) => {
+  const {surface, opts} = props;
   const value: EditorState = React.useMemo(() => {
     const state = new EditorState(surface, opts);
     const plugin = surface.plugins.find((p) => p instanceof EditorPlugin);
@@ -22,7 +24,9 @@ export const RenderDoc: React.FC<RenderDocProps> = ({surface, opts, children}) =
 
   return (
     <context.Provider value={value}>
-      <Chrome>{children}</Chrome>
+      <Chrome>
+        <Doc {...props} />
+      </Chrome>
     </context.Provider>
   );
 };

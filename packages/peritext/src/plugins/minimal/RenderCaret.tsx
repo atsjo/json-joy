@@ -27,7 +27,7 @@ const blockClass = rule({
   w: '0px',
   h: '100%',
   bg: 'black',
-  va: 'center',
+  va: 'baseline',
 });
 
 const innerClass = rule({

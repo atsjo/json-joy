@@ -1,4 +1,4 @@
-import {Value} from 'json-joy/lib/util/events/sync-store';
+import * as sync from 'thingies/lib/sync';
 import {HslColor} from '@jsonjoy.com/ui';
 import type {ChangeDetail} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '../../web/types';
@@ -6,13 +6,15 @@ import type {PeritextSurfaceState} from '../../web/state';
 
 export class CursorState implements UiLifeCycles {
   /** Current score. */
-  public readonly score: Value<number> = new Value(0);
+  public readonly score = sync.val(0);
 
   /** By how much the score changed. */
-  public readonly scoreDelta: Value<number> = new Value(0);
+  public readonly scoreDelta = sync.val(0);
 
   /** The last score that was shown to the user. */
-  public readonly lastVisScore: Value<number> = new Value(0);
+  public readonly lastVisScore = sync.val(0);
+
+  public readonly lastScoreTime = sync.val(0);
 
   constructor(
     public readonly ctx: PeritextSurfaceState,
@@ -22,11 +24,10 @@ export class CursorState implements UiLifeCycles {
   /** -------------------------------------------------- {@link UiLifeCycles} */
   public start(): () => void {
     const dom = this.ctx.dom;
-    let lastNow: number = 0;
 
     const onChange = (event: CustomEvent<ChangeDetail>) => {
       const now = Date.now();
-      const timeDiff = now - lastNow;
+      const timeDiff = now - this.lastScoreTime.value;
       let delta = 0;
       switch (event.detail.ev?.type) {
         case 'delete':
@@ -43,7 +44,7 @@ export class CursorState implements UiLifeCycles {
       }
       if (delta) this.score.next(delta >= 0 ? this.score.value + delta : 0);
       this.scoreDelta.next(delta);
-      lastNow = now;
+      this.lastScoreTime.next(now);
     };
 
     dom.et.addEventListener('change', onChange);

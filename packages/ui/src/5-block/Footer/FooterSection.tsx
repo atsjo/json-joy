@@ -56,7 +56,6 @@ export const FooterSection: React.FC<FooterSectionProps> = ({title, children}) =
       <div className={sectionHeadingClass}>{title}</div>
       <ul className={sectionListClass}>
         {list.map((child, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
           <li key={i}>
             <p>{child}</p>
           </li>

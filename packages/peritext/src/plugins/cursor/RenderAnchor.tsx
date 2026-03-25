@@ -20,7 +20,7 @@ const blockClass = rule({
   us: 'none',
   w: '0px',
   h: '100%',
-  va: 'center',
+  va: 'baseline',
 });
 
 const innerClass = rule({
