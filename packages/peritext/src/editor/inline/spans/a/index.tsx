@@ -18,6 +18,8 @@ import {Span} from './components/Span';
 import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {RenderInlineProps} from '../../RenderInline';
+import type {MenuItem} from '../../../types';
+import type {CommandDefinition} from '../../../state/commands/types';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'link'});
 
@@ -43,18 +45,20 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.a, typeof sche
   },
 };
 
+const menu: MenuItem = {
+  name: 'Link',
+  icon: () => <Icon width={15} height={15} />,
+  right: () => <Sidetip small>⌘ K</Sidetip>,
+  keys: ['⌘', 'k'],
+};
+
 /** Inline URL, like `<a>` tag in HTML. */
 export const behavior = new (class ABehavior extends SpanBehavior<SliceStacking.Many, SliceTypeCon.a, typeof schema> {
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.a, 'Link', schema, false, void 0, fromHtml);
   }
 
-  public readonly menu = {
-    name: 'Link',
-    icon: () => <Icon width={15} height={15} />,
-    right: () => <Sidetip small>⌘ K</Sidetip>,
-    keys: ['⌘', 'k'],
-  };
+  public readonly menu = menu;
 
   public readonly validate = (formatting: Fmt<any, any>): ValidationResult => {
     const obj = formatting.conf()?.view() as Data;

@@ -151,16 +151,15 @@ export class EditorState implements UiLifeCycles {
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
     const el = dom.facade.el;
-
-    this.cmd = new Commands(this);
-    const stopCommands = this.cmd.start();
-
+    const commands = this.cmd = new Commands(this);
     const stopMenu = menu.start();
-
     const registry = this.txt.editor.getRegistry();
     for (const behavior of defaultSpans) {
       registry.add(behavior);
+      const {cmd} = behavior;
+      if (cmd) commands.range.push(cmd);
     }
+    const stopCommands = this.cmd.start();
     // Object.assign(registry.get(SliceTypeName.a)?.data() || {}, behavior.a);
     // // registry.add({});
     // Object.assign(registry.get(SliceTypeName.col)?.data() || {}, behavior.col);
