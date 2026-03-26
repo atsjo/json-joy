@@ -35,11 +35,11 @@ export const FmtNewPane: React.FC<FmtNewPaneProps> = ({formatting, onSave}) => {
   };
 
   return (
-    <FmtPane onEsc={() => state.newSlice.next(void 0)}>
+    <FmtPane onEsc={() => state.selection.newSlice.next(void 0)}>
       <form className={blockClass} onSubmit={handleSave}>
         <ContextPaneHeader
           short
-          onCloseClick={() => state.newSlice.next(void 0)}
+          onCloseClick={() => state.selection.newSlice.next(void 0)}
           right={
             <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
               <BasicButton fill width={'auto'} disabled={!valid} onClick={valid ? onSave : void 0}>

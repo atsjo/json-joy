@@ -20,16 +20,10 @@ export class EditorState implements UiLifeCycles {
   public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
-  public readonly selection = new SelectionState(this);
+  public readonly selection: SelectionState;
 
   public readonly menu = new Menu(this);
   public cmd?: Commands;
-
-  /**
-   * New slice configuration. This is used for new slices which are not yet
-   * applied to the text as they need to be configured first.
-   */
-  public readonly newSlice = sync.val<NewFmt | undefined>(void 0);
 
   public readonly activeSlice = sync.val<undefined>(void 0);
 
@@ -57,6 +51,7 @@ export class EditorState implements UiLifeCycles {
   ) {
     this.txt = this.surface.dom.txt;
     this.et = surface.headless.et;
+    this.selection = new SelectionState(this);
     const length = spans.length;
     for (let i = 0; i < length; i++) {
       const tag = spans[i].tag;
@@ -122,23 +117,6 @@ export class EditorState implements UiLifeCycles {
   //   return true;
   // }
 
-  /** Open popup to start configuring a new slice. */
-  public startSliceConfig(tag: SliceTypeName | string | number): NewFmt | undefined {
-    const editor = this.txt.editor;
-    const behavior = this.spanMap[tag];
-    if (!behavior) return;
-    const range = editor.mainCursor()?.range();
-    if (!range) return;
-    const newSlice = this.newSlice;
-    if (!behavior) {
-      newSlice.next(void 0);
-      return;
-    }
-    const formatting = new NewFmt(behavior, range, this);
-    newSlice.next(formatting);
-    return formatting;
-  }
-
   // public registerSlice(tag: TypeTag, data: SliceRegistryEntryData): ToolBarSliceRegistryEntry {
   //   const registry = this.txt.editor.getRegistry();
   //   const entry = registry.get(tag);
@@ -147,7 +125,7 @@ export class EditorState implements UiLifeCycles {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const {surface, newSlice: newSliceConfig, menu} = this;
+    const {surface, menu} = this;
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
@@ -192,32 +170,21 @@ export class EditorState implements UiLifeCycles {
       //   showInlineToolbar.next([false, Date.now()]);
     };
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case 'Escape': {
-          if (newSliceConfig.value) {
-            event.stopPropagation();
-            event.preventDefault;
-            newSliceConfig.next(void 0);
-            return;
-          }
-          break;
-        }
-      }
-    };
+    // TODO: Move this to <a> span behavior.
     const onKeyDownDocument = (event: KeyboardEvent) => {
       switch (event.key) {
         case 'k': {
           if (event.metaKey) {
             const editor = this.txt.editor;
+            const newSlice = this.selection.newSlice;
             if (
               editor.hasCursor() &&
               !editor.mainCursor()?.isCollapsed() &&
-              (!newSliceConfig.value || newSliceConfig.value.behavior.tag !== SliceTypeName.a)
+              (!newSlice.value || newSlice.value.behavior.tag !== SliceTypeName.a)
             ) {
               event.stopPropagation();
               event.preventDefault;
-              this.startSliceConfig(SliceTypeName.a);
+              this.selection.startSliceConfig(SliceTypeName.a);
               return;
             }
           }
@@ -225,20 +192,10 @@ export class EditorState implements UiLifeCycles {
         }
       }
     };
-    const onCursor = ({detail}: PeritextCursorEvent) => {
-      // Close config popup on non-focus cursor moves.
-      if (newSliceConfig.value) {
-        const isFocusMove = detail.move && detail.move.length === 1 && detail.move[0][0] === 'focus';
-        if (!isFocusMove) {
-          this.newSlice.next(void 0);
-        }
-      }
-    };
 
     el.addEventListener('mousedown', mouseDownListener);
-    el.addEventListener('keydown', onKeyDown);
+    
     document.addEventListener('keydown', onKeyDownDocument);
-    et.addEventListener('cursor', onCursor);
 
     const unbindHotkeys = this.surface.headless.kbd.bind([
       [
@@ -284,9 +241,7 @@ export class EditorState implements UiLifeCycles {
       cursorUnsubscribe();
       unsubscribeMouseDown?.();
       el.removeEventListener('mousedown', mouseDownListener);
-      el.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keydown', onKeyDownDocument);
-      et.removeEventListener('cursor', onCursor);
       unbindHotkeys();
       unbindHotkeysSurface?.();
       selectionStop();

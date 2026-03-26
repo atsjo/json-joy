@@ -2,8 +2,8 @@ import * as React from 'react';
 import {useEditor} from '../../state/context';
 import {CaretFrame} from '../util/CaretFrame';
 import {FmtNewPane} from '../../inline/components/FmtNewPane';
+import {useSyncStoreOpt} from '../../../web/react/hooks';
 import {BottomPanePortal} from '../util/BottomPanePortal';
-import {useSyncStore, useSyncStoreOpt} from '../../../web/react/hooks';
 import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
 import {FocusOver} from './FocusOver';
 
@@ -16,15 +16,15 @@ export const RenderFocus: React.FC<RenderFocusProps> = (props) => {
   const state = useEditor()!;
   const {surface, selection} = state;
   const showInlineToolbarValue = selection.show.use();
+  const newSlice = selection.newSlice.use();
   const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
-  const formatting = useSyncStore(state.newSlice);
 
   let under: React.ReactNode | undefined;
 
-  if (!!formatting && showInlineToolbarValue && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
+  if (!!newSlice && showInlineToolbarValue && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
     under = (
       <BottomPanePortal>
-        <FmtNewPane formatting={formatting} onSave={() => formatting.save()} />
+        <FmtNewPane formatting={newSlice} onSave={() => newSlice.save()} />
       </BottomPanePortal>
     );
   }

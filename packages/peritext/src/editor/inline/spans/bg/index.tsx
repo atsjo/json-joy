@@ -44,7 +44,7 @@ export const behavior = new (class BgBehavior extends SpanBehavior<SliceStacking
   }
 
   public readonly action = (state: EditorState) => {
-    state.startSliceConfig(SliceTypeCon.bg);
+    state.selection.startSliceConfig(SliceTypeCon.bg);
   };
 
   public readonly menuId = 'fmt-artistic';
