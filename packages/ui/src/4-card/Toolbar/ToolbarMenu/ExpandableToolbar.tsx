@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as sync from 'thingies/lib/sync';
 import {ToolbarMenu} from '.';
 import {ContextMenu, type ContextMenuProps} from '../../ContextMenu';
 import {PositionAtPoint} from '../../../utils/popup/PositionAtPoint';
@@ -9,10 +10,16 @@ import {MoveToViewport} from '../../../utils/popup/MoveToViewport';
 import type {ToolbarMenuProps} from './types';
 import type {AnchorPoint} from '../../../utils/popup';
 import type {MenuItem} from '../../StructuralMenu/types';
+import {useSyncStore} from '../../../hooks/useSyncStore';
 
 export type InlineMenuView = 'toolbar' | 'context';
 
+export class ExpandableToolbarState {
+  public readonly view = sync.val<InlineMenuView>('toolbar');
+}
+
 export interface ExpandableToolbarProps extends ToolbarMenuProps {
+  state?: ExpandableToolbarState;
   expandPoint?: AnchorPoint | (() => AnchorPoint);
   disabled?: boolean;
   more?: Omit<ToolbarMenuProps['more'], 'onClick'>;
@@ -21,19 +28,20 @@ export interface ExpandableToolbarProps extends ToolbarMenuProps {
 }
 
 export const ExpandableToolbar: React.FC<ExpandableToolbarProps> = (props) => {
-  const {expandPoint, more, context, contextMenu = props.menu, ...rest} = props;
-  const [view, setView] = React.useState<InlineMenuView>('toolbar');
+  const {state: _state, expandPoint, more, context, contextMenu = props.menu, ...rest} = props;
+  const state = React.useMemo(() => _state || new ExpandableToolbarState(), [_state]);
+  const view = useSyncStore(state.view);
   const popupContextValue = React.useMemo(
     () => ({
       close: () => {
-        setView('toolbar');
+        state.view.next('toolbar');
       },
     }),
-    [],
+    [state],
   );
   const handleContextMenuClickAway = React.useCallback(() => {
-    setView('toolbar');
-  }, []);
+    state.view.next('toolbar');
+  }, [state]);
 
   if (view === 'context') {
     if (!expandPoint) return null;
@@ -43,7 +51,7 @@ export const ExpandableToolbar: React.FC<ExpandableToolbarProps> = (props) => {
           <popupContext.Provider value={popupContextValue}>
             <ToolbarMenuProvider {...rest}>
               <MoveToViewport>
-                <ContextMenu inset showSearch {...context} menu={contextMenu} onEsc={() => setView('toolbar')} />
+                <ContextMenu inset showSearch {...context} menu={contextMenu} onEsc={() => state.view.next('toolbar')} />
               </MoveToViewport>
             </ToolbarMenuProvider>
           </popupContext.Provider>
@@ -59,7 +67,7 @@ export const ExpandableToolbar: React.FC<ExpandableToolbarProps> = (props) => {
         ...more,
         onClick: expandPoint
           ? () => {
-              setView('context');
+              state.view.next('context');
             }
           : undefined,
       }}
