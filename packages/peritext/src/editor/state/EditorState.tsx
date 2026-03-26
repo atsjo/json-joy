@@ -6,6 +6,7 @@ import {spans as defaultSpans} from '../inline/spans';
 import {FmtManagePaneState} from '../inline/components/FmtManagePane/state';
 import {Menu} from './menus/Menu';
 import {Commands} from './commands/Commands';
+import {SelectionState} from './SelectionState';
 import type {SpanBehavior} from '../inline/SpanBehavior';
 import type {AnyBinding, Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
@@ -19,7 +20,7 @@ export class EditorState implements UiLifeCycles {
   public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
-  public readonly showInlineToolbar = sync.val<[show: boolean, time: number]>([false, 0]);
+  public readonly selection = new SelectionState(this);
 
   public readonly menu = new Menu(this);
   public cmd?: Commands;
@@ -146,7 +147,7 @@ export class EditorState implements UiLifeCycles {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const {surface, showInlineToolbar, newSlice: newSliceConfig, menu} = this;
+    const {surface, newSlice: newSliceConfig, menu} = this;
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
@@ -190,9 +191,7 @@ export class EditorState implements UiLifeCycles {
       // if (showInlineToolbar.value[0])
       //   showInlineToolbar.next([false, Date.now()]);
     };
-    const mouseUpListener = (event: MouseEvent) => {
-      if (!showInlineToolbar.value[0]) showInlineToolbar.next([true, Date.now()]);
-    };
+
     const onKeyDown = (event: KeyboardEvent) => {
       switch (event.key) {
         case 'Escape': {
@@ -237,7 +236,6 @@ export class EditorState implements UiLifeCycles {
     };
 
     el.addEventListener('mousedown', mouseDownListener);
-    el.addEventListener('mouseup', mouseUpListener);
     el.addEventListener('keydown', onKeyDown);
     document.addEventListener('keydown', onKeyDownDocument);
     et.addEventListener('cursor', onCursor);
@@ -276,6 +274,8 @@ export class EditorState implements UiLifeCycles {
         ),
     ]);
 
+    const selectionStop = this.selection.start();
+
     return () => {
       this.docSizer.disconnect();
       stopMenu();
@@ -284,12 +284,12 @@ export class EditorState implements UiLifeCycles {
       cursorUnsubscribe();
       unsubscribeMouseDown?.();
       el.removeEventListener('mousedown', mouseDownListener);
-      el.removeEventListener('mouseup', mouseUpListener);
       el.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keydown', onKeyDownDocument);
       et.removeEventListener('cursor', onCursor);
       unbindHotkeys();
       unbindHotkeysSurface?.();
+      selectionStop();
     };
   }
 }

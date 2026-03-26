@@ -14,10 +14,11 @@ export interface RenderFocusProps extends CaretViewProps {
 
 export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   const state = useEditor()!;
-  const {surface} = state;
-  const showInlineToolbar = state.showInlineToolbar;
-  const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
-  const enableAfterCoolDown = useTimeout(300, [toolbarVisibilityChangeTime]);
+  const {surface, selection} = state;
+  // const showInlineToolbar = state.showInlineToolbar;
+  // const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
+  const showInlineToolbarValue = selection.show.use();
+  const enableAfterCoolDown = useTimeout(300, [selection.showTime]);
   const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
   const formatting = useSyncStore(state.newSlice);
   // const focus = useSyncStoreOpt(surface.dom?.cursor.focus) || false;
