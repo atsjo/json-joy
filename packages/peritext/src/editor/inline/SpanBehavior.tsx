@@ -14,7 +14,7 @@ import type {EditableFmt, SavedFmt, Fmt} from '../state/formattings';
 import type {RenderInlineProps} from './RenderInline';
 import type {EditorState} from '../state';
 import type {SpanProps} from '../../web/react/types';
-import type {CommandDefinition} from '../state/commands/types';
+import type {DynamicCommandDefinition} from '../state/commands/types';
 
 /**
  * Inline slice behavior.
@@ -97,7 +97,7 @@ export class SpanBehavior<
   Edit?: React.FC<EditProps> = void 0;
 
   /** Commands to register in global command palette. */
-  cmd?: ((state: EditorState) => CommandDefinition) = void 0;
+  cmd?: DynamicCommandDefinition = void 0;
 
   public getMenu(state: EditorState): MenuItem | undefined {
     const menu = this.menu;

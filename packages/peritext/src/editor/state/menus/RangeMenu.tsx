@@ -473,6 +473,7 @@ export class RangeMenu implements UiLifeCycles {
       name: 'Commands',
       expand: 0,
       sepBefore: true,
+      minWidth: 300,
       children: cmd.buildMenu(),
     };
   }

@@ -1,6 +1,8 @@
 import type {MenuItem} from "../../types";
 import type {EditorState} from "../EditorState";
 
+export type DynamicCommandDefinition = (state: EditorState) => CommandDefinition;
+
 export interface CommandDefinition extends MenuItem {
   /** Technical name of the command, if not specified, the name will be used. */
   cmd?: string;

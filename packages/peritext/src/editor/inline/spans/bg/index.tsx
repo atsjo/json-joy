@@ -11,6 +11,7 @@ import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {behavior as col} from '../col';
 import type {EditorState} from '../../../state/EditorState';
+import type {DynamicCommandDefinition} from '../../../state/commands/types';
 
 export const name = 'Background';
 export const Icon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
@@ -31,20 +32,29 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.bg, typeof sch
   },
 };
 
+const menu = (state: EditorState) => ({
+  name,
+  order: 2,
+  icon: () => <Icon width={16} height={16} />,
+});
+
 export const behavior = new (class BgBehavior extends SpanBehavior<SliceStacking.Many, SliceTypeCon.bg, typeof schema> {
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.bg, name, schema, false, void 0, fromHtml);
   }
 
+  public readonly action = (state: EditorState) => {
+    state.startSliceConfig(SliceTypeCon.bg);
+  };
+
   public readonly menuId = 'fmt-artistic';
-  public readonly menu = (state: EditorState) => ({
-    name,
-    order: 2,
-    icon: () => <Icon width={16} height={16} />,
-    onSelect: () => {
-      state.startSliceConfig(SliceTypeCon.bg);
-    },
-  });
+  public readonly menu = menu;
+  // public readonly cmd: DynamicCommandDefinition = (state: EditorState) => ({
+  //   ...menu(state),
+  //   name: 'Open background color picker',
+  //   cmd: 'OpenBgPicker',
+  //   action: this.action,
+  // });
 
   public readonly text = (style: React.CSSProperties, attr: InlineAttrStack) => {
     const data = attr[attr.length - 1].slice.data();
