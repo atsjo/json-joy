@@ -16,7 +16,7 @@ export const CaretToolbar: React.FC<CaretToolbarProps> = ({menu, disabled, onPop
     const el = spanRef.current;
     if (el) {
       const rect = el.getBoundingClientRect();
-      return {x: rect.right + 4, y: rect.y - 16, dx: -1, dy: 1};
+      return {x: rect.right + 4, y: rect.y + 32, dx: -1, dy: 1};
     }
     return {x: 32, y: 32, dx: -1, dy: 1};
   }, []);
