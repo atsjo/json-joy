@@ -1,5 +1,5 @@
-import type * as schema from '../../schema';
 import {AbsType} from './AbsType';
+import type * as schema from '../../schema';
 
 export class ConType<V = any> extends AbsType<schema.ConSchema<V>> {
   public literal() {

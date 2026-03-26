@@ -1,5 +1,5 @@
-import type * as schema from '../../schema';
 import {AbsType} from './AbsType';
+import type * as schema from '../../schema';
 
 export class NumType extends AbsType<schema.NumSchema> {
   public format(format: schema.NumSchema['format']): this {

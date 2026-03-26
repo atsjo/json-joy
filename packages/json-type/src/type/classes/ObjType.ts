@@ -1,8 +1,8 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import * as schema from '../../schema';
+import {AbsType} from './AbsType';
 import type {ExcludeFromTuple, PickFromTuple} from '../../util/types';
 import type {SchemaOf, SchemaOfObjectFields, Type} from '../types';
-import {AbsType} from './AbsType';
 
 export class KeyType<K extends string, V extends Type> extends AbsType<schema.KeySchema<K, SchemaOf<V>>> {
   public readonly optional: boolean = false;
