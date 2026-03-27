@@ -3,6 +3,7 @@ import type {MenuItem} from '../../StructuralMenu/types';
 export interface SearchMatch {
   path: MenuItem[];
   item: MenuItem;
+  score: number;
 }
 
 // export interface SearchResult {
