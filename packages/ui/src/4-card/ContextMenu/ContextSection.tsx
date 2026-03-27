@@ -11,6 +11,8 @@ const blockClass = rule({
   pd: '8px 20px',
   bxz: 'border-box',
   col: theme.g(0.2),
+  bd: 'none',
+  mr: 0,
 });
 
 export interface ContextSectionProps extends React.AllHTMLAttributes<any> {
