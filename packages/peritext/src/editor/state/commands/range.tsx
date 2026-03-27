@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import type {CommandDefinition} from "./types";
+import type {CommandDefinition} from './types';
 import type {EditorState} from '../EditorState';
 
 const FlipIcon = makeIcon({set: 'tabler', icon: 'flip-vertical'});

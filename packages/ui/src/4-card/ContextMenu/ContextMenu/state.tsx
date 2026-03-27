@@ -255,12 +255,7 @@ export class ContextMenuState {
    * Focus-out handler for the root pane. Closes the menu when focus leaves
    * the entire menu tree (including portal-rendered submenus).
    */
-  public handleFocusOut(
-    e: React.FocusEvent,
-    container: HTMLElement | null,
-    depth: number,
-    onEsc?: () => void,
-  ): void {
+  public handleFocusOut(e: React.FocusEvent, container: HTMLElement | null, depth: number, onEsc?: () => void): void {
     if (depth !== 0 || !container || !onEsc) return;
     const relatedTarget = e.relatedTarget as HTMLElement | null;
     if (relatedTarget && container.contains(relatedTarget)) return;

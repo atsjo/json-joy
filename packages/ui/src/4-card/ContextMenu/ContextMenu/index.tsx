@@ -32,8 +32,7 @@ export const StatefulContextMenu: React.FC<StatefulContextMenuProps> = ({state})
   React.useEffect(() => {
     const trigger = document.activeElement as HTMLElement | null;
     return () => {
-      if (trigger && typeof trigger.focus === 'function')
-        requestAnimationFrame(() => trigger.focus());
+      if (trigger && typeof trigger.focus === 'function') requestAnimationFrame(() => trigger.focus());
     };
   }, []);
 

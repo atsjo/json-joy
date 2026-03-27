@@ -32,11 +32,11 @@ export class RangeMenu implements UiLifeCycles {
 
   public build(): MenuItem {
     const children: MenuItem['children'] = [
-        this.formattingMenu(),
-        this.annotationsMenu(),
-        this.modifyMenu(),
-        this.state.menu.buffer.clipboardMenu(),
-        /*
+      this.formattingMenu(),
+      this.annotationsMenu(),
+      this.modifyMenu(),
+      this.state.menu.buffer.clipboardMenu(),
+      /*
         secondBrain(),
         {
           name: 'Annotations separator',
@@ -276,7 +276,7 @@ export class RangeMenu implements UiLifeCycles {
           onSelect: () => {},
         },
         */
-      ];
+    ];
     const commands = this.cmdMenu();
     if (commands) children.push(commands);
     return {

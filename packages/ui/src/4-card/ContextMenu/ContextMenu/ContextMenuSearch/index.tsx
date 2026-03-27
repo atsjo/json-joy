@@ -76,7 +76,16 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
                 }
                 renderPane={
                   children
-                    ? () => <ContextMenuPane {...state.props} depth={1} path={path} menu={item} showSearch={false} onEsc={() => openPanel.deselect()} />
+                    ? () => (
+                        <ContextMenuPane
+                          {...state.props}
+                          depth={1}
+                          path={path}
+                          menu={item}
+                          showSearch={false}
+                          onEsc={() => openPanel.deselect()}
+                        />
+                      )
                     : void 0
                 }
                 onMouseEnter={handleMouseMove}

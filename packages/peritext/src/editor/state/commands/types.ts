@@ -1,5 +1,5 @@
-import type {MenuItem} from "../../types";
-import type {EditorState} from "../EditorState";
+import type {MenuItem} from '../../types';
+import type {EditorState} from '../EditorState';
 
 export type DynamicCommandDefinition = (state: EditorState) => CommandDefinition;
 

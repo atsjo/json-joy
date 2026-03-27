@@ -105,7 +105,14 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
         openPanel={openPanel}
         renderPane={() => (
           <MoveToViewport>
-            <ContextMenuPane {...props} header={void 0} path={[...path, menu]} depth={depth + 1} menu={item} onEsc={() => openPanel.deselect()} />
+            <ContextMenuPane
+              {...props}
+              header={void 0}
+              path={[...path, menu]}
+              depth={depth + 1}
+              menu={item}
+              onEsc={() => openPanel.deselect()}
+            />
           </MoveToViewport>
         )}
       />

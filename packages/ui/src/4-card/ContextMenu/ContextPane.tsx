@@ -68,62 +68,53 @@ export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export type IContextPaneState = {};
 
-export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivElement, ContextPaneProps>(({
-  children,
-  right,
-  triangle,
-  canOverflow,
-  minWidth,
-  hide,
-  style,
-  accent,
-  className,
-  ...rest
-}, ref) => {
-  const theme = useTheme();
+export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivElement, ContextPaneProps>(
+  ({children, right, triangle, canOverflow, minWidth, hide, style, accent, className, ...rest}, ref) => {
+    const theme = useTheme();
 
-  const blockStyle: React.CSSProperties = {
-    ...(style || {}),
-    background: theme.isLight ? theme.bg : theme.g(0.98),
-    boxShadow: theme.isLight
-      ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
-      : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
-  };
+    const blockStyle: React.CSSProperties = {
+      ...(style || {}),
+      background: theme.isLight ? theme.bg : theme.g(0.98),
+      boxShadow: theme.isLight
+        ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
+        : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
+    };
 
-  if (minWidth) {
-    blockStyle.minWidth = minWidth;
-  }
+    if (minWidth) {
+      blockStyle.minWidth = minWidth;
+    }
 
-  if (!right) {
-    blockStyle.left = 0;
-    blockStyle.right = 'auto';
-  }
+    if (!right) {
+      blockStyle.left = 0;
+      blockStyle.right = 'auto';
+    }
 
-  if (hide !== undefined) {
-    blockStyle.transform = hide ? 'scale(.85)' : 'scale(1)';
-    blockStyle.opacity = hide ? 0 : 1;
-  }
+    if (hide !== undefined) {
+      blockStyle.transform = hide ? 'scale(.85)' : 'scale(1)';
+      blockStyle.opacity = hide ? 0 : 1;
+    }
 
-  if (accent) {
-    blockStyle.borderBottom = `2px solid ${accent}`;
-    // blockStyle.borderTop = `2px solid ${accent}`;
-  }
+    if (accent) {
+      blockStyle.borderBottom = `2px solid ${accent}`;
+      // blockStyle.borderTop = `2px solid ${accent}`;
+    }
 
-  return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
-    <div {...rest} className={paneClass + (className || '')} style={blockStyle} ref={ref}>
-      <div className={bodyClass} style={{overflow: canOverflow ? 'visible' : undefined}}>
-        {children}
+    return (
+      // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
+      <div {...rest} className={paneClass + (className || '')} style={blockStyle} ref={ref}>
+        <div className={bodyClass} style={{overflow: canOverflow ? 'visible' : undefined}}>
+          {children}
+        </div>
+        {triangle && (
+          <div
+            className={triangleClass}
+            style={{
+              left: right ? 'auto' : 15,
+              right: right ? 15 : 'auto',
+            }}
+          />
+        )}
       </div>
-      {triangle && (
-        <div
-          className={triangleClass}
-          style={{
-            left: right ? 'auto' : 15,
-            right: right ? 15 : 'auto',
-          }}
-        />
-      )}
-    </div>
-  );
-});
+    );
+  },
+);

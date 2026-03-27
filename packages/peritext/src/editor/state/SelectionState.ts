@@ -17,9 +17,7 @@ export class SelectionState {
    */
   public readonly newSlice = rsync.val<NewFmt | undefined>(void 0);
 
-  constructor(
-    public readonly state: EditorState,
-  ) {}
+  constructor(public readonly state: EditorState) {}
 
   public showToolbar() {
     const toolbar = this.toolbar;
@@ -36,7 +34,7 @@ export class SelectionState {
 
   /**
    * Open popup to start configuring a new slice.
-   * 
+   *
    * @todo Restore editor selection when new slice popup closed without saving.
    */
   public showNewSlicePopup(tag: SliceTypeName | string | number): void {

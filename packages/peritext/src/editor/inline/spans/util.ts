@@ -13,12 +13,15 @@ export const spanOne = <Tag extends TypeTag = TypeTag>(
   for (const key in definition) (behavior as any)[key] = (definition as any)[key];
   const {menu, action} = behavior;
   if (menu && action) {
-    behavior.cmd = (state: EditorState) => ({
-      ...behavior.getMenu(state),
-      action: action ? (state) => {
-        action(state);
-      } : undefined,
-    } as CommandDefinition);
+    behavior.cmd = (state: EditorState) =>
+      ({
+        ...behavior.getMenu(state),
+        action: action
+          ? (state) => {
+              action(state);
+            }
+          : undefined,
+      }) as CommandDefinition;
   }
   return behavior;
 };

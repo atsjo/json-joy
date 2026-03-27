@@ -130,7 +130,7 @@ export class EditorState implements UiLifeCycles {
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
     const el = dom.facade.el;
-    const commands = this.cmd = new Commands(this);
+    const commands = (this.cmd = new Commands(this));
     const stopMenu = menu.start();
     const registry = this.txt.editor.getRegistry();
     for (const behavior of defaultSpans) {
@@ -194,7 +194,7 @@ export class EditorState implements UiLifeCycles {
     };
 
     el.addEventListener('mousedown', mouseDownListener);
-    
+
     document.addEventListener('keydown', onKeyDownDocument);
 
     const unbindHotkeys = this.surface.headless.kbd.bind([
@@ -206,7 +206,7 @@ export class EditorState implements UiLifeCycles {
             return;
           }
           // Remove all cursors.
-          const editor = this.txt.editor;  
+          const editor = this.txt.editor;
           if (editor.hasCursor()) {
             editor.delCursors();
             this.surface.rerender();
@@ -218,29 +218,32 @@ export class EditorState implements UiLifeCycles {
     ]);
 
     const unbindHotkeysSurface = dom.kbd?.bind([
-      ['Escape', (press: Key) => {
-        const editor = this.txt.editor;
-        const mainCursor = editor.mainCursor();
-        // Hide inline selection toolbar.
-        const toolbarHidden = this.selection.hideToolbar();
-        if (toolbarHidden && mainCursor && !mainCursor.isCollapsed()) {
-          return;
-        }
-        // Leave only one cursor, if multiple cursors are present.
-        const cursorCardinality = editor.cursorCard();
-        if (cursorCardinality > 1) {
-          editor.delCursors(c => c !== mainCursor);
-          this.surface.rerender();
-          return;
-        }
-        // Blur the editor.
-        const div = this.surface.dom.facade.el;
-        if (div instanceof HTMLElement && document.activeElement === div) {
-          div.blur();
-          return;
-        }
-        press.propagate = true;
-      }],
+      [
+        'Escape',
+        (press: Key) => {
+          const editor = this.txt.editor;
+          const mainCursor = editor.mainCursor();
+          // Hide inline selection toolbar.
+          const toolbarHidden = this.selection.hideToolbar();
+          if (toolbarHidden && mainCursor && !mainCursor.isCollapsed()) {
+            return;
+          }
+          // Leave only one cursor, if multiple cursors are present.
+          const cursorCardinality = editor.cursorCard();
+          if (cursorCardinality > 1) {
+            editor.delCursors((c) => c !== mainCursor);
+            this.surface.rerender();
+            return;
+          }
+          // Blur the editor.
+          const div = this.surface.dom.facade.el;
+          if (div instanceof HTMLElement && document.activeElement === div) {
+            div.blur();
+            return;
+          }
+          press.propagate = true;
+        },
+      ],
       [
         'Meta Meta',
         () => {

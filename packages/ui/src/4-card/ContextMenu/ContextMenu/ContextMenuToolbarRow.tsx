@@ -69,7 +69,14 @@ export const ContextMenuToolbarRow: React.FC<ContextMenuToolbarRowProps> = ({pat
         }
         renderPane={() => (
           <MoveToViewport>
-            <ContextMenuPane header={void 0} menu={parent} path={[parent]} depth={depth + 1} inset onEsc={() => openPanel.deselect()} />
+            <ContextMenuPane
+              header={void 0}
+              menu={parent}
+              path={[parent]}
+              depth={depth + 1}
+              inset
+              onEsc={() => openPanel.deselect()}
+            />
           </MoveToViewport>
         )}
         onMouseEnter={() => openPanel.onMouseMove(id)}

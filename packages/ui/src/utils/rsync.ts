@@ -1,9 +1,9 @@
 import {useSyncExternalStore} from 'react';
-import {Value, Computed, WrapListInSyncDep} from 'thingies/lib/sync';
+import {Value, Computed, type WrapListInSyncDep} from 'thingies/lib/sync';
 
 export class ReactValue<T> extends Value<T> {
   public use(): T {
-    return useSyncExternalStore(this.subscribe, this.getSnapshot)
+    return useSyncExternalStore(this.subscribe, this.getSnapshot);
   }
 }
 

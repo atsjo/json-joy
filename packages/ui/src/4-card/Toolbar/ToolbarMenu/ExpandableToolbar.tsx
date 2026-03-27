@@ -51,7 +51,13 @@ export const ExpandableToolbar: React.FC<ExpandableToolbarProps> = (props) => {
           <popupContext.Provider value={popupContextValue}>
             <ToolbarMenuProvider {...rest}>
               <MoveToViewport>
-                <ContextMenu inset showSearch {...context} menu={contextMenu} onEsc={() => state.view.next('toolbar')} />
+                <ContextMenu
+                  inset
+                  showSearch
+                  {...context}
+                  menu={contextMenu}
+                  onEsc={() => state.view.next('toolbar')}
+                />
               </MoveToViewport>
             </ToolbarMenuProvider>
           </popupContext.Provider>

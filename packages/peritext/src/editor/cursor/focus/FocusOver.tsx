@@ -18,8 +18,7 @@ export const FocusOver: React.FC<FocusOverProps> = ({cursor}) => {
     selection.toolbar.next(null);
   }, []);
 
-  if (isScrubbing || !toolbarState || state.txt.editor.mainCursor() !== cursor)
-    return;
+  if (isScrubbing || !toolbarState || state.txt.editor.mainCursor() !== cursor) return;
 
   return (
     <TopPanePortal>
@@ -29,8 +28,7 @@ export const FocusOver: React.FC<FocusOverProps> = ({cursor}) => {
         more={{
           small: true,
           tooltip: {
-
-              shortcut: '/',
+            shortcut: '/',
           },
           // tooltip
         }}

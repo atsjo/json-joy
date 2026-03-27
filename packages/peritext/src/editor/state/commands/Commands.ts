@@ -6,7 +6,7 @@ import type {MenuItem} from '../../types';
 export class Commands implements UiLifeCycles {
   public readonly range = [...rangeCommands];
 
-  constructor (public readonly state: EditorState) {}
+  constructor(public readonly state: EditorState) {}
 
   public start() {
     return () => {};

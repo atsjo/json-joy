@@ -139,10 +139,14 @@ export const CaretScore: React.FC<CaretScoreProps> = React.memo(() => {
         </span>
       ) : (
         score >= 24 && (
-          <span contentEditable={false} className={scoreClass} style={{
-            visibility: show ? 'visible' : 'hidden',
-            animation: typeof scoreMsg !== 'string' ? undefined : shakingAnimation + ' .5s ease-out forwards',
-          }}>
+          <span
+            contentEditable={false}
+            className={scoreClass}
+            style={{
+              visibility: show ? 'visible' : 'hidden',
+              animation: typeof scoreMsg !== 'string' ? undefined : shakingAnimation + ' .5s ease-out forwards',
+            }}
+          >
             {scoreMsg}
           </span>
         )
