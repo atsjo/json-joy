@@ -50,7 +50,7 @@ export const behavior = new (class ColBehavior extends SpanBehavior<
     order: 1,
     icon: () => <Icon width={16} height={16} />,
     onSelect: () => {
-      state.selection.startSliceConfig(SliceTypeCon.col);
+      state.selection.showNewSlicePopup(SliceTypeCon.col);
     },
   });
 

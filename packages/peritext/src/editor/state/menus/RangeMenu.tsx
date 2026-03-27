@@ -389,7 +389,7 @@ export class RangeMenu implements UiLifeCycles {
     const linkAction: MenuItem = {
       ...a.behavior.menu,
       onSelect: () => {
-        this.state.selection.startSliceConfig(CommonSliceType.a);
+        this.state.selection.showNewSlicePopup(CommonSliceType.a);
       },
     };
     return linkAction;

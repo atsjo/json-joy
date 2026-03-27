@@ -7,7 +7,6 @@ import type {PeritextCursorEvent, PeritextInsertEvent, SliceTypeName} from 'json
 
 export class SelectionState {
   public showTime: number = 0;
-  public readonly show = rsync.val(false);
 
   /** Displayed over the selection focus. */
   public readonly toolbar = rsync.val<ExpandableToolbarState | null>(new ExpandableToolbarState());
@@ -22,28 +21,27 @@ export class SelectionState {
     public readonly state: EditorState,
   ) {}
 
-  public openCtxMenu() {
-    if (this.show.value && this.toolbar.value) {
-      this.toolbar.value.view.next('context');
-    }
+  public showToolbar() {
+    const toolbar = this.toolbar;
+    if (toolbar.value) return;
+    toolbar.next(new ExpandableToolbarState());
   }
 
-  /** Open popup to start configuring a new slice. */
-  public startSliceConfig(tag: SliceTypeName | string | number): NewFmt | undefined {
-    const state = this.state;
+  /**
+   * Open popup to start configuring a new slice.
+   * 
+   * @todo Restore editor selection when new slice popup closed without saving.
+   */
+  public showNewSlicePopup(tag: SliceTypeName | string | number): void {
+    const {state, toolbar} = this;
+    toolbar.next(null);
     const editor = state.txt.editor;
     const behavior = state.spanMap[tag];
     if (!behavior) return;
     const range = editor.mainCursor()?.range();
     if (!range) return;
     const newSlice = this.newSlice;
-    if (!behavior) {
-      newSlice.next(void 0);
-      return;
-    }
-    const formatting = new NewFmt(behavior, range, state);
-    newSlice.next(formatting);
-    return formatting;
+    newSlice.next(new NewFmt(behavior, range, state));
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
@@ -65,21 +63,18 @@ export class SelectionState {
         }
       }
     };
-    const mouseUpListener = () => {
-      if (!this.show.value) {
-        this.showTime = Date.now();
-        this.show.next(true);
-      }
-    };
     const onInsert = (event: PeritextInsertEvent) => {
       if (event.detail.text === '/') {
         const editor = state.txt.editor;
         if (editor.cursorCard() === 1) {
           const cursor = editor.cursor;
           if (!cursor.isCollapsed()) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.openCtxMenu();
+            const toolbar = this.toolbar.value;
+            if (toolbar) {
+              event.preventDefault();
+              event.stopPropagation();
+              toolbar.view.next('context');
+            }
             return;
           }
         }
@@ -90,15 +85,13 @@ export class SelectionState {
       if (newSlice.value) {
         const isFocusMove = detail.move && detail.move.length === 1 && detail.move[0][0] === 'focus';
         if (!isFocusMove) newSlice.next(void 0);
-      }
+      } else this.showToolbar();
     };
     el.addEventListener('keydown', onKeyDown);
-    el.addEventListener('mouseup', mouseUpListener);
     et.addEventListener('insert', onInsert);
     et.addEventListener('cursor', onCursor);
     return () => {
       el.removeEventListener('keydown', onKeyDown);
-      el.removeEventListener('mouseup', mouseUpListener);
       et.removeEventListener('insert', onInsert);
       et.removeEventListener('cursor', onCursor);
     };

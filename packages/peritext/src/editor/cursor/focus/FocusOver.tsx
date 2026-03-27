@@ -10,20 +10,16 @@ export interface FocusOverProps extends CaretViewProps {}
 export const FocusOver: React.FC<FocusOverProps> = ({cursor}) => {
   const state = useEditor()!;
   const {surface, selection} = state;
-  const show = selection.show.use();
   const toolbarState = selection.toolbar.use();
-  const newSlice = selection.newSlice.use();
   const enableAfterCoolDown = useTimeout(300, [selection.showTime]);
   const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
 
   const handleClose = React.useCallback(() => {
-    //   surface.dom?.focus();
-    //   // if (showInlineToolbar.value) showInlineToolbar.next(false);
+    selection.toolbar.next(null);
   }, []);
 
-  if (newSlice || !show || isScrubbing || state.txt.editor.mainCursor() !== cursor || !toolbarState) {
+  if (isScrubbing || !toolbarState || state.txt.editor.mainCursor() !== cursor)
     return;
-  }
 
   return (
     <TopPanePortal>

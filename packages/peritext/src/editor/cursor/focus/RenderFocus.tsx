@@ -15,13 +15,12 @@ export const RenderFocus: React.FC<RenderFocusProps> = (props) => {
   const {children, cursor} = props;
   const state = useEditor()!;
   const {surface, selection} = state;
-  const showInlineToolbarValue = selection.show.use();
   const newSlice = selection.newSlice.use();
   const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
 
   let under: React.ReactNode | undefined;
 
-  if (!!newSlice && showInlineToolbarValue && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
+  if (!!newSlice && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
     under = (
       <BottomPanePortal>
         <FmtNewPane formatting={newSlice} onSave={() => newSlice.save()} />
