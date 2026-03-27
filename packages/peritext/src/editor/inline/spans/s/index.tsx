@@ -12,11 +12,11 @@ export const behavior = spanOne(SliceTypeCon.s, name, {
     state.et.format('tog', SliceTypeCon.s);
   },
   menuId: 'fmt-common',
-  menu: {
+  menu: () => ({
     name,
     order: 4,
     icon: () => <Icon width={16} height={16} />,
-  },
+  }),
   text: (style) => {
     style.textDecoration = (style.textDecoration ? style.textDecoration + ' ' : '') + 'line-through';
   },

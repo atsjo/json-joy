@@ -25,7 +25,7 @@ export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
     const el = ref.current;
     if (el) {
       const rect = el.getBoundingClientRect();
-      return {x: rect.x + rect.width + 8, y: rect.y, dx: 1, dy: 1};
+      return {x: rect.x + rect.width, y: rect.y, dx: -1, dy: 1};
     }
     return {x: 32, y: 32, dx: 1, dy: 1};
   }, []);
