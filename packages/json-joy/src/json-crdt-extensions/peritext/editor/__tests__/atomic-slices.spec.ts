@@ -398,6 +398,66 @@ const testSuite = (setup: () => Kit): void => {
           expect(editor.atomAt(editor.cursor.start)).toBeUndefined();
           expect(pos).toBeGreaterThanOrEqual(6);
         });
+
+        describe('uniform atom content (all letters)', () => {
+          /**
+           * Document: "ab eqn fg" with "eqn" (offset 3, length 3) as Atomic.
+           * Since atom content is all letters, skipWord's predicate will NOT
+           * break inside the atom. Instead it consumes the whole atom and may
+           * land at or past the atom boundary where atomAt() might not detect
+           * it, so skipAtom() becomes a no-op. The atom should still be treated
+           * as one unit: one eow from "ab" should skip past the whole atom.
+           */
+          const setupUniform = () => {
+            const kit = setup();
+            const {peritext} = kit;
+            const str = peritext.strApi();
+            str.del(0, str.length());
+            str.ins(0, 'ab eqn fg');
+            const range = peritext.rangeAt(3, 3);
+            const atom = peritext.savedSlices.insAtomic(range, 'math', {}, padded);
+            peritext.overlay.refresh();
+            return {...kit, atom};
+          };
+
+          test('eow() forward from before atom counts atom as one word', () => {
+            const {peritext, editor} = setupUniform();
+            let point = peritext.pointAt(0);
+            point = editor.eow(point);
+            expect(point.viewPos()).toBe(2); // end of "ab"
+            // Next eow: should treat atom as one unit, landing past it
+            point = editor.eow(point);
+            expect(editor.atomAt(point)).toBeUndefined();
+            expect(point.viewPos()).toBeGreaterThanOrEqual(6);
+          });
+
+          test('bow() backward from after atom counts atom as one word', () => {
+            const {peritext, editor} = setupUniform();
+            let point = peritext.pointAt(9);
+            point = editor.bow(point);
+            expect(point.viewPos()).toBe(7); // before "fg"
+            // Next bow: should treat atom as one unit, landing before it
+            point = editor.bow(point);
+            expect(editor.atomAt(point)).toBeUndefined();
+            expect(point.viewPos()).toBeLessThanOrEqual(3);
+          });
+
+          test('skip 3 words forward crosses atom without consuming extra words', () => {
+            const {peritext, editor} = setupUniform();
+            // "ab [eqn] fg" - 3 words: "ab", atom, "fg"
+            const point = peritext.pointAt(0);
+            const result = editor.skip(point, 3, 'word');
+            // 3 word-skips: end of "ab", past atom, end of "fg"
+            expect(result.viewPos()).toBe(9); // end of "fg"
+          });
+
+          test('skip 3 words backward crosses atom without consuming extra words', () => {
+            const {peritext, editor} = setupUniform();
+            const point = peritext.pointAt(9);
+            const result = editor.skip(point, -3, 'word');
+            expect(result.viewPos()).toBe(0); // start of "ab"
+          });
+        });
       });
 
       describe('line movement – skips over atoms', () => {
