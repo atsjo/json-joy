@@ -679,7 +679,8 @@ export class Editor<T = string> implements Printable {
     predicate: CharPredicate<string> = isLetter,
     firstLetterFound: boolean = false,
   ): Point<T> {
-    return this.skipWord(this.fwd(point), predicate, firstLetterFound) || point;
+    const result = this.skipWord(this.fwd(point), predicate, firstLetterFound) || point;
+    return this.skipAtom(result, 1);
   }
 
   /**
@@ -700,21 +701,28 @@ export class Editor<T = string> implements Printable {
     firstLetterFound: boolean = false,
   ): Point<T> {
     const bwd = this.bwd(point);
-    const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
-    if (endPoint) endPoint.anchor = Anchor.Before;
+    let endPoint = this.skipWord(bwd, predicate, firstLetterFound);
+    if (endPoint) {
+      endPoint = this.skipAtom(endPoint, -1);
+      endPoint.anchor = Anchor.Before;
+    }
     return endPoint || point;
   }
 
   /** Find end of line, starting from given point. */
   public eol(point: Point<T>): Point<T> {
-    return this.skipLine(this.fwd(point)) || this.end();
+    const result = this.skipLine(this.fwd(point)) || this.end();
+    return this.skipAtom(result, 1);
   }
 
   /** Find beginning of line, starting from given point. */
   public bol(point: Point<T>): Point<T> {
     const bwd = this.bwd(point);
-    const endPoint = this.skipLine(bwd);
-    if (endPoint) endPoint.anchor = Anchor.Before;
+    let endPoint = this.skipLine(bwd);
+    if (endPoint) {
+      endPoint = this.skipAtom(endPoint, -1);
+      endPoint.anchor = Anchor.Before;
+    }
     return endPoint || this.start();
   }
 
