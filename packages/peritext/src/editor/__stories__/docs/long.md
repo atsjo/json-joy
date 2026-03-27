@@ -3,7 +3,13 @@ thousands of jobs* as, [Google Docs](https://developers.google.com/workspace/doc
 it grapples with a global shift toward electric vehicles — a transformation
 Musk x=\frac{-b\pm\sqrt{b^2-4ac}}{2a} himself has been at the forefront of.
 
-> To be, or not to be: that is the question.
+> The move to electric vehicles is expected to lead to a significant reduction in
+> the number of jobs in the automotive industry, as electric vehicles require fewer
+> parts and less maintenance than traditional internal combustion engine vehicles.
+>
+> And she said:
+>
+> > To be, or not to be: that is the question.
 
 This is code block:
 

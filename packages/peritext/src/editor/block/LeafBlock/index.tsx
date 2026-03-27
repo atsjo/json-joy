@@ -16,7 +16,7 @@ const blockClass = rule({
 const topLeftOverlay = rule({
   d: 'block',
   pos: 'absolute',
-  t: '-8px',
+  t: '16px',
   l: '-72px',
 });
 
