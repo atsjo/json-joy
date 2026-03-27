@@ -39,6 +39,14 @@ export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
         expandPoint={() => expandPoint.current}
         disabled={disabled}
         onPopupClose={onPopupClose}
+        more={{
+          small: true,
+          tooltip: {
+            renderTooltip: () => 'More',
+            nowrap: true,
+            shortcut: 'Ctrl + /',
+          }
+        }}
       />
     </div>
   );

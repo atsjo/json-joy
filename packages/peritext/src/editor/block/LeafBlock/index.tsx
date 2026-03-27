@@ -52,14 +52,13 @@ export interface LeafBlockProps extends RenderBlockProps {}
 export const LeafBlock: React.FC<LeafBlockProps> = ({block, children}) => {
   const state = useEditor();
   const activeLeafBlockId = useSyncStore(state.activeLeafBlockId$);
-  const menu = React.useMemo(() => state.menu.block.leafBlockSmallMenu({block}), [state, block]);
-
   const isBlockActive = !!activeLeafBlockId && compare(activeLeafBlockId, block.marker?.id ?? block.txt.str.id) === 0;
+  const menu = React.useMemo(() => isBlockActive ? state.menu.block.buildLeafMenu({leaf: block}) : undefined, [state, block.hash, isBlockActive]);
 
   return (
     <div className={blockClass}>
       {children}
-      {isBlockActive && (
+      {!!menu && (
         <div className={topLeftOverlay}>
           <EntangledPortal position={position}>
             <AutoExpandableToolbar menu={menu!} more={{small: true}} />

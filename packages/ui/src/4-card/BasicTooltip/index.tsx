@@ -106,6 +106,7 @@ export const BasicTooltip: React.FC<BasicTooltipProps> = ({
                 bottom: dy <= 0 ? 'calc(100% + 4px)' : undefined,
                 top: dy > 0 ? 'calc(100% + 4px)' : undefined,
                 animation: 'fadeInScaleIn .4s',
+                whiteSpace: 'nowrap',
               }}
             >
               {shortcut}

@@ -9,7 +9,7 @@ export interface IBlock<Attr = unknown> {
   readonly parent: IBlock | null;
 }
 
-export class LeafBlock<Attr = unknown> extends Block<Attr> {
+export class LeafBlock<T = string, Attr = unknown> extends Block<T, Attr> {
   public text(): string {
     let str = '';
     for (let iterator = this.texts0(), inline = iterator(); inline; inline = iterator()) str += inline.text();

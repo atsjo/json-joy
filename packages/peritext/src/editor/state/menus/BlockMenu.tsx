@@ -28,19 +28,15 @@ const ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
 const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
 
 export interface LeafBlockMenuCtx {
-  block: LeafBlock<string>;
+  leaf: LeafBlock;
 }
 
 export class BlockMenu {
   constructor(public readonly state: EditorState) {}
 
-  public readonly blockTypeMenu = (): MenuItem => {
+  private blockTypeChildren (): MenuItem[] {
     const et = this.state.surface.events.et;
-    const menu: MenuItem = {
-      name: 'Block type',
-      expand: 1,
-      expandChild: 0,
-      children: [
+    const children: MenuItem[] = [
         {
           name: 'Text blocks',
           expand: 3,
@@ -214,21 +210,34 @@ export class BlockMenu {
             },
           ],
         },
-      ],
-    };
-    return menu;
+      ];
+    return children;
   };
 
-  public readonly leafBlockSmallMenu = (ctx: LeafBlockMenuCtx): MenuItem => {
-    const et = this.state.surface.events.et;
-    const block = ctx.block;
+  private blockTypeMenu (leaf: LeafBlock): MenuItem {
+    const state = this.state;
+    const tag = leaf.marker?.marker.nestedType().tag().name() ?? 0;
+    const behavior = tag !== void 0 ? state.blockMap[tag] : void 0;
+    console.log(tag, behavior?.name ?? 'Active block type');
+    const originalMenu = behavior?.getMenu(state);
     const menu: MenuItem = {
-      name: 'Leaf block menu',
+      name: behavior?.name ?? 'Active block type',
+      icon: originalMenu?.icon,
+      children: this.blockTypeChildren(),
+    };
+    return menu;
+  }
+
+  public buildLeafMenu({leaf}: LeafBlockMenuCtx): MenuItem {
+    const et = this.state.et;
+    
+    const menu: MenuItem = {
+      name: 'Block menu',
       maxToolbarItems: 1,
       more: true,
-      minWidth: 280,
+      // minWidth: 280,
       children: [
-        {...this.blockTypeMenu(), expand: 1, expandChild: 0},
+        this.blockTypeMenu(leaf),
         {
           sepBefore: true,
           name: 'Cursor actions',
@@ -238,27 +247,28 @@ export class BlockMenu {
               name: 'Select block',
               icon: () => <CursorTextIcon width={16} height={16} />,
               onSelect: () => {
-                const start = block.start.clone();
+                const start = leaf.start.clone();
                 if (!start.isAbsStart()) start.step(1);
-                et.cursor({at: [start, block.end]});
+                et.cursor({at: [start, leaf.end]});
               },
             },
             this.state.menu.buffer.clipboardMenu({
               hideStyleActions: true,
               onBeforeAction: (item, action) => {
-                const start = block.start.clone();
+                const start = leaf.start.clone();
                 if (!start.isAbsStart() && action === 'paste') start.step(1);
                 return {
-                  at: [start, block.end],
+                  at: [start, leaf.end],
                 };
               },
             }),
           ],
         },
 
-        secondBrain(),
+        // secondBrain(),
       ],
     };
+    if (!leaf) menu.children = [];
     return menu;
-  };
+  }
 }

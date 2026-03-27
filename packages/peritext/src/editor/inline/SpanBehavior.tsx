@@ -16,9 +16,6 @@ import type {EditorState} from '../state';
 import type {SpanProps} from '../../web/react/types';
 import type {DynamicCommandDefinition} from '../state/commands/types';
 
-/**
- * Inline slice behavior.
- */
 export class SpanBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
