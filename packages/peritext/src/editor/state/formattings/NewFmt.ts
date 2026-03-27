@@ -29,7 +29,7 @@ export class NewFmt<Node extends ObjNode = ObjNode> extends EditableFmt<Range<st
 
   public readonly save = () => {
     const state = this.state;
-    state.newSlice.next(void 0);
+    state.selection.newSlice.next(void 0);
     const view = this.conf()?.view() as Record<string, unknown>;
     if (!view || typeof view !== 'object') return;
     if (!view.title) delete view.title;

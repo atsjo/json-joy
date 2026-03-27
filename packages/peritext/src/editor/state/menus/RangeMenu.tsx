@@ -31,16 +31,12 @@ export class RangeMenu implements UiLifeCycles {
   }
 
   public build(): MenuItem {
-    return {
-      name: 'Selection menu',
-      // maxToolbarItems: 8,
-      more: true,
-      children: [
-        this.formattingMenu(),
-        this.annotationsMenu(),
-        this.modifyMenu(),
-        this.state.menu.buffer.clipboardMenu(),
-        /*
+    const children: MenuItem['children'] = [
+      this.formattingMenu(),
+      this.annotationsMenu(),
+      this.modifyMenu(),
+      this.state.menu.buffer.clipboardMenu(),
+      /*
         secondBrain(),
         {
           name: 'Annotations separator',
@@ -280,7 +276,14 @@ export class RangeMenu implements UiLifeCycles {
           onSelect: () => {},
         },
         */
-      ],
+    ];
+    const commands = this.cmdMenu();
+    if (commands) children.push(commands);
+    return {
+      name: 'Selection menu',
+      maxToolbarItems: 4,
+      more: true,
+      children,
     };
   }
 
@@ -386,7 +389,7 @@ export class RangeMenu implements UiLifeCycles {
     const linkAction: MenuItem = {
       ...a.behavior.menu,
       onSelect: () => {
-        this.state.startSliceConfig(CommonSliceType.a);
+        this.state.selection.showNewSlicePopup(CommonSliceType.a);
       },
     };
     return linkAction;
@@ -461,4 +464,17 @@ export class RangeMenu implements UiLifeCycles {
       ],
     };
   };
+
+  private cmdMenu(): MenuItem | undefined {
+    const state = this.state;
+    const cmd = state.cmd;
+    if (!cmd) return;
+    return {
+      name: 'Commands',
+      expand: 0,
+      sepBefore: true,
+      minWidth: 300,
+      children: cmd.buildMenu(),
+    };
+  }
 }

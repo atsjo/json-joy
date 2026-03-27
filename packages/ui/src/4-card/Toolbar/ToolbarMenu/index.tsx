@@ -6,11 +6,11 @@ import {ExpandSubChildren} from './ExpandSubChildren';
 import {ToolbarMenuItem} from './ToolbarMenuItem';
 import {context} from './context';
 import {ToolbarExpandBtn} from './ToolbarExpandBtn';
-import type {ToolbarMenuProps} from './types';
 import {context as popupContext} from '../../Popup/context';
 import {ClickAway} from '../../../utils/ClickAway';
 import {useBehaviorSubject} from '../../../hooks/useBehaviorSubject';
 import {ToolbarMenuState} from './state';
+import type {ToolbarMenuProps} from './types';
 
 export {ToolbarMenuState};
 

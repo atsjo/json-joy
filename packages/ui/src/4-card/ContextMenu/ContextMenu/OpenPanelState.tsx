@@ -11,6 +11,7 @@ export class OpenPanelState implements UiLifeCycles {
   protected canSelectAfter: number = 0;
   protected lastClosed: string = '';
   protected hovered: string = '';
+  private focusStack: HTMLElement[] = [];
 
   constructor(public readonly opts: OpenPanelStateOpts = {}) {}
 
@@ -60,6 +61,9 @@ export class OpenPanelState implements UiLifeCycles {
     this.hovered = '';
     this.canSelectAfter = Date.now() + COOL_DOWN_TIME;
     this.selected$.next('');
+    // Restore focus to the parent item that opened this submenu.
+    const prev = this.focusStack.pop();
+    if (prev && typeof prev.focus === 'function') requestAnimationFrame(() => prev.focus());
     return true;
   }
 
@@ -72,6 +76,9 @@ export class OpenPanelState implements UiLifeCycles {
     this.lastClosed = id;
     this.hovered = id;
     this.canSelectAfter = canSelectAfter;
+    // Save the currently focused element so we can restore it on deselect.
+    const focused = document.activeElement;
+    if (focused instanceof HTMLElement) this.focusStack.push(focused);
     this.selected$.next(id);
   }
 

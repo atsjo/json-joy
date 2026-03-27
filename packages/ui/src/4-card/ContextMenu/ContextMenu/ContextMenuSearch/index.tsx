@@ -48,46 +48,79 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
         const id = item.id ?? item.name;
         lastPathStr = pathStr;
         const handleMouseMove = () => openPanel.onMouseMove(id);
+        const isOpen = selected === id;
         return (
           <React.Fragment key={id}>
             {!isFirst && !samePath && <ContextSep />}
             {!isFirst && !samePath && <ContextSep line />}
             {!isFirst && !samePath && <ContextSep />}
             {!!path.length && !samePath && <GroupTitle path={path} off={1} />}
-            <ContextItemNested
-              open={selected === id}
-              key={pathStr + (item.id || item.name)}
-              inset={inset}
-              more={item.more}
-              nested={!!item.children}
-              icon={item.icon?.()}
-              right={item.right?.()}
-              danger={item.danger}
-              onClick={
-                item.onSelect
-                  ? (event) => state.execute(item, event)
-                  : children
-                    ? () => {
-                        state.select(path, item);
-                      }
+            <div data-menu-row data-menu-id={id}>
+              <ContextItemNested
+                open={isOpen}
+                key={pathStr + (item.id || item.name)}
+                inset={inset}
+                more={item.more}
+                nested={!!item.children}
+                icon={item.icon?.()}
+                right={item.right?.()}
+                danger={item.danger}
+                onClick={
+                  item.onSelect
+                    ? (event) => state.execute(item, event)
+                    : children
+                      ? () => {
+                          state.select(path, item);
+                        }
+                      : void 0
+                }
+                renderPane={
+                  children
+                    ? () => (
+                        <ContextMenuPane
+                          {...state.props}
+                          depth={1}
+                          path={path}
+                          menu={item}
+                          showSearch={false}
+                          onEsc={() => openPanel.deselect()}
+                        />
+                      )
                     : void 0
-              }
-              renderPane={
-                children
-                  ? () => <ContextMenuPane {...state.props} depth={1} path={path} menu={item} showSearch={false} />
-                  : void 0
-              }
-              onMouseEnter={handleMouseMove}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={openPanel.onMouseLeave}
-            >
-              {item.display?.() ?? t(item.name)}
-            </ContextItemNested>
+                }
+                onMouseEnter={handleMouseMove}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={openPanel.onMouseLeave}
+                role="menuitem"
+                tabIndex={-1}
+                aria-haspopup={children ? 'menu' : undefined}
+                aria-expanded={children ? isOpen : undefined}
+              >
+                {item.display?.() ?? t(item.name)}
+              </ContextItemNested>
+            </div>
           </React.Fragment>
         );
       });
+      const handleResultKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'ArrowRight') {
+          const row = (e.target as HTMLElement).closest?.('[data-menu-row]');
+          const menuId = row?.getAttribute('data-menu-id');
+          if (menuId) {
+            e.preventDefault();
+            e.stopPropagation();
+            openPanel.forceSelect(menuId);
+          }
+        } else if (e.key === 'ArrowLeft') {
+          if (openPanel.deselect()) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }
+      };
       results = (
-        <>
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div onKeyDown={handleResultKeyDown}>
           <Scrollbox
             style={{
               maxHeight:
@@ -97,14 +130,14 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
             {list}
           </Scrollbox>
           {!!list.length && <ContextSep key={'bottom-pad'} />}
-        </>
+        </div>
       );
     }
   }
 
   return (
     <>
-      <div style={{padding: '0 8px 8px'}}>
+      <div data-menu-row style={{padding: '0 8px 8px'}}>
         <Input
           focus
           size={-2}
@@ -117,13 +150,9 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
               e.preventDefault();
               e.stopPropagation();
               state.search$.next('');
-            } else {
-              e.preventDefault();
-              e.stopPropagation();
-              try {
-                (e.nativeEvent.target as any).blur?.();
-              } catch {}
             }
+            // When search is empty, let the event bubble to the container's
+            // keyboard handler (breadcrumb back-navigation → close menu).
           }}
         />
       </div>

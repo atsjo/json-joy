@@ -28,14 +28,14 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     type: K,
     detail: Omit<PeritextEventDetailMap, 'change'>[K],
   ): void {
-    const event = new CustomEvent<PeritextEventDetailMap[K]>(type, {detail});
+    const event = new CustomEvent<PeritextEventDetailMap[K]>(type, {detail, cancelable: true});
     this.dispatchEvent(event);
     if (!event.defaultPrevented) this.defaults[type]?.(event);
     this.change(event);
   }
 
   public change(ev?: CustomEvent<any>): void {
-    const event = new CustomEvent<PeritextEventDetailMap['change']>('change', {detail: {ev}});
+    const event = new CustomEvent<PeritextEventDetailMap['change']>('change', {detail: {ev}, cancelable: true});
     this.dispatchEvent(event);
     if (!event.defaultPrevented) this.defaults.change?.(event);
   }

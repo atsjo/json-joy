@@ -194,8 +194,10 @@ export class Editor<T = string> implements Printable {
     this.local.del(cursor);
   }
 
-  public delCursors(): void {
-    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) this.delCursor(cursor);
+  public delCursors(predicate?: (cursor: Cursor<T>) => boolean): void {
+    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
+      if (!predicate || predicate(cursor)) this.delCursor(cursor);
+    }
   }
 
   /**

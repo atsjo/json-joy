@@ -77,24 +77,28 @@ export const ExpandSection: React.FC<ExpandSectionProps> = (props) => {
       </ContextTitleNested>
       {nodes}
       {showMoreButton && (
-        <ContextItem
-          compact
-          bg
-          more
-          inset={state.props.inset}
-          // icon={<Iconista style={{opacity: .5}} width={15} height={15} set={'radix'} icon={'dots-vertical'} />}
-          // icon={<Iconista width={16} height={16} set={'elastic'} icon={'empty'} />}
-          onClick={() => setAll(true)}
-          icon={
-            <Flex style={{width: 16, height: 16, justifyContent: 'center', alignItems: 'end'}}>
-              <Iconista width={12} height={12} set={'radix'} icon={'arrow-down'} style={{opacity: 0.7}} />
-            </Flex>
-          }
-        >
-          <Code size={-1} gray spacious roundest>
-            +{remaining} {t('more')}
-          </Code>
-        </ContextItem>
+        <div data-menu-row>
+          <ContextItem
+            compact
+            bg
+            more
+            inset={state.props.inset}
+            // icon={<Iconista style={{opacity: .5}} width={15} height={15} set={'radix'} icon={'dots-vertical'} />}
+            // icon={<Iconista width={16} height={16} set={'elastic'} icon={'empty'} />}
+            onClick={() => setAll(true)}
+            role="menuitem"
+            tabIndex={-1}
+            icon={
+              <Flex style={{width: 16, height: 16, justifyContent: 'center', alignItems: 'end'}}>
+                <Iconista width={12} height={12} set={'radix'} icon={'arrow-down'} style={{opacity: 0.7}} />
+              </Flex>
+            }
+          >
+            <Code size={-1} gray spacious roundest>
+              +{remaining} {t('more')}
+            </Code>
+          </ContextItem>
+        </div>
       )}
     </>
   );

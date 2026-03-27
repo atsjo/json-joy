@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import * as schema from '../../schema';
-import type {SchemaOf, Type} from '../types';
 import {AbsType} from './AbsType';
+import type {SchemaOf, Type} from '../types';
 import type {TypeExportContext} from './ModuleType/TypeExportContext';
 
 export class MapType<T extends Type = any> extends AbsType<schema.MapSchema<SchemaOf<T>>> {

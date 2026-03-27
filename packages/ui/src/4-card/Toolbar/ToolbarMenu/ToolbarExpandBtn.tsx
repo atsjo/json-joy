@@ -2,14 +2,16 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {ToolbarTextItem} from '../ToolbarTextItem';
 import * as context from './context';
+import type {BasicTooltipProps} from '../../BasicTooltip';
 
 export interface ToolbarExpandBtnProps {
   small?: boolean;
   disabled?: boolean;
+  tooltip?: BasicTooltipProps;
   onClick?: React.EventHandler<React.MouseEvent>;
 }
 
-export const ToolbarExpandBtn: React.FC<ToolbarExpandBtnProps> = ({small, disabled, onClick}) => {
+export const ToolbarExpandBtn: React.FC<ToolbarExpandBtnProps> = ({small, disabled, tooltip, onClick}) => {
   const [t] = useT();
   const openPanel = context.useToolbarMenu()?.openPanel;
 
@@ -25,8 +27,9 @@ export const ToolbarExpandBtn: React.FC<ToolbarExpandBtnProps> = ({small, disabl
         small && !disabled
           ? {
               renderTooltip: () => t('More'),
+              ...tooltip,
             }
-          : void 0
+          : tooltip
       }
     >
       {small ? void 0 : t('More')}

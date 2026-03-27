@@ -41,7 +41,7 @@ export const ContextMenuToolbarRow: React.FC<ContextMenuToolbarRowProps> = ({pat
   }
 
   return (
-    <div style={{position: 'relative'}}>
+    <div data-menu-row data-menu-id={id}>
       <ContextItemNested
         key={item.id || item.name}
         open={open}
@@ -69,7 +69,14 @@ export const ContextMenuToolbarRow: React.FC<ContextMenuToolbarRowProps> = ({pat
         }
         renderPane={() => (
           <MoveToViewport>
-            <ContextMenuPane header={void 0} menu={parent} path={[parent]} depth={depth + 1} inset />
+            <ContextMenuPane
+              header={void 0}
+              menu={parent}
+              path={[parent]}
+              depth={depth + 1}
+              inset
+              onEsc={() => openPanel.deselect()}
+            />
           </MoveToViewport>
         )}
         onMouseEnter={() => openPanel.onMouseMove(id)}

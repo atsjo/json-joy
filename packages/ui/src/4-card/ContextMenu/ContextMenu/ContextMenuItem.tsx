@@ -26,39 +26,46 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   const children = !!item.children && !!item.children.length ? item.children : void 0;
 
   return (
-    <ContextItemNested
-      key={item.id || item.name}
-      open={open}
-      inset={state.props.inset}
-      more={item.more}
-      nested={!!children}
-      selected={active}
-      disabled={disabled}
-      icon={
-        item.icon?.() ??
-        (item.iconBig ? (
-          <div style={{transformOrigin: '0 0', transform: 'scale(.25)'}}>{item.iconBig?.()}</div>
-        ) : (
-          void 0
-        ))
-      }
-      right={item.right?.()}
-      danger={item.danger}
-      onClick={
-        item.onSelect
-          ? (event) => state.execute(item, event)
-          : children
-            ? () => {
-                state.select(path, item);
-              }
-            : void 0
-      }
-      renderPane={!!children && renderPane ? renderPane : void 0}
-      onMouseEnter={() => openPanel?.onMouseMove(id)}
-      onMouseMove={() => openPanel?.onMouseMove(id)}
-      onMouseLeave={openPanel?.onMouseLeave}
-    >
-      {item.display?.() ?? t(item.name)}
-    </ContextItemNested>
+    <div data-menu-row data-menu-id={id}>
+      <ContextItemNested
+        key={item.id || item.name}
+        open={open}
+        inset={state.props.inset}
+        more={item.more}
+        nested={!!children}
+        selected={active}
+        disabled={disabled}
+        icon={
+          item.icon?.() ??
+          (item.iconBig ? (
+            <div style={{transformOrigin: '0 0', transform: 'scale(.25)'}}>{item.iconBig?.()}</div>
+          ) : (
+            void 0
+          ))
+        }
+        right={item.right?.()}
+        danger={item.danger}
+        onClick={
+          item.onSelect
+            ? (event) => state.execute(item, event)
+            : children
+              ? () => {
+                  state.select(path, item);
+                }
+              : void 0
+        }
+        renderPane={!!children && renderPane ? renderPane : void 0}
+        onMouseEnter={() => openPanel?.onMouseMove(id)}
+        onMouseMove={() => openPanel?.onMouseMove(id)}
+        onMouseLeave={openPanel?.onMouseLeave}
+        role="menuitem"
+        tabIndex={-1}
+        aria-haspopup={children ? 'menu' : undefined}
+        aria-expanded={children ? open : undefined}
+        aria-disabled={disabled || undefined}
+      >
+        {item.display?.() ?? t(item.name)}
+      </ContextItemNested>
+    </div>
   );
 };

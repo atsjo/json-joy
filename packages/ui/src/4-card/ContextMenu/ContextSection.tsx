@@ -24,7 +24,7 @@ export const ContextSection: React.FC<ContextSectionProps> = ({className, compac
     padding: compact ? '4px 8px' : void 0,
   };
 
-  let element: React.ReactNode = <div {...rest} style={style} className={(className || '') + blockClass} />;
+  let element: React.ReactNode = <fieldset {...rest} style={style} className={(className || '') + blockClass} />;
 
   if (bg) {
     element = <div style={{background: theme.g(0, 0.04)}}>{element}</div>;

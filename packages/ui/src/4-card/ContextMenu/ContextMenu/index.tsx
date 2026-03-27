@@ -28,6 +28,14 @@ export const StatefulContextMenu: React.FC<StatefulContextMenuProps> = ({state})
   const path = useBehaviorSubject(state.path$);
   const currentMenu = useBehaviorSubject(state.menu$);
 
+  // Restore focus to the element that triggered the menu when it unmounts.
+  React.useEffect(() => {
+    const trigger = document.activeElement as HTMLElement | null;
+    return () => {
+      if (trigger && typeof trigger.focus === 'function') requestAnimationFrame(() => trigger.focus());
+    };
+  }, []);
+
   const id = currentMenu.id ?? currentMenu.name;
 
   return (

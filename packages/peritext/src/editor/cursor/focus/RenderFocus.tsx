@@ -1,57 +1,35 @@
 import * as React from 'react';
-import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useEditor} from '../../state/context';
 import {CaretFrame} from '../util/CaretFrame';
 import {FmtNewPane} from '../../inline/components/FmtNewPane';
+import {useSyncStoreOpt} from '../../../web/react/hooks';
 import {BottomPanePortal} from '../util/BottomPanePortal';
-import {TopPanePortal} from '../util/TopPanePortal';
-import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
 import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
+import {FocusOver} from './FocusOver';
 
 export interface RenderFocusProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
+export const RenderFocus: React.FC<RenderFocusProps> = (props) => {
+  const {children, cursor} = props;
   const state = useEditor()!;
-  const {surface} = state;
-  const showInlineToolbar = state.showInlineToolbar;
-  const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
-  const enableAfterCoolDown = useTimeout(300, [toolbarVisibilityChangeTime]);
+  const {surface, selection} = state;
+  const newSlice = selection.newSlice.use();
   const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
-  const formatting = useSyncStore(state.newSlice);
-  // const focus = useSyncStoreOpt(surface.dom?.cursor.focus) || false;
-  // const blurTimeout = useTimeout(300, [focus]);
 
-  const handleClose = React.useCallback(() => {
-    //   surface.dom?.focus();
-    //   // if (showInlineToolbar.value) showInlineToolbar.next(false);
-  }, []);
-
-  let over: React.ReactNode | undefined;
   let under: React.ReactNode | undefined;
 
-  if (!formatting && showInlineToolbarValue && !isScrubbing && state.txt.editor.mainCursor() === cursor)
-    over = (
-      <TopPanePortal>
-        <CaretToolbar
-          disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}
-          menu={state.menu.range.build()}
-          onPopupClose={handleClose}
-        />
-      </TopPanePortal>
-    );
-
-  if (!!formatting && showInlineToolbarValue && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
+  if (!!newSlice && !isScrubbing && state.txt.editor.mainCursor() === cursor) {
     under = (
       <BottomPanePortal>
-        <FmtNewPane formatting={formatting} onSave={() => formatting.save()} />
+        <FmtNewPane formatting={newSlice} onSave={() => newSlice.save()} />
       </BottomPanePortal>
     );
   }
 
   return (
-    <CaretFrame over={over} under={under}>
+    <CaretFrame over={<FocusOver {...props} />} under={under}>
       {children}
     </CaretFrame>
   );

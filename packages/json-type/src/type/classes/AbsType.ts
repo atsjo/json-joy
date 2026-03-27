@@ -1,7 +1,7 @@
+import {Value} from '../../value/Value';
 import type {Printable} from 'tree-dump/lib/types';
 import type * as schema from '../../schema';
 import type {SchemaExample} from '../../schema';
-import {Value} from '../../value';
 import type {BaseType, ModuleType} from '../types';
 
 export abstract class AbsType<S extends schema.Schema> implements BaseType<S>, Printable {

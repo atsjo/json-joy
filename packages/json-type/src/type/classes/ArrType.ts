@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump';
 import * as schema from '../../schema';
-import type {SchemaOf, Type} from '../types';
 import {AbsType} from './AbsType';
+import type {SchemaOf, Type} from '../types';
 import type {TypeExportContext} from './ModuleType/TypeExportContext';
 
 export class ArrType<

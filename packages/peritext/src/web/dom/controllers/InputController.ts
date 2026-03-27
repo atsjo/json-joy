@@ -232,15 +232,6 @@ export class InputController implements UiLifeCycles {
           }
           break;
         }
-        case 'Escape': {
-          // TODO: Use rendering surface imperative UI API here.
-          const div = this.dom.facade.el;
-          if (div instanceof HTMLElement) {
-            event.preventDefault();
-            div.blur();
-          }
-          break;
-        }
       }
     };
     const onCopy = (event: ClipboardEvent): void => {

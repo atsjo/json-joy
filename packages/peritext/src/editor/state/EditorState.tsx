@@ -1,32 +1,28 @@
 import * as sync from 'thingies/lib/sync';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import {NewFmt} from './formattings/NewFmt';
 import {spans as defaultSpans} from '../inline/spans';
 import {FmtManagePaneState} from '../inline/components/FmtManagePane/state';
 import {Menu} from './menus/Menu';
+import {Commands} from './commands/Commands';
+import {SelectionState} from './SelectionState';
 import type {SpanBehavior} from '../inline/SpanBehavior';
 import type {AnyBinding, Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {EditorPluginOpts} from '../plugin';
-import type {PeritextCursorEvent, PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
+import type {PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 export class EditorState implements UiLifeCycles {
   public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
-  public readonly showInlineToolbar = sync.val<[show: boolean, time: number]>([false, 0]);
+  public readonly selection: SelectionState;
 
   public readonly menu = new Menu(this);
-
-  /**
-   * New slice configuration. This is used for new slices which are not yet
-   * applied to the text as they need to be configured first.
-   */
-  public readonly newSlice = sync.val<NewFmt | undefined>(void 0);
+  public cmd?: Commands;
 
   public readonly activeSlice = sync.val<undefined>(void 0);
 
@@ -54,6 +50,7 @@ export class EditorState implements UiLifeCycles {
   ) {
     this.txt = this.surface.dom.txt;
     this.et = surface.headless.et;
+    this.selection = new SelectionState(this);
     const length = spans.length;
     for (let i = 0; i < length; i++) {
       const tag = spans[i].tag;
@@ -119,23 +116,6 @@ export class EditorState implements UiLifeCycles {
   //   return true;
   // }
 
-  /** Open popup to start configuring a new slice. */
-  public startSliceConfig(tag: SliceTypeName | string | number): NewFmt | undefined {
-    const editor = this.txt.editor;
-    const behavior = this.spanMap[tag];
-    if (!behavior) return;
-    const range = editor.mainCursor()?.range();
-    if (!range) return;
-    const newSlice = this.newSlice;
-    if (!behavior) {
-      newSlice.next(void 0);
-      return;
-    }
-    const formatting = new NewFmt(behavior, range, this);
-    newSlice.next(formatting);
-    return formatting;
-  }
-
   // public registerSlice(tag: TypeTag, data: SliceRegistryEntryData): ToolBarSliceRegistryEntry {
   //   const registry = this.txt.editor.getRegistry();
   //   const entry = registry.get(tag);
@@ -144,18 +124,20 @@ export class EditorState implements UiLifeCycles {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const {surface, showInlineToolbar, newSlice: newSliceConfig, menu} = this;
+    const {surface, menu} = this;
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
     const el = dom.facade.el;
-
+    const commands = (this.cmd = new Commands(this));
     const stopMenu = menu.start();
-
     const registry = this.txt.editor.getRegistry();
     for (const behavior of defaultSpans) {
       registry.add(behavior);
+      const {cmd} = behavior;
+      if (cmd) commands.range.push(cmd);
     }
+    const stopCommands = this.cmd.start();
     // Object.assign(registry.get(SliceTypeName.a)?.data() || {}, behavior.a);
     // // registry.add({});
     // Object.assign(registry.get(SliceTypeName.col)?.data() || {}, behavior.col);
@@ -186,35 +168,22 @@ export class EditorState implements UiLifeCycles {
       // if (showInlineToolbar.value[0])
       //   showInlineToolbar.next([false, Date.now()]);
     };
-    const mouseUpListener = (event: MouseEvent) => {
-      if (!showInlineToolbar.value[0]) showInlineToolbar.next([true, Date.now()]);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case 'Escape': {
-          if (newSliceConfig.value) {
-            event.stopPropagation();
-            event.preventDefault;
-            newSliceConfig.next(void 0);
-            return;
-          }
-          break;
-        }
-      }
-    };
+
+    // TODO: Move this to <a> span behavior.
     const onKeyDownDocument = (event: KeyboardEvent) => {
       switch (event.key) {
         case 'k': {
           if (event.metaKey) {
             const editor = this.txt.editor;
+            const newSlice = this.selection.newSlice;
             if (
               editor.hasCursor() &&
               !editor.mainCursor()?.isCollapsed() &&
-              (!newSliceConfig.value || newSliceConfig.value.behavior.tag !== SliceTypeName.a)
+              (!newSlice.value || newSlice.value.behavior.tag !== SliceTypeName.a)
             ) {
               event.stopPropagation();
               event.preventDefault;
-              this.startSliceConfig(SliceTypeName.a);
+              this.selection.showNewSlicePopup(SliceTypeName.a);
               return;
             }
           }
@@ -222,21 +191,10 @@ export class EditorState implements UiLifeCycles {
         }
       }
     };
-    const onCursor = ({detail}: PeritextCursorEvent) => {
-      // Close config popup on non-focus cursor moves.
-      if (newSliceConfig.value) {
-        const isFocusMove = detail.move && detail.move.length === 1 && detail.move[0][0] === 'focus';
-        if (!isFocusMove) {
-          this.newSlice.next(void 0);
-        }
-      }
-    };
 
     el.addEventListener('mousedown', mouseDownListener);
-    el.addEventListener('mouseup', mouseUpListener);
-    el.addEventListener('keydown', onKeyDown);
+
     document.addEventListener('keydown', onKeyDownDocument);
-    et.addEventListener('cursor', onCursor);
 
     const unbindHotkeys = this.surface.headless.kbd.bind([
       [
@@ -244,14 +202,47 @@ export class EditorState implements UiLifeCycles {
         (press: Key) => {
           if (islandUnder.value) {
             islandUnder.next(null);
-          } else {
-            press.propagate = true;
+            return;
           }
+          // Remove all cursors.
+          const editor = this.txt.editor;
+          if (editor.hasCursor()) {
+            editor.delCursors();
+            this.surface.rerender();
+            return;
+          }
+          press.propagate = true;
         },
       ],
     ]);
 
     const unbindHotkeysSurface = dom.kbd?.bind([
+      [
+        'Escape',
+        (press: Key) => {
+          const editor = this.txt.editor;
+          const mainCursor = editor.mainCursor();
+          // Hide inline selection toolbar.
+          const toolbarHidden = this.selection.hideToolbar();
+          if (toolbarHidden && mainCursor && !mainCursor.isCollapsed()) {
+            return;
+          }
+          // Leave only one cursor, if multiple cursors are present.
+          const cursorCardinality = editor.cursorCard();
+          if (cursorCardinality > 1) {
+            editor.delCursors((c) => c !== mainCursor);
+            this.surface.rerender();
+            return;
+          }
+          // Blur the editor.
+          const div = this.surface.dom.facade.el;
+          if (div instanceof HTMLElement && document.activeElement === div) {
+            div.blur();
+            return;
+          }
+          press.propagate = true;
+        },
+      ],
       [
         'Meta Meta',
         () => {
@@ -272,19 +263,20 @@ export class EditorState implements UiLifeCycles {
         ),
     ]);
 
+    const selectionStop = this.selection.start();
+
     return () => {
       this.docSizer.disconnect();
       stopMenu();
+      stopCommands();
       changeUnsubscribe();
       cursorUnsubscribe();
       unsubscribeMouseDown?.();
       el.removeEventListener('mousedown', mouseDownListener);
-      el.removeEventListener('mouseup', mouseUpListener);
-      el.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keydown', onKeyDownDocument);
-      et.removeEventListener('cursor', onCursor);
       unbindHotkeys();
       unbindHotkeysSurface?.();
+      selectionStop();
     };
   }
 }
