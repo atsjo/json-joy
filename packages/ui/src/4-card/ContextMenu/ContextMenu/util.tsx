@@ -23,13 +23,15 @@ export const findMenuItems = (root: MenuItem, query: string): SearchMatch[] => {
     if (curr.sep) return;
     if (curr.name) text = curr.name + ' ' + text;
     if (curr.id) text = curr.id + ' ' + text;
-    if (matcher(text)) result.push({path, item: curr});
-    else {
-      const children = curr.children;
-      if (children) {
-        const newPath = [...path, curr];
-        for (let i = 0; i < children.length; i++) find(newPath, children[i]);
-      }
+    const selfMatches = matcher(text);
+    const children = curr.children;
+    if (children) {
+      const before = result.length;
+      const newPath = [...path, curr];
+      for (let i = 0; i < children.length; i++) find(newPath, children[i]);
+      if (selfMatches && result.length === before) result.push({path, item: curr});
+    } else if (selfMatches) {
+      result.push({path, item: curr});
     }
   };
   find([], root);
