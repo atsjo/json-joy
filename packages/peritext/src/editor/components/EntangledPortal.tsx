@@ -22,7 +22,7 @@ class EntangledPortalState implements UiLifeCycles {
 
   constructor(public opts: EntangledPortalProps) {}
 
-  protected readonly entangle = (): void => {
+  public readonly reposition = (): void => {
     const {destEl, opts} = this;
     if (!destEl) return;
     const baseRect = this.baseRect$.getValue();
@@ -69,8 +69,8 @@ class EntangledPortalState implements UiLifeCycles {
       el.style.position = 'fixed';
       this.destSub = resize$(el)
         .pipe(throttleTime(20, void 0, {trailing: true}))
-        .subscribe(this.entangle);
-      this.entangle();
+        .subscribe(this.reposition);
+      this.reposition();
     }
     this.opts.onDest?.(el);
   };
@@ -79,7 +79,7 @@ class EntangledPortalState implements UiLifeCycles {
 
   public readonly start = () => {
     const subscription = this.baseRect$.subscribe(() => {
-      this.entangle();
+      this.reposition();
     });
     return () => {
       subscription.unsubscribe();
@@ -93,6 +93,7 @@ class EntangledPortalState implements UiLifeCycles {
 export interface EntangledPortalProps extends EntangledPortalStateOpts {
   span?: React.HTMLAttributes<HTMLSpanElement>;
   children?: React.ReactNode;
+  repositionRef?: React.MutableRefObject<(() => void) | undefined>;
 }
 
 /**
@@ -101,10 +102,11 @@ export interface EntangledPortalProps extends EntangledPortalStateOpts {
  * with the <span> on resize and scroll.
  */
 export const EntangledPortal: React.FC<EntangledPortalProps> = (props) => {
-  const {span, children} = props;
+  const {span, children, repositionRef} = props;
   // biome-ignore lint: props are set on every re-render in the render body
   const state = React.useMemo(() => new EntangledPortalState(props), []);
   state.opts = props;
+  if (repositionRef) repositionRef.current = state.reposition;
   // biome-ignore lint: too many dependencies
   React.useEffect(state.start, [state]);
 
