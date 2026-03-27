@@ -19,24 +19,23 @@ export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
   onPopupClose,
   ...rest
 }) => {
-  const expandPoint = React.useRef<AnchorPoint>({x: 32, y: 32, dx: 1, dy: 1});
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const getExpandPoint = React.useCallback((): AnchorPoint => {
+    const el = ref.current;
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      return {x: rect.x + rect.width + 8, y: rect.y, dx: 1, dy: 1};
+    }
+    return {x: 32, y: 32, dx: 1, dy: 1};
+  }, []);
 
   return (
-    <div
-      ref={(el: HTMLElement | null) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (!rect) return;
-        expandPoint.current.dx = 1;
-        expandPoint.current.dy = 1;
-        expandPoint.current.x = rect.x - 100;
-        expandPoint.current.y = rect.y - 48;
-      }}
-    >
+    <div ref={ref}>
       <ExpandableToolbar
         {...rest}
         menu={menu}
-        expandPoint={() => expandPoint.current}
+        expandPoint={getExpandPoint}
         disabled={disabled}
         onPopupClose={onPopupClose}
         more={{

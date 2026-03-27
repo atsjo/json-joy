@@ -218,10 +218,10 @@ export class BlockMenu {
     const state = this.state;
     const tag = leaf.marker?.marker.nestedType().tag().name() ?? 0;
     const behavior = tag !== void 0 ? state.blockMap[tag] : void 0;
-    console.log(tag, behavior?.name ?? 'Active block type');
     const originalMenu = behavior?.getMenu(state);
     const menu: MenuItem = {
-      name: behavior?.name ?? 'Active block type',
+      name: 'Block type',
+      // name: behavior?.name ?? 'Active block type',
       icon: originalMenu?.icon,
       children: this.blockTypeChildren(),
     };
