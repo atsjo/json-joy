@@ -27,6 +27,13 @@ export class SelectionState {
     toolbar.next(new ExpandableToolbarState());
   }
 
+  public hideToolbar(): boolean {
+    const toolbar = this.toolbar;
+    if (!toolbar.value) return false;
+    toolbar.next(null);
+    return true;
+  }
+
   /**
    * Open popup to start configuring a new slice.
    * 

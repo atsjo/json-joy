@@ -184,7 +184,7 @@ export class EditorState implements UiLifeCycles {
             ) {
               event.stopPropagation();
               event.preventDefault;
-              this.selection.startSliceConfig(SliceTypeName.a);
+              this.selection.showNewSlicePopup(SliceTypeName.a);
               return;
             }
           }
@@ -203,14 +203,44 @@ export class EditorState implements UiLifeCycles {
         (press: Key) => {
           if (islandUnder.value) {
             islandUnder.next(null);
-          } else {
-            press.propagate = true;
+            return;
           }
+          // Remove all cursors.
+          const editor = this.txt.editor;  
+          if (editor.hasCursor()) {
+            editor.delCursors();
+            this.surface.rerender();
+            return;
+          }
+          press.propagate = true;
         },
       ],
     ]);
 
     const unbindHotkeysSurface = dom.kbd?.bind([
+      ['Escape', (press: Key) => {
+        const editor = this.txt.editor;
+        const mainCursor = editor.mainCursor();
+        // Hide inline selection toolbar.
+        const toolbarHidden = this.selection.hideToolbar();
+        if (toolbarHidden && mainCursor && !mainCursor.isCollapsed()) {
+          return;
+        }
+        // Leave only one cursor, if multiple cursors are present.
+        const cursorCardinality = editor.cursorCard();
+        if (cursorCardinality > 1) {
+          editor.delCursors(c => c !== mainCursor);
+          this.surface.rerender();
+          return;
+        }
+        // Blur the editor.
+        const div = this.surface.dom.facade.el;
+        if (div instanceof HTMLElement && document.activeElement === div) {
+          div.blur();
+          return;
+        }
+        press.propagate = true;
+      }],
       [
         'Meta Meta',
         () => {
