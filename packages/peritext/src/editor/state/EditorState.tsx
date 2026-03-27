@@ -1,7 +1,6 @@
 import * as sync from 'thingies/lib/sync';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import {NewFmt} from './formattings/NewFmt';
 import {spans as defaultSpans} from '../inline/spans';
 import {FmtManagePaneState} from '../inline/components/FmtManagePane/state';
 import {Menu} from './menus/Menu';
@@ -13,7 +12,7 @@ import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-cr
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {EditorPluginOpts} from '../plugin';
-import type {PeritextCursorEvent, PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
+import type {PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 export class EditorState implements UiLifeCycles {

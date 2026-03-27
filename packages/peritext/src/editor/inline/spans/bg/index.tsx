@@ -11,7 +11,6 @@ import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {behavior as col} from '../col';
 import type {EditorState} from '../../../state/EditorState';
-import type {DynamicCommandDefinition} from '../../../state/commands/types';
 
 export const name = 'Background';
 export const Icon = makeIcon({set: 'lucide', icon: 'paint-bucket'});

@@ -73,7 +73,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
     }
     state.focusFirstItem(containerRef.current, doShowSearch, depth);
     return undefined;
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [depth, doShowSearch, state.focusFirstItem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     if (search && openPanel.selected$.getValue()) openPanel.deselect();

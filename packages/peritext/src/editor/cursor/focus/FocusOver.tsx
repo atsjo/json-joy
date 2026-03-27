@@ -16,7 +16,7 @@ export const FocusOver: React.FC<FocusOverProps> = ({cursor}) => {
 
   const handleClose = React.useCallback(() => {
     selection.toolbar.next(null);
-  }, []);
+  }, [selection.toolbar.next]);
 
   if (isScrubbing || !toolbarState || state.txt.editor.mainCursor() !== cursor) return;
 

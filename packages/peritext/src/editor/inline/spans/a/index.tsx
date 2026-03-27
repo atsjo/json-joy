@@ -19,7 +19,6 @@ import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {RenderInlineProps} from '../../RenderInline';
 import type {MenuItem} from '../../../types';
-import type {CommandDefinition} from '../../../state/commands/types';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'link'});
 

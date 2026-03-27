@@ -100,7 +100,6 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
     }
 
     return (
-      // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
       <div {...rest} className={paneClass + (className || '')} style={blockStyle} ref={ref}>
         <div className={bodyClass} style={{overflow: canOverflow ? 'visible' : undefined}}>
           {children}
