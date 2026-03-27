@@ -32,7 +32,7 @@ const blockClass = rule({
 
 const innerClass = rule({
   pos: 'absolute',
-  b: 'calc(var(--' + CursorConstants.CaretHeight + ') / -2 + 0.5em)',
+  b: 'calc(var(--' + CursorConstants.CaretHeight + ') / -2.2 + 0.5em)',
   l: '-.065em',
   w: 'calc(max(.2em, 2px))',
   h: `var(--${CursorConstants.CaretHeight})`,
