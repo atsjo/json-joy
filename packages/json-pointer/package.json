@@ -10,8 +10,8 @@
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/json-pointer",
-  "repository": "jsonjoy-com/json-pointer",
+  "homepage": "https://github.com/streamich/json-joy/packages/json-pointer",
+  "repository": "streamich/json-joy",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"

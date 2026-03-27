@@ -9,8 +9,8 @@
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/json-expression",
-  "repository": "jsonjoy-com/json-expression",
+  "homepage": "https://github.com/streamich/json-joy/packages/json-expression",
+  "repository": "streamich/json-joy",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"

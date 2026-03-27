@@ -9,8 +9,8 @@
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/buffers",
-  "repository": "jsonjoy-com/buffers",
+  "homepage": "https://github.com/streamich/json-joy/packages/buffers",
+  "repository": "streamich/json-joy",
   "license": "Apache-2.0",
   "funding": {
     "type": "github",

@@ -9,8 +9,8 @@
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/json-path#readme",
-  "repository": "jsonjoy-com/json-path",
+  "homepage": "https://github.com/streamich/json-joy/packages/json-path",
+  "repository": "streamich/json-joy",
   "license": "Apache-2.0",
   "funding": {
     "type": "github",
