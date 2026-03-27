@@ -34,6 +34,11 @@ export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
     <div ref={ref}>
       <ExpandableToolbar
         {...rest}
+        pane={{
+          ...(typeof rest.pane === 'object' ? rest.pane : {}),
+          compact: true,
+        }}
+        compact
         menu={menu}
         expandPoint={getExpandPoint}
         disabled={disabled}

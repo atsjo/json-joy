@@ -13,9 +13,10 @@ const separatorClass = rule({
 
 export interface ToolbarSepProps {
   line?: boolean;
+  compact?: boolean;
 }
 
-export const ToolbarSep: React.FC<ToolbarSepProps> = ({line}) => {
+export const ToolbarSep: React.FC<ToolbarSepProps> = ({line, compact}) => {
   const styles = useStyles();
 
   const props: any = {
@@ -25,7 +26,7 @@ export const ToolbarSep: React.FC<ToolbarSepProps> = ({line}) => {
   if (line) {
     props.style = {
       width: '1px',
-      margin: '0 4px',
+      margin: compact ? '0 2px' : '0 4px',
       background: styles.light ? styles.g(0.92) : styles.g(0.8),
     };
   }

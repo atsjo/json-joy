@@ -22,10 +22,11 @@ export const ToolbarMenu: React.FC<ToolbarMenuProps> = (props) => {
 
 export interface StatefulToolbarMenuProps extends ToolbarMenuProps {
   state: ToolbarMenuState;
+  compact?: boolean;
 }
 
 export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) => {
-  const {state, menu, disabled, more, before, after, pane = true, onPopupClose, onClickAway} = props;
+  const {state, menu, disabled, more, before, after, pane = true, onPopupClose, onClickAway, compact} = props;
   state.props = props;
   const openPanel = state.openPanel;
   const selected = useBehaviorSubject(openPanel.selected$);
@@ -67,7 +68,7 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
     const child = children![i];
     const key = child.id || child.name || i;
     if (child.sep || child.sepBefore) {
-      nodes.push(<ToolbarSep key={key + '-sep'} line />);
+      nodes.push(<ToolbarSep key={key + '-sep'} line compact={compact} />);
       if (!child.sepBefore) continue;
     }
     if (child.expand && !child?.children?.[0]?.iconBig) {
@@ -92,7 +93,7 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
         {before}
         {nodes}
         {after}
-        {showMore && <ToolbarSep line />}
+        {showMore && <ToolbarSep line compact={compact} />}
         {showMore && <ToolbarExpandBtn {...more} disabled={disabled} />}
       </context.Provider>
     </popupContext.Provider>

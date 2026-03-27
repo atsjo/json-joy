@@ -12,12 +12,19 @@ const flexClass = rule({
 
 export interface ToolbarPaneProps extends ContextPaneProps {
   children?: React.ReactNode;
+  compact?: boolean;
 }
 
 export const ToolbarPane: React.FC<ToolbarPaneProps> = ({children, ...rest}) => {
+  let style: React.CSSProperties | undefined = rest.style;
+
+  if (rest.compact) {
+    style = {padding: 2};
+  }
+
   return (
     <ContextPane {...rest}>
-      <div className={flexClass}>{children}</div>
+      <div className={flexClass} style={style}>{children}</div>
     </ContextPane>
   );
 };

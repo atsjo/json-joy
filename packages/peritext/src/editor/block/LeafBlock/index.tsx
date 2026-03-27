@@ -47,7 +47,7 @@ export const LeafBlock: React.FC<LeafBlockProps> = ({block, children}) => {
   const position = React.useCallback<NonNullable<EntangledPortalStateOpts['position']>>((base, dest) => {
     let x = base.x - (dest.width >> 1) + 24;
     const caretRect = state.surface.dom.caretRect();
-    let y = caretRect ? caretRect.y - 16 : base.y;
+    let y = caretRect ? caretRect.y - 10 : base.y;
     if (x < gap) x = gap;
     else if (x + dest.width + gap > window.innerWidth) x = window.innerWidth - dest.width - gap;
     const {scrollY} = window;

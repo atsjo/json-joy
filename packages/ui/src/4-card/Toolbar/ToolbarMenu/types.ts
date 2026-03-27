@@ -9,6 +9,7 @@ export interface ToolbarMenuProps {
   before?: React.ReactNode;
   after?: React.ReactNode;
   pane?: boolean | ContextPaneProps;
+  compact?: boolean;
   onPopupClose?: () => void;
   onClickAway?: () => void;
   onEsc?: () => void;
