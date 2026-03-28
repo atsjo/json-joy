@@ -11,6 +11,6 @@ export const behavior = block(SliceTypeCon.p, name, {
   menu: {
     name,
     order: 1,
-    icon: () => <Icon width={15} height={15} />,
+    icon: () => <Icon width={16} height={16} />,
   },
 });

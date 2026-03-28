@@ -12,11 +12,11 @@ export const behavior = spanOne(SliceTypeCon.b, name, {
     state.et.format('tog', SliceTypeCon.b);
   },
   menuId: 'fmt-common',
-  menu: {
+  menu: () => ({
     name,
     order: 1,
     icon: () => <Icon width={15} height={15} />,
-  },
+  }),
   text: (style) => {
     style.fontWeight = 'bold';
   },

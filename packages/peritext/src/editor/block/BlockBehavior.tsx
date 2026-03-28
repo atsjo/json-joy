@@ -10,6 +10,15 @@ import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditorState} from '../state';
 
+/**
+ * @todo Behavior on block split (Enter) - ability to add newline in codeblock, but also exit block on double Enter or Cmd+Enter
+ * @todo Maybe `Enter` vs `Cmd+Enter` behavior can be inverted/specified per block type.
+ * @todo Whether the node is *terminal/leaf* (e.g. code block) or *container* - can contain other blocks (e.g. list item)
+ * @todo Whether the typically accepts inline formatting (e.g. code block doesn't, paragraph does)
+ * @todo Atomic behavior - e.g. for <math> blocks, where the content is not editable main editor and the block itself is selected as a whole, like an image.
+ * @todo Or render the "atomic" block differently depending on whether the cursor is inside it or not.
+ * @todo Aliases for block tags: e.g. the `0` `SliceTypeCon.p` could have `'p'` and `'paragraph'` aliases. Good for AI.
+ */
 export class BlockBehavior<
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
@@ -31,7 +40,8 @@ export class BlockBehavior<
   /** Default action to be performed when the keys are pressed or selected in the menu. */
   action?: (state: EditorState) => void = void 0;
 
-  setActiveTag(state: EditorState): void {
+  setLeafTag(state: EditorState): void {
+    // TODO: What about data, update that, too? Or reset it?
     state.et.marker({
       action: 'upd',
       target: ['tag'],
@@ -45,7 +55,7 @@ export class BlockBehavior<
     const menu = this.menu;
     if (!menu) return;
     const menuItem = typeof menu === 'function' ? menu(state) : menu;
-    menuItem.onSelect ??= this.action ? (() => this.action?.(state)) : (() => this.setActiveTag(state));
+    menuItem.onSelect ??= this.action ? (() => this.action?.(state)) : (() => this.setLeafTag(state));
     const keys = this.keys;
     if (keys) menuItem.keys ??= keys.map((k) => remap[k] ?? k);
     if (keys) menuItem.right ??= () => <Sidetip small>{formatKeys(keys)}</Sidetip>;

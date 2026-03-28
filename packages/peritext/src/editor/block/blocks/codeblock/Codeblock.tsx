@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {fonts} from '@jsonjoy.com/ui/lib/styles';
-import type {BlockViewProps} from '../../../web/react/BlockView';
+import type {BlockViewProps} from '../../../../web/react/BlockView';
 
 const blockClass = rule({
   ...fonts.get('mono', 'mid'),
