@@ -58,10 +58,21 @@ export class BlockMenu {
       expand: 3,
       children: [],
     };
+    const headings: MenuItem = {
+      id: 'block-h',
+      name: 'Headings',
+      expand: 3,
+      children: [],
+    };
     this.buildBlockGroup(text);
+    this.buildBlockGroup(headings);
     
     const children: MenuItem[] = [];
-    if (text.children?.length) children.push(text);
+    if (text.children!.length) children.push(text);
+    if (headings.children!.length) {
+      if (text.children!.length) headings.sepBefore = true;
+      children.push(headings);
+    }
 
 
     children.push(
@@ -106,70 +117,70 @@ export class BlockMenu {
         //     },
         //   ],
         // },
-        {
-          name: 'Headings',
-          sepBefore: true,
-          expand: 3,
-          children: [
-            {
-              name: 'Heading 1',
-              icon: () => <H1Icon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.h1);
-              },
-            },
-            {
-              name: 'Heading 2',
-              icon: () => <H2Icon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.h2);
-              },
-            },
-            {
-              name: 'Heading 3',
-              icon: () => <H3Icon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.h3);
-              },
-            },
-            {
-              name: 'Heading 4',
-              icon: () => <H4Icon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.h4);
-              },
-            },
-            {
-              name: 'Heading 5',
-              icon: () => <H5Icon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.h5);
-              },
-            },
-            {
-              name: 'Heading 6',
-              icon: () => <H6Icon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.h6);
-              },
-            },
-            {
-              sepBefore: true,
-              name: 'Title',
-              icon: () => <TypeIcon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.title);
-              },
-            },
-            {
-              name: 'Sub-title',
-              icon: () => <TypeIcon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.subtitle);
-              },
-            },
-          ],
-        },
+        // {
+        //   name: 'Headings',
+        //   sepBefore: true,
+        //   expand: 3,
+        //   children: [
+        //     {
+        //       name: 'Heading 1',
+        //       icon: () => <H1Icon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.h1);
+        //       },
+        //     },
+        //     {
+        //       name: 'Heading 2',
+        //       icon: () => <H2Icon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.h2);
+        //       },
+        //     },
+        //     {
+        //       name: 'Heading 3',
+        //       icon: () => <H3Icon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.h3);
+        //       },
+        //     },
+        //     {
+        //       name: 'Heading 4',
+        //       icon: () => <H4Icon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.h4);
+        //       },
+        //     },
+        //     {
+        //       name: 'Heading 5',
+        //       icon: () => <H5Icon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.h5);
+        //       },
+        //     },
+        //     {
+        //       name: 'Heading 6',
+        //       icon: () => <H6Icon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.h6);
+        //       },
+        //     },
+        //     {
+        //       sepBefore: true,
+        //       name: 'Title',
+        //       icon: () => <TypeIcon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.title);
+        //       },
+        //     },
+        //     {
+        //       name: 'Sub-title',
+        //       icon: () => <TypeIcon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.subtitle);
+        //       },
+        //     },
+        //   ],
+        // },
         {
           sepBefore: true,
           name: 'Lists',
