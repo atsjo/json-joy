@@ -243,6 +243,11 @@ export class EditorState implements UiLifeCycles {
             this.surface.rerender();
             return;
           }
+          if (cursorCardinality === 1 && !!mainCursor && !mainCursor.isCollapsed()) {
+            mainCursor.set(mainCursor.focus());
+            this.surface.rerender();
+            return;
+          }
           // Blur the editor.
           const div = this.surface.dom.facade.el;
           if (div instanceof HTMLElement && document.activeElement === div) {
