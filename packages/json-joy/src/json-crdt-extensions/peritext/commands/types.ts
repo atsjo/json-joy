@@ -11,3 +11,7 @@ export type DefaultCommands = {
 export type DefaultCommand = DefaultCommands[DefaultCommandNames];
 
 export type PeritextCommand = DefaultCommand | CommandBase<string, any[]>;
+
+export type CommandCall<Args extends any[] = unknown[]> = CommandCallWithArgs<Args> | CommandCallNoArgs;
+export type CommandCallWithArgs<Args extends any[] = unknown[]> = [name: string, ...args: Args];
+export type CommandCallNoArgs = string;
