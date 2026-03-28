@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {LeafBlock} from './LeafBlock';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import {Blockquote} from './blocks/blocquote/Block';
+import {Blockquote} from './blocks/blockquote/Block';
 import {Codeblock} from './blocks/Codeblock';
 import {TopBlock} from './TopBlock';
 import {MidBlock} from './MidBlock';

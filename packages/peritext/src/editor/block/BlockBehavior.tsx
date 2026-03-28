@@ -27,12 +27,15 @@ export class BlockBehavior<
    * Menu group which this formatting belongs to.
    */
   menuId?: string = void 0;
+  
+  /** Default action to be performed when the keys are pressed or selected in the menu. */
+  action?: (state: EditorState) => void = void 0;
 
   public getMenu(state: EditorState): MenuItem | undefined {
     const menu = this.menu;
     if (!menu) return;
     const menuItem = typeof menu === 'function' ? menu(state) : menu;
-    // menuItem.onSelect ??= () => this.action?.(state);
+    menuItem.onSelect ??= () => this.action?.(state);
     const keys = this.keys;
     if (keys) menuItem.keys ??= keys.map((k) => remap[k] ?? k);
     if (keys) menuItem.right ??= () => <Sidetip small>{formatKeys(keys)}</Sidetip>;
