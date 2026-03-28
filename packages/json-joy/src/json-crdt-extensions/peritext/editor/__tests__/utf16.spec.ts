@@ -275,3 +275,122 @@ describe('Editor.vstep() — UTF-16 grapheme clusters', () => {
     });
   });
 });
+
+describe('Editor.del() — UTF-16 grapheme cluster deletion', () => {
+  describe('forward delete (Delete key)', () => {
+    test('delete a surrogate-pair emoji forward', () => {
+      const {editor, peritext} = setupWithText('a🍪b');
+      // "a🍪b" = 'a'(1) + 🍪(2) + 'b'(1) = 4 CU
+      editor.cursor.setAt(1); // between 'a' and 🍪
+      editor.del(1); // forward delete
+      expect(peritext.strApi().view()).toBe('ab');
+    });
+
+    test('delete a combining character sequence forward', () => {
+      const {editor, peritext} = setupWithText('cafe\u0301s');
+      // c(1) a(1) f(1) e(1) ◌́(1) s(1) = 6 CU
+      editor.cursor.setAt(3); // before 'e' + combining acute
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('cafs');
+    });
+
+    test('delete a ZWJ family emoji forward', () => {
+      const {editor, peritext} = setupWithText('a👨\u200D👩\u200D👧\u200D👦b');
+      const before = peritext.strApi().view();
+      expect(before).toBe('a👨\u200D👩\u200D👧\u200D👦b');
+      editor.cursor.setAt(1); // after 'a', before family emoji
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('ab');
+    });
+
+    test('delete a flag emoji forward', () => {
+      const {editor, peritext} = setupWithText('x\uD83C\uDDFA\uD83C\uDDF8y');
+      editor.cursor.setAt(1); // after 'x'
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('xy');
+    });
+
+    test('delete emoji with skin tone forward', () => {
+      const {editor, peritext} = setupWithText('a👍🏽b');
+      editor.cursor.setAt(1); // after 'a'
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('ab');
+    });
+
+    test('delete plain ASCII forward', () => {
+      const {editor, peritext} = setupWithText('abc');
+      editor.cursor.setAt(1); // after 'a'
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('ac');
+    });
+  });
+
+  describe('backward delete (Backspace)', () => {
+    test('delete a surrogate-pair emoji backward', () => {
+      const {editor, peritext} = setupWithText('a🍪b');
+      editor.cursor.setAt(3); // after 🍪, before 'b'
+      editor.del(-1); // backspace
+      expect(peritext.strApi().view()).toBe('ab');
+    });
+
+    test('delete a combining character sequence backward', () => {
+      const {editor, peritext} = setupWithText('cafe\u0301s');
+      editor.cursor.setAt(5); // after é (e + combining acute), before 's'
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('cafs');
+    });
+
+    test('delete a ZWJ family emoji backward', () => {
+      const {editor, peritext} = setupWithText('a👨\u200D👩\u200D👧\u200D👦b');
+      const text = peritext.strApi().view();
+      editor.cursor.setAt(text.length - 1); // before 'b', after family emoji
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('ab');
+    });
+
+    test('delete a flag emoji backward', () => {
+      const {editor, peritext} = setupWithText('x\uD83C\uDDFA\uD83C\uDDF8y');
+      editor.cursor.setAt(5); // after flag, before 'y'
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('xy');
+    });
+
+    test('delete emoji with skin tone backward', () => {
+      const {editor, peritext} = setupWithText('a👍🏽b');
+      editor.cursor.setAt(5); // after 👍🏽, before 'b'
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('ab');
+    });
+
+    test('delete plain ASCII backward', () => {
+      const {editor, peritext} = setupWithText('abc');
+      editor.cursor.setAt(2); // after 'b'
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('ac');
+    });
+  });
+
+  describe('consecutive deletions', () => {
+    test('delete multiple emoji one by one forward', () => {
+      const {editor, peritext} = setupWithText('🍪🍩🍰');
+      editor.cursor.setAt(0);
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('🍩🍰');
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('🍰');
+      editor.del(1);
+      expect(peritext.strApi().view()).toBe('');
+    });
+
+    test('delete multiple emoji one by one backward', () => {
+      const {editor, peritext} = setupWithText('🍪🍩🍰');
+      editor.cursor.setAt(6); // end
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('🍪🍩');
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('🍪');
+      editor.del(-1);
+      expect(peritext.strApi().view()).toBe('');
+    });
+  });
+});

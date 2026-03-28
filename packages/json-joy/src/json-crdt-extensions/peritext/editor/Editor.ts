@@ -857,6 +857,7 @@ export class Editor<T = string> implements Printable {
       case 'char': {
         const p = point.clone();
         p.step(steps);
+        this.snapToGrapheme(p, direction);
         return this.skipAtom(p, direction);
       }
       case 'vchar': {
