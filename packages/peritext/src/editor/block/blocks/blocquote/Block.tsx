@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import type {BlockViewProps} from '../../../web/react/BlockView';
+import type {BlockViewProps} from '../../../../web/react/BlockView';
 
 const blockClass = rule({
   bg: 'rgba(0,0,0,.02)',

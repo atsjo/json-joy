@@ -34,50 +34,78 @@ export interface LeafBlockMenuCtx {
 export class BlockMenu {
   constructor(public readonly state: EditorState) {}
 
+  private buildBlockGroup(group: MenuItem): void {
+    const {id, children = []} = group;
+    const state = this.state;
+    const {blocks} = state;
+    const spanLength = blocks.length;
+    for (let i = 0; i < spanLength; i++) {
+      const span = blocks[i];
+      if (span.menuId === id) {
+        const item = span.getMenu(state);
+        if (item) children.push(item);
+      }
+    }
+    if (children.length) children.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }
+
   private blockTypeChildren (): MenuItem[] {
-    const et = this.state.surface.events.et;
-    const children: MenuItem[] = [
-        {
-          name: 'Text blocks',
-          expand: 3,
-          children: [
-            {
-              name: 'Paragraph',
-              icon: () => <PilcrowIcon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.p);
-              },
-            },
-            {
-              name: 'Code block',
-              icon: () => <CodeIcon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.codeblock);
-              },
-            },
-            {
-              name: 'Blockquote',
-              icon: () => <QuoteIcon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', [SliceTypeName.blockquote, SliceTypeName.p]);
-              },
-            },
-            {
-              name: 'Math block',
-              icon: () => <MathIcon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.mathblock);
-              },
-            },
-            {
-              name: 'Pre-formatted',
-              icon: () => <TypeIcon width={16} height={16} />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeName.pre);
-              },
-            },
-          ],
-        },
+    const et = this.state.et;
+
+    const text: MenuItem = {
+      id: 'block-text',
+      name: 'Text blocks',
+      expand: 3,
+      children: [],
+    };
+    this.buildBlockGroup(text);
+    
+    const children: MenuItem[] = [];
+    if (text.children?.length) children.push(text);
+
+
+    children.push(
+        // {
+        //   name: 'Text blocks',
+        //   expand: 3,
+        //   children: [
+        //     {
+        //       name: 'Paragraph',
+        //       icon: () => <PilcrowIcon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.p);
+        //       },
+        //     },
+        //     {
+        //       name: 'Code block',
+        //       icon: () => <CodeIcon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.codeblock);
+        //       },
+        //     },
+        //     {
+        //       name: 'Blockquote',
+        //       icon: () => <QuoteIcon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', [SliceTypeName.blockquote, SliceTypeName.p]);
+        //       },
+        //     },
+        //     {
+        //       name: 'Math block',
+        //       icon: () => <MathIcon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.mathblock);
+        //       },
+        //     },
+        //     {
+        //       name: 'Pre-formatted',
+        //       icon: () => <TypeIcon width={16} height={16} />,
+        //       onSelect: () => {
+        //         et.marker('upd', SliceTypeName.pre);
+        //       },
+        //     },
+        //   ],
+        // },
         {
           name: 'Headings',
           sepBefore: true,
@@ -210,7 +238,7 @@ export class BlockMenu {
             },
           ],
         },
-      ];
+      );
     return children;
   };
 

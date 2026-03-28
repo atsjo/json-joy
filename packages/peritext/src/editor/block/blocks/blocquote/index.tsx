@@ -3,10 +3,10 @@ import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {block} from '../util';
 
-export const name = 'Paragraph';
-export const Icon = makeIcon({set: 'lucide', icon: 'pilcrow'});
-export const behavior = block(SliceTypeCon.p, name, {
-  keys: ['Shift', 'Primary', '0'],
+export const name = 'Blockquote';
+export const Icon = makeIcon({set: 'lucide', icon: 'quote'});
+export const behavior = block(SliceTypeCon.blockquote, name, {
+  keys: ['Shift', 'Primary', '1'],
   menuId: 'block-text',
   menu: {
     name,
