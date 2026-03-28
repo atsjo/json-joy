@@ -14,13 +14,4 @@ export const behavior = block(SliceTypeCon.blockquote, name, {
     order: 1,
     icon: () => <Icon width={15} height={15} />,
   }),
-  action: (state: EditorState) => {
-    state.et.marker({
-      action: 'upd',
-      target: ['tag'],
-      ops: [
-        ['replace', '/', SliceTypeCon.blockquote],
-      ],
-    });
-  },
 });

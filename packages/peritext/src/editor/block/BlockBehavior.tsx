@@ -31,11 +31,21 @@ export class BlockBehavior<
   /** Default action to be performed when the keys are pressed or selected in the menu. */
   action?: (state: EditorState) => void = void 0;
 
+  setActiveTag(state: EditorState): void {
+    state.et.marker({
+      action: 'upd',
+      target: ['tag'],
+      ops: [
+        ['replace', '/', this.tag],
+      ],
+    });
+  }
+
   public getMenu(state: EditorState): MenuItem | undefined {
     const menu = this.menu;
     if (!menu) return;
     const menuItem = typeof menu === 'function' ? menu(state) : menu;
-    menuItem.onSelect ??= () => this.action?.(state);
+    menuItem.onSelect ??= this.action ? (() => this.action?.(state)) : (() => this.setActiveTag(state));
     const keys = this.keys;
     if (keys) menuItem.keys ??= keys.map((k) => remap[k] ?? k);
     if (keys) menuItem.right ??= () => <Sidetip small>{formatKeys(keys)}</Sidetip>;
@@ -43,7 +53,3 @@ export class BlockBehavior<
     return menuItem;
   }
 }
-
-// export interface BlockIconProps {
-//   size: number;
-// }

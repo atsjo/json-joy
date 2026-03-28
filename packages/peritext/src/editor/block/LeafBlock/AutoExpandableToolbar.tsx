@@ -25,7 +25,10 @@ export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
     const el = ref.current;
     if (el) {
       const rect = el.getBoundingClientRect();
-      return {x: rect.x + rect.width, y: rect.y, dx: -1, dy: 1};
+      const doLeanLeft = rect.x > 360;
+      return doLeanLeft
+        ? {x: rect.x + rect.width - 32, y: rect.y, dx: -1, dy: 0}
+        : {x: rect.x + rect.width + 8, y: rect.y, dx: 1, dy: 0};
     }
     return {x: 32, y: 32, dx: 1, dy: 1};
   }, []);
