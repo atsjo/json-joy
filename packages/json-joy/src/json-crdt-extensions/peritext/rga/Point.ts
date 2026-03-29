@@ -299,6 +299,52 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return new ChunkSlice(chunk, off, 1);
   }
 
+  /** Peeks up to `n` visible UTF-16 code units of text to the right. */
+  public peekRight(n: number): string {
+    const cs = this.rightChar();
+    if (!cs) return '';
+    const rga = this.rga;
+    let result = '';
+    let remaining = n;
+    let chunk: Chunk<T> | undefined = cs.chunk;
+    let off = cs.off;
+    while (chunk && remaining > 0) {
+      if (!chunk.del) {
+        const data = chunk.view() as unknown as string;
+        const available = chunk.span - off;
+        const take = Math.min(available, remaining);
+        result += data.slice(off, off + take);
+        remaining -= take;
+      }
+      chunk = rga.next(chunk);
+      off = 0;
+    }
+    return result;
+  }
+
+  /** Peeks up to `n` visible UTF-16 code units of text to the left. */
+  public peekLeft(n: number): string {
+    const cs = this.leftChar();
+    if (!cs) return '';
+    const rga = this.rga;
+    let result = '';
+    let remaining = n;
+    let chunk: Chunk<T> | undefined = cs.chunk;
+    let off = cs.off;
+    while (chunk && remaining > 0) {
+      if (!chunk.del) {
+        const data = chunk.view() as unknown as string;
+        const available = off + 1;
+        const take = Math.min(available, remaining);
+        result = data.slice(off + 1 - take, off + 1) + result;
+        remaining -= take;
+      }
+      chunk = rga.prev(chunk);
+      off = chunk ? chunk.span - 1 : 0;
+    }
+    return result;
+  }
+
   /**
    * Returns a chunk slice that wraps the character referenced by this point.
    *
@@ -606,52 +652,6 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
 
   public key(): number {
     return hashId(this.id) + (this.anchor ? 0 : 1);
-  }
-
-  /** Peeks up to `n` visible UTF-16 code units of text to the right. */
-  public peekRight(n: number): string {
-    const rga = this.rga;
-    const cs = this.rightChar();
-    if (!cs) return '';
-    let result = '';
-    let remaining = n;
-    let chunk: Chunk<T> | undefined = cs.chunk;
-    let off = cs.off;
-    while (chunk && remaining > 0) {
-      if (!chunk.del) {
-        const data = chunk.view() as unknown as string;
-        const available = chunk.span - off;
-        const take = Math.min(available, remaining);
-        result += data.slice(off, off + take);
-        remaining -= take;
-      }
-      chunk = rga.next(chunk);
-      off = 0;
-    }
-    return result;
-  }
-
-  /** Peeks up to `n` visible UTF-16 code units of text to the left. */
-  public peekLeft(n: number): string {
-    const rga = this.rga;
-    const cs = this.leftChar();
-    if (!cs) return '';
-    let result = '';
-    let remaining = n;
-    let chunk: Chunk<T> | undefined = cs.chunk;
-    let off = cs.off;
-    while (chunk && remaining > 0) {
-      if (!chunk.del) {
-        const data = chunk.view() as unknown as string;
-        const available = off + 1;
-        const take = Math.min(available, remaining);
-        result = data.slice(off + 1 - take, off + 1) + result;
-        remaining -= take;
-      }
-      chunk = rga.prev(chunk);
-      off = chunk ? chunk.span - 1 : 0;
-    }
-    return result;
   }
 
   // ----------------------------------------------------------------- Stateful
