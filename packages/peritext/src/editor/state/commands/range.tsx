@@ -11,7 +11,7 @@ const keys = ['Primary', 'Primary'];
 export const cmds: ((state: EditorState) => CommandDefinition)[] = [
   () => ({
     name: 'FlipSelection',
-    code: true,
+    mono: true,
     icon: () => <Icon width={16} height={16} />,
     right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
     // keys: ['Primary', 'Primary'],
