@@ -66,6 +66,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
                 icon={item.icon?.()}
                 right={item.right?.()}
                 danger={item.danger}
+                mono={item.mono}
                 onClick={
                   item.onSelect
                     ? (event) => state.execute(item, event)

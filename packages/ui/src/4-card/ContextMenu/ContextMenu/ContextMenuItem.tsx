@@ -24,9 +24,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
 
   const id = item.id ?? item.name;
   const children = !!item.children && !!item.children.length ? item.children : void 0;
-
-  let display = item.display?.() ?? t(item.name);
-  if (item.code) display = <code>{display}</code>;
+  const display = item.display?.() ?? t(item.name);
 
   return (
     <div data-menu-row data-menu-id={id}>
@@ -48,6 +46,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
         }
         right={item.right?.()}
         danger={item.danger}
+        mono={item.mono}
         onClick={
           item.onSelect
             ? (event) => state.execute(item, event)

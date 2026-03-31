@@ -24,7 +24,7 @@ export interface MenuItem {
    * }
    * ```
    */
-  code?: boolean;
+  mono?: boolean;
 
   /** Optional description of the command for UI display. */
   description?: string;

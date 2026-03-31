@@ -82,6 +82,7 @@ export interface ContextItemProps extends React.HTMLAttributes<any> {
   selected?: boolean;
   disabled?: boolean;
   inset?: boolean;
+  mono?: boolean;
   /** Whether to close popup on click. */
   closePopup?: boolean;
 }
@@ -105,6 +106,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
   selected,
   disabled,
   inset,
+  mono,
   closePopup,
   ...rest
 }) => {
@@ -185,6 +187,10 @@ export const ContextItem: React.FC<ContextItemProps> = ({
         <span style={{opacity: 0.4}}> {SYMBOL.ELLIPSIS}</span>
       </span>
     );
+  }
+
+  if (mono) {
+    element = <code>{element}</code>;
   }
 
   if (right) {
