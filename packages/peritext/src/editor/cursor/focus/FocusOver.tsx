@@ -28,9 +28,8 @@ export const FocusOver: React.FC<FocusOverProps> = ({cursor}) => {
         more={{
           small: true,
           tooltip: {
-            shortcut: '/',
+            shortcut: 'Space',
           },
-          // tooltip
         }}
         menu={state.menu.range.build()}
         onPopupClose={handleClose}
