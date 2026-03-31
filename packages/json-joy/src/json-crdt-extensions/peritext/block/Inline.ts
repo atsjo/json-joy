@@ -114,8 +114,9 @@ export class Inline<T = string> extends Range<T> implements Printable {
   }
 
   public refresh(): number {
-    const p1 = this.p1;
-    let state = p1.hash;
+    const {p1, p2} = this;
+    let state = p1.hash ?? 5381;
+    if (p2) state = updateNum(state, p2.hash ?? 5381);
     const layers = p1.layers;
     const length = layers.length;
     for (let i = 0; i < length; i++) state = updateNum(state, layers[i].hash);
