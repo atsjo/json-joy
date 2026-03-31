@@ -5,6 +5,9 @@ export interface MenuItem {
   /** Name of the item. */
   name: string;
 
+  /** Optional description of the command for UI display. */
+  description?: string;
+
   /** Whether this item is a separator. */
   sep?: boolean;
 

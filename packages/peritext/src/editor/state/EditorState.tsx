@@ -144,7 +144,10 @@ export class EditorState implements UiLifeCycles {
     for (const behavior of defaultSpans) {
       registry.add(behavior);
       const {cmd} = behavior;
-      if (cmd) commands.range.push(cmd);
+      if (cmd) {
+        if (Array.isArray(cmd)) for (const c of cmd) commands.register(c);
+        else commands.register(cmd);
+      }
     }
     const stopCommands = this.cmd.start();
     // Object.assign(registry.get(SliceTypeName.a)?.data() || {}, behavior.a);

@@ -12,8 +12,6 @@ export interface CommandDefinition extends MenuItem {
   domain?: CommandDomain;
   /** Human-readable name of the command. */
   name: string;
-  /** Optional description of the command for UI display. */
-  description?: string;
   /** The function to execute when the command is invoked. */
   action: (state: EditorState, args: string[]) => Promise<unknown> | unknown;
   /** Keyboard shortcut key combination. */
