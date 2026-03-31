@@ -12,7 +12,6 @@ const cmdName = name;
 const icon = () => <Icon width={15} height={15} />;
 const menu: MenuItem = {
   name,
-  description: 'Toggle bold formatting for the selected text.',
   order: 1,
   icon,
 };
