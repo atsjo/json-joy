@@ -55,33 +55,35 @@ export interface InlineViewProps {
   inline: Inline;
 }
 
-/** @todo Add ability to compute `.hash` for {@link Inline} nodes and use for memoization. */
-export const InlineView: React.FC<InlineViewProps> = (props) => {
-  const {inline} = props;
-  const ctx = usePeritext();
-  const {plugins, dom} = ctx;
-  const ref = React.useRef<HTMLSpanElement | null>(null);
-  const text = inline.text();
+export const InlineView: React.FC<InlineViewProps> = React.memo(
+  (props) => {
+    const {inline} = props;
+    const ctx = usePeritext();
+    const {plugins, dom} = ctx;
+    const ref = React.useRef<HTMLSpanElement | null>(null);
+    const text = inline.text();
 
-  const span = ref.current;
-  if (span) (span as any)[ElementAttr.InlineOffset] = inline;
+    const span = ref.current;
+    if (span) (span as any)[ElementAttr.InlineOffset] = inline;
 
-  let attr: SpanProps = {
-    className: CssClass.Inline,
-    ref: (span: HTMLSpanElement | null) => {
-      const inlines = dom.inlines;
-      const start = inline.start;
-      ref.current = span as HTMLSpanElement;
-      if (span) {
-        (span as any)[ElementAttr.InlineOffset] = inline;
-        inlines.set(start, span);
-      } else {
-        inlines.del(start);
-      }
-    },
-  };
-  for (const map of plugins) attr = map.text?.(attr, inline, ctx) ?? attr;
-  let children: React.ReactNode = <span {...attr}>{text}</span>;
-  for (const map of plugins) children = map.inline?.(props, children) ?? children;
-  return children;
-};
+    let attr: SpanProps = {
+      className: CssClass.Inline,
+      ref: (span: HTMLSpanElement | null) => {
+        const inlines = dom.inlines;
+        const start = inline.start;
+        ref.current = span as HTMLSpanElement;
+        if (span) {
+          (span as any)[ElementAttr.InlineOffset] = inline;
+          inlines.set(start, span);
+        } else {
+          inlines.del(start);
+        }
+      },
+    };
+    for (const map of plugins) attr = map.text?.(attr, inline, ctx) ?? attr;
+    let children: React.ReactNode = <span {...attr}>{text}</span>;
+    for (const map of plugins) children = map.inline?.(props, children) ?? children;
+    return children;
+  },
+  (prev, next) => prev.inline.hash === next.inline.refresh(),
+);

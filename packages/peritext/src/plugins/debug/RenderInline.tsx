@@ -39,7 +39,7 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
           contentEditable={false}
           style={{position: 'absolute', top: -6, left: -3, userSelect: 'none', pointerEvents: 'none'}}
         >
-          <DebugLabel small>{tags.join(', ')}</DebugLabel>
+          <DebugLabel small right={inline.hash.toString(36)}>{tags.join(', ')}</DebugLabel>
         </span>
       )}
       {children}
