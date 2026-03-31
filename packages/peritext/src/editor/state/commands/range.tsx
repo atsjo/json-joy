@@ -10,7 +10,7 @@ export const cmds: ((state: EditorState) => CommandDefinition)[] = [
     name: 'Flip selection',
     icon: () => <FlipIcon width={16} height={16} />,
     cmd: 'FlipSelection',
-    group: ['Selection'],
+    // group: ['Cursor'],
     domain: 'range',
     action: (state: EditorState) => {
       state.et.cursor({flip: true});

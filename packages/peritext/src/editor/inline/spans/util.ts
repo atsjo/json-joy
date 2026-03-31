@@ -20,6 +20,7 @@ export const spanOne = <Tag extends TypeTag = TypeTag>(
         name,
         cmd: name,
         domain: 'range',
+        group: ['Toggle formatting'],
         action: (state) => {
           state.surface.headless.cmd.exec('FormatToggle', tag);
         },

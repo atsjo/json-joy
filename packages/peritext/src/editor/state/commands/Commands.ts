@@ -22,28 +22,64 @@ export class Commands implements UiLifeCycles {
     if (menu.domain === 'range') this.range.push(cmd);
   }
 
-  public buildMenu(): MenuItem[] {
+  public run(name: string, ...args: any[]): Promise<unknown> | unknown {
+    const cmdDef = this.byName[name];
+    if (!cmdDef) throw new Error(`Command not found: ${name}`);
+    const cmd = cmdDef(this.state);
+    return cmd.action(this.state, args);
+  }
+
+  // -------------------------------------------------------------------- menus
+
+  private buildGroups(path: string[], groups: Record<string, MenuItem>): MenuItem {
+    let groupKey = '';
+    const length = path.length;
+    let parent: MenuItem = groups['']!;
+    for (let i = 0; i < length; i++) {
+      const name = path[i];
+      groupKey += (i > 0 ? ':' : '') + name;
+      let group = groups[groupKey];
+      if (!group) {
+        group = groups[groupKey] = {
+          name,
+          expand: 0,
+          minWidth: 300,
+          children: [],
+        };
+        parent.children?.push(group);
+      }
+      parent = group;
+    }
+    return groups[groupKey]!;
+  }
+
+  public buildRangeMenu(name: string = 'Commands'): MenuItem {
+    const root: MenuItem = {
+      name,
+      expand: 0,
+      sepBefore: true,
+      minWidth: 300,
+      children: [],
+    };
+    const groups: Record<string, MenuItem> = {'': root};
     const state = this.state;
-    const menu: MenuItem[] = [];
     const commands = this.range;
     const length = commands.length;
     for (let i = 0; i < length; i++) {
       const item = commands[i](state);
+      let container: MenuItem = root;
+      if (item.group) container = this.buildGroups(item.group, groups);
       const {onSelect, action} = item;
       if (!onSelect && !!action) {
         item.onSelect = () => {
           action?.(this.state, []);
         };
       }
-      menu.push(item);
+      container.children!.push(item);
     }
-    return menu;
-  }
-
-  public run(name: string, ...args: any[]): Promise<unknown> | unknown {
-    const cmdDef = this.byName[name];
-    if (!cmdDef) throw new Error(`Command not found: ${name}`);
-    const cmd = cmdDef(this.state);
-    return cmd.action(this.state, args);
+    for (const group of Object.values(groups)) {
+      if (group.children) group.children.sort((a, b) => (a.name > b.name ? 1 : -1));
+    }
+    return root;
   }
 }
