@@ -9,13 +9,10 @@ export const name = 'Spoiler';
 export const Icon = makeIcon({set: 'tabler', icon: 'lock-password'});
 export const behavior = spanOne(SliceTypeCon.spoiler, name, {
   menuId: 'fmt-common',
-  menu: (state: EditorState) => ({
+  menu: () => ({
     name,
     order: 7,
     icon: () => <Icon width={16} height={16} />,
-    onSelect: () => {
-      state.et.format('tog', SliceTypeCon.spoiler);
-    },
   }),
   render: (children: React.ReactNode, attr: InlineAttrStack) => (
     <Spoiler attr={attr[attr.length - 1]}>{children}</Spoiler>

@@ -10,7 +10,7 @@ export const spanOne = <Tag extends TypeTag = TypeTag>(
 ): SpanBehavior<SliceStacking.One, Tag> => {
   const behavior = new SpanBehavior<SliceStacking.One, Tag>(SliceStacking.One, tag, name);
   for (const key in definition) (behavior as any)[key] = (definition as any)[key];
-  const {menu, action} = behavior;
+  if (!behavior.action) behavior.action = (state: EditorState) => state.cmd?.run(name);
   if (!definition.cmd) {
     const cmd: DynamicCommandDefinition[] = behavior.cmd = [];
     cmd.push((state: EditorState) => {

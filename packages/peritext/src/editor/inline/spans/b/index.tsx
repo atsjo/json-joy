@@ -3,7 +3,6 @@ import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {MenuItem} from '../../../types';
-import type {EditorState} from '../../../state/EditorState';
 
 export const name = 'Bold';
 export const Icon = makeIcon({set: 'radix', icon: 'font-bold'});
@@ -18,7 +17,6 @@ const menu: MenuItem = {
 
 export const behavior = spanOne(SliceTypeCon.b, name, {
   keys: ['Primary', 'b'],
-  action: (state: EditorState) => state.cmd?.run(cmdName),
   menuId: 'fmt-common',
   menu: () => ({...menu}),
   text: (style) => {
