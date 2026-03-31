@@ -25,6 +25,9 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   const id = item.id ?? item.name;
   const children = !!item.children && !!item.children.length ? item.children : void 0;
 
+  let display = item.display?.() ?? t(item.name);
+  if (item.code) display = <code>{display}</code>;
+
   return (
     <div data-menu-row data-menu-id={id}>
       <ContextItemNested
@@ -64,7 +67,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
         aria-expanded={children ? open : undefined}
         aria-disabled={disabled || undefined}
       >
-        {item.display?.() ?? t(item.name)}
+        {display}
       </ContextItemNested>
     </div>
   );

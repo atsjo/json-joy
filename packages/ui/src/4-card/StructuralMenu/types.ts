@@ -5,6 +5,27 @@ export interface MenuItem {
   /** Name of the item. */
   name: string;
 
+  /**
+   * Rich text used to display the item.
+   *
+   * @default name
+   */
+  display?: () => React.ReactNode;
+
+  /**
+   * If true, wrap the display in a `<code>` element and use monospace font.
+   * Used when the item represents some code or a literal value.
+   * 
+   * This can also be achieved by using the `display` property:
+   * 
+   * ```ts
+   * {
+   *   display: () => <code>{name}</code>,
+   * }
+   * ```
+   */
+  code?: boolean;
+
   /** Optional description of the command for UI display. */
   description?: string;
 
@@ -32,13 +53,6 @@ export interface MenuItem {
 
   /** Color of the item. If not provided, computed from `id`.  */
   color?: string;
-
-  /**
-   * Rich text used to display the item.
-   *
-   * @default name
-   */
-  display?: () => React.ReactNode;
 
   /**
    * Small icon displayed next to the item.

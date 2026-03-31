@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, drule, SYMBOL} from 'nano-theme';
+import {rule, drule, SYMBOL, theme} from 'nano-theme';
 import {Link} from '../../1-inline/Link';
 import {FixedColumn} from '../../3-list-item/FixedColumn';
 import {Ripple} from '../../misc/Ripple';
@@ -22,6 +22,10 @@ const blockClass = rule({
   ta: 'left',
   us: 'none',
   out: 'none',
+  '& code': {
+    ...theme.font.mono.mid,
+    fz: '.95em',
+  },
 });
 
 const itemClass = drule({

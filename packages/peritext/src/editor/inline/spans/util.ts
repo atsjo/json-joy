@@ -19,6 +19,7 @@ export const spanOne = <Tag extends TypeTag = TypeTag>(
         ...menu,
         name,
         cmd: name,
+        code: true,
         domain: 'range',
         group: ['Toggle formatting'],
         action: (state) => {
