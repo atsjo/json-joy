@@ -29,10 +29,10 @@ const noop = () => {};
 
 export interface InputProps {
   disabled?: boolean;
+  type?: 'text' | 'password' | 'email' | 'number';
   value?: string;
   placeholder?: string;
   label?: string;
-  type?: 'text' | 'password' | 'email';
   focus?: boolean;
   select?: boolean;
   readOnly?: boolean;
