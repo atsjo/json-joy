@@ -10,7 +10,7 @@ export interface ArgBoolProps {
   onChange: (value: boolean) => void;
 }
 
-export const ArgBool: React.FC<ArgBoolProps> = ({param, value, onChange, ...props}) => {
+export const ArgBool: React.FC<ArgBoolProps> = ({param, value, onChange}) => {
   return (
     <div className={argBlockCss}>
       <FormRow
@@ -19,7 +19,9 @@ export const ArgBool: React.FC<ArgBoolProps> = ({param, value, onChange, ...prop
         description={param.description}
         right
       >
-        <Checkbox on={value} small onChange={() => onChange(!value)} />
+        <div style={{width: 40}}>
+          <Checkbox on={value} small onChange={() => onChange(!value)} />
+        </div>
       </FormRow>
     </div>
   );
