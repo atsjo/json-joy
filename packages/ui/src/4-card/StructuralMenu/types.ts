@@ -140,7 +140,7 @@ export interface MenuItem {
    * Called when the user confirms argument values. Receives a list of 
    * `[idOrName, value]` tuples representing the collected argument values.
    */
-  onSubmit?: (args: [idOrName: string, value: unknown][]) => void;
+  onSubmit?: (list: [idOrName: string, value: unknown][], map: Record<string, unknown>) => void;
 }
 
 

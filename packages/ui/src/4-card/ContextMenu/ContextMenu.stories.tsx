@@ -41,6 +41,46 @@ export const Primary: StoryObj<typeof meta> = {
   },
 };
 
+export const WithParams: StoryObj<typeof meta> = {
+  args: {
+    inset: true,
+    pane: {
+      style: {
+        width: 300,
+      },
+    },
+    menu: {
+      name: 'Test',
+      children: [
+        {
+          name: 'Item 1',
+          onSelect: () => {},
+          params: [
+            {
+              kind: 'str',
+              id: 'url',
+              name: 'Link',
+              optional: false,
+              placeholder: 'https://example.com',
+            },
+            {
+              kind: 'bool',
+              id: 'openInNewTab',
+              name: 'Open in new tab',
+              optional: true,
+              default: false,
+            }
+          ],
+        },
+        {
+          name: 'Item 2',
+          onSelect: () => {},
+        },
+      ],
+    },
+  },
+};
+
 export const RichTextInline: StoryObj<typeof meta> = {
   args: {
     inset: true,

@@ -6,8 +6,6 @@ export type DynamicCommandDefinition = (state: EditorState) => CommandDefinition
 export interface CommandDefinition extends MenuItem {
   /** Technical name of the command, if not specified, the name will be used. */
   cmd?: string;
-  /** Optional arguments for the command. */
-  args?: CommandArgDefinition[];
   /** Domain where command operates. */
   domain?: CommandDomain;
   /** Human-readable name of the command. */
@@ -20,11 +18,6 @@ export interface CommandDefinition extends MenuItem {
   danger?: boolean;
   /** Group this command belongs to when rendering context menu, potentially nested. */
   group?: string[];
-}
-
-export interface CommandArgDefinition {
-  title: string;
-  kind: 'str' | 'num' | 'bool';
 }
 
 export type CommandDomain =

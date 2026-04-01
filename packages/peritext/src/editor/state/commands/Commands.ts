@@ -78,7 +78,11 @@ export class Commands implements UiLifeCycles {
       container.children!.push(item);
     }
     for (const group of Object.values(groups)) {
-      if (group.children) group.children.sort((a, b) => (a.name > b.name ? 1 : -1));
+      if (group.children) group.children.sort((a, b) => {
+        if (!a.children && b.children) return -1;
+        if (a.children && !b.children) return 1;
+        return (a.name > b.name ? 1 : -1);
+      });
     }
     return root;
   }
