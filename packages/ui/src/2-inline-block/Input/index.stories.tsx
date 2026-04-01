@@ -90,3 +90,23 @@ const DemoSizes: React.FC<InputProps> = (props) => {
 export const SizeScale: StoryObj<typeof meta> = {
   render: (args: any) => <DemoSizes {...args} />,
 };
+
+const DemoColor: React.FC<InputProps> = (props) => {
+  const [value, setValue] = React.useState(props.value || '#3366FF');
+
+  return (
+    <div>
+      <Component type="color" label={'Color'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <br />
+      <Component type="color" value={value} onChange={(value) => setValue(value)} {...props} />
+      <br />
+      <Component type="color" size={-2} value={value} onChange={(value) => setValue(value)} {...props} />
+      <br />
+      <Component type="color" disabled label={'Disabled'} value={value} onChange={(value) => setValue(value)} {...props} />
+    </div>
+  );
+};
+
+export const Color: StoryObj<typeof meta> = {
+  render: (args: any) => <DemoColor {...args} />,
+};
