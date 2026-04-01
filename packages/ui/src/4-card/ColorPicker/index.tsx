@@ -13,7 +13,7 @@ interface HsvaColor {
   a: number;
 }
 
-export interface ColorfulProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'color'> {
+export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'color'> {
   prefixCls?: string;
   onChange?: (color: HslColor) => void;
   color?: string | HslColor;
@@ -46,7 +46,7 @@ const Pointer = ({style, color, ...props}: React.HTMLAttributes<HTMLDivElement> 
   );
 };
 
-export const ColorPicker = React.forwardRef<HTMLDivElement, ColorfulProps>((props, ref) => {
+export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>((props, ref) => {
   const {prefixCls = 'jsonjoy-color-picker', className, onChange, color, style, noAlpha, ...other} = props;
   const hsl = HslColor.from(color ?? '') ?? new HslColor(0, 0, 0);
   const hsv = hsl.toHsv();
