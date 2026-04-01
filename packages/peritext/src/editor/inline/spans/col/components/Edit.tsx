@@ -4,7 +4,7 @@ import {useNodeView} from '@jsonjoy.com/collaborative-react';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {isValid} from '../../../../util/color';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {ColorPicker} from '../../../../components/ColorPicker';
+import {ColorPicker} from '@jsonjoy.com/ui/lib/4-card/ColorPicker';
 import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
 import type {EditProps} from '../../../SpanBehavior';
 

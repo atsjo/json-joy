@@ -2686,10 +2686,6 @@ __metadata:
     "@jsonjoy.com/collaborative-react": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
     "@jsonjoy.com/keyboard": "workspace:*"
-    "@uiw/color-convert": "npm:^2.9.5"
-    "@uiw/react-color-alpha": "npm:^2.9.5"
-    "@uiw/react-color-hue": "npm:^2.9.5"
-    "@uiw/react-color-saturation": "npm:^2.9.5"
     json-joy: "workspace:*"
     mathlive: "npm:^0.109.0"
   peerDependencies:
@@ -2735,6 +2731,9 @@ __metadata:
     "@types/papaparse": "npm:^5"
     "@types/react": "npm:^19.1.12"
     "@types/react-dom": "npm:^19.1.9"
+    "@uiw/react-color-alpha": "npm:^2.9.6"
+    "@uiw/react-color-hue": "npm:^2.9.6"
+    "@uiw/react-color-saturation": "npm:^2.9.6"
     clipboard-copy: "npm:^4.0.1"
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
@@ -4458,65 +4457,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/color-convert@npm:2.9.5, @uiw/color-convert@npm:^2.9.5":
-  version: 2.9.5
-  resolution: "@uiw/color-convert@npm:2.9.5"
+"@uiw/color-convert@npm:2.9.6":
+  version: 2.9.6
+  resolution: "@uiw/color-convert@npm:2.9.6"
   peerDependencies:
     "@babel/runtime": ">=7.19.0"
-  checksum: 10c0/a2cd9f17e5f0b0a962c35d1cd5ddfb77a1f3b4bf1de011fb2098f9abc48af2bcbe595caebcdd891e53ddcf3ef1f674ea253fd6309cbd132f3ff68c509caea17f
+  checksum: 10c0/4ee910801f408f63e0e23df043e7c7818b7d73dec4841846343ec2f69b08fe39eae0519c196ff68fe820d4a575057f2943b0e9b8c277d141416cdec07d176aa4
   languageName: node
   linkType: hard
 
-"@uiw/react-color-alpha@npm:2.9.5, @uiw/react-color-alpha@npm:^2.9.5":
-  version: 2.9.5
-  resolution: "@uiw/react-color-alpha@npm:2.9.5"
+"@uiw/react-color-alpha@npm:2.9.6, @uiw/react-color-alpha@npm:^2.9.6":
+  version: 2.9.6
+  resolution: "@uiw/react-color-alpha@npm:2.9.6"
   dependencies:
-    "@uiw/color-convert": "npm:2.9.5"
-    "@uiw/react-drag-event-interactive": "npm:2.9.5"
+    "@uiw/color-convert": "npm:2.9.6"
+    "@uiw/react-drag-event-interactive": "npm:2.9.6"
   peerDependencies:
     "@babel/runtime": ">=7.19.0"
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/b593dc9a1869d821de1f424a3da1367cd5b41a34ffffc0885626b1d443b8eca3363f303175d1e965d18c02d6ba746bb1138de886854bc3547e2d5756c60f7032
+  checksum: 10c0/f771a4a309244c2837546318e5bf35ae2da67682470ae422a701a49d94dfc257b67670b704d4680d82ab7262b5c9b064255773585ab7c5b4df1cdeee227f1aa2
   languageName: node
   linkType: hard
 
-"@uiw/react-color-hue@npm:^2.9.5":
-  version: 2.9.5
-  resolution: "@uiw/react-color-hue@npm:2.9.5"
+"@uiw/react-color-hue@npm:^2.9.6":
+  version: 2.9.6
+  resolution: "@uiw/react-color-hue@npm:2.9.6"
   dependencies:
-    "@uiw/color-convert": "npm:2.9.5"
-    "@uiw/react-color-alpha": "npm:2.9.5"
+    "@uiw/color-convert": "npm:2.9.6"
+    "@uiw/react-color-alpha": "npm:2.9.6"
   peerDependencies:
     "@babel/runtime": ">=7.19.0"
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/1d87beec485ce3ee41ff88c5803648e567be9dcc601f1e53311668c9f341e824147a9a5e9d361993f76ad989eed2eee9f4d2f1c5e87e20377580149f6fbed749
+  checksum: 10c0/338032f6f7b3a9b84874ea77d74a35aa06de9ddaa2ca1238cadab7c252721c1413cd64c25e30167eee5b8293565a64eed14fdd045068e4e61a8b0902f5522b8d
   languageName: node
   linkType: hard
 
-"@uiw/react-color-saturation@npm:^2.9.5":
-  version: 2.9.5
-  resolution: "@uiw/react-color-saturation@npm:2.9.5"
+"@uiw/react-color-saturation@npm:^2.9.6":
+  version: 2.9.6
+  resolution: "@uiw/react-color-saturation@npm:2.9.6"
   dependencies:
-    "@uiw/color-convert": "npm:2.9.5"
-    "@uiw/react-drag-event-interactive": "npm:2.9.5"
+    "@uiw/color-convert": "npm:2.9.6"
+    "@uiw/react-drag-event-interactive": "npm:2.9.6"
   peerDependencies:
     "@babel/runtime": ">=7.19.0"
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/3ffa4cdac44d35ba509fb576b788724e462a8d9827918ea9a4fe8b902463e373b7b30d5117fe962bc58c77ff244bfb3582c083dbb38f1a94694902ba228e8945
+  checksum: 10c0/54eb7cf39bd4dbb12bf022a6e65767594a091cdbcdabc9081f92efe0e59bc48b5bf02e301a3ceb5dd49037851fb59d0c9bc19f88238a852c599bed61d2530d99
   languageName: node
   linkType: hard
 
-"@uiw/react-drag-event-interactive@npm:2.9.5":
-  version: 2.9.5
-  resolution: "@uiw/react-drag-event-interactive@npm:2.9.5"
+"@uiw/react-drag-event-interactive@npm:2.9.6":
+  version: 2.9.6
+  resolution: "@uiw/react-drag-event-interactive@npm:2.9.6"
   peerDependencies:
     "@babel/runtime": ">=7.19.0"
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/bb1bd1fff26b6093d9daafb4b890c489390051a18f0a92daf89cb868763fd9200e071ec530920847b0549e87e86d6373a9c87c99e8a82a65c45c18202f0b9c0d
+  checksum: 10c0/b1169cbb54b432e1ea169415bbdfa9903014f603cea1f1803ca9a53e2aa05da2b418986258016b03c7dd672b652a96b39179b5f73968291ac0ee44e59e019ad1
   languageName: node
   linkType: hard
 
@@ -11253,6 +11252,9 @@ __metadata:
     "@codemirror/state": "npm:^6.5.2"
     "@codemirror/view": "npm:^6.36.5"
     "@jsonjoy.com/keyboard": "workspace:*"
+    "@uiw/react-color-alpha": "npm:^2.9.6"
+    "@uiw/react-color-hue": "npm:^2.9.6"
+    "@uiw/react-color-saturation": "npm:^2.9.6"
     clipboard-copy: "npm:^4.0.1"
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"

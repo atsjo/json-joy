@@ -32,16 +32,17 @@ const descriptionClass = rule({
 export interface FormRowProps {
   title?: React.ReactNode;
   description?: React.ReactNode;
+  descriptionAbove?: boolean;
   optional?: boolean;
   right?: boolean;
   children: React.ReactNode;
 }
 
-export const FormRow: React.FC<FormRowProps> = ({title, description, optional, right, children}) => {
+export const FormRow: React.FC<FormRowProps> = ({title, description, descriptionAbove, optional, right, children}) => {
   const [t] = useT();
 
   let titleElement: React.ReactNode = title;
-  let descriptionElement: React.ReactNode = !!description && <div className={descriptionClass} style={{padding: right ? '0 8px 0 0' : void 0}}>{description}</div>;
+  let descriptionElement: React.ReactNode = !!description && <div className={descriptionClass} style={{padding: descriptionAbove ? '0 0 8px' : right ? '0 8px 0 0' : void 0, marginTop: descriptionAbove ? '-8px' : void 0}}>{description}</div>;
 
   if (optional) {
     titleElement = (
@@ -63,10 +64,17 @@ export const FormRow: React.FC<FormRowProps> = ({title, description, optional, r
           </Split>
         </>
       ) : (
-        <>
-          {children}
-          {descriptionElement}
-        </>
+        descriptionAbove ? (
+          <>
+            {descriptionElement}
+            {children}
+          </>
+        ) : (
+          <>
+            {children}
+            {descriptionElement}
+          </>
+        )
       )}
     </div>
   );

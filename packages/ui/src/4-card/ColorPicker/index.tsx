@@ -2,9 +2,9 @@ import React from 'react';
 import Alpha from '@uiw/react-color-alpha';
 import Saturation from '@uiw/react-color-saturation';
 import Hue from '@uiw/react-color-hue';
-import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
-import {HsvColor} from '@jsonjoy.com/ui/lib/styles/color/HsvColor';
+import {Space} from '../../3-list-item/Space';
+import {HslColor} from '../../styles/color/HslColor';
+import {HsvColor} from '../../styles/color/HsvColor';
 
 interface HsvaColor {
   h: number;

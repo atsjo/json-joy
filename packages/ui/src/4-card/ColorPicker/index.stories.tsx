@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {ColorPicker} from '.';
-import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
+import {HslColor} from '../../styles/color/HslColor';
 
 export default {
   component: ColorPicker,
-  title: '<ColorPicker>',
+  title: '4. Card/ColorPicker',
 };
 
 export const Default = {
@@ -12,7 +12,7 @@ export const Default = {
 };
 
 export const NoAlpha = {
-  render: () => <ColorPicker color="#10b981" disableAlpha />,
+  render: () => <ColorPicker color="#10b981" noAlpha />,
 };
 
 const Controlled: React.FC = () => {
@@ -77,8 +77,8 @@ const MultiPicker: React.FC = () => {
         style={{
           padding: '16px 24px',
           borderRadius: 8,
-          background: bg,
-          color: fg,
+          background: bg.toString(),
+          color: fg.toString(),
           border: '1px solid rgba(0,0,0,.08)',
           alignSelf: 'center',
           fontWeight: 600,
