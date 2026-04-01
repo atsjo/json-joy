@@ -60,7 +60,6 @@ export const behavior = new (class ColBehavior extends SpanBehavior<
           id: 'col',
           name: 'Color',
           kind: 'color',
-          title: 'Select color',
           required: true,
           default: '#000000',
           placeholder: '#hex',

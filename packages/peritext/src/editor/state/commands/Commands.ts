@@ -76,6 +76,7 @@ export class Commands implements UiLifeCycles {
         };
       }
       if (params && params.length) {
+        item.more = true;
         item.onSubmit = (list) => {
           const args: string[] = list.map(([_, value]) => value + '');
           action?.(this.state, args);

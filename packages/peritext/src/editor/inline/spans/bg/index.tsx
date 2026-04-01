@@ -11,6 +11,7 @@ import {SpanBehavior} from '../../SpanBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {behavior as col} from '../col';
 import type {EditorState} from '../../../state/EditorState';
+import type {DynamicCommandDefinition} from '../../../state/commands/types';
 
 export const name = 'Background';
 export const Icon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
@@ -41,6 +42,33 @@ export const behavior = new (class BgBehavior extends SpanBehavior<SliceStacking
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.bg, name, schema, false, void 0, fromHtml);
   }
+  
+  public readonly cmd: DynamicCommandDefinition = (state: EditorState) => {
+    const menu = this.getMenu(state);
+    return {
+      ...menu,
+      onSelect: void 0,
+      name,
+      cmd: name,
+      mono: true,
+      domain: 'range',
+      group: ['Add formatting'],
+      params: [
+        {
+          id: 'col',
+          name: 'Color',
+          kind: 'color',
+          required: true,
+          default: '#000000',
+          placeholder: '#hex',
+        },
+      ],
+      action: (state, args) => {
+        const color = args[0] || '#000000';
+        state.surface.events.et.format('tog', SliceTypeCon.bg, 'many', {col: color});
+      },
+    };
+  };
 
   public readonly action = (state: EditorState) => {
     state.selection.showNewSlicePopup(SliceTypeCon.bg);
