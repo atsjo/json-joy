@@ -50,6 +50,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
         lastPathStr = pathStr;
         const handleMouseMove = () => openPanel.onMouseMove(compositeId);
         const isOpen = selected === compositeId;
+        const hasArgs = !!item.params?.length;
         return (
           <React.Fragment key={compositeId}>
             {!isFirst && !samePath && <ContextSep />}
@@ -68,13 +69,17 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
                 danger={item.danger}
                 mono={item.mono}
                 onClick={
-                  item.onSelect
-                    ? (event) => state.execute(item, event)
-                    : children
-                      ? () => {
-                          state.select(path, item);
-                        }
-                      : void 0
+                  hasArgs
+                    ? () => {
+                        state.selectArgs(path, item);
+                      }
+                    : item.onSelect
+                      ? (event) => state.execute(item, event)
+                      : children
+                        ? () => {
+                            state.select(path, item);
+                          }
+                        : void 0
                 }
                 renderPane={
                   children

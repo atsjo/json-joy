@@ -17,13 +17,13 @@ export interface ArgControlProps {
 export const Arg: React.FC<ArgControlProps> = ({param, value, onChange, onSubmit, focus}) => {
   switch (param.kind) {
     case 'str':
-      return <ArgStr param={param} value={(value as string) ?? ''} onChange={onChange} onSubmit={onSubmit} focus={focus} />;
+      return <ArgStr param={param} value={(value as string) ?? ''} onChange={onChange} onEnter={onSubmit} focus={focus} />;
     case 'num':
-      return <ArgNum param={param} value={Number(value) || 0} onChange={onChange} onSubmit={onSubmit} focus={focus} />;
+      return <ArgNum param={param} value={Number(value) || 0} onChange={onChange} onEnter={onSubmit} focus={focus} />;
     case 'bool':
       return <ArgBool param={param} value={!!value} onChange={onChange} />;
     case 'color':
-      return <ArgColor param={param} value={(value as string) ?? ''} onChange={onChange}  focus={focus} />;
+      return <ArgColor param={param} value={(value as string) ?? ''} onChange={onChange} onEnter={onSubmit} focus={focus} />;
     case 'select':
       return <ArgSelect param={param} value={(value as string) ?? ''} onChange={onChange} onSubmit={onSubmit} />;
     default:

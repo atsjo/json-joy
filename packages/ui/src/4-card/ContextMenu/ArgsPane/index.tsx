@@ -30,8 +30,8 @@ export interface ArgsPaneProps {
   item: MenuItem;
   params: Param[];
   minWidth?: number;
-  onSubmit: (args: Record<string, unknown>) => void;
   onCancel: () => void;
+  onSubmit: (list: [string, unknown][], args: Record<string, unknown>) => void;
 }
 
 export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
@@ -52,8 +52,6 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
   );
 
   const display = item.display?.() ?? t(item.name);
-
-  console.log(state.canSubmit());
 
   return (
     <ContextPane style={{minWidth: minWidth ?? 220}} onKeyDown={handleKeyDown}>

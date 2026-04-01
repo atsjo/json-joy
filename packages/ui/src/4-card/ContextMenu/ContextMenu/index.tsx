@@ -28,7 +28,7 @@ export const StatefulContextMenu: React.FC<StatefulContextMenuProps> = ({state})
   state.onclose = popup?.close;
   const path = useBehaviorSubject(state.path$);
   const currentMenu = useBehaviorSubject(state.menu$);
-  const argsItem = state.argsItem$.use();
+  const argsItem = state.argsItem.use();
 
   // Restore focus to the element that triggered the menu when it unmounts.
   React.useEffect(() => {
@@ -49,10 +49,13 @@ export const StatefulContextMenu: React.FC<StatefulContextMenuProps> = ({state})
           <ArgsPane
             item={argsItem}
             params={argsItem.params ?? []}
-            onSubmit={(args) => state.submitArgs(argsItem, args)}
-            onCancel={state.cancelArgs}
             minWidth={minWidth}
-            />
+            onCancel={() => state.argsItem.next(null)}
+            onSubmit={(list, map) => {
+              argsItem.onSubmit?.(list, map);
+              state.onclose?.();
+            }}
+          />
         </context.Provider>
       );
     }

@@ -46,9 +46,10 @@ export const behavior = new (class ColBehavior extends SpanBehavior<
   }
 
   public readonly cmd: DynamicCommandDefinition = (state: EditorState) => {
-    const menu = behavior.getMenu(state);
+    const menu = this.getMenu(state);
     return {
       ...menu,
+      onSelect: void 0,
       name,
       cmd: name,
       mono: true,
@@ -56,7 +57,8 @@ export const behavior = new (class ColBehavior extends SpanBehavior<
       group: ['Add formatting'],
       params: [
         {
-          name: 'color',
+          id: 'col',
+          name: 'Color',
           kind: 'color',
           title: 'Select color',
           required: true,

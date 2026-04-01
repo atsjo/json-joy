@@ -69,10 +69,16 @@ export class Commands implements UiLifeCycles {
       const item = commands[i](state);
       let container: MenuItem = root;
       if (item.group) container = this.buildGroups(item.group, groups);
-      const {onSelect, action} = item;
+      const {onSelect, action, params} = item;
       if (!onSelect && !!action) {
         item.onSelect = () => {
           action?.(this.state, []);
+        };
+      }
+      if (params && params.length) {
+        item.onSubmit = (list) => {
+          const args: string[] = list.map(([_, value]) => value + '');
+          action?.(this.state, args);
         };
       }
       container.children!.push(item);

@@ -28,6 +28,14 @@ export class ArgsState {
   }
 
   public readonly onSubmit = () => {
-    if (this.canSubmit()) this.props.onSubmit(this.args.value);
+    if (!this.canSubmit()) return;
+    const list: [string, unknown][] = [];
+    const {props, args} = this;
+    const map = args.value;
+    for (const param of props.params ?? []) {
+      const idOrName = param.id ?? param.name;
+      list.push([idOrName, map[idOrName]]);
+    }
+    props.onSubmit?.(list, map);
   };
 }
