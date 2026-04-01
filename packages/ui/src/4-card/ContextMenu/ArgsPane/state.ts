@@ -1,38 +1,33 @@
+import {ArgsPaneProps} from ".";
 import {rsync} from "../../..";
-import type {Param} from "../../StructuralMenu/types";
 
 export class ArgsState {
   public args: rsync.ReactValue<Record<string, unknown>>;
 
-  constructor(public readonly params: Param[]) {
+  constructor(public readonly props: ArgsPaneProps) {
     const map: Record<string, unknown> = {};
-    for (const param of params)
-      if (param.default !== undefined) map[String(param.id ?? param.name)] = param.default;
+    for (const param of props.params)
+      map[String(param.id ?? param.name)] = param.default;
     this.args = rsync.val<Record<string, unknown>>(map);
   }
 
   public setValue(name: string, value: unknown) {
-    const args = this.args;
-    const map = args.value;
-    map[name] = value;
-    args.next(map);
+    this.args.next({...this.args.value, [name]: value});
   }
 
   public canSubmit(): boolean {
     const args = this.args;
     const map = args.value;
-    for (const param of this.params) {
+    for (const param of this.props.params) {
       if (!param.optional) {
-        const value = map[param.name];
-        if (value === undefined || value === '') return false;
+        const id = param.id ?? param.name;
+        if (map[id] === undefined) return false;
       }
     }
     return true;
   }
 
   public readonly onSubmit = () => {
-    // const handleSubmit = React.useCallback(() => {
-      //   if (canSubmit) onSubmit(values);
-      // }, [canSubmit, onSubmit, values]);
+    if (this.canSubmit()) this.props.onSubmit(this.args.value);
   };
 }

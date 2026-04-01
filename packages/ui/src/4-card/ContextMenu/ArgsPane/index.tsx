@@ -54,9 +54,10 @@ export interface ArgsPaneProps {
   onCancel: () => void;
 }
 
-export const ArgsPane: React.FC<ArgsPaneProps> = ({item, params, onSubmit, onCancel, minWidth}) => {
+export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
+  const {item, params, onCancel, minWidth} = props;
   const [t] = useT();
-  const state = React.useMemo(() => new ArgsState(params), []);
+  const state = React.useMemo(() => new ArgsState(props), []);
   const args = state.args.use();
 
   const handleKeyDown = React.useCallback(
@@ -71,6 +72,8 @@ export const ArgsPane: React.FC<ArgsPaneProps> = ({item, params, onSubmit, onCan
   );
 
   const display = item.display?.() ?? t(item.name);
+
+  console.log(state.canSubmit());
 
   return (
     <ContextPane style={{minWidth: minWidth ?? 220}} onKeyDown={handleKeyDown}>
