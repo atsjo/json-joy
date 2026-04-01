@@ -1,21 +1,17 @@
 import * as React from 'react';
-import {rule, theme, useTheme} from 'nano-theme';
+import {rule, useTheme} from 'nano-theme';
 import {fonts} from '../../styles';
 
 const keyClass = rule({
-  ...fonts.get('mono', 'bold'),
-  mar: '0 .1em',
-  pad: '.3em calc(.7em - 2px) .3em .7em',
-  bg: theme.g(0.2),
-  bdt: `1px solid ${theme.g(0.3)}`,
-  bdb: `2px solid ${theme.g(0)}`,
-  bdr: `2px solid ${theme.g(0.1)}`,
-  bdrad: '.25em',
+  ...fonts.get('mono', 'bold', 0),
+  d: 'inline-block',
+  mr: '0 .1em',
+  pd: '.4em .6em',
+  bdrad: '.3em',
   lh: '1em',
-  fz: '.7em',
+  fz: '.75em',
   ws: 'nowrap',
-  bxsh: '0 0 .125em rgba(0,0,0,.5),0 .065em .19em rgba(0,0,0,.5),.065em 0 .125em rgba(0,0,0,.2)',
-  col: '#fff',
+  va: 'middle',
 });
 
 export interface KeyProps {
@@ -25,11 +21,13 @@ export interface KeyProps {
 export const Key: React.FC<KeyProps> = ({children}) => {
   const theme = useTheme();
 
-  const style: React.CSSProperties = {};
-
-  if (!theme.isLight) {
-    style.boxShadow = `0 0 0 1px ${theme.g(0.1, 0.16)}`;
-  }
+  const style: React.CSSProperties = {
+    color: theme.g(0),
+    background: theme.g(0.96),
+    border: `1px solid ${theme.g(0.8)}`,
+    borderBottom: `2px solid ${theme.g(0.6)}`,
+    boxShadow: `0 1px 2px ${theme.g(.2,.1)}`,
+  };
 
   return (
     <kbd className={keyClass} style={style}>
