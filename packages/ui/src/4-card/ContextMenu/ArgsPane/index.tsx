@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {rule, theme} from 'nano-theme';
+import {rule} from 'nano-theme';
 import {ContextPane} from '../ContextPane';
 import {ContextHeader} from '../ContextHeader';
 import {ContextSep} from '../ContextSep';
@@ -9,36 +9,16 @@ import {BasicButtonBack} from '../../../2-inline-block/BasicButton/BasicButtonBa
 import {Flex} from '../../../3-list-item/Flex';
 import {Arg} from './Arg';
 import {ArgsState} from './state';
+import {Button} from '../../../2-inline-block/Button';
+import {BasicTooltip} from '../../BasicTooltip';
 import type {MenuItem, Param} from '../../StructuralMenu/types';
 
 const footerClass = rule({
   d: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  pad: '6px 16px',
+  pad: '4px 16px',
   gap: '8px',
-});
-
-const submitBtnClass = rule({
-  ...theme.font.ui2,
-  fz: '12px',
-  pad: '4px 12px',
-  bdrad: '4px',
-  bd: 'none',
-  cur: 'pointer',
-  col: '#fff',
-  transition: 'opacity 0.15s',
-  '&:disabled': {
-    opacity: 0.4,
-    cur: 'default',
-  },
-});
-
-const hintClass = rule({
-  ...theme.font.ui3,
-  fz: '10px',
-  col: theme.g(0.45),
-  us: 'none',
 });
 
 const nameClass = rule({
@@ -87,7 +67,13 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
       <ContextSep />
       {params.map((arg, i) => (
         <>
-          {i > 0 && <ContextSep line />}
+          {i > 0 && (
+            <>
+              <ContextSep />
+              <ContextSep line />
+              <ContextSep />
+            </>
+          )}
           <Arg
             key={arg.name}
             param={arg}
@@ -99,17 +85,19 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
         </>
       ))}
       <ContextSep />
+      <ContextSep line />
+      <ContextSep />
       <div className={footerClass}>
-        <span className={hintClass}>Enter ↵</span>
-        <button
-          className={submitBtnClass}
-          style={{background: theme.color.sem.blue[0]}}
-          disabled={!state.canSubmit()}
-          onClick={state.onSubmit}
-        >
-          {t('Apply')}
-        </button>
+        <BasicTooltip shortcut='⏎' renderTooltip={() => 'Enter'}>
+          <Button
+            disabled={!state.canSubmit()}
+            onClick={state.onSubmit}
+          >
+            {t('Apply')}
+          </Button>
+        </BasicTooltip>
       </div>
+      <ContextSep />
     </ContextPane>
   );
 };
