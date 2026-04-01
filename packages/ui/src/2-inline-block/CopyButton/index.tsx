@@ -1,10 +1,14 @@
 import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicButton, type BasicButtonProps} from '../BasicButton';
-import {Iconista} from '../../icons/Iconista';
+import {makeIcon} from '../../icons/Iconista';
 import {BasicTooltip, type BasicTooltipProps} from '../../4-card/BasicTooltip';
 import useMountedState from 'react-use/lib/useMountedState';
+
 const copy = require('clipboard-copy'); // eslint-disable-line
+
+const CheckIcon = makeIcon({set: 'atlaskit', icon: 'check'});
+const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
 
 const anchor = {horizontal: true, center: true};
 
@@ -35,13 +39,30 @@ export const CopyButton: React.FC<CopyButtonProps> = ({onCopy, tooltip, ...rest}
       {...tooltip}
     >
       <BasicButton {...rest} onClick={handleClick}>
-        <Iconista
-          key={copied ? 'check' : 'copy'}
-          set={copied ? 'atlaskit' : 'lucide'}
-          icon={copied ? 'check' : 'copy'}
-          width={16}
-          height={16}
-        />
+        <div style={{position: 'relative', width: 16, height: 16, overflow: 'hidden'}}>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              transform: copied ? 'translateY(100%)' : 'translateY(0%)',
+              transition: 'transform 150ms ease-in-out',
+            }}
+          >
+            <CopyIcon width={16} height={16} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              transform: copied ? 'translateY(0%)' : 'translateY(-100%)',
+              transition: 'transform 150ms ease-in-out',
+            }}
+          >
+            <CheckIcon width={16} height={16} />
+          </div>
+        </div>
       </BasicButton>
     </BasicTooltip>
   );
