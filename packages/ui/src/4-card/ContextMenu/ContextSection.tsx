@@ -7,6 +7,7 @@ const blockClass = rule({
   columnGap: '4px',
   ai: 'center',
   w: '100%',
+  minW: 0,
   fz: '13px',
   pd: '8px 20px',
   bxz: 'border-box',
