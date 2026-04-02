@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {Input} from '../../2-inline-block/Input';
 import {Space} from '../../3-list-item/Space';
 import {ColorPicker, type ColorPickerProps} from '../../4-card/ColorPicker';
 import {InputColor, type InputColorProps} from '../../2-inline-block/InputColor';

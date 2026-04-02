@@ -70,7 +70,7 @@ export const LeafBlock: React.FC<LeafBlockProps> = ({block, children}) => {
   const isBlockActive = !!activeLeafBlockId && compare(activeLeafBlockId, block.marker?.id ?? block.txt.str.id) === 0;
   const menu = React.useMemo(
     () => (isBlockActive ? state.menu.block.buildLeafMenu({leaf: block}) : undefined),
-    [state, block.hash, isBlockActive],
+    [state, block.hash, isBlockActive, block],
   );
 
   return (

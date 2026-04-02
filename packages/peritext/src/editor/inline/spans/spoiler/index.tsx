@@ -3,7 +3,6 @@ import {type InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensi
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Spoiler} from './Spoiler';
-import type {EditorState} from '../../../state';
 
 export const name = 'Spoiler';
 export const Icon = makeIcon({set: 'tabler', icon: 'lock-password'});

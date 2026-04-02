@@ -67,12 +67,10 @@ export const FormRow: React.FC<FormRowProps> = ({title, description, description
     <div className={blockClass}>
       {!!title && <div className={titleClass}>{titleElement}</div>}
       {right ? (
-        <>
-          <Split>
-            {descriptionElement || <div />}
-            {children}
-          </Split>
-        </>
+        <Split>
+          {descriptionElement || <div />}
+          {children}
+        </Split>
       ) : descriptionAbove ? (
         <>
           {descriptionElement}

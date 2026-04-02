@@ -1,18 +1,18 @@
 import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import {type LeafBlock, SliceTypeName} from 'json-joy/lib/json-crdt-extensions';
+import type {LeafBlock} from 'json-joy/lib/json-crdt-extensions';
 import type {MenuItem} from '../../types';
 import type {EditorState} from '../EditorState';
 
-const LayoutIcon = makeIcon({set: 'tabler', icon: 'layout'});
-const TableIcon = makeIcon({set: 'tabler', icon: 'table'});
-const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns'});
+const _LayoutIcon = makeIcon({set: 'tabler', icon: 'layout'});
+const _TableIcon = makeIcon({set: 'tabler', icon: 'table'});
+const _ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns'});
 const ImageInPictureIcon = makeIcon({set: 'tabler', icon: 'image-in-picture'});
 const PhotoScanIcon = makeIcon({set: 'tabler', icon: 'photo-scan'});
 const TablerFileIcon = makeIcon({set: 'tabler', icon: 'file'});
-const ListBulletedIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted'});
-const ListNumberedIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered'});
-const ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
+const _ListBulletedIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted'});
+const _ListNumberedIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered'});
+const _ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
 const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
 
 export interface LeafBlockMenuCtx {
@@ -38,7 +38,7 @@ export class BlockMenu {
   }
 
   private blockTypeChildren(): MenuItem[] {
-    const et = this.state.et;
+    const _et = this.state.et;
 
     const text: MenuItem = {
       id: 'block-text',

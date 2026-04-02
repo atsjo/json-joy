@@ -2,6 +2,7 @@ import * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
+import type {EditorState} from '../../../state';
 
 export const name = 'Subscript';
 export const Icon = makeIcon({set: 'tabler', icon: 'subscript'});

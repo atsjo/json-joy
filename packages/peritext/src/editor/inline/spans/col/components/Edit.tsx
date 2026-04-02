@@ -6,11 +6,11 @@ import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
 import type {EditProps} from '../../../SpanBehavior';
 
 export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
-  const [t] = useT();
+  const [_t] = useT();
   const obj = formatting.conf()!;
   const view = useNodeView(obj);
   const [color, setColor] = React.useState(HslColor.from(String(view?.col || '#000000')) as HslColor);
-  const [colorInput, setColorInput] = React.useState(color.toRgb().hex());
+  const [_colorInput, setColorInput] = React.useState(color.toRgb().hex());
 
   return (
     <div style={{width: 'calc(min(240px, 100vw))'}}>

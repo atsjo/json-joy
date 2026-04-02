@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
 
-const {useState, useCallback, useRef, useEffect} = React;
+const {useState, useCallback, useRef} = React;
 
 const blockClass = rule({
   pos: 'relative',
@@ -216,6 +216,7 @@ export const Slider: React.FC<SliderProps> = (props) => {
       >
         <div className={rangeClass} style={rangeStyle} />
         <button
+          type="button"
           className={handleClass}
           style={handleStyle}
           onKeyDown={onKeyDown}

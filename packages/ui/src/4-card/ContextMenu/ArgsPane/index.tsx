@@ -37,7 +37,7 @@ export interface ArgsPaneProps {
 export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
   const {item, params, onCancel, minWidth} = props;
   const [t] = useT();
-  const state = React.useMemo(() => new ArgsState(props), []);
+  const state = React.useMemo(() => new ArgsState(props), [props]);
   const args = state.args.use();
 
   const handleKeyDown = React.useCallback(

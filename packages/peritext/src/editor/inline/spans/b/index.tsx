@@ -7,7 +7,6 @@ import type {MenuItem} from '../../../types';
 export const name = 'Bold';
 export const Icon = makeIcon({set: 'radix', icon: 'font-bold'});
 
-const cmdName = name;
 const icon = () => <Icon width={15} height={15} />;
 const menu: MenuItem = {
   name,

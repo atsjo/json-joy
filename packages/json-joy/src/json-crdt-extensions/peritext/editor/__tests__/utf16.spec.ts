@@ -121,7 +121,7 @@ describe('Editor.vstep() — UTF-16 grapheme clusters', () => {
     });
 
     test('move left past e + combining acute (é)', () => {
-      const {editor, peritext} = setupWithText('cafe\u0301s');
+      const {editor} = setupWithText('cafe\u0301s');
       editor.cursor.setAt(6);
       const point = editor.cursor.start.clone();
       editor.vstep(point, -1); // s <-
@@ -156,7 +156,7 @@ describe('Editor.vstep() — UTF-16 grapheme clusters', () => {
       const {editor, peritext} = setupWithText('a👨\u200D👩\u200D👧\u200D👦b');
       const text = peritext.strApi().view();
       const totalLen = text.length;
-      const familyLen = totalLen - 2;
+      const _familyLen = totalLen - 2;
       editor.cursor.setAt(totalLen);
       const point = editor.cursor.start.clone();
       editor.vstep(point, -1); // past 'b'
