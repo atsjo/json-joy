@@ -12,22 +12,46 @@ export class OpenPanelState implements UiLifeCycles {
   protected lastClosed: string = '';
   protected hovered: string = '';
   private focusStack: HTMLElement[] = [];
+  private pendingTimer: ReturnType<typeof setTimeout> | 0 = 0;
 
   constructor(public readonly opts: OpenPanelStateOpts = {}) {}
 
   public readonly start = () => {
-    return () => {};
+    return () => {
+      this.clearPending();
+    };
   };
+
+  private clearPending(): void {
+    if (this.pendingTimer) {
+      clearTimeout(this.pendingTimer);
+      this.pendingTimer = 0;
+    }
+  }
+
+  private schedulePending(id: string): void {
+    this.clearPending();
+    const delay = this.canSelectAfter - Date.now();
+    if (delay <= 0) return;
+    this.pendingTimer = setTimeout(() => {
+      this.pendingTimer = 0;
+      if (this.hovered === id && this.selected$.value !== id) {
+        this.forceSelect(id);
+      }
+    }, delay);
+  }
 
   public readonly hover = (id: string) => {
     const selected = this.selected$.value;
     if (id === this.lastClosed && selected !== id) return;
     if (!selected) {
+      this.clearPending();
       this.forceSelect(id);
       return;
     }
     const now = Date.now();
     if (selected === id) {
+      this.clearPending();
       this.canSelectAfter = now + COOL_DOWN_TIME;
       this.hovered = id;
       return;
@@ -35,8 +59,10 @@ export class OpenPanelState implements UiLifeCycles {
     if (now <= this.canSelectAfter) {
       this.canSelectAfter = now + COOL_DOWN_TIME;
       this.hovered = id;
+      this.schedulePending(id);
       return;
     }
+    this.clearPending();
     this.hovered = id;
     this.select(id);
   };
@@ -57,6 +83,7 @@ export class OpenPanelState implements UiLifeCycles {
   public deselect(): boolean {
     const selected = this.selected$.value;
     if (!selected) return false;
+    this.clearPending();
     this.lastClosed = selected;
     this.hovered = '';
     this.canSelectAfter = Date.now() + COOL_DOWN_TIME;
@@ -85,6 +112,7 @@ export class OpenPanelState implements UiLifeCycles {
   public readonly onClick = this.select;
   public readonly onMouseMove = this.hover;
   public readonly onMouseLeave = () => {
+    this.clearPending();
     this.hovered = '';
   };
 }
