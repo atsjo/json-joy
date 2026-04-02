@@ -32,7 +32,7 @@ export const Required: StoryObj<ArgNumProps> = {
       id: 'url',
       name: 'Link',
       optional: false,
-      placeholder: 'https://example.com'
+      placeholder: 'https://example.com',
     },
     value: 0,
   },
@@ -46,7 +46,7 @@ export const Optional: StoryObj<ArgNumProps> = {
       id: 'note',
       name: 'Note',
       optional: true,
-      placeholder: 'Optional note…'
+      placeholder: 'Optional note…',
     },
     value: 0,
   },

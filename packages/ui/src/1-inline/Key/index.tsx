@@ -26,7 +26,7 @@ export const Key: React.FC<KeyProps> = ({children}) => {
     background: theme.g(0.96),
     border: `1px solid ${theme.g(0.8)}`,
     borderBottom: `2px solid ${theme.g(0.6)}`,
-    boxShadow: `0 1px 2px ${theme.g(.2,.1)}`,
+    boxShadow: `0 1px 2px ${theme.g(0.2, 0.1)}`,
   };
 
   return (

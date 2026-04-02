@@ -13,11 +13,7 @@ export const ArgStr: React.FC<ArgStrProps> = ({param, ...props}) => {
   return (
     <div className={argBlockCss}>
       <FormRow title={param.display?.() ?? param.name ?? param.id} optional={param.optional}>
-        <Input
-          {...props}
-          placeholder={param.placeholder}
-          type="text"
-        />
+        <Input {...props} placeholder={param.placeholder} type="text" />
       </FormRow>
     </div>
   );

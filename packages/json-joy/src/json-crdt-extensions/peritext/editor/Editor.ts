@@ -85,7 +85,6 @@ const isSimpleCodeUnit = (code: number): boolean => {
   return true;
 };
 
-
 export class Editor<T = string> implements Printable {
   public readonly saved: EditorSlices<T>;
   public readonly extra: EditorSlices<T>;

@@ -69,7 +69,7 @@ export const WithParams: StoryObj<typeof meta> = {
               name: 'Open in new tab',
               optional: true,
               default: false,
-            }
+            },
           ],
         },
         {

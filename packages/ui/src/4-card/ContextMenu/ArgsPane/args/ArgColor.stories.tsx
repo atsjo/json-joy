@@ -32,7 +32,7 @@ export const Required: StoryObj<ArgColorProps> = {
       id: 'color',
       name: 'Color',
       optional: false,
-      placeholder: '#0077ff'
+      placeholder: '#0077ff',
     },
     value: '#0077ff',
   },

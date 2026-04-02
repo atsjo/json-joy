@@ -6,10 +6,9 @@ import type {MenuItem} from '../../types';
 
 export class Commands implements UiLifeCycles {
   public readonly byName: Record<string, DynamicCommandDefinition> = {};
-  public readonly range: DynamicCommandDefinition[] = []
+  public readonly range: DynamicCommandDefinition[] = [];
 
-  constructor(public readonly state: EditorState) {
-  }
+  constructor(public readonly state: EditorState) {}
 
   public start() {
     for (const cmd of rangeCommands) this.register(cmd);
@@ -85,11 +84,12 @@ export class Commands implements UiLifeCycles {
       container.children!.push(item);
     }
     for (const group of Object.values(groups)) {
-      if (group.children) group.children.sort((a, b) => {
-        if (!a.children && b.children) return -1;
-        if (a.children && !b.children) return 1;
-        return (a.name > b.name ? 1 : -1);
-      });
+      if (group.children)
+        group.children.sort((a, b) => {
+          if (!a.children && b.children) return -1;
+          if (a.children && !b.children) return 1;
+          return a.name > b.name ? 1 : -1;
+        });
     }
     return root;
   }

@@ -86,11 +86,8 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
       <ContextSep line />
       <ContextSep />
       <div className={footerClass}>
-        <BasicTooltip shortcut='⏎' renderTooltip={() => 'Enter'}>
-          <Button
-            disabled={!state.canSubmit()}
-            onClick={state.onSubmit}
-          >
+        <BasicTooltip shortcut="⏎" renderTooltip={() => 'Enter'}>
+          <Button disabled={!state.canSubmit()} onClick={state.onSubmit}>
             {t('Apply')}
           </Button>
         </BasicTooltip>

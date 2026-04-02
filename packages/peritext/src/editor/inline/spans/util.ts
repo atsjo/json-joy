@@ -12,7 +12,7 @@ export const spanOne = <Tag extends TypeTag = TypeTag>(
   for (const key in definition) (behavior as any)[key] = (definition as any)[key];
   if (!behavior.action) behavior.action = (state: EditorState) => state.cmd?.run(name);
   if (!definition.cmd) {
-    const cmd: DynamicCommandDefinition[] = behavior.cmd = [];
+    const cmd: DynamicCommandDefinition[] = (behavior.cmd = []);
     cmd.push((state: EditorState) => {
       const menu = behavior.getMenu(state);
       return {

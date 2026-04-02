@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {Input, InputProps} from '../Input';
 
-export interface InputColorProps extends InputProps {
-}
+export interface InputColorProps extends InputProps {}
 
 export const InputColor: React.FC<InputColorProps> = (props) => {
   const swatchSize = props.label ? 32 : 16;
@@ -43,7 +42,5 @@ export const InputColor: React.FC<InputColorProps> = (props) => {
     </div>
   );
 
-  return (
-    <Input right={rightElement} {...props} />
-  );
+  return <Input right={rightElement} {...props} />;
 };

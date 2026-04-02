@@ -19,7 +19,7 @@ export class CommandsImpl implements PeritextDefaultCommands {
   ) {}
 
   public FormatToggle(tag: string | number): void {
-    this.et.format('tog', typeof tag === 'number' ? tag : (tag + ''));
+    this.et.format('tog', typeof tag === 'number' ? tag : tag + '');
   }
 
   public Caret(gap: number): void {

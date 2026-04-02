@@ -28,15 +28,13 @@ export const ColorPickerInput: React.FC<ColorPickerInputProps> = ({input, ...res
         {...input}
         value={typeof color === 'string' ? color : color?.toRgb().hex() || ''}
         onChange={(v) => {
-        if (isValid(v)) {
-          rest.onChange?.(HslColor.from(v) ?? HslColor.from('#000000')!);
-        }
-      }} />
-      <Space />
-      <ColorPicker
-        style={{width: '100%'}}
-        {...rest}
+          if (isValid(v)) {
+            rest.onChange?.(HslColor.from(v) ?? HslColor.from('#000000')!);
+          }
+        }}
       />
+      <Space />
+      <ColorPicker style={{width: '100%'}} {...rest} />
     </div>
   );
 };

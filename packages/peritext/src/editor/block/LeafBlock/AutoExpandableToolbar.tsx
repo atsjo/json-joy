@@ -52,7 +52,7 @@ export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
             renderTooltip: () => 'More',
             nowrap: true,
             shortcut: 'Ctrl + /',
-          }
+          },
         }}
       />
     </div>

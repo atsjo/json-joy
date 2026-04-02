@@ -42,7 +42,7 @@ export const behavior = new (class BgBehavior extends SpanBehavior<SliceStacking
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.bg, name, schema, false, void 0, fromHtml);
   }
-  
+
   public readonly cmd: DynamicCommandDefinition = (state: EditorState) => {
     const menu = this.getMenu(state);
     return {

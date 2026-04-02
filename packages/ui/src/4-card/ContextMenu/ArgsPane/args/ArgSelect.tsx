@@ -36,8 +36,13 @@ export const ArgSelect: React.FC<ArgSelectProps> = ({param, value, onChange, onS
 
   return (
     <div className={argBlockCss}>
-      <FormRow title={param.display?.() ?? param.name ?? param.id} descriptionAbove description={param.description} optional={param.optional}>
-        <div style={{margin: '-4px -16px',}}>
+      <FormRow
+        title={param.display?.() ?? param.name ?? param.id}
+        descriptionAbove
+        description={param.description}
+        optional={param.optional}
+      >
+        <div style={{margin: '-4px -16px'}}>
           <Scrollbox style={{maxHeight: 200}}>
             <div style={{padding: '4px 16px'}}>
               {options.map((opt) => {

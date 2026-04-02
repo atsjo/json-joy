@@ -13,10 +13,7 @@ export const ArgColor: React.FC<ArgColorProps> = ({param, ...props}) => {
   return (
     <div className={argBlockCss}>
       <FormRow title={param.display?.() ?? param.name ?? param.id} optional={param.optional}>
-        <InputColor
-          {...props}
-          placeholder={'#hex'}
-        />
+        <InputColor {...props} placeholder={'#hex'} />
       </FormRow>
     </div>
   );

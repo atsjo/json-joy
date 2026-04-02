@@ -37,7 +37,7 @@ export class BlockMenu {
     if (children.length) children.sort((a, b) => (a.order || 0) - (b.order || 0));
   }
 
-  private blockTypeChildren (): MenuItem[] {
+  private blockTypeChildren(): MenuItem[] {
     const et = this.state.et;
 
     const text: MenuItem = {
@@ -54,7 +54,7 @@ export class BlockMenu {
     };
     this.buildBlockGroup(text);
     this.buildBlockGroup(headings);
-    
+
     const children: MenuItem[] = [];
     if (text.children!.length) children.push(text);
     if (headings.children!.length) {
@@ -62,81 +62,80 @@ export class BlockMenu {
       children.push(headings);
     }
 
-
     children.push(
-        // {
-        //   sepBefore: true,
-        //   name: 'Lists',
-        //   expand: 3,
-        //   children: [
-        //     {
-        //       name: 'Bullet list',
-        //       icon: () => <ListBulletedIcon width={16} height={16} />,
-        //       onSelect: () => {
-        //         et.marker('upd', [SliceTypeName.ul, SliceTypeName.li, SliceTypeName.p]);
-        //       },
-        //     },
-        //     {
-        //       name: 'Numbered list',
-        //       icon: () => <ListNumberedIcon width={16} height={16} />,
-        //       onSelect: () => {
-        //         et.marker('upd', [SliceTypeName.ol, SliceTypeName.li, SliceTypeName.p]);
-        //       },
-        //     },
-        //     {
-        //       name: 'Task list',
-        //       icon: () => <ListCheckedIcon width={16} height={16} />,
-        //       onSelect: () => {
-        //         et.marker('upd', [SliceTypeName.tl, SliceTypeName.li, SliceTypeName.p]);
-        //       },
-        //     },
-        //   ],
-        // },
-        // {
-        //   sepBefore: true,
-        //   name: 'Layouts',
-        //   expand: 0,
-        //   icon: () => <LayoutIcon width={16} height={16} />,
-        //   children: [
-        //     {
-        //       name: 'Table',
-        //       icon: () => <TableIcon width={16} height={16} />,
-        //       onSelect: () => {
-        //         et.marker('upd', [SliceTypeName.table, SliceTypeName.tr, SliceTypeName.p]);
-        //       },
-        //     },
-        //     {
-        //       name: 'Columns',
-        //       icon: () => <ColumnsIcon width={16} height={16} />,
-        //       onSelect: () => {
-        //         et.marker('upd', [SliceTypeName.column, SliceTypeName.p]);
-        //       },
-        //     },
-        //   ],
-        // },
-        {
-          sepBefore: true,
-          name: 'Embed',
-          expand: 0,
-          icon: () => <ImageInPictureIcon width={16} height={16} />,
-          children: [
-            {
-              name: 'Image',
-              icon: () => <PhotoScanIcon width={16} height={16} />,
-              onSelect: () => {},
-            },
-            {
-              name: 'File',
-              icon: () => <TablerFileIcon width={16} height={16} />,
-              onSelect: () => {},
-            },
-          ],
-        },
-      );
+      // {
+      //   sepBefore: true,
+      //   name: 'Lists',
+      //   expand: 3,
+      //   children: [
+      //     {
+      //       name: 'Bullet list',
+      //       icon: () => <ListBulletedIcon width={16} height={16} />,
+      //       onSelect: () => {
+      //         et.marker('upd', [SliceTypeName.ul, SliceTypeName.li, SliceTypeName.p]);
+      //       },
+      //     },
+      //     {
+      //       name: 'Numbered list',
+      //       icon: () => <ListNumberedIcon width={16} height={16} />,
+      //       onSelect: () => {
+      //         et.marker('upd', [SliceTypeName.ol, SliceTypeName.li, SliceTypeName.p]);
+      //       },
+      //     },
+      //     {
+      //       name: 'Task list',
+      //       icon: () => <ListCheckedIcon width={16} height={16} />,
+      //       onSelect: () => {
+      //         et.marker('upd', [SliceTypeName.tl, SliceTypeName.li, SliceTypeName.p]);
+      //       },
+      //     },
+      //   ],
+      // },
+      // {
+      //   sepBefore: true,
+      //   name: 'Layouts',
+      //   expand: 0,
+      //   icon: () => <LayoutIcon width={16} height={16} />,
+      //   children: [
+      //     {
+      //       name: 'Table',
+      //       icon: () => <TableIcon width={16} height={16} />,
+      //       onSelect: () => {
+      //         et.marker('upd', [SliceTypeName.table, SliceTypeName.tr, SliceTypeName.p]);
+      //       },
+      //     },
+      //     {
+      //       name: 'Columns',
+      //       icon: () => <ColumnsIcon width={16} height={16} />,
+      //       onSelect: () => {
+      //         et.marker('upd', [SliceTypeName.column, SliceTypeName.p]);
+      //       },
+      //     },
+      //   ],
+      // },
+      {
+        sepBefore: true,
+        name: 'Embed',
+        expand: 0,
+        icon: () => <ImageInPictureIcon width={16} height={16} />,
+        children: [
+          {
+            name: 'Image',
+            icon: () => <PhotoScanIcon width={16} height={16} />,
+            onSelect: () => {},
+          },
+          {
+            name: 'File',
+            icon: () => <TablerFileIcon width={16} height={16} />,
+            onSelect: () => {},
+          },
+        ],
+      },
+    );
     return children;
-  };
+  }
 
-  private blockTypeMenu (leaf: LeafBlock): MenuItem {
+  private blockTypeMenu(leaf: LeafBlock): MenuItem {
     const state = this.state;
     const tag = leaf.marker?.marker.nestedType().tag().name() ?? 0;
     const behavior = tag !== void 0 ? state.blockMap[tag] : void 0;
@@ -152,7 +151,7 @@ export class BlockMenu {
 
   public buildLeafMenu({leaf}: LeafBlockMenuCtx): MenuItem {
     const et = this.state.et;
-    
+
     const menu: MenuItem = {
       name: 'Block menu',
       maxToolbarItems: 1,

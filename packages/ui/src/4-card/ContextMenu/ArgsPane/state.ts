@@ -1,13 +1,12 @@
-import {ArgsPaneProps} from ".";
-import {rsync} from "../../..";
+import {ArgsPaneProps} from '.';
+import {rsync} from '../../..';
 
 export class ArgsState {
   public args: rsync.ReactValue<Record<string, unknown>>;
 
   constructor(public readonly props: ArgsPaneProps) {
     const map: Record<string, unknown> = {};
-    for (const param of props.params)
-      map[String(param.id ?? param.name)] = param.default;
+    for (const param of props.params) map[String(param.id ?? param.name)] = param.default;
     this.args = rsync.val<Record<string, unknown>>(map);
   }
 

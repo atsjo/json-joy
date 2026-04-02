@@ -43,7 +43,7 @@ export class RangeMenu implements UiLifeCycles {
     const children: MenuItem['children'] = [
       this.formattingMenu(),
       this.annotationsMenu(),
-      this.typesettingMenu(),
+      // this.typesettingMenu(),
       this.modifyMenu(),
       this.state.menu.buffer.clipboardMenu(),
       /*

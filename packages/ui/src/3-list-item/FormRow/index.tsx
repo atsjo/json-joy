@@ -42,7 +42,17 @@ export const FormRow: React.FC<FormRowProps> = ({title, description, description
   const [t] = useT();
 
   let titleElement: React.ReactNode = title;
-  let descriptionElement: React.ReactNode = !!description && <div className={descriptionClass} style={{padding: descriptionAbove ? '0 0 8px' : right ? '0 8px 0 0' : void 0, marginTop: descriptionAbove ? '-8px' : void 0}}>{description}</div>;
+  let descriptionElement: React.ReactNode = !!description && (
+    <div
+      className={descriptionClass}
+      style={{
+        padding: descriptionAbove ? '0 0 8px' : right ? '0 8px 0 0' : void 0,
+        marginTop: descriptionAbove ? '-8px' : void 0,
+      }}
+    >
+      {description}
+    </div>
+  );
 
   if (optional) {
     titleElement = (
@@ -63,18 +73,16 @@ export const FormRow: React.FC<FormRowProps> = ({title, description, description
             {children}
           </Split>
         </>
+      ) : descriptionAbove ? (
+        <>
+          {descriptionElement}
+          {children}
+        </>
       ) : (
-        descriptionAbove ? (
-          <>
-            {descriptionElement}
-            {children}
-          </>
-        ) : (
-          <>
-            {children}
-            {descriptionElement}
-          </>
-        )
+        <>
+          {children}
+          {descriptionElement}
+        </>
       )}
     </div>
   );

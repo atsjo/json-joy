@@ -2,7 +2,10 @@ import * as React from 'react';
 import {ArgsPane, ArgsPaneProps} from './index';
 import type {Meta, StoryObj} from '@storybook/react';
 
-const action = (name: string) => (...args: unknown[]) => console.log(name, ...args);
+const action =
+  (name: string) =>
+  (...args: unknown[]) =>
+    console.log(name, ...args);
 
 const meta: Meta = {
   title: '4. Card/ContextMenu/ArgsPane',
@@ -24,7 +27,7 @@ export const Default: StoryObj<ArgsPaneProps> = {
         kind: 'str',
         id: 'note',
         name: 'Note',
-        placeholder: 'Optional note…'
+        placeholder: 'Optional note…',
       },
       {
         kind: 'bool',
@@ -45,14 +48,14 @@ export const Default: StoryObj<ArgsPaneProps> = {
         name: 'Size',
         optional: true,
         placeholder: 'Size in MB',
-        default: 10
+        default: 10,
       },
       {
         kind: 'color',
         id: 'color',
         name: 'Color',
         optional: true,
-        default: '#0077ff'
+        default: '#0077ff',
       },
       {
         kind: 'select',
@@ -71,21 +74,63 @@ export const Default: StoryObj<ArgsPaneProps> = {
 };
 
 const timezones = [
-  'UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
-  'America/Anchorage', 'America/Sao_Paulo', 'America/Argentina/Buenos_Aires',
-  'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Europe/Moscow',
-  'Asia/Dubai', 'Asia/Kolkata', 'Asia/Bangkok', 'Asia/Shanghai',
-  'Asia/Tokyo', 'Asia/Seoul', 'Australia/Sydney', 'Pacific/Auckland',
-  'Pacific/Honolulu', 'Africa/Cairo', 'Africa/Johannesburg', 'Africa/Lagos',
+  'UTC',
+  'America/New_York',
+  'America/Chicago',
+  'America/Denver',
+  'America/Los_Angeles',
+  'America/Anchorage',
+  'America/Sao_Paulo',
+  'America/Argentina/Buenos_Aires',
+  'Europe/London',
+  'Europe/Paris',
+  'Europe/Berlin',
+  'Europe/Moscow',
+  'Asia/Dubai',
+  'Asia/Kolkata',
+  'Asia/Bangkok',
+  'Asia/Shanghai',
+  'Asia/Tokyo',
+  'Asia/Seoul',
+  'Australia/Sydney',
+  'Pacific/Auckland',
+  'Pacific/Honolulu',
+  'Africa/Cairo',
+  'Africa/Johannesburg',
+  'Africa/Lagos',
 ];
 
 const fontFamilies = [
-  'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Trebuchet MS',
-  'Courier New', 'Lucida Console', 'Monaco', 'Menlo', 'Consolas', 'SF Mono',
-  'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins',
-  'Source Code Pro', 'Fira Code', 'JetBrains Mono', 'IBM Plex Sans',
-  'Noto Sans', 'Ubuntu', 'Raleway', 'Playfair Display', 'Merriweather',
-  'Oswald', 'Nunito', 'PT Sans',
+  'Arial',
+  'Helvetica',
+  'Times New Roman',
+  'Georgia',
+  'Verdana',
+  'Trebuchet MS',
+  'Courier New',
+  'Lucida Console',
+  'Monaco',
+  'Menlo',
+  'Consolas',
+  'SF Mono',
+  'Inter',
+  'Roboto',
+  'Open Sans',
+  'Lato',
+  'Montserrat',
+  'Poppins',
+  'Source Code Pro',
+  'Fira Code',
+  'JetBrains Mono',
+  'IBM Plex Sans',
+  'Noto Sans',
+  'Ubuntu',
+  'Raleway',
+  'Playfair Display',
+  'Merriweather',
+  'Oswald',
+  'Nunito',
+  'PT Sans',
 ];
 
 export const Interactive: StoryObj<ArgsPaneProps> = {

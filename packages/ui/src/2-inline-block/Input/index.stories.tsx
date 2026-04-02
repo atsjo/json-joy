@@ -102,7 +102,14 @@ const DemoColor: React.FC<InputProps> = (props) => {
       <br />
       <Component type="color" size={-2} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
-      <Component type="color" disabled label={'Disabled'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component
+        type="color"
+        disabled
+        label={'Disabled'}
+        value={value}
+        onChange={(value) => setValue(value)}
+        {...props}
+      />
     </div>
   );
 };

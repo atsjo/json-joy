@@ -24,9 +24,9 @@ export interface MenuItem {
   /**
    * If true, wrap the display in a `<code>` element and use monospace font.
    * Used when the item represents some code or a literal value.
-   * 
+   *
    * This can also be achieved by using the `display` property:
-   * 
+   *
    * ```ts
    * {
    *   display: () => <code>{name}</code>,
@@ -137,18 +137,17 @@ export interface MenuItem {
   params?: Param[];
 
   /**
-   * Called when the user confirms argument values. Receives a list of 
+   * Called when the user confirms argument values. Receives a list of
    * `[idOrName, value]` tuples representing the collected argument values.
    */
   onSubmit?: (list: [idOrName: string, value: unknown][], map: Record<string, unknown>) => void;
 }
 
-
 // -------------------------------------- Parameters for argument configuration
 
 export type ParamKind = 'str' | 'num' | 'bool' | 'color' | 'select';
 
-export type Param = | ParamStr | ParamNum | ParamBool | ParamColor | ParamSelect;
+export type Param = ParamStr | ParamNum | ParamBool | ParamColor | ParamSelect;
 
 export interface ParamBase<K extends ParamKind = ParamKind, V = string | number | boolean> extends MenuItem {
   kind: K;

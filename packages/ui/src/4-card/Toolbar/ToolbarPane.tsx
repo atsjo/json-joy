@@ -24,7 +24,9 @@ export const ToolbarPane: React.FC<ToolbarPaneProps> = ({children, ...rest}) => 
 
   return (
     <ContextPane {...rest}>
-      <div className={flexClass} style={style}>{children}</div>
+      <div className={flexClass} style={style}>
+        {children}
+      </div>
     </ContextPane>
   );
 };

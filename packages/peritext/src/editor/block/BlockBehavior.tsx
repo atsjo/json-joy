@@ -1,11 +1,7 @@
 import * as React from 'react';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys, remap} from '../util/keys';
-import {
-  SliceBehavior,
-  type SliceStacking,
-  type TypeTag,
-} from 'json-joy/lib/json-crdt-extensions';
+import {SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditorState} from '../state';
@@ -36,7 +32,7 @@ export class BlockBehavior<
    * Menu group which this formatting belongs to.
    */
   menuId?: string = void 0;
-  
+
   /** Default action to be performed when the keys are pressed or selected in the menu. */
   action?: (state: EditorState) => void = void 0;
 
@@ -45,9 +41,7 @@ export class BlockBehavior<
     state.et.marker({
       action: 'upd',
       target: ['tag'],
-      ops: [
-        ['replace', '/', this.tag],
-      ],
+      ops: [['replace', '/', this.tag]],
     });
   }
 
@@ -55,7 +49,7 @@ export class BlockBehavior<
     const menu = this.menu;
     if (!menu) return;
     const menuItem = typeof menu === 'function' ? menu(state) : menu;
-    menuItem.onSelect ??= this.action ? (() => this.action?.(state)) : (() => this.setLeafTag(state));
+    menuItem.onSelect ??= this.action ? () => this.action?.(state) : () => this.setLeafTag(state);
     const keys = this.keys;
     if (keys) menuItem.keys ??= keys.map((k) => remap[k] ?? k);
     if (keys) menuItem.right ??= () => <Sidetip small>{formatKeys(keys)}</Sidetip>;
