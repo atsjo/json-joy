@@ -309,7 +309,7 @@ export class BufferMenu {
     cutMenu.sepBefore = true;
     pasteMenu.sepBefore = true;
     return {
-      name: 'Copy, cut, and paste',
+      name: 'Copy, cut & paste',
       icon: () => <CopyIcon width={16} height={16} />,
       expand: 0,
       sepBefore: true,
