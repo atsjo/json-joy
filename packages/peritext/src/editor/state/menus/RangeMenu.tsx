@@ -2,6 +2,7 @@ import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {CommonSliceType, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
+import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import * as a from '../../inline/spans/a';
 import type {MenuItem} from '../../types';
 import type {EditorState} from '../EditorState';
@@ -11,6 +12,14 @@ const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
 const BoxAlignRightIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
 const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
 const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
+
+const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography'});
+const FontStyleIcon = makeIcon({set: 'radix', icon: 'font-style'});
+const FontFamilyIcon = makeIcon({set: 'radix', icon: 'font-family'});
+const FontSizeIcon = makeIcon({set: 'radix', icon: 'font-size'});
+const LetterSpacingIcon = makeIcon({set: 'radix', icon: 'letter-spacing'});
+const LetterCaseUppercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-uppercase'});
+const LetterCaseLowercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-lowercase'});
 
 export class RangeMenu implements UiLifeCycles {
   public recent: MenuItem[] = [];
@@ -34,6 +43,7 @@ export class RangeMenu implements UiLifeCycles {
     const children: MenuItem['children'] = [
       this.formattingMenu(),
       this.annotationsMenu(),
+      this.typesettingMenu(),
       this.modifyMenu(),
       this.state.menu.buffer.clipboardMenu(),
       /*
@@ -363,6 +373,86 @@ export class RangeMenu implements UiLifeCycles {
     else artistic.sepBefore = false;
     if (artistic.children?.length) children.push(artistic);
     return formatting;
+  }
+
+  private typesettingMenu(): MenuItem {
+    return {
+      name: 'Typesetting',
+      expand: 4,
+      openOnTitleHov: true,
+      sepBefore: true,
+      icon: () => <TypographyIcon width={16} height={16} />,
+      onSelect: () => {},
+      children: [
+        {
+          name: 'Sans-serif',
+          iconBig: () => <FontStyleButton kind={'sans'} />,
+          onSelect: () => {},
+        },
+        {
+          name: 'Serif',
+          iconBig: () => <FontStyleButton kind={'serif'} />,
+          onSelect: () => {},
+        },
+        {
+          name: 'Slab',
+          icon: () => <FontStyleButton kind={'slab'} size={16} />,
+          iconBig: () => <FontStyleButton kind={'slab'} />,
+          onSelect: () => {},
+        },
+        {
+          name: 'Monospace',
+          iconBig: () => <FontStyleButton kind={'mono'} />,
+          onSelect: () => {},
+        },
+        // {
+        //   name: 'Custom typeface separator',
+        //   sep: true,
+        // },
+        {
+          name: 'Custom typeface',
+          expand: 10,
+          icon: () => <FontStyleIcon width={15} height={15} />,
+          children: [
+            {
+              name: 'Typeface',
+              // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
+              icon: () => <FontFamilyIcon width={15} height={15} />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Text size',
+              icon: () => <FontSizeIcon width={15} height={15} />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Letter spacing',
+              icon: () => <LetterSpacingIcon width={15} height={15} />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Word spacing',
+              icon: () => <LetterSpacingIcon width={15} height={15} />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Caps separator',
+              sep: true,
+            },
+            {
+              name: 'Large caps',
+              icon: () => <LetterCaseUppercaseIcon width={15} height={15} />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Small caps',
+              icon: () => <LetterCaseLowercaseIcon width={15} height={15} />,
+              onSelect: () => {},
+            },
+          ],
+        },
+      ],
+    };
   }
 
   // public readonly colorMenuItem = (): MenuItem => {
