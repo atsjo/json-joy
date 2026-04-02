@@ -2,7 +2,7 @@ import * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {block} from '../util';
-import {EditorState} from '../../../state';
+import type {EditorState} from '../../../state';
 
 export const name = 'Heading 6';
 export const Icon = makeIcon({set: 'tabler', icon: 'h-6'});

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ArgsPane, ArgsPaneProps} from './index';
+import {ArgsPane, type ArgsPaneProps} from './index';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const action =

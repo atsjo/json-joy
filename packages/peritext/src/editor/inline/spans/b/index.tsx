@@ -2,7 +2,7 @@ import * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
-import {MenuItem} from '../../../types';
+import type {MenuItem} from '../../../types';
 
 export const name = 'Bold';
 export const Icon = makeIcon({set: 'radix', icon: 'font-bold'});

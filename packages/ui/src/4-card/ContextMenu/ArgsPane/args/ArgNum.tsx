@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Input, InputProps} from '../../../../2-inline-block/Input';
+import {Input, type InputProps} from '../../../../2-inline-block/Input';
 import {FormRow} from '../../../../3-list-item/FormRow';
 import {argBlockCss} from './css';
 import type {ParamNum} from '../../../StructuralMenu/types';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ArgSelect, ArgSelectProps} from './ArgSelect';
+import {ArgSelect, type ArgSelectProps} from './ArgSelect';
 import {ContextPane} from '../../ContextPane';
 import {ContextSep} from '../../ContextSep';
 import type {Meta, StoryObj} from '@storybook/react';

@@ -42,7 +42,7 @@ export const FormRow: React.FC<FormRowProps> = ({title, description, description
   const [t] = useT();
 
   let titleElement: React.ReactNode = title;
-  let descriptionElement: React.ReactNode = !!description && (
+  const descriptionElement: React.ReactNode = !!description && (
     <div
       className={descriptionClass}
       style={{

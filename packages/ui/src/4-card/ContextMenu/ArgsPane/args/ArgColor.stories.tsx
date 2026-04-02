@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ArgColor, ArgColorProps} from './ArgColor';
+import {ArgColor, type ArgColorProps} from './ArgColor';
 import {ContextPane} from '../../ContextPane';
 import {ContextSep} from '../../ContextSep';
 import type {Meta, StoryObj} from '@storybook/react';

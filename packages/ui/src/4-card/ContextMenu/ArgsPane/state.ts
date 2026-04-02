@@ -1,4 +1,4 @@
-import {ArgsPaneProps} from '.';
+import type {ArgsPaneProps} from '.';
 import {rsync} from '../../..';
 
 export class ArgsState {

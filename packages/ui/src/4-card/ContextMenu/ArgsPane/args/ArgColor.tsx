@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {FormRow} from '../../../../3-list-item/FormRow';
 import {argBlockCss} from './css';
-import {InputColor, InputColorProps} from '../../../../2-inline-block/InputColor';
+import {InputColor, type InputColorProps} from '../../../../2-inline-block/InputColor';
 import type {ParamColor} from '../../../StructuralMenu/types';
 
 export interface ArgColorProps extends InputColorProps {

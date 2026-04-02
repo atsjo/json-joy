@@ -2,8 +2,8 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {Input} from '../../2-inline-block/Input';
 import {Space} from '../../3-list-item/Space';
-import {ColorPicker, ColorPickerProps} from '../../4-card/ColorPicker';
-import {InputColor, InputColorProps} from '../../2-inline-block/InputColor';
+import {ColorPicker, type ColorPickerProps} from '../../4-card/ColorPicker';
+import {InputColor, type InputColorProps} from '../../2-inline-block/InputColor';
 import {HslColor} from '../../styles/color';
 
 const REG_VALID = /^#?([0-9A-F]{3}|([0-9A-F]{6}([0-9a-f]{2})?))$/i;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Input, InputProps} from '../Input';
+import {Input, type InputProps} from '../Input';
 
 export interface InputColorProps extends InputProps {}
 

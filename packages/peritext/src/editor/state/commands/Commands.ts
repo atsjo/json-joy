@@ -1,5 +1,5 @@
 import {cmds as rangeCommands} from './range';
-import {DynamicCommandDefinition} from './types';
+import type {DynamicCommandDefinition} from './types';
 import type {EditorState} from '../EditorState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import type {MenuItem} from '../../types';

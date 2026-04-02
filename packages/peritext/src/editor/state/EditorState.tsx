@@ -7,7 +7,7 @@ import {FmtManagePaneState} from '../inline/components/FmtManagePane/state';
 import {Menu} from './menus/Menu';
 import {Commands} from './commands/Commands';
 import {SelectionState} from './SelectionState';
-import {BlockBehavior} from '../block/BlockBehavior';
+import type {BlockBehavior} from '../block/BlockBehavior';
 import type {SpanBehavior} from '../inline/SpanBehavior';
 import type {AnyBinding, Key} from '@jsonjoy.com/keyboard';
 import type {Inline, InlineAttr, PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions';
