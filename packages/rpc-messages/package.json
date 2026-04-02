@@ -1,19 +1,19 @@
 {
-  "name": "@jsonjoy.com/rpc-error",
+  "name": "@jsonjoy.com/rpc-messages",
   "publishConfig": {
     "access": "public"
   },
   "version": "1.0.0",
-  "description": "RPC error class and error codes for JSON RPC APIs",
+  "description": "RPC message types and utilities for JSON RPC APIs",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/rpc-error",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/rpc-messages",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/rpc-error"
+    "directory": "packages/rpc-messages"
   },
   "license": "Apache-2.0",
   "funding": {
@@ -22,13 +22,16 @@
   },
   "keywords": [
     "rpc",
-    "error",
-    "rpc-error",
+    "messages",
+    "rpc-messages",
     "json-rpc",
-    "error-codes",
     "json",
     "joy"
   ],
+  "dependencies": {
+    "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/rpc-error": "workspace:*"
+  },
   "peerDependencies": {
     "tslib": "*"
   },

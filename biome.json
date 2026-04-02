@@ -48,7 +48,8 @@
 				"noCommaOperator": "off",
 				"noUselessLabel": "off",
 				"noBannedTypes": "off",
-				"noUselessUndefinedInitialization": "off"
+				"noUselessUndefinedInitialization": "off",
+				"noUselessEscapeInRegex": "off"
 			},
 			"security": {
 				"noGlobalEval": "off"
