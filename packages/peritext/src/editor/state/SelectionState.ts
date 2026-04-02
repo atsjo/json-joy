@@ -69,7 +69,7 @@ export class SelectionState {
       }
     };
     const onInsert = (event: PeritextInsertEvent) => {
-      if (event.detail.text === '/') {
+      if (event.detail.text === ' ') {
         const editor = state.txt.editor;
         if (editor.cursorCard() === 1) {
           const cursor = editor.cursor;

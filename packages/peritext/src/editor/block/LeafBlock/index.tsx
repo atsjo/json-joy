@@ -16,7 +16,7 @@ const blockClass = rule({
 const topLeftOverlay = rule({
   d: 'block',
   pos: 'absolute',
-  t: '-8px',
+  t: '16px',
   l: '-72px',
 });
 
@@ -28,40 +28,57 @@ const topLeftOverlay = rule({
 // });
 
 const gap = 4;
-const position: EntangledPortalStateOpts['position'] = (base, dest) => {
-  let x = base.x - (dest.width >> 1);
-  let y = base.y;
-  if (x < gap) x = gap;
-  else if (x + dest.width + gap > window.innerWidth) x = window.innerWidth - dest.width - gap;
-  const {scrollY} = window;
-  const body = document.body;
-  const html = document.documentElement;
-  const pageHeight = Math.max(
-    body.scrollHeight,
-    body.offsetHeight,
-    html.clientHeight,
-    html.scrollHeight,
-    html.offsetHeight,
-  );
-  if (base.y + dest.height + scrollY > pageHeight) y = base.y - (base.y + dest.height + scrollY - pageHeight);
-  return [x, y];
-};
 
 export interface LeafBlockProps extends RenderBlockProps {}
 
 export const LeafBlock: React.FC<LeafBlockProps> = ({block, children}) => {
   const state = useEditor();
-  const activeLeafBlockId = useSyncStore(state.activeLeafBlockId$);
-  const menu = React.useMemo(() => state.menu.block.leafBlockSmallMenu({block}), [state, block]);
 
+  const repositionRef = React.useRef<(() => void) | undefined>(void 0);
+
+  React.useEffect(() => {
+    return state.et.subscribe('cursor', () => {
+      setTimeout(() => {
+        repositionRef.current?.();
+      }, 25);
+    });
+  }, [state]);
+
+  const position = React.useCallback<NonNullable<EntangledPortalStateOpts['position']>>(
+    (base, dest) => {
+      let x = base.x - (dest.width >> 1) + 24;
+      const caretRect = state.surface.dom.caretRect();
+      let y = caretRect ? caretRect.y - 10 : base.y;
+      if (x < gap) x = gap;
+      else if (x + dest.width + gap > window.innerWidth) x = window.innerWidth - dest.width - gap;
+      const {scrollY} = window;
+      const body = document.body;
+      const html = document.documentElement;
+      const pageHeight = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight,
+      );
+      if (y + dest.height + scrollY > pageHeight) y = y - (y + dest.height + scrollY - pageHeight);
+      return [x, y];
+    },
+    [state],
+  );
+  const activeLeafBlockId = useSyncStore(state.activeLeafBlockId$);
   const isBlockActive = !!activeLeafBlockId && compare(activeLeafBlockId, block.marker?.id ?? block.txt.str.id) === 0;
+  const menu = React.useMemo(
+    () => (isBlockActive ? state.menu.block.buildLeafMenu({leaf: block}) : undefined),
+    [state, block.hash, isBlockActive, block],
+  );
 
   return (
     <div className={blockClass}>
       {children}
-      {isBlockActive && (
+      {!!menu && (
         <div className={topLeftOverlay}>
-          <EntangledPortal position={position}>
+          <EntangledPortal position={position} repositionRef={repositionRef}>
             <AutoExpandableToolbar menu={menu!} more={{small: true}} />
           </EntangledPortal>
         </div>

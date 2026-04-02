@@ -1,9 +1,42 @@
 import * as React from 'react';
 import type {SyncStore} from '../../types';
 
+// ------------------------------------------------------------- Menu item tree
+
 export interface MenuItem {
+  /**
+   * Unique identifier of the item. Unique with the parent panel.
+   *
+   * @default name
+   */
+  id?: string;
+
   /** Name of the item. */
   name: string;
+
+  /**
+   * Rich text used to display the item.
+   *
+   * @default name
+   */
+  display?: () => React.ReactNode;
+
+  /**
+   * If true, wrap the display in a `<code>` element and use monospace font.
+   * Used when the item represents some code or a literal value.
+   *
+   * This can also be achieved by using the `display` property:
+   *
+   * ```ts
+   * {
+   *   display: () => <code>{name}</code>,
+   * }
+   * ```
+   */
+  mono?: boolean;
+
+  /** Optional description of the command for UI display. */
+  description?: string;
 
   /** Whether this item is a separator. */
   sep?: boolean;
@@ -20,22 +53,8 @@ export interface MenuItem {
   /** Text by which to search for this item, defaults to `name`. */
   text?: string;
 
-  /**
-   * Unique identifier of the item. Unique with the parent panel.
-   *
-   * @default name
-   */
-  id?: string;
-
   /** Color of the item. If not provided, computed from `id`.  */
   color?: string;
-
-  /**
-   * Rich text used to display the item.
-   *
-   * @default name
-   */
-  display?: () => React.ReactNode;
 
   /**
    * Small icon displayed next to the item.
@@ -110,4 +129,46 @@ export interface MenuItem {
 
   /** Callback when the item is clicked. */
   onSelect?: React.EventHandler<React.MouseEvent<Element> | React.TouchEvent<Element>>;
+
+  /**
+   * Argument definitions for this command. When present, selecting the item
+   * opens an argument configuration pane instead of executing immediately.
+   */
+  params?: Param[];
+
+  /**
+   * Called when the user confirms argument values. Receives a list of
+   * `[idOrName, value]` tuples representing the collected argument values.
+   */
+  onSubmit?: (list: [idOrName: string, value: unknown][], map: Record<string, unknown>) => void;
+}
+
+// -------------------------------------- Parameters for argument configuration
+
+export type ParamKind = 'str' | 'num' | 'bool' | 'color' | 'select';
+
+export type Param = ParamStr | ParamNum | ParamBool | ParamColor | ParamSelect;
+
+export interface ParamBase<K extends ParamKind = ParamKind, V = string | number | boolean> extends MenuItem {
+  kind: K;
+  optional?: boolean;
+  default?: V;
+}
+
+export interface ParamStr extends ParamBase<'str', string> {
+  placeholder?: string;
+}
+
+export interface ParamNum extends ParamBase<'num', number> {
+  placeholder?: string;
+}
+
+export interface ParamBool extends ParamBase<'bool', boolean> {}
+
+export interface ParamColor extends ParamBase<'color', string> {
+  placeholder?: string;
+}
+
+export interface ParamSelect extends ParamBase<'select', string> {
+  options: MenuItem[];
 }

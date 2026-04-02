@@ -7,10 +7,13 @@ const blockClass = rule({
   columnGap: '4px',
   ai: 'center',
   w: '100%',
+  minW: 0,
   fz: '13px',
   pd: '8px 20px',
   bxz: 'border-box',
   col: theme.g(0.2),
+  bd: 'none',
+  mr: 0,
 });
 
 export interface ContextSectionProps extends React.AllHTMLAttributes<any> {

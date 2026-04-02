@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, drule, SYMBOL} from 'nano-theme';
+import {rule, drule, SYMBOL, theme} from 'nano-theme';
 import {Link} from '../../1-inline/Link';
 import {FixedColumn} from '../../3-list-item/FixedColumn';
 import {Ripple} from '../../misc/Ripple';
@@ -22,6 +22,10 @@ const blockClass = rule({
   ta: 'left',
   us: 'none',
   out: 'none',
+  '& code': {
+    ...theme.font.mono.mid,
+    fz: '.95em',
+  },
 });
 
 const itemClass = drule({
@@ -78,6 +82,7 @@ export interface ContextItemProps extends React.HTMLAttributes<any> {
   selected?: boolean;
   disabled?: boolean;
   inset?: boolean;
+  mono?: boolean;
   /** Whether to close popup on click. */
   closePopup?: boolean;
 }
@@ -101,6 +106,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
   selected,
   disabled,
   inset,
+  mono,
   closePopup,
   ...rest
 }) => {
@@ -181,6 +187,10 @@ export const ContextItem: React.FC<ContextItemProps> = ({
         <span style={{opacity: 0.4}}> {SYMBOL.ELLIPSIS}</span>
       </span>
     );
+  }
+
+  if (mono) {
+    element = <code>{element}</code>;
   }
 
   if (right) {

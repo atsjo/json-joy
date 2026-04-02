@@ -19,26 +19,41 @@ export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
   onPopupClose,
   ...rest
 }) => {
-  const expandPoint = React.useRef<AnchorPoint>({x: 32, y: 32, dx: 1, dy: 1});
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const getExpandPoint = React.useCallback((): AnchorPoint => {
+    const el = ref.current;
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      const doLeanLeft = rect.x > 360;
+      return doLeanLeft
+        ? {x: rect.x + rect.width - 32, y: rect.y, dx: -1, dy: 0}
+        : {x: rect.x + rect.width + 8, y: rect.y, dx: 1, dy: 0};
+    }
+    return {x: 32, y: 32, dx: 1, dy: 1};
+  }, []);
 
   return (
-    <div
-      ref={(el: HTMLElement | null) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (!rect) return;
-        expandPoint.current.dx = 1;
-        expandPoint.current.dy = 1;
-        expandPoint.current.x = rect.x - 100;
-        expandPoint.current.y = rect.y - 48;
-      }}
-    >
+    <div ref={ref}>
       <ExpandableToolbar
         {...rest}
+        pane={{
+          ...(typeof rest.pane === 'object' ? rest.pane : {}),
+          compact: true,
+        }}
+        compact
         menu={menu}
-        expandPoint={() => expandPoint.current}
+        expandPoint={getExpandPoint}
         disabled={disabled}
         onPopupClose={onPopupClose}
+        more={{
+          small: true,
+          tooltip: {
+            renderTooltip: () => 'More',
+            nowrap: true,
+            shortcut: 'Ctrl + /',
+          },
+        }}
       />
     </div>
   );

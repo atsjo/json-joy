@@ -326,6 +326,190 @@ const testSuite = (setup: () => Kit): void => {
           expect(result).toBeUndefined();
         });
       });
+
+      describe('word movement - skips over atoms', () => {
+        /**
+         * Document: "ab X1Y fg" with "X1Y" (offset 3, length 3) as Atomic.
+         * The atom content mixes letters and digits, so skipWord's predicate
+         * would stop mid-atom without atom-awareness. Word-forward from "ab "
+         * must NOT land inside the atom.
+         */
+        const setupWords = () => {
+          const kit = setup();
+          const {peritext} = kit;
+          const str = peritext.strApi();
+          str.del(0, str.length());
+          str.ins(0, 'ab X1Y fg');
+          // "X1Y" at offset 3, length 3 is the atom (mixed chars)
+          const range = peritext.rangeAt(3, 3);
+          const atom = peritext.savedSlices.insAtomic(range, 'math', {}, padded);
+          peritext.overlay.refresh();
+          return {...kit, atom};
+        };
+
+        test('eow() does not land inside atomic slice (mixed-char atom)', () => {
+          const {peritext, editor} = setupWords();
+          let point = peritext.pointAt(0);
+          point = editor.eow(point);
+          expect(point.viewPos()).toBe(2);
+          // Second eow should skip past the atom entirely, NOT stop at 'X' inside it
+          point = editor.eow(point);
+          const pos = point.viewPos();
+          expect(editor.atomAt(point)).toBeUndefined();
+          expect(pos).toBeGreaterThanOrEqual(6);
+        });
+
+        test('bow() does not land inside atomic slice (mixed-char atom)', () => {
+          const {peritext, editor} = setupWords();
+          // Start at end of text
+          let point = peritext.pointAt(9);
+          point = editor.bow(point);
+          expect(point.viewPos()).toBe(7); // before "fg"
+          // Next bow should skip back past the atom, NOT stop at 'Y' inside it
+          point = editor.bow(point);
+          const pos = point.viewPos();
+          expect(editor.atomAt(point)).toBeUndefined();
+          expect(pos).toBeLessThanOrEqual(3);
+        });
+
+        test('skip(word) forward does not stop inside atom', () => {
+          const {peritext, editor} = setupWords();
+          const point = peritext.pointAt(0);
+          const result = editor.skip(point, 2, 'word');
+          expect(editor.atomAt(result)).toBeUndefined();
+          expect(result.viewPos()).toBeGreaterThanOrEqual(6);
+        });
+
+        test('skip(word) backward does not stop inside atom', () => {
+          const {peritext, editor} = setupWords();
+          const point = peritext.pointAt(9);
+          const result = editor.skip(point, -2, 'word');
+          expect(editor.atomAt(result)).toBeUndefined();
+          expect(result.viewPos()).toBeLessThanOrEqual(3);
+        });
+
+        test('move(word) forward does not get stuck inside atom', () => {
+          const {editor} = setupWords();
+          editor.cursor.setAt(0);
+          editor.move(1, 'word');
+          expect(editor.cursor.start.viewPos()).toBe(2);
+          editor.move(1, 'word');
+          const pos = editor.cursor.start.viewPos();
+          expect(editor.atomAt(editor.cursor.start)).toBeUndefined();
+          expect(pos).toBeGreaterThanOrEqual(6);
+        });
+
+        describe('uniform atom content (all letters)', () => {
+          /**
+           * Document: "ab eqn fg" with "eqn" (offset 3, length 3) as Atomic.
+           * Since atom content is all letters, skipWord's predicate will NOT
+           * break inside the atom. Instead it consumes the whole atom and may
+           * land at or past the atom boundary where atomAt() might not detect
+           * it, so skipAtom() becomes a no-op. The atom should still be treated
+           * as one unit: one eow from "ab" should skip past the whole atom.
+           */
+          const setupUniform = () => {
+            const kit = setup();
+            const {peritext} = kit;
+            const str = peritext.strApi();
+            str.del(0, str.length());
+            str.ins(0, 'ab eqn fg');
+            const range = peritext.rangeAt(3, 3);
+            const atom = peritext.savedSlices.insAtomic(range, 'math', {}, padded);
+            peritext.overlay.refresh();
+            return {...kit, atom};
+          };
+
+          test('eow() forward from before atom counts atom as one word', () => {
+            const {peritext, editor} = setupUniform();
+            let point = peritext.pointAt(0);
+            point = editor.eow(point);
+            expect(point.viewPos()).toBe(2); // end of "ab"
+            // Next eow: should treat atom as one unit, landing past it
+            point = editor.eow(point);
+            expect(editor.atomAt(point)).toBeUndefined();
+            expect(point.viewPos()).toBeGreaterThanOrEqual(6);
+          });
+
+          test('bow() backward from after atom counts atom as one word', () => {
+            const {peritext, editor} = setupUniform();
+            let point = peritext.pointAt(9);
+            point = editor.bow(point);
+            expect(point.viewPos()).toBe(7); // before "fg"
+            // Next bow: should treat atom as one unit, landing before it
+            point = editor.bow(point);
+            expect(editor.atomAt(point)).toBeUndefined();
+            expect(point.viewPos()).toBeLessThanOrEqual(3);
+          });
+
+          test('skip 3 words forward crosses atom without consuming extra words', () => {
+            const {peritext, editor} = setupUniform();
+            // "ab [eqn] fg" - 3 words: "ab", atom, "fg"
+            const point = peritext.pointAt(0);
+            const result = editor.skip(point, 3, 'word');
+            // 3 word-skips: end of "ab", past atom, end of "fg"
+            expect(result.viewPos()).toBe(9); // end of "fg"
+          });
+
+          test('skip 3 words backward crosses atom without consuming extra words', () => {
+            const {peritext, editor} = setupUniform();
+            const point = peritext.pointAt(9);
+            const result = editor.skip(point, -3, 'word');
+            expect(result.viewPos()).toBe(0); // start of "ab"
+          });
+        });
+      });
+
+      describe('line movement – skips over atoms', () => {
+        const setupLine = () => {
+          const kit = setup();
+          const {peritext} = kit;
+          const str = peritext.strApi();
+          str.del(0, str.length());
+          str.ins(0, 'ab X1Y fg\nhi jkl mn');
+          // "X1Y" at offset 3, length 3 is the atom (mixed chars)
+          const range = peritext.rangeAt(3, 3);
+          const atom = peritext.savedSlices.insAtomic(range, 'math', {tex: 'E=mc^2'}, padded);
+          peritext.overlay.refresh();
+          return {...kit, atom};
+        };
+
+        test('eol() result is not inside atom', () => {
+          const {peritext, editor} = setupLine();
+          const point = peritext.pointAt(0);
+          const result = editor.eol(point);
+          const pos = result.viewPos();
+          expect(pos).toBe(9);
+          expect(editor.atomAt(result)).toBeUndefined();
+        });
+
+        test('bol() result is not inside atom', () => {
+          const {peritext, editor} = setupLine();
+          const point = peritext.pointAt(9);
+          const result = editor.bol(point);
+          const pos = result.viewPos();
+          expect(pos).toBe(0);
+          expect(editor.atomAt(result)).toBeUndefined();
+        });
+
+        test('eol() does not stop at newline-like char inside atom', () => {
+          const kit = setup();
+          const {peritext, editor} = kit;
+          const str = peritext.strApi();
+          str.del(0, str.length());
+          // Place a newline character inside the atom content
+          str.ins(0, 'hello X\nY world');
+          // "X\nY" at offset 6, length 3 is the atom
+          const range = peritext.rangeAt(6, 3);
+          peritext.savedSlices.insAtomic(range, 'formula', undefined, padded);
+          peritext.overlay.refresh();
+          const point = peritext.pointAt(0);
+          const result = editor.eol(point);
+          // Should skip past the atom's internal newline and reach end of text
+          expect(editor.atomAt(result)).toBeUndefined();
+          expect(result.viewPos()).toBeGreaterThanOrEqual(9);
+        });
+      });
     });
   }
 };

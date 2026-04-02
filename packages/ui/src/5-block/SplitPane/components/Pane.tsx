@@ -18,7 +18,6 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(props, r
   const defaultStyle: CSSProperties = {
     position: 'relative',
     outline: 'none',
-    overflow: 'auto',
     flex: 'none',
   };
 

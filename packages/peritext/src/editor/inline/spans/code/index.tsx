@@ -3,17 +3,13 @@ import {type InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensi
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Code} from './Code';
-import type {EditorState} from '../../../state';
 
 export const name = 'Code';
 export const Icon = makeIcon({set: 'tabler', icon: 'code'});
 export const behavior = spanOne(SliceTypeCon.code, name, {
   keys: ['Primary', 'e'],
-  action: (state: EditorState) => {
-    state.et.format('tog', SliceTypeCon.code);
-  },
   menuId: 'fmt-technical',
-  menu: (state: EditorState) => ({
+  menu: () => ({
     name,
     order: 1,
     icon: () => <Icon width={16} height={16} />,

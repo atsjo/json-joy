@@ -316,7 +316,6 @@ export function SplitPane(props: SplitPaneProps) {
     flexDirection: direction === 'horizontal' ? 'row' : 'column',
     height: '100%',
     width: '100%',
-    overflow: 'hidden',
     position: 'relative',
     ...style,
   };

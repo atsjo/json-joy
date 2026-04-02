@@ -46,16 +46,18 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
         const isFirst = index === 0;
         const children = item.children;
         const id = item.id ?? item.name;
+        const compositeId = pathStr ? pathStr + '/' + id : id;
         lastPathStr = pathStr;
-        const handleMouseMove = () => openPanel.onMouseMove(id);
-        const isOpen = selected === id;
+        const handleMouseMove = () => openPanel.onMouseMove(compositeId);
+        const isOpen = selected === compositeId;
+        const hasArgs = !!item.params?.length;
         return (
-          <React.Fragment key={id}>
+          <React.Fragment key={compositeId}>
             {!isFirst && !samePath && <ContextSep />}
             {!isFirst && !samePath && <ContextSep line />}
             {!isFirst && !samePath && <ContextSep />}
             {!!path.length && !samePath && <GroupTitle path={path} off={1} />}
-            <div data-menu-row data-menu-id={id}>
+            <div data-menu-row data-menu-id={compositeId}>
               <ContextItemNested
                 open={isOpen}
                 key={pathStr + (item.id || item.name)}
@@ -65,14 +67,19 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
                 icon={item.icon?.()}
                 right={item.right?.()}
                 danger={item.danger}
+                mono={item.mono}
                 onClick={
-                  item.onSelect
-                    ? (event) => state.execute(item, event)
-                    : children
-                      ? () => {
-                          state.select(path, item);
-                        }
-                      : void 0
+                  hasArgs
+                    ? () => {
+                        state.selectArgs(path, item);
+                      }
+                    : item.onSelect
+                      ? (event) => state.execute(item, event)
+                      : children
+                        ? () => {
+                            state.select(path, item);
+                          }
+                        : void 0
                 }
                 renderPane={
                   children

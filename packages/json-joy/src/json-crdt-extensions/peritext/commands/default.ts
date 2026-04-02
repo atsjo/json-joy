@@ -2,6 +2,7 @@ import type {Peritext} from '../Peritext';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 
 export interface PeritextDefaultCommands {
+  FormatToggle(tag: string | number): void;
   Caret(gap: number): void;
   Delete(): void;
   Insert(text: string): void;
@@ -16,6 +17,10 @@ export class CommandsImpl implements PeritextDefaultCommands {
     public readonly txt: Peritext,
     public readonly et: PeritextEventTarget,
   ) {}
+
+  public FormatToggle(tag: string | number): void {
+    this.et.format('tog', typeof tag === 'number' ? tag : tag + '');
+  }
 
   public Caret(gap: number): void {
     this.et.cursor({at: [Number(gap)]});

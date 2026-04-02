@@ -62,6 +62,7 @@ export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
 
   style?: React.CSSProperties;
   accent?: string;
+  compact?: boolean;
   className?: string;
   children?: React.ReactNode;
 }

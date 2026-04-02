@@ -34,6 +34,7 @@ export class RangeMenu implements UiLifeCycles {
     const children: MenuItem['children'] = [
       this.formattingMenu(),
       this.annotationsMenu(),
+      // this.typesettingMenu(),
       this.modifyMenu(),
       this.state.menu.buffer.clipboardMenu(),
       /*
@@ -277,7 +278,7 @@ export class RangeMenu implements UiLifeCycles {
         },
         */
     ];
-    const commands = this.cmdMenu();
+    const commands = this.state.cmd?.buildRangeMenu();
     if (commands) children.push(commands);
     return {
       name: 'Selection menu',
@@ -464,17 +465,4 @@ export class RangeMenu implements UiLifeCycles {
       ],
     };
   };
-
-  private cmdMenu(): MenuItem | undefined {
-    const state = this.state;
-    const cmd = state.cmd;
-    if (!cmd) return;
-    return {
-      name: 'Commands',
-      expand: 0,
-      sepBefore: true,
-      minWidth: 300,
-      children: cmd.buildMenu(),
-    };
-  }
 }

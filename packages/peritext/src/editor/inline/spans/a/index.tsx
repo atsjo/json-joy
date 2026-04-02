@@ -19,6 +19,8 @@ import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {RenderInlineProps} from '../../RenderInline';
 import type {MenuItem} from '../../../types';
+import type {DynamicCommandDefinition} from '../../../state/commands/types';
+import type {EditorState} from '../../../state';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'link'});
 
@@ -44,8 +46,9 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.a, typeof sche
   },
 };
 
+const name = 'Link';
 const menu: MenuItem = {
-  name: 'Link',
+  name,
   icon: () => <Icon width={15} height={15} />,
   right: () => <Sidetip small>⌘ K</Sidetip>,
   keys: ['⌘', 'k'],
@@ -56,6 +59,41 @@ export const behavior = new (class ABehavior extends SpanBehavior<SliceStacking.
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.a, 'Link', schema, false, void 0, fromHtml);
   }
+
+  public readonly cmd: DynamicCommandDefinition = (state: EditorState) => {
+    const menu = this.getMenu(state);
+    return {
+      ...menu,
+      onSelect: void 0,
+      name,
+      cmd: name,
+      mono: true,
+      domain: 'range',
+      group: ['Add formatting'],
+      params: [
+        {
+          kind: 'str',
+          id: 'url',
+          name: 'Link',
+          placeholder: 'https://example.com',
+        },
+        {
+          kind: 'str',
+          id: 'title',
+          name: 'Title',
+          optional: true,
+          placeholder: 'Title',
+        },
+      ],
+      action: (state, args) => {
+        const url = args[0] || '';
+        const data: Data = {href: url};
+        const title = args[1] || '';
+        if (title) data.title = title;
+        state.surface.events.et.format('tog', SliceTypeCon.a, 'many', data);
+      },
+    };
+  };
 
   public readonly menu = menu;
 

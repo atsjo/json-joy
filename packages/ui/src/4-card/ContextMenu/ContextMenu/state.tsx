@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {BehaviorSubject} from 'rxjs';
-import type {MenuItem} from '../../StructuralMenu/types';
 import {findMenuItems} from './util';
+import {rsync} from '../../..';
+import type {MenuItem} from '../../StructuralMenu/types';
 import type {SearchMatch} from './types';
 import type {ContextMenuProps} from '.';
 import type {OpenPanelState} from './OpenPanelState';
@@ -109,6 +110,20 @@ export class ContextMenuState {
       item.onSelect(event);
       this.onclose?.();
     }
+  };
+
+  // ------------------------------------------------------ Argument collection
+
+  /** The item currently being configured with arguments. */
+  public readonly argsItem = rsync.val<MenuItem | null>(null);
+
+  public readonly selectArgs = (path: MenuItem[], item: MenuItem): void => {
+    this.path$.next(path);
+    this.argsItem.next(item);
+  };
+
+  public readonly cancelArgs = (): void => {
+    this.argsItem.next(null);
   };
 
   // ------------------------------------------------------ Keyboard navigation

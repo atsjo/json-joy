@@ -31,6 +31,15 @@ export class UiHandle {
     return this.api.getCharRect?.(point.id);
   }
 
+  /**
+   * Same as {@link getPointRect} but if the character in the given direction is
+   * inside an atomic slice (not individually measurable in DOM), falls back to
+   * measuring from the opposite direction.
+   */
+  private getPointRectRobust(pos: Point<string>, right: boolean): Rect | undefined {
+    return this.getPointRect(pos, right) ?? this.getPointRect(pos, !right);
+  }
+
   public pointX(pos: number | Point<string>): [x: number, rect: Rect] | undefined {
     const txt = this.txt;
     const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
@@ -41,6 +50,7 @@ export class UiHandle {
   }
 
   public findPointAtX(targetX: number, line: UiLineInfo): Point<string> {
+    const editor = this.txt.editor;
     let point = line[0][0].clone();
     const curr = point;
     let bestDiff = 1e9;
@@ -56,14 +66,22 @@ export class UiHandle {
         point = curr.clone();
       } else break;
       curr.step(1);
+      const atom = editor.atomAt(curr);
+      if (atom) {
+        const edge = atom.end.clone();
+        edge.refBefore();
+        if (edge.isAbs()) break;
+        curr.set(edge);
+      }
     }
     return point;
   }
 
   public getLineEnd(pos: number | Point<string>, right = true): UiLineEdge | undefined {
+    const editor = this.txt.editor;
     const startPoint = this.point(pos);
     if (startPoint.isAbs()) return;
-    const startRect = this.getPointRect(startPoint, right);
+    const startRect = this.getPointRectRobust(startPoint, right);
     if (!startRect) return;
     let curr = startPoint.clone();
     let currRect = startRect;
@@ -78,10 +96,17 @@ export class UiHandle {
       return [curr, currRect];
     };
     while (true) {
-      const next = curr.copy((p) => p.step(right ? 1 : -1));
+      let next = curr.copy((p) => p.step(right ? 1 : -1));
       if (!next) return prepareReturn();
       if (next.isAbs()) return prepareReturn();
-      const nextRect = this.getPointRect(next, right);
+      const atom = editor.atomAt(next);
+      if (atom) {
+        next = right ? atom.end.clone() : atom.start.clone();
+        if (right) next.refBefore();
+        else next.refAfter();
+        if (next.isAbs()) return prepareReturn();
+      }
+      const nextRect = this.getPointRectRobust(next, right);
       if (!nextRect) return prepareReturn();
       if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return prepareReturn();
       curr = next;
@@ -93,6 +118,12 @@ export class UiHandle {
     const txt = this.txt;
     const point = this.point(pos);
     if (point.isAbs()) return;
+    const atom = txt.editor.atomAt(point);
+    if (atom) {
+      const edge = atom.start.clone();
+      edge.refAfter();
+      if (!edge.isAbs()) point.set(edge);
+    }
     const isEndOfText = point.viewPos() === txt.strApi().length();
     if (isEndOfText) return;
     const left = this.getLineEnd(point, false);
@@ -106,6 +137,13 @@ export class UiHandle {
     const txt = this.txt;
     if (edge.viewPos() >= txt.str.length()) return;
     const point = edge.copy((p) => p.step(direction));
+    const atom = txt.editor.atomAt(point);
+    if (atom) {
+      const atomEdge = direction > 0 ? atom.end.clone() : atom.start.clone();
+      if (direction > 0) atomEdge.refBefore();
+      else atomEdge.refAfter();
+      if (!atomEdge.isAbs()) point.set(atomEdge);
+    }
     const success = txt.overlay.skipMarkers(point, direction);
     if (!success) return;
     if (point.isAbs()) return;

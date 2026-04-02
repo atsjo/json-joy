@@ -391,7 +391,7 @@ export const inlineText: MenuItem = {
       sep: true,
     },
     {
-      name: 'Copy, cut, and paste',
+      name: 'Copy, cut & paste',
       // icon: () => <ClipboardCopyIcon width={15} height={15} />,
       icon: () => <CopyIcon width={16} height={16} />,
       expand: 0,

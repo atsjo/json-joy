@@ -9,8 +9,8 @@
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/base64",
-  "repository": "jsonjoy-com/base64",
+  "homepage": "https://github.com/streamich/json-joy/packages/base64",
+  "repository": "streamich/json-joy",
   "license": "Apache-2.0",
   "funding": {
     "type": "github",

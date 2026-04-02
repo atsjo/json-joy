@@ -15,6 +15,7 @@ import {isValid} from '../../../util/color';
 import type {IconProps, ValidationResult} from '../../SpanBehavior';
 import type {Fmt} from '../../../state/formattings';
 import type {EditorState} from '../../../state';
+import type {DynamicCommandDefinition} from '../../../state/commands/types';
 
 export const name = 'Color';
 export const Icon = makeIcon({set: 'lucide', icon: 'paintbrush'});
@@ -43,6 +44,33 @@ export const behavior = new (class ColBehavior extends SpanBehavior<
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.col, name, schema, false, void 0, fromHtml);
   }
+
+  public readonly cmd: DynamicCommandDefinition = (state: EditorState) => {
+    const menu = this.getMenu(state);
+    return {
+      ...menu,
+      onSelect: void 0,
+      name,
+      cmd: name,
+      mono: true,
+      domain: 'range',
+      group: ['Add formatting'],
+      params: [
+        {
+          id: 'col',
+          name: 'Color',
+          kind: 'color',
+          required: true,
+          default: '#000000',
+          placeholder: '#hex',
+        },
+      ],
+      action: (state, args) => {
+        const color = args[0] || '#000000';
+        state.surface.events.et.format('tog', SliceTypeCon.col, 'many', {col: color});
+      },
+    };
+  };
 
   public readonly menuId = 'fmt-artistic';
   public readonly menu = (state: EditorState) => ({

@@ -66,6 +66,25 @@ const makeRangeExtendable = <T>(range: Range<T>): void => {
   }
 };
 
+/**
+ * Returns `true` if the given UTF-16 code unit is guaranteed to be a
+ * single-code-unit grapheme cluster on its own (fast path), meaning we
+ * can skip the `Intl.Segmenter` lookup.
+ */
+const isSimpleCodeUnit = (code: number): boolean => {
+  if (code >= 0xd800 && code <= 0xdfff) return false; // surrogate
+  if (code >= 0x0300 && code <= 0x036f) return false; // combining diacritical marks
+  if (code >= 0x1ab0 && code <= 0x1aff) return false; // combining diacritical ext
+  if (code >= 0x20d0 && code <= 0x20ff) return false; // combining for symbols
+  if (code >= 0xfe20 && code <= 0xfe2f) return false; // combining half marks
+  if (code === 0x200d) return false; // ZWJ
+  if (code === 0xfe0e || code === 0xfe0f) return false; // variation selectors
+  if (code >= 0x1100 && code <= 0x11ff) return false; // Hangul jamo
+  if (code >= 0xa960 && code <= 0xa97f) return false; // Hangul jamo Ext-A
+  if (code >= 0xd7b0 && code <= 0xd7ff) return false; // Hangul jamo Ext-B
+  return true;
+};
+
 export class Editor<T = string> implements Printable {
   public readonly saved: EditorSlices<T>;
   public readonly extra: EditorSlices<T>;
@@ -494,8 +513,58 @@ export class Editor<T = string> implements Printable {
       // If after the step we landed inside an atomic slice, jump to its edge.
       const skippedTo = this.skipAtom(point, direction);
       if (skippedTo !== point) point.set(skippedTo);
+      // If the step landed inside a multi-code-unit grapheme cluster, advance
+      // to the grapheme boundary in the direction of travel.
+      else this.snapToGrapheme(point, direction);
     }
     return end;
+  }
+
+  /**
+   * If the point is inside a multi-code-unit grapheme cluster (e.g. between
+   * the surrogates of an emoji), advance it to the grapheme boundary in the
+   * given direction.
+   */
+  private snapToGrapheme(point: Point<T>, direction: number): void {
+    // Fast path: check single code units on both sides of the cursor.
+    // If both are simple BMP chars, we're on a grapheme boundary — done.
+    const left = point.leftChar();
+    const right = point.rightChar();
+    const leftCode = left ? (left.view() as unknown as string).charCodeAt(0) : -1;
+    const rightCode = right ? (right.view() as unknown as string).charCodeAt(0) : -1;
+    if ((leftCode < 0 || isSimpleCodeUnit(leftCode)) && (rightCode < 0 || isSimpleCodeUnit(rightCode))) return;
+    // Slow path: peek a window, segment it, find if we're mid-grapheme.
+    if (direction > 0) {
+      const rightText = point.peekRight(24);
+      if (!rightText.length) return;
+      const leftText = point.peekLeft(24);
+      const window = leftText + rightText;
+      const cursor = leftText.length;
+      const seg = new Intl.Segmenter(undefined, {granularity: 'grapheme'});
+      for (const {index, segment} of seg.segment(window)) {
+        const segEnd = index + segment.length;
+        if (cursor > index && cursor < segEnd) {
+          point.step(segEnd - cursor);
+          return;
+        }
+        if (index >= cursor) return;
+      }
+    } else {
+      const leftText = point.peekLeft(24);
+      if (!leftText.length) return;
+      const rightText = point.peekRight(24);
+      const window = leftText + rightText;
+      const cursor = leftText.length;
+      const seg = new Intl.Segmenter(undefined, {granularity: 'grapheme'});
+      for (const {index, segment} of seg.segment(window)) {
+        const segEnd = index + segment.length;
+        if (cursor > index && cursor < segEnd) {
+          point.step(-(cursor - index));
+          return;
+        }
+        if (index >= cursor) return;
+      }
+    }
   }
 
   private didSkipDeleted(point: Point<T>, direction: number): boolean {
@@ -679,7 +748,8 @@ export class Editor<T = string> implements Printable {
     predicate: CharPredicate<string> = isLetter,
     firstLetterFound: boolean = false,
   ): Point<T> {
-    return this.skipWord(this.fwd(point), predicate, firstLetterFound) || point;
+    const result = this.skipWord(this.fwd(point), predicate, firstLetterFound) || point;
+    return this.skipAtom(result, 1);
   }
 
   /**
@@ -700,21 +770,28 @@ export class Editor<T = string> implements Printable {
     firstLetterFound: boolean = false,
   ): Point<T> {
     const bwd = this.bwd(point);
-    const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
-    if (endPoint) endPoint.anchor = Anchor.Before;
+    let endPoint = this.skipWord(bwd, predicate, firstLetterFound);
+    if (endPoint) {
+      endPoint = this.skipAtom(endPoint, -1);
+      endPoint.anchor = Anchor.Before;
+    }
     return endPoint || point;
   }
 
   /** Find end of line, starting from given point. */
   public eol(point: Point<T>): Point<T> {
-    return this.skipLine(this.fwd(point)) || this.end();
+    const result = this.skipLine(this.fwd(point)) || this.end();
+    return this.skipAtom(result, 1);
   }
 
   /** Find beginning of line, starting from given point. */
   public bol(point: Point<T>): Point<T> {
     const bwd = this.bwd(point);
-    const endPoint = this.skipLine(bwd);
-    if (endPoint) endPoint.anchor = Anchor.Before;
+    let endPoint = this.skipLine(bwd);
+    if (endPoint) {
+      endPoint = this.skipAtom(endPoint, -1);
+      endPoint.anchor = Anchor.Before;
+    }
     return endPoint || this.start();
   }
 
@@ -779,6 +856,7 @@ export class Editor<T = string> implements Printable {
       case 'char': {
         const p = point.clone();
         p.step(steps);
+        this.snapToGrapheme(p, direction);
         return this.skipAtom(p, direction);
       }
       case 'vchar': {

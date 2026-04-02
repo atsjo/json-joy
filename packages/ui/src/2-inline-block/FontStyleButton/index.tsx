@@ -13,6 +13,7 @@ const blockClass = drule({
   bd: 0,
   bxz: 'border-box',
   us: 'none',
+  minW: 0,
 });
 
 const verticalClass = drule({

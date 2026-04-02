@@ -5,6 +5,7 @@ import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
+import {updateNum} from '../../../json-hash/hash';
 import {formatStep} from '../slice/util';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
@@ -100,6 +101,8 @@ export type InlineAttrs<T = string> = Record<string | number, InlineAttrStack<T>
  * full text content of the inline.
  */
 export class Inline<T = string> extends Range<T> implements Printable {
+  public hash: number = 0;
+
   constructor(
     public readonly txt: Peritext<T>,
     public readonly p1: OverlayPoint<T>,
@@ -108,6 +111,19 @@ export class Inline<T = string> extends Range<T> implements Printable {
     end: Point<T>,
   ) {
     super(txt.str, start, end);
+  }
+
+  public refresh(): number {
+    const {p1, p2} = this;
+    let state = p1.hash ?? 5381;
+    if (p2) state = updateNum(state, p2.hash ?? 5381);
+    const layers = p1.layers;
+    const length = layers.length;
+    for (let i = 0; i < length; i++) state = updateNum(state, layers[i].hash);
+    const markers = p1.markers;
+    const length2 = markers.length;
+    for (let i = 0; i < length2; i++) state = updateNum(state, markers[i].hash);
+    return (this.hash = state);
   }
 
   /**

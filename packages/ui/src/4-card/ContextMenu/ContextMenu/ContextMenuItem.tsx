@@ -24,6 +24,8 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
 
   const id = item.id ?? item.name;
   const children = !!item.children && !!item.children.length ? item.children : void 0;
+  const hasArgs = !!item.params?.length;
+  const display = item.display?.() ?? t(item.name);
 
   return (
     <div data-menu-row data-menu-id={id}>
@@ -45,14 +47,19 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
         }
         right={item.right?.()}
         danger={item.danger}
+        mono={item.mono}
         onClick={
-          item.onSelect
-            ? (event) => state.execute(item, event)
-            : children
-              ? () => {
-                  state.select(path, item);
-                }
-              : void 0
+          hasArgs
+            ? () => {
+                state.selectArgs(path, item);
+              }
+            : item.onSelect
+              ? (event) => state.execute(item, event)
+              : children
+                ? () => {
+                    state.select(path, item);
+                  }
+                : void 0
         }
         renderPane={!!children && renderPane ? renderPane : void 0}
         onMouseEnter={() => openPanel?.onMouseMove(id)}
@@ -64,7 +71,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
         aria-expanded={children ? open : undefined}
         aria-disabled={disabled || undefined}
       >
-        {item.display?.() ?? t(item.name)}
+        {display}
       </ContextItemNested>
     </div>
   );

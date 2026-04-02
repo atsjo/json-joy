@@ -29,10 +29,10 @@ const noop = () => {};
 
 export interface InputProps {
   disabled?: boolean;
+  type?: 'text' | 'password' | 'email' | 'number';
   value?: string;
   placeholder?: string;
   label?: string;
-  type?: 'text' | 'password' | 'email';
   focus?: boolean;
   select?: boolean;
   readOnly?: boolean;
@@ -51,6 +51,7 @@ export interface InputProps {
   onPaste?: () => void;
   onEsc?: React.KeyboardEventHandler;
   onEnter?: React.KeyboardEventHandler;
+  onSubmit?: React.KeyboardEventHandler;
   onKeyDown?: React.KeyboardEventHandler;
 }
 
@@ -62,6 +63,7 @@ export const Input: React.FC<InputProps> = (props) => {
     onPaste,
     onEsc,
     onEnter,
+    onSubmit,
     label,
     size,
     readOnly,
@@ -105,10 +107,10 @@ export const Input: React.FC<InputProps> = (props) => {
       if (props.isInForm && e.key === 'Enter') {
         ref.current.blur();
       } else if (e.key === 'Escape') onEsc?.(e);
-      else if (e.key === 'Enter') onEnter?.(e);
+      else if (e.key === 'Enter') (onEnter || onSubmit)?.(e);
       else onKeyDown?.(e);
     },
-    [onEsc, onEnter, onKeyDown, props.isInForm],
+    [onEsc, onEnter, onSubmit, onKeyDown, props.isInForm],
   );
 
   let rightElement: React.ReactNode = null;

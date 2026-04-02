@@ -2,21 +2,22 @@ import * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
-import type {EditorState} from '../../../state/EditorState';
+import type {MenuItem} from '../../../types';
 
 export const name = 'Bold';
 export const Icon = makeIcon({set: 'radix', icon: 'font-bold'});
+
+const icon = () => <Icon width={15} height={15} />;
+const menu: MenuItem = {
+  name,
+  order: 1,
+  icon,
+};
+
 export const behavior = spanOne(SliceTypeCon.b, name, {
   keys: ['Primary', 'b'],
-  action: (state: EditorState) => {
-    state.et.format('tog', SliceTypeCon.b);
-  },
   menuId: 'fmt-common',
-  menu: {
-    name,
-    order: 1,
-    icon: () => <Icon width={15} height={15} />,
-  },
+  menu: () => ({...menu}),
   text: (style) => {
     style.fontWeight = 'bold';
   },

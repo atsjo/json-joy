@@ -16,9 +16,6 @@ import type {EditorState} from '../state';
 import type {SpanProps} from '../../web/react/types';
 import type {DynamicCommandDefinition} from '../state/commands/types';
 
-/**
- * Inline slice behavior.
- */
 export class SpanBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
@@ -97,7 +94,7 @@ export class SpanBehavior<
   Edit?: React.FC<EditProps> = void 0;
 
   /** Commands to register in global command palette. */
-  cmd?: DynamicCommandDefinition = void 0;
+  cmd?: DynamicCommandDefinition | DynamicCommandDefinition[];
 
   public getMenu(state: EditorState): MenuItem | undefined {
     const menu = this.menu;
