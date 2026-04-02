@@ -20,8 +20,8 @@ export class OpenPanelState implements UiLifeCycles {
   };
 
   public readonly hover = (id: string) => {
-    if (id === this.lastClosed) return;
     const selected = this.selected$.value;
+    if (id === this.lastClosed && selected !== id) return;
     if (!selected) {
       this.forceSelect(id);
       return;
