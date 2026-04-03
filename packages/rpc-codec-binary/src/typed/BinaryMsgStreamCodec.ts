@@ -1,6 +1,6 @@
 import {RpcMessageFormat} from '@jsonjoy.com/rpc-codec-base/lib/constants';
 import * as msg from '@jsonjoy.com/rpc-messages';
-import {decode} from '../decode';
+import {decode} from './decode';
 import {BinaryMessageType} from '../constants';
 import {writeType2, writeType3, writeType4} from './encode';
 import type {Uint8ArrayCut} from '@jsonjoy.com/buffers/lib/Uint8ArrayCut';
@@ -9,7 +9,7 @@ import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 
 export class BinaryMsgStreamCodec implements MsgStreamCodec {
   id = 'rx.binary';
-  format = RpcMessageFormat.Compact;
+  format = RpcMessageFormat.Binary;
 
   public write(codec: JsonValueCodec, message: msg.RpcMessage): void {
     if (message instanceof msg.NotificationMessage) {
