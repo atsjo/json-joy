@@ -4,7 +4,7 @@ import {RxCaller} from './RxCaller';
 import type {Observable} from 'rxjs';
 import type {RpcMessage} from '@jsonjoy.com/rpc-messages';
 import type {MsgCodec} from '@jsonjoy.com/rpc-codec-base';
-import type {Caller, RpcCallerMethods} from './types';
+import type {Caller, CallerMethods} from './types';
 
 export interface FetchCallerOptions {
   /** URL of the RPC endpoint. */
@@ -22,7 +22,7 @@ export interface FetchCallerOptions {
  * {@link FetchChannel} as the physical transport, {@link MsgCodecLogicalChannel}
  * for encoding/decoding, and {@link RxCaller} for RPC semantics.
  */
-export class FetchCaller<Methods extends RpcCallerMethods<any> = RpcCallerMethods> implements Caller<Methods> {
+export class FetchCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
   public readonly caller: RxCaller<Methods>;
 
   constructor(options: FetchCallerOptions) {

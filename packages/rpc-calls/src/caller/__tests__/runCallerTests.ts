@@ -12,7 +12,7 @@ export interface ApiTestSetupResult {
 
 export type ApiTestSetup = () => ApiTestSetupResult | Promise<ApiTestSetupResult>;
 
-export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests}: {skipValidationTests?: boolean} = {}) => {
+export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests, skipStreamingTests}: {skipValidationTests?: boolean; skipStreamingTests?: boolean} = {}) => {
   describe('API', () => {
     describe('ping', () => {
       test('can execute static RPC method', async () => {
@@ -75,27 +75,31 @@ export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests}: {skip
       });
     });
 
-    describe('streamError', () => {
-      test('throws error on streaming RPC error', async () => {
-        const {caller, stop} = await setup();
-        const [, error] = await of(lastValueFrom(caller.call$('streamError', {})));
-        expect(error).toMatchObject({message: 'Stream always errors'});
-        await stop();
-      });
-    });
-
-    describe('util.info', () => {
-      test('can receive one value of stream that ends after emitting one value', async () => {
-        const {caller, stop} = await setup();
-        const observable = caller.call$('util.info', {});
-        const result = await firstValueFrom(observable);
-        expect(result).toEqual({
-          commit: 'AAAAAAAAAAAAAAAAAAA',
-          sha1: 'BBBBBBBBBBBBBBBBBBB',
+    if (!skipStreamingTests) {
+      describe('streamError', () => {
+        test('throws error on streaming RPC error', async () => {
+          const {caller, stop} = await setup();
+          const [, error] = await of(lastValueFrom(caller.call$('streamError', {})));
+          expect(error).toMatchObject({message: 'Stream always errors'});
+          await stop();
         });
-        await stop();
       });
-    });
+    }
+
+    if (!skipStreamingTests) {
+      describe('util.info', () => {
+        test('can receive one value of stream that ends after emitting one value', async () => {
+          const {caller, stop} = await setup();
+          const observable = caller.call$('util.info', {});
+          const result = await firstValueFrom(observable);
+          expect(result).toEqual({
+            commit: 'AAAAAAAAAAAAAAAAAAA',
+            sha1: 'BBBBBBBBBBBBBBBBBBB',
+          });
+          await stop();
+        });
+      });
+    }
 
     describe('doubleStringWithValidation', () => {
       test('can execute successfully', async () => {
@@ -120,29 +124,31 @@ export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests}: {skip
     });
 
     // We loop here to check for memory leaks.
-    for (let i = 0; i < 5; i++) {
-      describe(`doubleStringWithValidation2, iteration ${i + 1}`, () => {
-        test('can execute successfully', async () => {
-          const {caller, stop} = await setup();
-          const result = await firstValueFrom(caller.call$('doubleStringWithValidation2', {foo: 'a'}));
-          await new Promise((r) => setTimeout(r, 15));
-          expect(result).toEqual({
-            bar: 'aa',
-          });
-          await stop();
-        });
-
-        if (!skipValidationTests) {
-          test('throws on invalid data', async () => {
+    if (!skipStreamingTests) {
+      for (let i = 0; i < 5; i++) {
+        describe(`doubleStringWithValidation2, iteration ${i + 1}`, () => {
+          test('can execute successfully', async () => {
             const {caller, stop} = await setup();
-            const [, error] = await of(firstValueFrom(caller.call$('doubleStringWithValidation2', {foo: 123 as any})));
-            expect(error).toMatchObject({
-              message: '"foo" property missing.',
+            const result = await firstValueFrom(caller.call$('doubleStringWithValidation2', {foo: 'a'}));
+            await new Promise((r) => setTimeout(r, 15));
+            expect(result).toEqual({
+              bar: 'aa',
             });
             await stop();
           });
-        }
-      });
+
+          if (!skipValidationTests) {
+            test('throws on invalid data', async () => {
+              const {caller, stop} = await setup();
+              const [, error] = await of(firstValueFrom(caller.call$('doubleStringWithValidation2', {foo: 123 as any})));
+              expect(error).toMatchObject({
+                message: '"foo" property missing.',
+              });
+              await stop();
+            });
+          }
+        });
+      }
     }
   });
 
@@ -150,31 +156,38 @@ export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests}: {skip
     test('can execute various methods in parallel', async () => {
       const {caller, stop} = await setup();
       const repeat = async () => {
-        const [res1, res2, res3, res4, res5, res6, res7] = await Promise.all([
+        const promises: Promise<any>[] = [
           caller.call('ping', undefined),
           caller.call('double', {num: 5}),
           caller.call('auth.users.get', {id: 'user-123'}),
           Rx.firstValueFrom(caller.call$('auth.users.get', {id: 'xxx'})),
-          Rx.firstValueFrom(caller.call$('util.info', void 0)),
-          Rx.firstValueFrom(caller.call$('count', {count: 1})),
           Rx.firstValueFrom(caller.call$('doubleStringWithValidation', {foo: '123'})),
-        ]);
-        expect(res1).toBe('pong');
-        expect(res2.num).toBe(10);
-        expect(res3).toEqual({
+        ];
+        if (!skipStreamingTests) {
+          promises.push(
+            Rx.firstValueFrom(caller.call$('util.info', void 0)),
+            Rx.firstValueFrom(caller.call$('count', {count: 1})),
+          );
+        }
+        const results = await Promise.all(promises);
+        expect(results[0]).toBe('pong');
+        expect(results[1].num).toBe(10);
+        expect(results[2]).toEqual({
           id: 'user-123',
           name: 'Mario Dragi',
           tags: ['news', 'cola', 'bcaa'],
         });
-        expect(res4.id).toEqual('xxx');
-        expect(res5).toEqual({
-          commit: 'AAAAAAAAAAAAAAAAAAA',
-          sha1: 'BBBBBBBBBBBBBBBBBBB',
-        });
-        expect(res6).toEqual(0);
-        expect(res7).toEqual({
+        expect(results[3].id).toEqual('xxx');
+        expect(results[4]).toEqual({
           bar: '123123',
         });
+        if (!skipStreamingTests) {
+          expect(results[5]).toEqual({
+            commit: 'AAAAAAAAAAAAAAAAAAA',
+            sha1: 'BBBBBBBBBBBBBBBBBBB',
+          });
+          expect(results[6]).toEqual(0);
+        }
       };
       await repeat();
       await repeat();
@@ -234,12 +247,14 @@ export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests}: {skip
         await stop();
       });
 
-      test('can execute "timer"', async () => {
-        const {caller, stop} = await setup();
-        const res = await Rx.firstValueFrom(caller.call$('util.timer', Rx.of(undefined)).pipe(Rx.skip(2)));
-        expect(res).toBe(2);
-        await stop();
-      });
+      if (!skipStreamingTests) {
+        test('can execute "timer"', async () => {
+          const {caller, stop} = await setup();
+          const res = await Rx.firstValueFrom(caller.call$('util.timer', Rx.of(undefined)).pipe(Rx.skip(2)));
+          expect(res).toBe(2);
+          await stop();
+        });
+      }
 
       test('can retrieve a context', async () => {
         const {caller, stop} = await setup();
