@@ -1,0 +1,40 @@
+import type {RpcMessage} from '@jsonjoy.com/rpc-messages';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
+import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+
+type RpcSpecifierEncoding = 'cbor' | 'json' | 'msgpack';
+type RpcSpecifierRx = `rpc.rx.${'binary' | 'compact'}.${RpcSpecifierEncoding}`;
+type RpcSpecifierJson2 = `rpc.json2.verbose.${RpcSpecifierEncoding}`;
+export type RpcSpecifier = RpcSpecifierRx | RpcSpecifierJson2;
+
+/**
+ * Represents a single message and value request/response pair. Typically to be
+ * used for a single HTTP request/response, or a connection over WebSocket or similar.
+ */
+export class RpcCodec {
+  constructor(
+    public readonly msg: MsgStreamCodec,
+    public readonly req: JsonValueCodec,
+    public readonly res: JsonValueCodec,
+  ) {}
+
+  public specifier(): RpcSpecifier {
+    const specifier = `rpc.${this.msg.id}.${this.req.id}` + (this.req.id !== this.res.id ? `-${this.res.id}` : '');
+    return specifier as RpcSpecifier;
+  }
+
+  public encode(messages: RpcMessage[]): Uint8Array {
+    const encoder = this.req.encoder;
+    const writer = encoder.writer;
+    writer.reset();
+    this.msg.writeBatch(this.req, messages);
+    return writer.flush();
+  }
+
+  public decode(data: Uint8Array, valueCodec: JsonValueCodec): RpcMessage[] {
+    const decoder = valueCodec.decoder;
+    const reader = decoder.reader;
+    reader.reset(data);
+    return this.msg.readChunk(valueCodec, data);
+  }
+}
