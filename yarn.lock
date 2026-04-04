@@ -2719,6 +2719,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/rpc-calls@workspace:packages/rpc-calls":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-calls@workspace:packages/rpc-calls"
+  dependencies:
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    tree-dump: "npm:^1.1.0"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/rpc-codec-base@workspace:*, @jsonjoy.com/rpc-codec-base@workspace:packages/rpc-codec-base":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-codec-base@workspace:packages/rpc-codec-base"

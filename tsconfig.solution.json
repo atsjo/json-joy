@@ -34,6 +34,7 @@
     { "path": "packages/collaborative-slate/tsconfig.build.json" },
     { "path": "packages/collaborative-ui/tsconfig.build.json" },
     { "path": "packages/peritext/tsconfig.build.json" },
+    { "path": "packages/rpc-calls/tsconfig.build.json" },
     { "path": "packages/rpc-error/tsconfig.build.json" },
     { "path": "packages/rpc-messages/tsconfig.build.json" },
     { "path": "packages/rpc-codec-base/tsconfig.build.json" },
