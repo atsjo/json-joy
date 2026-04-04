@@ -8,7 +8,7 @@ export interface MsgCodec<Chunk, Message> {
   /**
    * Message envelope format, i.e. format of the payload wrapper. The format
    * of the message payload itself is determined by the JsonValueCodec.
-   * 
+   *
    */
   format: RpcMessageFormat;
 
@@ -25,7 +25,7 @@ export interface MsgStreamCodec {
   /**
    * Message envelope format, i.e. format of the payload wrapper. The format
    * of the message payload itself is determined by the JsonValueCodec.
-   * 
+   *
    */
   format: RpcMessageFormat;
 

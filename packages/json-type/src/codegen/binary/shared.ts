@@ -1,5 +1,5 @@
 import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
-import {CompiledBinaryEncoder} from '../types';
+import type {CompiledBinaryEncoder} from '../types';
 import {CborCodegen} from './cbor/CborCodegen';
 import {JsonCodegen} from './json/JsonCodegen';
 import {MsgPackCodegen} from './msgpack/MsgPackCodegen';

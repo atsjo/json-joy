@@ -67,7 +67,10 @@ export class CompactBinaryMsgCodec implements BinaryMsgCodec<Message> {
   public readonly format = RpcMessageFormat.Binary;
   private readonly msgWriter: BinaryMessageWriter;
 
-  constructor(public readonly codec: JsonValueCodec, getTypeEncoder?: typeof getEncoder) {
+  constructor(
+    public readonly codec: JsonValueCodec,
+    getTypeEncoder?: typeof getEncoder,
+  ) {
     this.msgWriter = new BinaryMessageWriter(getTypeEncoder);
   }
 

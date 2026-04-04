@@ -4,9 +4,7 @@ import type {BinaryJsonEncoder} from '@jsonjoy.com/json-pack';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 
 export class BinaryMessageWriter {
-  constructor(
-    public getTypeEncoder?: typeof getEncoder
-  ) {}
+  constructor(public getTypeEncoder?: typeof getEncoder) {}
 
   writeHeader(
     writer: BinaryJsonEncoder['writer'],
@@ -55,12 +53,7 @@ export class BinaryMessageWriter {
     writer.view.setUint32(start, (payloadSize << 8) + nameLength);
   }
 
-  writeType3(
-    codec: JsonValueCodec,
-    typeU16: number,
-    id: number,
-    value: unknown | Value<any> | undefined,
-  ): void {
+  writeType3(codec: JsonValueCodec, typeU16: number, id: number, value: unknown | Value<any> | undefined): void {
     const encoder = codec.encoder;
     const writer = encoder.writer;
     writer.move(4);
