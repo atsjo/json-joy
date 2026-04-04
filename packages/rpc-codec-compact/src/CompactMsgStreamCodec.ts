@@ -2,7 +2,7 @@ import {RpcMessageFormat} from '@jsonjoy.com/rpc-codec-base/lib/constants';
 import {RpcError} from '@jsonjoy.com/rpc-error';
 import * as msg from '@jsonjoy.com/rpc-messages';
 import {toMessage} from './toMessage';
-import {getTypeEncoder} from '@jsonjoy.com/rpc-codec-base/lib/util';
+import {getEncoder as getTypeEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import {CompactMessageType} from './constants';
 import type {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';

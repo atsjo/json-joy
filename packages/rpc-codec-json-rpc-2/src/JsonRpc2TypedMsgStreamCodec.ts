@@ -1,7 +1,7 @@
 import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
+import {getEncoder as getTypeEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import {RpcMessageFormat} from '@jsonjoy.com/rpc-codec-base/lib/constants';
 import {RpcError} from '@jsonjoy.com/rpc-error';
-import {getTypeEncoder} from '@jsonjoy.com/rpc-codec-base/lib/util';
 import {toMessage} from './toMessage';
 import * as msg from '@jsonjoy.com/rpc-messages';
 import * as schema from './schema';
