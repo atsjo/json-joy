@@ -1,5 +1,5 @@
 import * as Rx from 'rxjs';
-import {createTypedCaller} from './TypedCaller.fixtures';
+import {createTypedCaller} from './TypedCallee.fixtures';
 import {RpcError} from 'rpc-error';
 
 describe('.call()', () => {

@@ -1,37 +1,49 @@
-import {UnaryCaller, type UnaryCallerOptions} from './UnaryCaller';
+import {FetchChannel} from '@jsonjoy.com/channel';
+import {MsgCodecLogicalChannel} from '../channel';
+import {RxCaller} from './RxCaller';
 import type {Observable} from 'rxjs';
-import type {CompactClientMessage, CompactServerMessage} from '@jsonjoy.com/rpc-messages';
+import type {RpcMessage} from '@jsonjoy.com/rpc-messages';
+import type {MsgCodec} from '@jsonjoy.com/rpc-codec-base';
 import type {Caller, RpcCallerMethods} from './types';
 
-export interface FetchCallerOptions extends Omit<UnaryCallerOptions, 'send'> {
+export interface FetchCallerOptions {
   /** URL of the RPC endpoint. */
   url: string;
+
+  /** Codec used to encode/decode RPC messages over the wire. */
+  codec: MsgCodec<Uint8Array, RpcMessage>;
 
   /** Custom `fetch` implementation, defaults to global `fetch`. */
   fetch?: typeof fetch;
 }
 
 /**
- * Simple unary RPC caller that sends batched compact messages via HTTP `fetch`.
+ * Simple HTTP-based RPC caller that sends messages via `fetch()`. Uses
+ * {@link FetchChannel} as the physical transport, {@link MsgCodecLogicalChannel}
+ * for encoding/decoding, and {@link RxCaller} for RPC semantics.
  */
 export class FetchCaller<Methods extends RpcCallerMethods<any> = RpcCallerMethods> implements Caller<Methods> {
-  public readonly caller: UnaryCaller<Methods>;
+  public readonly caller: RxCaller<Methods>;
 
   constructor(options: FetchCallerOptions) {
-    const {url} = options;
+    const {url, codec} = options;
     const currentFetch = options.fetch || fetch;
-    this.caller = new UnaryCaller<Methods>({
-      bufferSize: options.bufferSize,
-      bufferTime: options.bufferTime,
-      send: async (messages: CompactClientMessage[]): Promise<CompactServerMessage[]> => {
+    const physicalChannel = new FetchChannel({
+      fetch: async (data: Uint8Array): Promise<Uint8Array> => {
         const response = await currentFetch(url, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(messages),
+          headers: {'Content-Type': 'application/octet-stream'},
+          body: data as any,
         });
-        return await response.json();
+        const buffer = await response.arrayBuffer();
+        return new Uint8Array(buffer);
       },
     });
+    const logicalChannel = new MsgCodecLogicalChannel({
+      codec,
+      channel: physicalChannel,
+    });
+    this.caller = new RxCaller<Methods>({channel: logicalChannel as any});
   }
 
   public call$<K extends keyof Methods>(method: K, data: Observable<Methods[K][0]> | Methods[K][0]): Observable<Methods[K][1]> {

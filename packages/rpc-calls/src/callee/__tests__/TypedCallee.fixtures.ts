@@ -1,6 +1,6 @@
 import {TypedCaller} from '../TypedCaller';
 import {ObjValue} from '@jsonjoy.com/json-type';
-import {procedures, SampleCtx} from './RpcCaller.fixtures';
+import {procedures, SampleCtx} from './Callee.fixtures';
 
 const base = ObjValue.new();
 const t = base.system.t;

@@ -5,16 +5,15 @@ import {
   RequestCompleteMessage,
   RequestDataMessage,
   RequestErrorMessage,
-  RequestUnsubscribeMessage,
   ResponseCompleteMessage,
   ResponseDataMessage,
   ResponseErrorMessage,
   ResponseUnsubscribeMessage,
-  RpcClientMessage,
-  RpcServerMessage,
-} from '../../messages';
-import {LogicalChannel} from '../../channel/logical/types';
-import {BufferedLogicalChannel} from '../../channel/logical/BufferedLogicalChannel';
+  type RpcClientMessage,
+  type RpcServerMessage,
+} from '@jsonjoy.com/rpc-messages';
+import type {LogicalChannel} from '../../channel/types';
+import {BufferedLogicalChannel} from '../../channel/BufferedLogicalChannel';
 import {unknown} from '@jsonjoy.com/json-type';
 import {utf8} from '@jsonjoy.com/buffers/lib/strings';
 import {until} from 'thingies';
