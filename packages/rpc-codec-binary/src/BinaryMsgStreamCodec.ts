@@ -1,8 +1,9 @@
 import {RpcMessageFormat} from '@jsonjoy.com/rpc-codec-base/lib/constants';
 import * as msg from '@jsonjoy.com/rpc-messages';
 import {decode} from './decode';
-import {BinaryMessageType} from '../constants';
-import {writeType2, writeType3, writeType4} from './encode';
+import {BinaryMessageType} from './constants';
+import {BinaryMessageWriter} from './BinaryMessageWriter';
+import type {getEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import type {Uint8ArrayCut} from '@jsonjoy.com/buffers/lib/Uint8ArrayCut';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
@@ -11,23 +12,30 @@ export class BinaryMsgStreamCodec implements MsgStreamCodec {
   id = 'rx.binary';
   format = RpcMessageFormat.Binary;
 
+  private readonly msgWriter: BinaryMessageWriter;
+
+  constructor(getTypeEncoder?: typeof getEncoder) {
+    this.msgWriter = new BinaryMessageWriter(getTypeEncoder);
+  }
+
   public write(codec: JsonValueCodec, message: msg.RpcMessage): void {
+    const writer = this.msgWriter;
     if (message instanceof msg.NotificationMessage) {
-      writeType2(codec, message.method, message.value);
+      writer.writeType2(codec, message.method, message.value);
     } else if (message instanceof msg.RequestDataMessage) {
-      writeType4(codec, BinaryMessageType.RequestData << 13, message.id, message.method, message.value);
+      writer.writeType4(codec, BinaryMessageType.RequestData << 13, message.id, message.method, message.value);
     } else if (message instanceof msg.RequestCompleteMessage) {
-      writeType4(codec, BinaryMessageType.RequestComplete << 13, message.id, message.method, message.value);
+      writer.writeType4(codec, BinaryMessageType.RequestComplete << 13, message.id, message.method, message.value);
     } else if (message instanceof msg.RequestErrorMessage) {
-      writeType4(codec, BinaryMessageType.RequestError << 13, message.id, message.method, message.value);
+      writer.writeType4(codec, BinaryMessageType.RequestError << 13, message.id, message.method, message.value);
     } else if (message instanceof msg.RequestUnsubscribeMessage) {
       codec.encoder.writer.u32(0b11100000_00000000_00000000_00000000 | message.id);
     } else if (message instanceof msg.ResponseCompleteMessage) {
-      writeType3(codec, BinaryMessageType.ResponseComplete << 13, message.id, message.value);
+      writer.writeType3(codec, BinaryMessageType.ResponseComplete << 13, message.id, message.value);
     } else if (message instanceof msg.ResponseDataMessage) {
-      writeType3(codec, BinaryMessageType.ResponseData << 13, message.id, message.value);
+      writer.writeType3(codec, BinaryMessageType.ResponseData << 13, message.id, message.value);
     } else if (message instanceof msg.ResponseErrorMessage) {
-      writeType3(codec, BinaryMessageType.ResponseError << 13, message.id, message.value);
+      writer.writeType3(codec, BinaryMessageType.ResponseError << 13, message.id, message.value);
     } else if (message instanceof msg.ResponseUnsubscribeMessage) {
       codec.encoder.writer.u32(0b11100000_00000001_00000000_00000000 | message.id);
     }

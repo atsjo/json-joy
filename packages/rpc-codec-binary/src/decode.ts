@@ -11,7 +11,7 @@ import {
   ResponseErrorMessage,
   ResponseUnsubscribeMessage,
 } from '@jsonjoy.com/rpc-messages';
-import {BinaryMessageType} from '../constants';
+import {BinaryMessageType} from './constants';
 import {unknown} from '@jsonjoy.com/json-type/lib/value';
 import type {IReader} from '@jsonjoy.com/buffers/lib/types';
 
