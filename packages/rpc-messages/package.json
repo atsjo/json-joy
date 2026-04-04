@@ -1,0 +1,75 @@
+{
+  "name": "@jsonjoy.com/rpc-messages",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.0",
+  "description": "RPC message types and utilities for JSON RPC APIs",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/rpc-messages",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/rpc-messages"
+  },
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "rpc",
+    "messages",
+    "rpc-messages",
+    "json-rpc",
+    "json",
+    "joy"
+  ],
+  "dependencies": {
+    "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/rpc-error": "workspace:*"
+  },
+  "peerDependencies": {
+    "tslib": "*"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit",
+    "test": "jest --maxWorkers 7"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}

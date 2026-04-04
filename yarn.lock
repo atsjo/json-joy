@@ -2719,6 +2719,94 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/rpc-codec-base@workspace:*, @jsonjoy.com/rpc-codec-base@workspace:packages/rpc-codec-base":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-codec-base@workspace:packages/rpc-codec-base"
+  dependencies:
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-codec-binary@workspace:*, @jsonjoy.com/rpc-codec-binary@workspace:packages/rpc-codec-binary":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-codec-binary@workspace:packages/rpc-codec-binary"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-codec-compact@workspace:*, @jsonjoy.com/rpc-codec-compact@workspace:packages/rpc-codec-compact":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-codec-compact@workspace:packages/rpc-codec-compact"
+  dependencies:
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-codec-json-rpc-2@workspace:*, @jsonjoy.com/rpc-codec-json-rpc-2@workspace:packages/rpc-codec-json-rpc-2":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-codec-json-rpc-2@workspace:packages/rpc-codec-json-rpc-2"
+  dependencies:
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-codec@workspace:packages/rpc-codec":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-codec@workspace:packages/rpc-codec"
+  dependencies:
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-codec-binary": "workspace:*"
+    "@jsonjoy.com/rpc-codec-compact": "workspace:*"
+    "@jsonjoy.com/rpc-codec-json-rpc-2": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-error@workspace:*, @jsonjoy.com/rpc-error@workspace:packages/rpc-error":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-error@workspace:packages/rpc-error"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-messages@workspace:*, @jsonjoy.com/rpc-messages@workspace:packages/rpc-messages":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-messages@workspace:packages/rpc-messages"
+  dependencies:
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/ui@workspace:*, @jsonjoy.com/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/ui@workspace:packages/ui"
