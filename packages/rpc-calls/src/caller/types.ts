@@ -1,14 +1,14 @@
 import type {Observable} from 'rxjs';
 import type {ProcedureReq, ProcedureRes, Procedures} from '../procedures';
 
-export type RpcCallerCall<Req = unknown, Res = unknown> = [req: Req, res: Res];
-export type RpcCallerMethods<T = unknown> = Record<string, RpcCallerCall<T, T>>;
+export type CallerCall<Req = unknown, Res = unknown> = [req: Req, res: Res];
+export type CallerMethods<T = unknown> = Record<string, CallerCall<T, T>>;
 
 export type ProceduresToCallerMethods<P extends Procedures<any>> = {
-  [K in keyof P]: RpcCallerCall<ProcedureReq<P[K]>, ProcedureRes<P[K]>>;
+  [K in keyof P]: CallerCall<ProcedureReq<P[K]>, ProcedureRes<P[K]>>;
 };
 
-export interface Caller<Methods extends RpcCallerMethods<any> = RpcCallerMethods> {
+export interface Caller<Methods extends CallerMethods<any> = CallerMethods> {
   /**
    * Execute a streaming RPC method.
    *

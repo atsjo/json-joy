@@ -5,7 +5,7 @@ import {RxCaller, type RxCallerOptions} from './RxCaller';
 import {PersistentChannel, type PersistentChannelParams} from '@jsonjoy.com/channel';
 import {MsgCodecLogicalChannel} from '../channel';
 import type {MsgCodec} from '@jsonjoy.com/rpc-codec-base';
-import type {Caller, RpcCallerMethods} from './types';
+import type {Caller, CallerMethods} from './types';
 
 export interface PersistentCallerOptions {
   channel: PersistentChannelParams;
@@ -34,7 +34,7 @@ export interface PersistentCallerOptions {
  * physical channel and the provided codec, then an {@link RxCaller} is created
  * on top of it.
  */
-export class PersistentCaller<Methods extends RpcCallerMethods<any> = RpcCallerMethods> implements Caller<Methods> {
+export class PersistentCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
   public channel: PersistentChannel;
   public rpc?: RxCaller<Methods>;
   public readonly rpc$ = new ReplaySubject<RxCaller<Methods>>(1);

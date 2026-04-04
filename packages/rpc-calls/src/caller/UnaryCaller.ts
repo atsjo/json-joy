@@ -3,7 +3,7 @@ import {Defer} from 'thingies/lib/Defer';
 import {Observable, of, switchMap} from 'rxjs';
 import {CompactMessageType} from '@jsonjoy.com/rpc-messages/lib/constants';
 import type {CompactClientMessage, CompactServerMessage, CompactRequestCompleteMessage, CompactNotificationMessage} from '@jsonjoy.com/rpc-messages';
-import type {Caller, RpcCallerMethods} from './types';
+import type {Caller, CallerMethods} from './types';
 
 /**
  * Configuration parameters for {@link UnaryCaller}.
@@ -38,7 +38,7 @@ export interface UnaryCallerOptions {
  *
  * (This means `.call$()` is supported, it sends and receives a single message.)
  */
-export class UnaryCaller<Methods extends RpcCallerMethods<any> = RpcCallerMethods> implements Caller<Methods> {
+export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
   private id = 1;
   public readonly buffer: TimedQueue<CompactClientMessage>;
   public onsend: ((messages: CompactClientMessage[]) => Promise<CompactServerMessage[]>) = async () => {
