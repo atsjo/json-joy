@@ -1897,7 +1897,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/channel@workspace:packages/channel":
+"@jsonjoy.com/channel@workspace:*, @jsonjoy.com/channel@workspace:packages/channel":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/channel@workspace:packages/channel"
   dependencies:
@@ -2723,8 +2723,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-calls@workspace:packages/rpc-calls"
   dependencies:
+    "@jsonjoy.com/channel": "workspace:*"
     "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-codec": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
     "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+    thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
   peerDependencies:
     rxjs: 7
@@ -2786,7 +2791,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/rpc-codec@workspace:packages/rpc-codec":
+"@jsonjoy.com/rpc-codec@workspace:*, @jsonjoy.com/rpc-codec@workspace:packages/rpc-codec":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-codec@workspace:packages/rpc-codec"
   dependencies:

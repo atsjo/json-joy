@@ -24,7 +24,11 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
+    {"path": "../channel"},
     {"path": "../json-type"},
-    {"path": "../rpc-error"}
+    {"path": "../rpc-codec"},
+    {"path": "../rpc-codec-base"},
+    {"path": "../rpc-error"},
+    {"path": "../rpc-messages"}
   ]
 }

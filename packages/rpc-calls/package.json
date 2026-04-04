@@ -34,8 +34,13 @@
     "tslib": "*"
   },
   "dependencies": {
+    "@jsonjoy.com/channel": "workspace:*",
     "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/rpc-codec": "workspace:*",
+    "@jsonjoy.com/rpc-codec-base": "workspace:*",
     "@jsonjoy.com/rpc-error": "workspace:*",
+    "@jsonjoy.com/rpc-messages": "workspace:*",
+    "thingies": "^2.6.0",
     "tree-dump": "^1.1.0"
   },
   "engines": {
