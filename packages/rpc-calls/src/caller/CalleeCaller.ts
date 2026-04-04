@@ -1,10 +1,10 @@
 import {Observable, of} from 'rxjs';
-import type {RpcCaller} from '../caller/RpcCaller';
-import type {ProcedureReq, ProcedureRes, Procedures} from '../caller';
-import type {ProceduresToCallerMethods, RpcCaller} from './types';
+import type {Callee} from '../callee/types';
+import type {ProcedureReq, ProcedureRes, Procedures} from '../procedures';
+import type {ProceduresToCallerMethods, Caller} from './types';
 
-export class CallerClient<Ctx = unknown, P extends Procedures<any> = Procedures<Ctx>> implements RpcCaller<ProceduresToCallerMethods<P>> {
-  constructor(protected readonly caller: RpcCaller<Ctx, P>, public ctx: Ctx) {}
+export class CalleeCaller<Ctx = unknown, P extends Procedures<any> = Procedures<Ctx>> implements Caller<ProceduresToCallerMethods<P>> {
+  constructor(protected readonly caller: Callee<Ctx, P>, public ctx: Ctx) {}
 
   public call$<K extends keyof P>(method: K, data: Observable<ProcedureReq<P[K]>> | ProcedureReq<P[K]>): Observable<ProcedureRes<P[K]>> {
     return this.caller.call$(method, data instanceof Observable ? data : of(data), this.ctx);

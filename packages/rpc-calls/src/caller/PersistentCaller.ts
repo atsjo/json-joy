@@ -1,15 +1,15 @@
 import type * as msg from '@jsonjoy.com/rpc-messages';
 import {firstValueFrom, type Observable, ReplaySubject, timer} from 'rxjs';
 import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
-import {RxCaller, RxCallerOptions} from './RxCaller';
+import {RxCaller, type RxCallerOptions} from './RxCaller';
 import {PersistentChannel, type PersistentChannelParams} from '@jsonjoy.com/channel';
 import {MsgCodecLogicalChannel} from '../channel';
-import type {RpcCodec} from '@jsonjoy.com/rpc-codec';
-import type {RpcCaller, RpcClientMethods} from './types';
+import type {MsgCodec} from '@jsonjoy.com/rpc-codec-base';
+import type {Caller, RpcCallerMethods} from './types';
 
 export interface PersistentCallerOptions {
   channel: PersistentChannelParams;
-  codec: RpcCodec;
+  codec: MsgCodec<string | Uint8Array, msg.RpcMessage>;
   client?: Omit<RxCallerOptions, 'channel'>;
 
   /**
@@ -28,32 +28,33 @@ export interface PersistentCallerOptions {
 
 /**
  * RPC client which automatically reconnects if disconnected.
+ *
+ * Uses a {@link PersistentChannel} to maintain a physical connection. On each
+ * new connection a {@link MsgCodecLogicalChannel} is constructed from the
+ * physical channel and the provided codec, then an {@link RxCaller} is created
+ * on top of it.
  */
-export class PersistentCaller<Methods extends RpcClientMethods<any> = RpcClientMethods> implements RpcCaller<Methods> {
+export class PersistentCaller<Methods extends RpcCallerMethods<any> = RpcCallerMethods> implements Caller<Methods> {
   public channel: PersistentChannel;
   public rpc?: RxCaller<Methods>;
   public readonly rpc$ = new ReplaySubject<RxCaller<Methods>>(1);
 
   constructor(params: PersistentCallerOptions) {
     const ping = params.ping ?? 15000;
-    const codec = params.codec;
-    const textEncoder = new TextEncoder();
     this.channel = new PersistentChannel(params.channel);
     this.channel.open$.pipe(filter((open) => open)).subscribe(() => {
       const close$ = this.channel.open$.pipe(filter((open) => !open));
-      const channel = new MsgCodecLogicalChannel<, msg.RpcMessage[]>({
-        codec,
-        channel: this.channel.active$,
-      });
-      const client = new RxCaller<Methods>({
-        ...params.client,
-        channel,
+      const physicalChannel = this.channel.channel$.value;
+      if (!physicalChannel) return;
+
+      const channel = new MsgCodecLogicalChannel({
+        codec: params.codec,
+        channel: physicalChannel,
       });
 
-      this.channel.message$.pipe(takeUntil(close$)).subscribe((data) => {
-        const encoded = typeof data === 'string' ? textEncoder.encode(data) : new Uint8Array(data);
-        const messages = codec.decode(encoded, codec.res);
-        client.onMessages((messages instanceof Array ? messages : [messages]) as msg.RpcServerMessage[]);
+      const client = new RxCaller<Methods>({
+        ...params.client,
+        channel: channel as any,
       });
 
       // Send ping notifications to keep the connection alive.

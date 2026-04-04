@@ -2,7 +2,7 @@ import {firstValueFrom, isObservable, Observable, type Observer, of, Subject, Su
 import {unknown} from '@jsonjoy.com/json-type';
 import * as msg from '@jsonjoy.com/rpc-messages';
 import {subscribeCompleteObserver} from './util/subscribeCompleteObserver';
-import type {RpcCaller, RpcClientMethods} from './types';
+import type {Caller, RpcCallerMethods} from './types';
 import type {LogicalChannel} from '../channel/types';
 
 /**
@@ -59,7 +59,7 @@ export interface RxCallerOptions {
  * });
  * ```
  */
-export class RxCaller<Methods extends RpcClientMethods<any> = RpcClientMethods> implements RpcCaller<Methods> {
+export class RxCaller<Methods extends RpcCallerMethods<any> = RpcCallerMethods> implements Caller<Methods> {
   /** In-flight RPC calls. */
   private readonly calls = new Map<number, Call>();
   /** Message ID counter. */
