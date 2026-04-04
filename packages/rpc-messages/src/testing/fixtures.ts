@@ -1,13 +1,22 @@
+import {t, Value} from '@jsonjoy.com/json-type';
 import * as msg from '../messages';
 import {unknown} from '../unknown';
 
 const val = (data: unknown = undefined) => unknown(data);
+const User = t.object({
+  id: t.str,
+  name: t.str,
+});
+
+const user1 = new Value({id: '1234asdf', name: 'Alice'}, User);
 
 const notification1 = new msg.NotificationMessage('a', val('a'));
 const notification2 = new msg.NotificationMessage('test', val(null));
 const notification3 = new msg.NotificationMessage('test', val(123));
 const notification4 = new msg.NotificationMessage('foo', val({hello: 'world'}));
+const notification5 = new msg.NotificationMessage('foo', user1);
 
+const reqData0 = new msg.RequestDataMessage(3, 'typed.msg', user1);
 const reqData1 = new msg.RequestDataMessage(2, 'test', undefined);
 const reqData2 = new msg.RequestDataMessage(2, 'hello.world', undefined);
 const reqData3 = new msg.RequestDataMessage(3, 'hello.world', undefined);
@@ -208,6 +217,8 @@ export const messages = {
   notification2,
   notification3,
   notification4,
+  notification5,
+  reqData0,
   reqData1,
   reqData2,
   reqData3,
