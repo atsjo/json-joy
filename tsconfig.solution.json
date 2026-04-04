@@ -33,6 +33,13 @@
     { "path": "packages/collaborative-prosemirror/tsconfig.build.json" },
     { "path": "packages/collaborative-slate/tsconfig.build.json" },
     { "path": "packages/collaborative-ui/tsconfig.build.json" },
-    { "path": "packages/peritext/tsconfig.build.json" }
+    { "path": "packages/peritext/tsconfig.build.json" },
+    { "path": "packages/rpc-error/tsconfig.build.json" },
+    { "path": "packages/rpc-messages/tsconfig.build.json" },
+    { "path": "packages/rpc-codec-base/tsconfig.build.json" },
+    { "path": "packages/rpc-codec-compact/tsconfig.build.json" },
+    { "path": "packages/rpc-codec-binary/tsconfig.build.json" },
+    { "path": "packages/rpc-codec-json-rpc-2/tsconfig.build.json" },
+    { "path": "packages/rpc-codec/tsconfig.build.json" }
   ]
 }
