@@ -7,13 +7,13 @@ import {BinaryMessageWriter} from './BinaryMessageWriter';
 import type {getEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import type {Uint8ArrayCut} from '@jsonjoy.com/buffers/lib/Uint8ArrayCut';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {BinaryMsgCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 
 /**
  * Lite binary Reactive JSON RPC codec intended for browser/client use. Uses a
  * injected codec for values, JSON Type values can be untyped.
  */
-export class RpcMessageBinaryMsgCodec implements BinaryMsgCodec<msg.RxMessage> {
+export class RpcMessageBinaryMsgCodec implements BinBatchCodec<msg.RxMessage> {
   public readonly id = 'rx.binary';
   public readonly format = RpcMessageFormat.Binary;
   private readonly msgWriter: BinaryMessageWriter;

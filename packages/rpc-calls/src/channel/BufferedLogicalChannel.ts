@@ -20,6 +20,11 @@ export interface BufferedLogicalChannelOpts<Incoming, Outgoing> {
   bufferTime?: number;
 }
 
+/**
+ * Adds buffering capabilities to a {@link LogicalChannel}, where messages are
+ * sent every {@link BufferedLogicalChannelOpts.bufferTime} milliseconds or when the buffer
+ * reaches {@link BufferedLogicalChannelOpts.bufferSize} messages, whichever comes first.
+ */
 export class BufferedLogicalChannel<Incoming, Outgoing> implements LogicalChannel<Incoming[], Outgoing[]> {
   public readonly msg$: Observable<Incoming[]>;
   public readonly err$: Observable<unknown>;

@@ -3,14 +3,14 @@ import {toUint8Array} from '@jsonjoy.com/buffers/lib/toUint8Array';
 import {ChannelState} from './constants';
 import type {CloseEventBase, PhysicalChannel} from './types';
 
-export interface FetchChannelParams {
+export interface FetchPhysicalChannelOptions {
   fetch: (data: Uint8Array) => Promise<Uint8Array>;
 }
 
 /**
  * A `Channel` interface using Fetch implementation.
  */
-export class FetchChannel<T extends string | Uint8Array = string | Uint8Array> implements PhysicalChannel<T> {
+export class FetchPhysicalChannel<T extends string | Uint8Array = string | Uint8Array> implements PhysicalChannel<T> {
   public readonly state$ = new BehaviorSubject<ChannelState>(ChannelState.CONNECTING);
   public readonly open$ = new ReplaySubject<PhysicalChannel>(1);
   public readonly close$ = new ReplaySubject<[self: PhysicalChannel, event: CloseEventBase]>(1);
@@ -19,7 +19,7 @@ export class FetchChannel<T extends string | Uint8Array = string | Uint8Array> i
 
   protected readonly _fetch: (data: Uint8Array) => Promise<Uint8Array>;
 
-  constructor({fetch}: FetchChannelParams) {
+  constructor({fetch}: FetchPhysicalChannelOptions) {
     this._fetch = fetch;
     this.state$.next(ChannelState.OPEN);
     this.open$.next(this);

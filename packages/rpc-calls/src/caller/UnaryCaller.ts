@@ -1,9 +1,11 @@
 import {TimedQueue} from './util/TimedQueue';
 import {Defer} from 'thingies/lib/Defer';
 import {Observable, of, switchMap} from 'rxjs';
-import {CompactMessageType} from '@jsonjoy.com/rpc-messages/lib/constants';
-import type {CompactClientMessage, CompactServerMessage, CompactRequestCompleteMessage, CompactNotificationMessage} from '@jsonjoy.com/rpc-messages';
+import {CompactBinBatchCodec} from '@jsonjoy.com/rpc-codec/lib/CompactBinBatchCodec';
+import {unknown} from '@jsonjoy.com/json-type/lib/value/Value';
+import {type RxMessage, NotificationMessage, RequestCompleteMessage, ResponseCompleteMessage, ResponseErrorMessage} from '@jsonjoy.com/rpc-messages';
 import type {Caller, CallerMethods} from './types';
+import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base';
 
 /**
  * Configuration parameters for {@link UnaryCaller}.
@@ -13,7 +15,13 @@ export interface UnaryCallerOptions {
    * Method to be called by client when it wants to send messages to the server.
    * This is usually connected to your WebSocket "send" method.
    */
-  send?: (messages: CompactClientMessage[]) => Promise<CompactServerMessage[]>;
+  send?: (messages: Uint8Array) => Promise<Uint8Array>;
+
+
+  /**
+   * Codec used to encode/decode Rx RPC messages over the wire.
+   */
+  codec?: BinBatchCodec<RxMessage>;
 
   /**
    * Number of messages to keep in buffer before sending them to the server.
@@ -40,8 +48,8 @@ export interface UnaryCallerOptions {
  */
 export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
   private id = 1;
-  public readonly buffer: TimedQueue<CompactClientMessage>;
-  public onsend: ((messages: CompactClientMessage[]) => Promise<CompactServerMessage[]>) = async () => {
+  public readonly buffer: TimedQueue<RxMessage>;
+  public onsend: ((messages: Uint8Array) => Promise<Uint8Array>) = async () => {
     throw new Error('onsend not implemented');
   };
 
@@ -50,30 +58,31 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
    */
   private readonly calls = new Map<number, Defer<unknown>>();
 
-  constructor({send, bufferSize = 100, bufferTime = 10}: UnaryCallerOptions) {
+  constructor({send, codec = new CompactBinBatchCodec(), bufferSize = 100, bufferTime = 10}: UnaryCallerOptions) {
     if (send) this.onsend = send;
     this.buffer = new TimedQueue();
     this.buffer.itemLimit = bufferSize;
     this.buffer.timeLimit = bufferTime;
-    this.buffer.onFlush = (messages: CompactClientMessage[]) => {
-      this.onsend(messages)
-        .then((responses: CompactServerMessage[]) => {
-          for (const response of responses) {
-            const type = response[0];
-            const id = response[1] as number;
+    this.buffer.onFlush = (messages: RxMessage[]) => {
+      const chunk = codec.toChunk(messages as RxMessage[]);
+      this.onsend(chunk)
+        .then((responses: Uint8Array) => {
+          const messages = codec.fromChunk(responses);
+          for (const message of messages) {
+            if (message instanceof NotificationMessage) continue;
+            const id = message.id;
             const calls = this.calls;
             const future = calls.get(id);
             calls.delete(id);
             if (!future) continue;
-            if (type === CompactMessageType.ResponseComplete) future.resolve(response[2]);
-            else if (type === CompactMessageType.ResponseError) future.reject(response[2]);
+            if (message instanceof ResponseCompleteMessage) future.resolve(message.value);
+            else if (message instanceof ResponseErrorMessage) future.reject(message.value);
           }
         })
         .catch((error) => {
           for (const message of messages) {
-            const type = message[0];
-            if (type === CompactMessageType.RequestComplete) {
-              const id = message[1];
+            if (message instanceof ResponseCompleteMessage) {
+              const id = message.id;
               const calls = this.calls;
               const future = calls.get(id);
               calls.delete(id);
@@ -84,7 +93,7 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
         })
         .finally(() => {
           for (const message of messages)
-            if (message[0] === CompactMessageType.RequestComplete) this.calls.delete(message[1]);
+            if (message instanceof RequestCompleteMessage) this.calls.delete(message.id);
         });
     };
   }
@@ -96,7 +105,7 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
   public async call<K extends keyof Methods>(method: K, request: Methods[K][0]): Promise<Methods[K][1]> {
     const id = this.id++;
     if (this.id >= 0xffff) this.id = 1;
-    const message: CompactRequestCompleteMessage = [CompactMessageType.RequestComplete, id, method as string, request];
+    const message = new RequestCompleteMessage(id, method as string, unknown(request));
     const future = new Defer<unknown>();
     this.calls.set(id, future);
     this.buffer.push(message);
@@ -110,7 +119,7 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
    * @param data Static payload data.
    */
   public notify<K extends keyof Methods>(method: K, data: Methods[K][0]): void {
-    const msg: CompactNotificationMessage = [CompactMessageType.Notification, method as string, data];
+    const msg = new NotificationMessage(method as string, unknown(data));
     this.buffer.push(msg);
   }
 

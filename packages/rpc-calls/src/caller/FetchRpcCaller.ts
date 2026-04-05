@@ -1,9 +1,9 @@
-import {FetchChannel} from '@jsonjoy.com/channel';
-import {MsgCodecLogicalChannel} from '../channel';
-import {RxCaller} from './RxCaller';
 import type {Observable} from 'rxjs';
 import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 import type {BatchCodec} from '@jsonjoy.com/rpc-codec-base';
+import {FetchChannel} from '@jsonjoy.com/channel';
+import {MsgCodecLogicalChannel} from '../channel';
+import {RxCaller} from './RxCaller';
 import type {Caller, CallerMethods} from './types';
 
 export interface FetchCallerOptions {
@@ -23,7 +23,7 @@ export interface FetchCallerOptions {
  * for encoding/decoding, and {@link RxCaller} for RPC semantics.
  */
 export class FetchCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
-  public readonly caller: RxCaller<Methods>;
+  public readonly rpc: RxCaller<Methods>;
 
   constructor(options: FetchCallerOptions) {
     const {url, codec} = options;
@@ -33,7 +33,7 @@ export class FetchCaller<Methods extends CallerMethods<any> = CallerMethods> imp
         const response = await currentFetch(url, {
           method: 'POST',
           headers: {'Content-Type': 'application/octet-stream'},
-          body: data as any,
+          body: data,
         });
         const buffer = await response.arrayBuffer();
         return new Uint8Array(buffer);
@@ -43,22 +43,22 @@ export class FetchCaller<Methods extends CallerMethods<any> = CallerMethods> imp
       codec,
       channel: physicalChannel,
     });
-    this.caller = new RxCaller<Methods>({channel: logicalChannel as any});
+    this.rpc = new RxCaller<Methods>({channel: logicalChannel as any});
   }
 
   public call$<K extends keyof Methods>(method: K, data: Observable<Methods[K][0]> | Methods[K][0]): Observable<Methods[K][1]> {
-    return this.caller.call$(method, data);
+    return this.rpc.call$(method, data);
   }
 
   public async call<K extends keyof Methods>(method: K, request: Methods[K][0]): Promise<Methods[K][1]> {
-    return this.caller.call(method, request);
+    return this.rpc.call(method, request);
   }
 
   public notify<K extends keyof Methods>(method: K, data: Methods[K][0]): void {
-    this.caller.notify(method, data);
+    this.rpc.notify(method, data);
   }
 
   public stop() {
-    this.caller.stop();
+    this.rpc.stop();
   }
 }

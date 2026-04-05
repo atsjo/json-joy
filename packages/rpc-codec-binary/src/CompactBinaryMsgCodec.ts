@@ -5,7 +5,7 @@ import {BinaryMessageWriter} from './BinaryMessageWriter';
 import type {CompactMessage} from '@jsonjoy.com/rpc-messages';
 import type {getEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {BinaryMsgCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 import type {IReader} from '@jsonjoy.com/buffers/lib/types';
 
 type Message = CompactMessage;
@@ -62,7 +62,7 @@ const readPayloadId = (
  * Encodes/decodes in "binary" message format directly messages in "compact"
  * message format.
  */
-export class CompactBinaryMsgCodec implements BinaryMsgCodec<Message> {
+export class CompactBinaryMsgCodec implements BinBatchCodec<Message> {
   public readonly id = 'rx.binary';
   public readonly format = RpcMessageFormat.Binary;
   private readonly msgWriter: BinaryMessageWriter;

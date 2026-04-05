@@ -3,6 +3,9 @@ import type {Callee} from '../callee/types';
 import type {ProcedureReq, ProcedureRes, Procedures} from '../procedures';
 import type {ProceduresToCallerMethods, Caller} from './types';
 
+/**
+ * In-process RPC caller that directly invokes a {@link Callee} instance.
+ */
 export class CalleeCaller<Ctx = unknown, P extends Procedures<any> = Procedures<Ctx>> implements Caller<ProceduresToCallerMethods<P>> {
   constructor(protected readonly callee: Callee<Ctx, P>, public ctx: Ctx) {}
 
