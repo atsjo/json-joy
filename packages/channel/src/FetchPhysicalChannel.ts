@@ -12,10 +12,14 @@ export interface FetchPhysicalChannelOptions {
  */
 export class FetchPhysicalChannel<T extends string | Uint8Array = string | Uint8Array> implements PhysicalChannel<T> {
   public readonly state$ = new BehaviorSubject<ChannelState>(ChannelState.CONNECTING);
-  public readonly open$ = new ReplaySubject<PhysicalChannel>(1);
-  public readonly close$ = new ReplaySubject<[self: PhysicalChannel, event: CloseEventBase]>(1);
+  public readonly open$ = new ReplaySubject<PhysicalChannel<T>>(1);
+  public readonly close$ = new ReplaySubject<[self: PhysicalChannel<T>, event: CloseEventBase]>(1);
   public readonly error$ = new Subject<Error>();
   public readonly message$ = new Subject<T>();
+
+  public closed: boolean = false;
+  public onmessage?: (data: T, isUtf8: boolean) => void;
+  public onclose?: (code: number, reason: string, wasClean: boolean) => void;
 
   protected readonly _fetch: (data: Uint8Array) => Promise<Uint8Array>;
 
@@ -30,10 +34,15 @@ export class FetchPhysicalChannel<T extends string | Uint8Array = string | Uint8
     return 0;
   }
 
-  public close(code?: number, reason?: string): void {}
+  public close(code?: number, reason?: string): void {
+    this.closed = true;
+    this.state$.next(ChannelState.CLOSED);
+    this.close$.next([this, {code: code ?? 1000, reason: reason ?? 'Normal Closure', wasClean: true}]);
+    this.onclose?.(code ?? 1000, reason ?? 'Normal Closure', true);
+  }
 
   public isOpen(): boolean {
-    return true;
+    return !this.closed;
   }
 
   public send(data: T): number {
@@ -42,6 +51,7 @@ export class FetchPhysicalChannel<T extends string | Uint8Array = string | Uint8
       .then((response) => {
         const message: T = (typeof response === 'string' ? response : toUint8Array(response)) as unknown as T;
         this.message$.next(message);
+        this.onmessage?.(message, typeof response === 'string');
       })
       .catch((error) => {
         this.error$.next(error);
