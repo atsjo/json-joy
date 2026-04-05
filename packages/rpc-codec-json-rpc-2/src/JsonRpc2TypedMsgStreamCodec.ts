@@ -8,18 +8,18 @@ import * as schema from './schema';
 import type {TlvBinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
 import type {JsonJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/json';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 
 const RESPONSE_TYPE = schema.JsonRpc2Response.type;
 const ERROR_TYPE = schema.JsonRpc2Error.type;
 const NOTIFICATION_TYPE = schema.JsonRpc2Notification.type;
 const REQUEST_TYPE = schema.JsonRpc2Request.type;
 
-export class JsonRpc2TypedMsgStreamCodec implements MsgStreamCodec {
+export class JsonRpc2TypedMsgStreamCodec implements StreamCodec {
   id = 'json2.verbose';
   format = RpcMessageFormat.JsonRpc2;
 
-  public write(jsonCodec: JsonValueCodec, message: msg.RpcMessage): void {
+  public write(jsonCodec: JsonValueCodec, message: msg.RxMessage): void {
     if (message instanceof msg.ResponseCompleteMessage || message instanceof msg.ResponseDataMessage) {
       const pojo: schema.JsonRpc2ResponseMessage = {
         id: message.id,
@@ -74,7 +74,7 @@ export class JsonRpc2TypedMsgStreamCodec implements MsgStreamCodec {
     }
   }
 
-  public writeBatch(jsonCodec: JsonValueCodec, batch: msg.RpcMessage[]): void {
+  public writeBatch(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): void {
     const length = batch.length;
     if (length === 1) {
       this.write(jsonCodec, batch[0]);
@@ -105,7 +105,7 @@ export class JsonRpc2TypedMsgStreamCodec implements MsgStreamCodec {
     }
   }
 
-  public encode(jsonCodec: JsonValueCodec, batch: msg.RpcMessage[]): Uint8Array {
+  public encode(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): Uint8Array {
     const encoder = jsonCodec.encoder;
     const writer = encoder.writer;
     writer.reset();
@@ -113,11 +113,11 @@ export class JsonRpc2TypedMsgStreamCodec implements MsgStreamCodec {
     return writer.flush();
   }
 
-  public read(jsonCodec: JsonValueCodec): msg.RpcMessage[] {
+  public read(jsonCodec: JsonValueCodec): msg.RxMessage[] {
     try {
       let jsonRpcMessages = jsonCodec.decoder.readAny() as unknown as schema.JsonRpc2Message[];
       if (!Array.isArray(jsonRpcMessages)) jsonRpcMessages = [jsonRpcMessages];
-      const messages: msg.RpcMessage[] = [];
+      const messages: msg.RxMessage[] = [];
       const length = jsonRpcMessages.length;
       for (let i = 0; i < length; i++) messages.push(toMessage(jsonRpcMessages[i]));
       return messages;
@@ -127,7 +127,7 @@ export class JsonRpc2TypedMsgStreamCodec implements MsgStreamCodec {
     }
   }
 
-  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RpcMessage[] {
+  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
     jsonCodec.decoder.reader.reset(uint8);
     return this.read(jsonCodec);
   }

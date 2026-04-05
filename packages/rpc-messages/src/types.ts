@@ -5,7 +5,7 @@ import type * as msg from './messages';
 /**
  * Messages that client can send.
  */
-export type RpcClientMessage =
+export type RxClientMessage =
   | msg.NotificationMessage
   | msg.RequestDataMessage
   | msg.RequestCompleteMessage
@@ -15,7 +15,7 @@ export type RpcClientMessage =
 /**
  * Messages with which server can respond.
  */
-export type RpcServerMessage =
+export type RxServerMessage =
   | msg.NotificationMessage
   | msg.ResponseDataMessage
   | msg.ResponseCompleteMessage
@@ -25,7 +25,7 @@ export type RpcServerMessage =
 /**
  * All Reactive RPC messages.
  */
-export type RpcMessage = RpcClientMessage | RpcServerMessage;
+export type RxMessage = RxClientMessage | RxServerMessage;
 
 export interface Message {
   /**

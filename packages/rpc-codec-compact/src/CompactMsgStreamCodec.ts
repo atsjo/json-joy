@@ -5,7 +5,7 @@ import {toMessage} from './toMessage';
 import {getEncoder as getTypeEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import {CompactMessageType} from './constants';
 import type {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
-import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type * as types from './types';
 import type {TlvBinaryJsonEncoder} from '@jsonjoy.com/json-pack';
@@ -90,11 +90,11 @@ const encodeCompactWithPayload = (
   } else encoder.writeArr(msg.toCompact());
 };
 
-export class CompactMsgStreamCodec implements MsgStreamCodec {
+export class CompactMsgStreamCodec implements StreamCodec {
   id = 'rx.compact';
   format = RpcMessageFormat.Compact;
 
-  public write(codec: JsonValueCodec, message: msg.RpcMessage): void {
+  public write(codec: JsonValueCodec, message: msg.RxMessage): void {
     if (message instanceof msg.NotificationMessage) {
       const encoder = codec.encoder;
       if (typeof (encoder as any as TlvBinaryJsonEncoder).writeArrHdr === 'function') {
@@ -144,7 +144,7 @@ export class CompactMsgStreamCodec implements MsgStreamCodec {
     }
   }
 
-  public writeBatch(jsonCodec: JsonValueCodec, batch: msg.RpcMessage[]): void {
+  public writeBatch(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): void {
     const encoder = jsonCodec.encoder;
     if (typeof (encoder as any as TlvBinaryJsonEncoder).writeArrHdr === 'function') {
       const binaryEncoder = encoder as any as TlvBinaryJsonEncoder;
@@ -174,7 +174,7 @@ export class CompactMsgStreamCodec implements MsgStreamCodec {
     }
   }
 
-  public encode(jsonCodec: JsonValueCodec, batch: msg.RpcMessage[]): Uint8Array {
+  public encode(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): Uint8Array {
     const encoder = jsonCodec.encoder;
     const writer = encoder.writer;
     writer.reset();
@@ -182,12 +182,12 @@ export class CompactMsgStreamCodec implements MsgStreamCodec {
     return writer.flush();
   }
 
-  public read(codec: JsonValueCodec): msg.RpcMessage[] {
+  public read(codec: JsonValueCodec): msg.RxMessage[] {
     const decoder = codec.decoder;
     const value = decoder.readAny();
     if (!(value instanceof Array)) throw RpcError.badRequest();
     if (typeof value[0] === 'number') return [toMessage(value as unknown[])];
-    const result: msg.RpcMessage[] = [];
+    const result: msg.RxMessage[] = [];
     const length = value.length;
     for (let i = 0; i < length; i++) {
       const item = value[i];
@@ -196,7 +196,7 @@ export class CompactMsgStreamCodec implements MsgStreamCodec {
     return result;
   }
 
-  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RpcMessage[] {
+  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
     jsonCodec.decoder.reader.reset(uint8);
     return this.read(jsonCodec);
   }

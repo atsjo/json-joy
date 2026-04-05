@@ -13,7 +13,7 @@ import type {BinaryMsgCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
  * Lite binary Reactive JSON RPC codec intended for browser/client use. Uses a
  * injected codec for values, JSON Type values can be untyped.
  */
-export class RpcMessageBinaryMsgCodec implements BinaryMsgCodec<msg.RpcMessage> {
+export class RpcMessageBinaryMsgCodec implements BinaryMsgCodec<msg.RxMessage> {
   public readonly id = 'rx.binary';
   public readonly format = RpcMessageFormat.Binary;
   private readonly msgWriter: BinaryMessageWriter;
@@ -25,7 +25,7 @@ export class RpcMessageBinaryMsgCodec implements BinaryMsgCodec<msg.RpcMessage> 
     this.msgWriter = new BinaryMessageWriter(getTypeEncoder);
   }
 
-  public toChunk(batch: msg.RpcMessage[]): Uint8Array {
+  public toChunk(batch: msg.RxMessage[]): Uint8Array {
     const codec = this.codec;
     const writer = codec.encoder.writer;
     writer.reset();
@@ -56,12 +56,12 @@ export class RpcMessageBinaryMsgCodec implements BinaryMsgCodec<msg.RpcMessage> 
     return writer.flush();
   }
 
-  public fromChunk(uint8: Uint8Array): msg.RpcMessage[] {
+  public fromChunk(uint8: Uint8Array): msg.RxMessage[] {
     const codec = this.codec;
     const decoder = codec.decoder;
     const reader = decoder.reader;
     reader.reset(uint8);
-    const messages: msg.RpcMessage[] = [];
+    const messages: msg.RxMessage[] = [];
     while (reader.x < reader.uint8.length) {
       const message = decode(reader);
       messages.push(message);

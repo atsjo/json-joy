@@ -1,7 +1,7 @@
 import {Uint8ArrayCut} from '@jsonjoy.com/buffers/lib/Uint8ArrayCut';
 import {
   NotificationMessage,
-  type RpcMessage,
+  type RxMessage,
   RequestCompleteMessage,
   RequestDataMessage,
   RequestErrorMessage,
@@ -15,7 +15,7 @@ import {BinaryMessageType} from './constants';
 import {unknown} from '@jsonjoy.com/json-type/lib/value';
 import type {IReader} from '@jsonjoy.com/buffers/lib/types';
 
-export const decode = (reader: IReader): RpcMessage => {
+export const decode = (reader: IReader): RxMessage => {
   const word = reader.u32();
   const type = word >>> 29;
   switch (type) {

@@ -1,10 +1,10 @@
 import {CompactMessageType} from './constants';
 import {unknown} from '@jsonjoy.com/json-type';
 import * as msg from './messages';
-import type {RpcMessage} from './types';
+import type {RxMessage} from './types';
 import type {CompactMessage} from './compact';
 
-export const toMessage = (arr: unknown | unknown[] | CompactMessage): RpcMessage => {
+export const toMessage = (arr: unknown | unknown[] | CompactMessage): RxMessage => {
   if (!(arr instanceof Array)) throw new Error('INV_MSG');
   const type = arr[0];
   switch (type) {

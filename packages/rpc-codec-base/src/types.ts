@@ -1,8 +1,12 @@
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {RpcMessage} from '@jsonjoy.com/rpc-messages';
+import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 import type {RpcMessageFormat} from './constants';
 
-export interface MsgCodec<Chunk, Message> {
+/**
+ * Encodes/decodes messages to/from serialized physical batches (chunks).
+ * `Chunk` is usually `string` or `Uint8Array`, depending on the transport.
+ */
+export interface BatchCodec<Chunk, Message> {
   id: string;
 
   /**
@@ -16,10 +20,14 @@ export interface MsgCodec<Chunk, Message> {
   fromChunk(chunk: Chunk): Message[];
 }
 
-export type TextMsgCodec<Message> = MsgCodec<string, Message>;
-export type BinaryMsgCodec<Message> = MsgCodec<Uint8Array, Message>;
+export type TextMsgCodec<Message> = BatchCodec<string, Message>;
+export type BinaryMsgCodec<Message> = BatchCodec<Uint8Array, Message>;
 
-export interface MsgStreamCodec {
+/**
+ * Encodes/decodes messages one-by-one or in batches. Can `.write()` directly
+ * to a stream `Writer` buffer resolved by {@link JsonValueCodec}.
+ */
+export interface StreamCodec {
   id: string;
 
   /**
@@ -29,9 +37,9 @@ export interface MsgStreamCodec {
    */
   format: RpcMessageFormat;
 
-  write(codec: JsonValueCodec, message: RpcMessage): void;
-  writeBatch(codec: JsonValueCodec, messages: RpcMessage[]): void;
-  encode(jsonCodec: JsonValueCodec, batch: RpcMessage[]): Uint8Array;
-  read(codec: JsonValueCodec): RpcMessage[];
-  readChunk(codec: JsonValueCodec, uint8: Uint8Array): RpcMessage[];
+  write(codec: JsonValueCodec, message: RxMessage): void;
+  writeBatch(codec: JsonValueCodec, messages: RxMessage[]): void;
+  encode(jsonCodec: JsonValueCodec, batch: RxMessage[]): Uint8Array;
+  read(codec: JsonValueCodec): RxMessage[];
+  readChunk(codec: JsonValueCodec, uint8: Uint8Array): RxMessage[];
 }

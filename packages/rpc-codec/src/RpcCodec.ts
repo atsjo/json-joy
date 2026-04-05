@@ -1,6 +1,6 @@
-import type {RpcMessage} from '@jsonjoy.com/rpc-messages';
+import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 import type {RpcSpecifier} from './types';
 
 /**
@@ -9,7 +9,7 @@ import type {RpcSpecifier} from './types';
  */
 export class RpcCodec {
   constructor(
-    public readonly msg: MsgStreamCodec,
+    public readonly msg: StreamCodec,
     public readonly req: JsonValueCodec,
     public readonly res: JsonValueCodec,
   ) {}
@@ -19,7 +19,7 @@ export class RpcCodec {
     return specifier as RpcSpecifier;
   }
 
-  public encode(messages: RpcMessage[]): Uint8Array {
+  public encode(messages: RxMessage[]): Uint8Array {
     const encoder = this.req.encoder;
     const writer = encoder.writer;
     writer.reset();
@@ -27,7 +27,7 @@ export class RpcCodec {
     return writer.flush();
   }
 
-  public decode(data: Uint8Array, valueCodec: JsonValueCodec): RpcMessage[] {
+  public decode(data: Uint8Array, valueCodec: JsonValueCodec): RxMessage[] {
     const decoder = valueCodec.decoder;
     const reader = decoder.reader;
     reader.reset(data);

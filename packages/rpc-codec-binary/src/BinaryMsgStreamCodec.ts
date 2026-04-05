@@ -6,9 +6,9 @@ import {BinaryMessageWriter} from './BinaryMessageWriter';
 import type {getEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import type {Uint8ArrayCut} from '@jsonjoy.com/buffers/lib/Uint8ArrayCut';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 
-export class BinaryMsgStreamCodec implements MsgStreamCodec {
+export class BinaryMsgStreamCodec implements StreamCodec {
   id = 'rx.binary';
   format = RpcMessageFormat.Binary;
 
@@ -18,7 +18,7 @@ export class BinaryMsgStreamCodec implements MsgStreamCodec {
     this.msgWriter = new BinaryMessageWriter(getTypeEncoder);
   }
 
-  public write(codec: JsonValueCodec, message: msg.RpcMessage): void {
+  public write(codec: JsonValueCodec, message: msg.RxMessage): void {
     const writer = this.msgWriter;
     if (message instanceof msg.NotificationMessage) {
       writer.writeType2(codec, message.method, message.value);
@@ -41,12 +41,12 @@ export class BinaryMsgStreamCodec implements MsgStreamCodec {
     }
   }
 
-  public writeBatch(codec: JsonValueCodec, batch: msg.RpcMessage[]): void {
+  public writeBatch(codec: JsonValueCodec, batch: msg.RxMessage[]): void {
     const length = batch.length;
     for (let i = 0; i < length; i++) this.write(codec, batch[i]);
   }
 
-  public encode(jsonCodec: JsonValueCodec, batch: msg.RpcMessage[]): Uint8Array {
+  public encode(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): Uint8Array {
     const encoder = jsonCodec.encoder;
     const writer = encoder.writer;
     writer.reset();
@@ -54,10 +54,10 @@ export class BinaryMsgStreamCodec implements MsgStreamCodec {
     return writer.flush();
   }
 
-  public read(codec: JsonValueCodec): msg.RpcMessage[] {
+  public read(codec: JsonValueCodec): msg.RxMessage[] {
     const decoder = codec.decoder;
     const reader = decoder.reader;
-    const messages: msg.RpcMessage[] = [];
+    const messages: msg.RxMessage[] = [];
     while (reader.x < reader.uint8.length) {
       const message = decode(reader);
       messages.push(message);
@@ -94,7 +94,7 @@ export class BinaryMsgStreamCodec implements MsgStreamCodec {
     return messages;
   }
 
-  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RpcMessage[] {
+  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
     jsonCodec.decoder.reader.reset(uint8);
     return this.read(jsonCodec);
   }
