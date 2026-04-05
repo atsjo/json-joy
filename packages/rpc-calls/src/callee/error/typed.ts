@@ -16,8 +16,8 @@ export class TypedRpcError {
   }
 
   public static valueFrom(error: unknown, def = TypedRpcError.internalErrorValue(error)): RpcErrorValue {
-    if (error instanceof Value && error.data instanceof RpcError && error.type === RpcErrorType) return error;
-    if (error instanceof RpcError) return TypedRpcError.value(error);
+    if (error instanceof Value && RpcError.isRpcError(error.data) && error.type === RpcErrorType) return error;
+    if (RpcError.isRpcError(error)) return TypedRpcError.value(error);
     return def;
   }
 

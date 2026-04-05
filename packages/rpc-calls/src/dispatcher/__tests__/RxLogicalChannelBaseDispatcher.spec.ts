@@ -22,148 +22,149 @@ describe('RxLogicalChannelBaseDispatcher', () => {
     expect(decoded).toEqual([[CompactMessageType.ResponseComplete, 1, 'pong']]);
   });
 
-//   describe('.onMessage', () => {
-//     test('can process a single "ping" call', async () => {
-//       const {processor, ctx, connection} = createStreamProcessor();
-//       const msg = new RequestCompleteMessage(1, 'ping');
+  describe('.onMessage', () => {
+    test('can process a single "ping" call', async () => {
+      const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+      const msg = new RequestCompleteMessage(1, 'ping');
+      dispatcher.onMessage(msg, ctx);
+      await until(() => channel.sentData.length === 1);
+      const [uint8] = channel.sentData;
+      const text = new TextDecoder().decode(uint8);
+      const decoded = JSON.parse(text);
+      expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, 'pong']);
+    });
 
-//       processor.onMessage(msg, ctx);
+    test('can process RequestDataMessage', async () => {
+      const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+      const msg = new RequestDataMessage(1, 'double', unknown({num: 5}));
 
-//       await until(() => connection.sentData.length === 1);
-//       const [uint8] = connection.sentData;
-//       const text = new TextDecoder().decode(uint8);
-//       const decoded = JSON.parse(text);
-//       expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, 'pong']);
-//     });
+      dispatcher.onMessage(msg, ctx);
 
-//     test('can process RequestDataMessage', async () => {
-//       const {processor, ctx, connection} = createStreamProcessor();
-//       const msg = new RequestDataMessage(1, 'double', unknown({num: 5}));
+      await until(() => channel.sentData.length === 1);
+      const [uint8] = channel.sentData;
+      const text = new TextDecoder().decode(uint8);
+      const decoded = JSON.parse(text);
+      expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, {num: 10}]);
+    });
 
-//       processor.onMessage(msg, ctx);
+    test('handles validation errors', async () => {
+      const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+      const msg = new RequestDataMessage(1, 'double', unknown({invalidField: 'not a number'}));
+      dispatcher.onMessage(msg, ctx);
+      await until(() => channel.sentData.length === 1);
+      const [uint8] = channel.sentData;
+      const text = new TextDecoder().decode(uint8);
+      const decoded = JSON.parse(text);
+      expect(decoded[0][0]).toBe(CompactMessageType.ResponseError);
+      expect(decoded[0][1]).toBe(1);
+      expect(decoded[0][2]).toMatchObject({
+        message: 'Payload .num field missing.',
+        code: 'BAD_REQUEST',
+      });
+    });
 
-//       await until(() => connection.sentData.length === 1);
-//       const [uint8] = connection.sentData;
-//       const text = new TextDecoder().decode(uint8);
-//       const decoded = JSON.parse(text);
-//       expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, {num: 10}]);
-//     });
+    test('handles errors gracefully', async () => {
+      const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+      const msg = new RequestCompleteMessage(1, 'error');
+      dispatcher.onMessage(msg, ctx);
+      await until(() => channel.sentData.length === 1);
+      const [uint8] = channel.sentData;
+      const text = new TextDecoder().decode(uint8);
+      const decoded = JSON.parse(text);
+      expect(decoded[0][0]).toBe(CompactMessageType.ResponseError);
+      expect(decoded[0][1]).toBe(1);
+      expect(decoded[0][2]).toMatchObject({
+        message: 'this promise can throw'
+      });
+    });
+  });
 
-//     test('handles validation errors', async () => {
-//       const {processor, ctx, connection} = createStreamProcessor();
-//       const msg = new RequestDataMessage(1, 'double', unknown({invalidField: 'not a number'}));
-//       processor.onMessage(msg, ctx);
-//       await until(() => connection.sentData.length === 1);
-//       const [uint8] = connection.sentData;
-//       const text = new TextDecoder().decode(uint8);
-//       const decoded = JSON.parse(text);
-//       expect(decoded[0][0]).toBe(CompactMessageType.ResponseError);
-//       expect(decoded[0][1]).toBe(1);
-//       expect(decoded[0][2]).toMatchObject({
-//         message: 'Payload .num field missing.',
-//         code: 'BAD_REQUEST',
-//       });
-//     });
+  describe('.onMessages', () => {
+    test('processes empty batch', () => {
+      const {dispatcher, ctx} = createRxLogicalChannelBaseDispatcher();
 
-//     test('handles errors gracefully', async () => {
-//       const {processor, ctx, connection} = createStreamProcessor();
-//       const msg = new RequestCompleteMessage(1, 'error');
-//       processor.onMessage(msg, ctx);
-//       await until(() => connection.sentData.length === 1);
-//       const [uint8] = connection.sentData;
-//       const text = new TextDecoder().decode(uint8);
-//       const decoded = JSON.parse(text);
-//       expect(decoded[0][0]).toBe(CompactMessageType.ResponseError);
-//       expect(decoded[0][1]).toBe(1);
-//       expect(decoded[0][2]).toMatchObject({
-//         message: 'this promise can throw'
-//       });
-//     });
-//   });
+      // Should not throw
+      expect(() => dispatcher.onMessages([], ctx)).not.toThrow();
+    });
 
-//   describe('.onMessages', () => {
-//     test('processes empty batch', () => {
-//       const {processor, ctx} = createStreamProcessor();
+    test('can process a simple message batch', async () => {
+      const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+      const messages = [
+        new RequestCompleteMessage(1, 'ping'),
+      ];
+      dispatcher.onMessages(messages, ctx);
+      await until(() => channel.sentData.length === 1);
+      const [uint8] = channel.sentData;
+      const text = new TextDecoder().decode(uint8);
+      const decoded = JSON.parse(text);
+      expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, 'pong']);
+    });
 
-//       // Should not throw
-//       expect(() => processor.onMessages([], ctx)).not.toThrow();
-//     });
+    test('can send a notification', async () => {
+      const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+      dispatcher.onMessages([
+        new NotificationMessage('notificationSetValue', unknown({value: 124})),
+        new RequestCompleteMessage(1, 'getValue'),
+      ], ctx);
+      await until(() => channel.sentData.length > 0);
+      const [uint8] = channel.sentData;
+      const text = new TextDecoder().decode(uint8);
+      const decoded = JSON.parse(text);
+      expect(decoded).toEqual([[CompactMessageType.ResponseComplete, 1, {value: 124}]]);
+    });
 
-//     test('can process a simple message batch', async () => {
-//       const {processor, ctx, connection} = createStreamProcessor();
-//       const messages = [
-//         new RequestCompleteMessage(1, 'ping'),
-//       ];
-//       processor.onMessages(messages, ctx);
-//       await until(() => connection.sentData.length === 1);
-//       const [uint8] = connection.sentData;
-//       const text = new TextDecoder().decode(uint8);
-//       const decoded = JSON.parse(text);
-//       expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, 'pong']);
-//     });
+      test('sends complete message if observable immediately completes after emitting one value', async () => {
+        const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+        const msg = new RequestCompleteMessage(1, 'emitOnceSync');
+        dispatcher.onMessage(msg, ctx);
+        await until(() => channel.sentData.length === 1);
+        const [uint8] = channel.sentData;
+        const text = new TextDecoder().decode(uint8);
+        const decoded = JSON.parse(text);
+        // Should send ResponseComplete with the emitted value, not ResponseData + ResponseComplete
+        expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, expect.any(String)]);
+        expect(decoded.length).toBe(1);
+      });
 
-//     test('can send a notification', async () => {
-//       const {processor, ctx, connection} = createStreamProcessor();
-//       processor.onMessages([
-//         new NotificationMessage('notificationSetValue', unknown({value: 124})),
-//         new RequestCompleteMessage(1, 'getValue'),
-//       ], ctx);
-//       await until(() => connection.sentData.length > 0);
-//       const [uint8] = connection.sentData;
-//       const text = new TextDecoder().decode(uint8);
-//       const decoded = JSON.parse(text);
-//       expect(decoded).toEqual([[CompactMessageType.ResponseComplete, 1, {value: 124}]]);
-//     });
+      test('observable emits three values synchronously', async () => {
+        const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+        const msg = new RequestDataMessage(1, 'emitThreeSync', unknown(null));
+        dispatcher.onMessage(msg, ctx);
+        const msg2 = new RequestCompleteMessage(1, '');
+        dispatcher.onMessage(msg2, ctx);
+        await until(() => channel.sentData.length === 1);
+        const [uint8] = channel.sentData;
+        const text = new TextDecoder().decode(uint8);
+        const decoded = JSON.parse(text);
+        expect(decoded).toEqual([
+          [CompactMessageType.ResponseData, 1, 1],
+          [CompactMessageType.ResponseData, 1, 2],
+          [CompactMessageType.ResponseComplete, 1, 3],
+        ]);
+      });
 
-//       test('sends complete message if observable immediately completes after emitting one value', async () => {
-//         const {processor, ctx, connection} = createStreamProcessor();
-//         const msg = new RequestCompleteMessage(1, 'emitOnceSync');
-//         processor.onMessage(msg, ctx);
-//         await until(() => connection.sentData.length === 1);
-//         const [uint8] = connection.sentData;
-//         const text = new TextDecoder().decode(uint8);
-//         const decoded = JSON.parse(text);
-//         // Should send ResponseComplete with the emitted value, not ResponseData + ResponseComplete
-//         expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, expect.any(String)]);
-//         expect(decoded.length).toBe(1);
-//       });
+      test('when promise completes with delay', async () => {
+        const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+        const msg = new RequestCompleteMessage(1, 'promiseDelay');
+        dispatcher.onMessage(msg, ctx);
+        await until(() => channel.sentData.length === 1);
+        const [uint8] = channel.sentData;
+        const text = new TextDecoder().decode(uint8);
+        const decoded = JSON.parse(text);
+        // Should send ResponseComplete with the result
+        expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, {}]);
+      });
 
-//       // test('observable emits three values synchronously', async () => {
-//       //   const {processor, ctx, connection} = createStreamProcessor();
-//       //   const msg = new RequestDataMessage(1, 'emitThreeSync');
-//       //   processor.onMessage(msg, ctx);
-//       //   const msg2 = new RequestCompleteMessage(1, '');
-//       //   processor.onMessage(msg2, ctx);
-//       //   await until(() => connection.sentData.length > 1);
-//       //   const [uint8] = connection.sentData;
-//       //   const text = new TextDecoder().decode(uint8);
-//       //   const decoded = JSON.parse(text);
-//       //   expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, 1]);
-//       //   expect(decoded.length).toBe(1);
-//       // });
-
-//       test('when promise completes with delay', async () => {
-//         const {processor, ctx, connection} = createStreamProcessor();
-//         const msg = new RequestCompleteMessage(1, 'promiseDelay');
-//         processor.onMessage(msg, ctx);
-//         await until(() => connection.sentData.length === 1);
-//         const [uint8] = connection.sentData;
-//         const text = new TextDecoder().decode(uint8);
-//         const decoded = JSON.parse(text);
-//         // Should send ResponseComplete with the result
-//         expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, {}]);
-//       });
-
-//       test('when observable completes with delay', async () => {
-//         const {processor, ctx, connection} = createStreamProcessor();
-//         const msg = new RequestCompleteMessage(1, 'streamDelay');
-//         processor.onMessage(msg, ctx);
-//         await until(() => connection.sentData.length === 1);
-//         const [uint8] = connection.sentData;
-//         const text = new TextDecoder().decode(uint8);
-//         const decoded = JSON.parse(text);
-//         // Should send ResponseComplete with the result after async delay
-//         expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, {}]);
-//       });
-//   });
+      test('when observable completes with delay', async () => {
+        const {dispatcher, ctx, channel} = createRxLogicalChannelBaseDispatcher();
+        const msg = new RequestCompleteMessage(1, 'streamDelay');
+        dispatcher.onMessage(msg, ctx);
+        await until(() => channel.sentData.length === 1);
+        const [uint8] = channel.sentData;
+        const text = new TextDecoder().decode(uint8);
+        const decoded = JSON.parse(text);
+        // Should send ResponseComplete with the result after async delay
+        expect(decoded).toContainEqual([CompactMessageType.ResponseComplete, 1, {}]);
+      });
+  });
 });

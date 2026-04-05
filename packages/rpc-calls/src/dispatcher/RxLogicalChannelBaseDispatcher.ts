@@ -83,10 +83,9 @@ export class RxLogicalChannelBaseDispatcher<Ctx> {
     this.send(message);
   }
 
-  protected sendErrorMessage(id: number, value: Value): void {
-    if (value instanceof RpcError) value = TypedRpcError.value(value);
-    if (!(value instanceof Value)) value = unknown(value);
-    const message = new msg.ResponseErrorMessage(id, value);
+  protected sendErrorMessage(id: number, value: unknown): void {
+    const errorValue = TypedRpcError.valueFrom(value, value instanceof Value ? value : unknown(value));
+    const message = new msg.ResponseErrorMessage(id, errorValue);
     this.send(message);
   }
 

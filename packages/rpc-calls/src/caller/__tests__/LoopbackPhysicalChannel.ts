@@ -15,12 +15,13 @@ const CLOSED = 2 as const;
  * transport. Uses a {@link LoopbackChannel} internally for message processing
  * and wraps it in the {@link PhysicalChannel} interface.
  */
-export class LoopbackPhysicalChannel implements PhysicalChannel<string> {
-  public readonly message$ = new Subject<string>();
+export class LoopbackPhysicalChannel implements PhysicalChannel<string | Uint8Array> {
+  public closed = false;
+  public readonly message$ = new Subject<string | Uint8Array>();
   public readonly error$: Observable<Error> = NEVER;
   public readonly state$ = new BehaviorSubject<any>(OPEN);
-  public readonly open$: Observable<PhysicalChannel<string>>;
-  public readonly close$: Observable<[PhysicalChannel<string>, CloseEventBase]> = NEVER;
+  public readonly open$: Observable<PhysicalChannel<string | Uint8Array>>;
+  public readonly close$: Observable<[PhysicalChannel<string | Uint8Array>, CloseEventBase]> = NEVER;
 
   private readonly loopback: LoopbackChannel;
 
@@ -43,17 +44,19 @@ export class LoopbackPhysicalChannel implements PhysicalChannel<string> {
     return this.state$.value === OPEN;
   }
 
-  send(data: string): number {
+  send(data: string | Uint8Array): number {
+    if (typeof data !== 'string') throw new Error('LoopbackPhysicalChannel only supports string payloads.');
     const messages = this.codec.fromChunk(data);
     this.loopback.send(messages as msg.RxClientMessage[]);
     return 0;
   }
 
-  send$(data: string): Observable<number> {
+  send$(data: string | Uint8Array): Observable<number> {
     return of(this.send(data));
   }
 
   close(): void {
+    this.closed = true;
     this.state$.next(CLOSED);
   }
 

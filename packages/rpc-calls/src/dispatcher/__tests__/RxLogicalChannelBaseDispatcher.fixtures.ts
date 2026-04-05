@@ -11,7 +11,8 @@ export const createRxLogicalChannelBaseDispatcher = () => {
   const callee = createRpcCallee<SampleCtx>();
   const channel = new MockServerWebSocketChannel();
   const codecs = createCodecs();
-  const codec = new RpcCodec(codecs.msg.binary, codecs.val.cbor, codecs.val.cbor);
+  // const codec = new RpcCodec(codecs.msg.binary, codecs.val.cbor, codecs.val.cbor);
+  const codec = new RpcCodec(codecs.msg.compact, codecs.val.json, codecs.val.json);
   const rxMessageChannel = new RxLogicalChannelBase(channel, codec);
   const rxMessageChannelBuffered = new BufferedLogicalChannelBase({channel: rxMessageChannel});
   const ctx: SampleCtx = {ip: '1.2.3.4'};
