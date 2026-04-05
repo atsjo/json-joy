@@ -2,18 +2,18 @@ import {WebSocketMock} from './WebSocketMock';
 import {firstValueFrom} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {of} from './of';
-import {PersistentChannel, type PersistentChannelParams} from '../PersistentChannel';
+import {PersistentPhysicalChannel, type PersistentPhysicalChannelOptions} from '../PersistentPhysicalChannel';
 import {WebSocketChannel} from '../WebSocketChannel';
 import type {PhysicalChannel} from '../types';
 import {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
 
 const setup = <T extends string | Uint8Array = string | Uint8Array>(
-  params: Partial<PersistentChannelParams<T>> = {},
+  params: Partial<PersistentPhysicalChannelOptions<T>> = {},
 ) => {
   let ws: WebSocketMock;
   const onClose = jest.fn();
   const onSend = jest.fn();
-  const persistent = new PersistentChannel({
+  const persistent = new PersistentPhysicalChannel({
     ...params,
     newChannel: () => {
       const connection = new WebSocketMockServerConnection();
@@ -312,7 +312,7 @@ describe('error$', () => {
   test('emits when newChannel() throws on start', () => {
     let callCount = 0;
     const errors: Error[] = [];
-    const persistent = new PersistentChannel({
+    const persistent = new PersistentPhysicalChannel({
       newChannel: () => {
         callCount++;
         throw new Error('factory failed');
@@ -327,7 +327,7 @@ describe('error$', () => {
 
   test('wraps non-Error throws into Error', () => {
     const errors: Error[] = [];
-    const persistent = new PersistentChannel({
+    const persistent = new PersistentPhysicalChannel({
       newChannel: () => {
         throw 'string error';
       },

@@ -3,7 +3,7 @@ import {delay, filter, map, skip, switchMap, take, takeUntil, tap} from 'rxjs/op
 import {ChannelState} from './constants';
 import type {PhysicalChannel} from './types';
 
-export interface PersistentChannelParams<T extends string | Uint8Array = string | Uint8Array> {
+export interface PersistentPhysicalChannelOptions<T extends string | Uint8Array = string | Uint8Array> {
   /**
    * New `Channel` factory.
    */
@@ -39,7 +39,7 @@ export interface PersistentChannelParams<T extends string | Uint8Array = string 
  * Channel which automatically reconnects if disconnected. Once stopped via
  * `.stop()`, the instance is fully disposed and cannot be restarted.
  */
-export class PersistentChannel<T extends string | Uint8Array = string | Uint8Array> {
+export class PersistentPhysicalChannel<T extends string | Uint8Array = string | Uint8Array> {
   /**
    * Whether the service is "active". The service becomes active when it is
    * started using the ".start()" method. When service is "active" it will
@@ -75,7 +75,7 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
   private readonly subs: Subscription[] = [];
   private readonly stop$ = new Subject<void>();
 
-  constructor(public readonly params: PersistentChannelParams<T>) {
+  constructor(public readonly params: PersistentPhysicalChannelOptions<T>) {
     const start$ = new Subject<void>();
 
     this.subs.push(

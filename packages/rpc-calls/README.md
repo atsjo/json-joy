@@ -41,15 +41,16 @@ A more realistic detailed setup with reconnection (persistent channel), batching
 and codecs:
 
 ```
-PersistentCaller → PersistentPhysicalChannel → PhysicalChannel
+PersistentCaller → PersistentPhysicalChannel → WebSocketChannel(PhysicalChannel)
   ↓                                             ┊
 LogicalChannelRxCaller(Caller)                  ┊
   ↓                                             ┊
 BufferedLogicalChannel                          ┊
   ↓                                             ┊
-MsgCodecLogicalChannel(LogicalChannel) ------→ PhysicalChannel
+MsgCodecLogicalChannel(LogicalChannel) ------→ WebSocketChannel(PhysicalChannel)
                                                 ↑
-                                                │
+                                                ↑
+                                               PhysicalChannel
 MsgStreamCodecLogicalChannel(LogicalChannel) ---╯
  ↑
 BufferedLogicalChannel
