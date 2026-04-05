@@ -1,11 +1,7 @@
 import type {RpcMessage} from '@jsonjoy.com/rpc-messages';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {MsgStreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
-
-type RpcSpecifierEncoding = 'cbor' | 'json' | 'msgpack';
-type RpcSpecifierRx = `rpc.rx.${'binary' | 'compact'}.${RpcSpecifierEncoding}`;
-type RpcSpecifierJson2 = `rpc.json2.verbose.${RpcSpecifierEncoding}`;
-export type RpcSpecifier = RpcSpecifierRx | RpcSpecifierJson2;
+import type {RpcSpecifier} from './types';
 
 /**
  * Represents a single message and value request/response pair. Typically to be
