@@ -5,6 +5,14 @@ export interface LogicalChannelBase<Incoming, Outgoing> {
   onerr: (err: unknown) => void;
   onclose?: (code: number, reason: string, wasClean: boolean) => void;
   send(outgoing: Outgoing): void;
+  
+  /**
+   * Closes the channel.
+   *
+   * @param code Closure code.
+   * @param reason Closure reason.
+   */
+  close(code?: number, reason?: string): void;
 }
 
 export interface LogicalChannel<Incoming, Outgoing> {

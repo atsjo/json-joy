@@ -28,8 +28,10 @@ export class BufferedLogicalChannelBase<Incoming, Outgoing> implements LogicalCh
   public onmsg: (msg: Incoming[]) => void = () => {};
   public onerr: (err: unknown) => void = () => {};
   public readonly buffer: TimedQueue<Outgoing>;
+  private readonly channel: LogicalChannelBase<Incoming[], Outgoing[]>;
 
   constructor({channel, bufferSize = 100, bufferTime = 5}: BufferedLogicalChannelBaseOptions<Incoming, Outgoing>) {
+    this.channel = channel;
     channel.onmsg = (msg: Incoming[]) => this.onmsg(msg);
     channel.onerr = (err: unknown) => this.onerr(err);
     this.buffer = new TimedQueue();
@@ -44,5 +46,9 @@ export class BufferedLogicalChannelBase<Incoming, Outgoing> implements LogicalCh
     const buffer = this.buffer;
     const length = outgoing.length;
     for (let i = 0; i < length; i++) buffer.push(outgoing[i]);
+  }
+
+  public close(code?: number, reason?: string): void {
+    this.channel.close(code, reason);
   }
 }

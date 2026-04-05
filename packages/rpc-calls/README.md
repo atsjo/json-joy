@@ -48,7 +48,7 @@ A more realistic detailed setup with reconnection (persistent channel), batching
 and codecs over a WebSocket transport:
 
 ```
-ReliableCaller
+ReliableCaller → FetchCaller (HTTP fallback, see below)
   ↓
 RxPersistentCaller → PersistentPhysicalChannel → WebSocketChannel(PhysicalChannel)
   ↓                                               ┊
@@ -63,15 +63,16 @@ RxBatchCodecLogicalChannel(                       ┊
                                                   ↓┊
                                                  PhysicalChannelBase
                                                   ↑
-RxStreamCodecLogicalChannel(LogicalChannelBase) --╯
+RxLogicalChannelBase(LogicalChannelBase) ---------╯
  ↑     ╰→ RpcCodec → (StreamCodec + JsonValueCodec)
  │                     ╰→ | rx.binary        ╰→ | cbor
  │                        | rx.compact          | json
  │                        | json2.verbose       | msgpack
-BufferedLogicalChannel
+ │
+BufferedLogicalChannelBase
  ↑
-RxLogicalChannelDispatcher (Reactive RPC message router to Callee/Procedure)
- ↓
+RxLogicalChannelBaseDispatcher (Reactive RPC message router to Callee/Procedure)
+ ↓     ╰→ Ctx
 Callee → Procedure
 ^^^^^^
 ```
@@ -85,7 +86,7 @@ fetch()
   ┊↑
 (HTTP network)
   ↓┊
-RxBatchCodecDispatcher
+RxBatchCodecDispatcher → Ctx
  │     ╰→ RpcCodec → (StreamCodec + JsonValueCodec)
  │                     ╰→ | rx.binary        ╰→ | cbor
  │                        | rx.compact          | json

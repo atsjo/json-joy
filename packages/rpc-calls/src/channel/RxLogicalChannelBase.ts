@@ -37,4 +37,8 @@ export class RxLogicalChannelBase implements LogicalChannelBase<Incoming[], Outg
     const encoded = msg.encode(res, messages);
     this.channel.send(encoded);
   }
+
+  public close(code?: number, reason?: string): void {
+    this.channel.close(code, reason);
+  }
 }
