@@ -9,7 +9,7 @@ import type {RpcSpecifier} from './types';
  */
 export class RpcCodec {
   constructor(
-    public readonly msg: StreamCodec,
+    public readonly msg: StreamCodec<RxMessage>,
     public readonly req: JsonValueCodec,
     public readonly res: JsonValueCodec,
   ) {}

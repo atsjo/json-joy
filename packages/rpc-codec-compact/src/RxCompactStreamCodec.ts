@@ -90,7 +90,7 @@ const encodeCompactWithPayload = (
   } else encoder.writeArr(msg.toCompact());
 };
 
-export class CompactMsgStreamCodec implements StreamCodec {
+export class RxCompactStreamCodec implements StreamCodec<msg.RxMessage> {
   id = 'rx.compact';
   format = RpcMessageFormat.Compact;
 

@@ -15,7 +15,7 @@ const ERROR_TYPE = schema.JsonRpc2Error.type;
 const NOTIFICATION_TYPE = schema.JsonRpc2Notification.type;
 const REQUEST_TYPE = schema.JsonRpc2Request.type;
 
-export class JsonRpc2TypedMsgStreamCodec implements StreamCodec {
+export class JsonRpc2StreamCodec implements StreamCodec<msg.RxMessage> {
   id = 'json2.verbose';
   format = RpcMessageFormat.JsonRpc2;
 
