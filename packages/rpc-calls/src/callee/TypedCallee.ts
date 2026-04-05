@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import {ObjValue} from '@jsonjoy.com/json-type';
 import {RpcError} from '@jsonjoy.com/rpc-error';
-import {RpcCaller, type RpcCallerOptions} from './RpcCaller';
+import {RpcCallee, type RpcCallerOptions} from './RpcCallee';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Procedure} from '../procedures';
 import {Call} from './Call';
@@ -71,15 +71,15 @@ const objectValueToProcedures = <V extends ObjValue<any>, Ctx = unknown>(router:
  * ObjectValue. Wraps all responses and errors into JSON Type {@link Value}
  * objects.
  */
-export class TypedCaller<Ctx, V extends ObjValue<any>, P extends ObjectValueToProcedures<V, Ctx> = ObjectValueToProcedures<V, Ctx>> implements Callee<Ctx, P>, Printable {
+export class TypedCallee<Ctx, V extends ObjValue<any>, P extends ObjectValueToProcedures<V, Ctx> = ObjectValueToProcedures<V, Ctx>> implements Callee<Ctx, P>, Printable {
   public readonly router: V;
-  public readonly rpc: RpcCaller;
+  public readonly rpc: RpcCallee;
 
   constructor({router, ...rest}: ObjectValueCallerOptions<V, Ctx>) {
     this.router = router;
     if (!router.type.system) throw new Error('NO_MODULE');
     const procedures = objectValueToProcedures(router);
-    this.rpc = new RpcCaller({...rest, procedures});
+    this.rpc = new RpcCallee({...rest, procedures});
   }
 
   protected getResType<K extends keyof P>(name: K) {

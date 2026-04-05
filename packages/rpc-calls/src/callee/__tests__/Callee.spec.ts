@@ -1,12 +1,12 @@
 import * as Rx from 'rxjs';
-import {createRpcCaller} from './Callee.fixtures';
-import {RpcCaller} from '../RpcCaller';
+import {createRpcCallee} from './Callee.fixtures';
+import {RpcCallee} from '../RpcCallee';
 import {Procedure} from '../../procedures';
 import {of} from 'thingies';
 import {RpcError} from 'rpc-error';
 
 const setup = () => {
-  const caller = createRpcCaller();
+  const caller = createRpcCallee();
   return {caller};
 };
 
@@ -24,7 +24,7 @@ describe('.call()', () => {
   });
 
   test('wraps error into RpcError', async () => {
-    const caller = new RpcCaller<any>({
+    const caller = new RpcCallee<any>({
       procedures: {
         test: Procedure.unary(async () => {
           // tslint:disable-next-line:no-string-throw
@@ -83,7 +83,7 @@ describe('.call$()', () => {
   });
 
   test('wraps errors into internal RpcError values', async () => {
-    const caller = new RpcCaller({
+    const caller = new RpcCallee({
       procedures: {
         test: Procedure.rx(() => {
           const subject = new Rx.Subject();

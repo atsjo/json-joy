@@ -2,7 +2,7 @@ import {timer, from, Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {RpcError} from 'rpc-error';
 import {Procedure} from '../../procedures';
-import {RpcCaller} from '../RpcCaller';
+import {RpcCallee} from '../RpcCallee';
 
 export interface SampleCtx {
   ip?: string;
@@ -161,7 +161,7 @@ export const procedures = {
 // Helper for value state
 const valueHolder = {value: 0};
 
-export const createRpcCaller = () =>
-  new RpcCaller<SampleCtx | void, typeof procedures>({
+export const createRpcCallee = <Ctx>() =>
+  new RpcCallee<Ctx, typeof procedures>({
     procedures,
   });

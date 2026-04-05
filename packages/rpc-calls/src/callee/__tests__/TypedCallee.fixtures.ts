@@ -1,4 +1,4 @@
-import {TypedCaller} from '../TypedCaller';
+import {TypedCallee} from '../TypedCallee';
 import {ObjValue} from '@jsonjoy.com/json-type';
 import {procedures, SampleCtx} from './Callee.fixtures';
 
@@ -71,7 +71,7 @@ export const obj = base
   )
   .add('utilTimer', t.fn.inp(t.undef).out(t.num).ctx<SampleCtx>(), procedures.utilTimer.call.bind(procedures.utilTimer));
 
-export const createTypedCaller = () =>
-  new TypedCaller<SampleCtx | void, typeof obj>({
+export const createTypedCallee = () =>
+  new TypedCallee<SampleCtx | void, typeof obj>({
     router: obj,
   });
