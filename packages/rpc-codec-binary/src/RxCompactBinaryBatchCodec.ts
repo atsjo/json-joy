@@ -58,11 +58,9 @@ const readPayloadId = (
 };
 
 /**
- * Lite binary Reactive JSON RPC codec intended for browser/client use.
- * Encodes/decodes in "binary" message format directly messages in "compact"
- * message format.
+ * Encodes from "compact" POJO format to "rx.binary" over the wire, and back.
  */
-export class CompactBinaryMsgCodec implements BinBatchCodec<Message> {
+export class RxCompactBinaryBatchCodec implements BinBatchCodec<Message> {
   public readonly id = 'rx.binary';
   public readonly format = RpcMessageFormat.Binary;
   private readonly msgWriter: BinaryMessageWriter;

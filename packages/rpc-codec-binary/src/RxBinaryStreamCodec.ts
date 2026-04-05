@@ -8,7 +8,7 @@ import type {Uint8ArrayCut} from '@jsonjoy.com/buffers/lib/Uint8ArrayCut';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 
-export class BinaryMsgStreamCodec implements StreamCodec {
+export class RxBinaryStreamCodec implements StreamCodec<msg.RxMessage> {
   id = 'rx.binary';
   format = RpcMessageFormat.Binary;
 

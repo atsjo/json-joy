@@ -27,7 +27,7 @@ export type BinBatchCodec<Message> = BatchCodec<Uint8Array, Message>;
  * Encodes/decodes messages one-by-one or in batches. Can `.write()` directly
  * to a stream `Writer` buffer resolved by {@link JsonValueCodec}.
  */
-export interface StreamCodec {
+export interface StreamCodec<Message> {
   id: string;
 
   /**
@@ -37,9 +37,9 @@ export interface StreamCodec {
    */
   format: RpcMessageFormat;
 
-  write(codec: JsonValueCodec, message: RxMessage): void;
-  writeBatch(codec: JsonValueCodec, messages: RxMessage[]): void;
-  encode(jsonCodec: JsonValueCodec, batch: RxMessage[]): Uint8Array;
-  read(codec: JsonValueCodec): RxMessage[];
-  readChunk(codec: JsonValueCodec, uint8: Uint8Array): RxMessage[];
+  write(codec: JsonValueCodec, message: Message): void;
+  writeBatch(codec: JsonValueCodec, messages: Message[]): void;
+  encode(jsonCodec: JsonValueCodec, batch: Message[]): Uint8Array;
+  read(codec: JsonValueCodec): Message[];
+  readChunk(codec: JsonValueCodec, uint8: Uint8Array): Message[];
 }

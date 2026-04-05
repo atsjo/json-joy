@@ -13,7 +13,7 @@ import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
  * Lite binary Reactive JSON RPC codec intended for browser/client use. Uses a
  * injected codec for values, JSON Type values can be untyped.
  */
-export class RpcMessageBinaryMsgCodec implements BinBatchCodec<msg.RxMessage> {
+export class RxBinaryBatchCodec implements BinBatchCodec<msg.RxMessage> {
   public readonly id = 'rx.binary';
   public readonly format = RpcMessageFormat.Binary;
   private readonly msgWriter: BinaryMessageWriter;

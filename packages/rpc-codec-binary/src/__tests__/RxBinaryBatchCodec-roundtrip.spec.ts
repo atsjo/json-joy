@@ -1,14 +1,14 @@
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {messages} from '@jsonjoy.com/rpc-messages/lib/testing/fixtures';
-import {RpcMessageBinaryMsgCodec} from '../RpcMessageBinaryMsgCodec';
+import {RxBinaryBatchCodec} from '../RxBinaryBatchCodec';
 
 const cbor = new CborJsonValueCodec(new Writer());
 
 describe('one message at a time', () => {
   for (const [name, msg] of Object.entries(messages)) {
     test(name, () => {
-      const codec = new RpcMessageBinaryMsgCodec(cbor);
+      const codec = new RxBinaryBatchCodec(cbor);
       const u8 = codec.toChunk([msg]);
       const [decoded] = codec.fromChunk(u8);
       expect(decoded.constructor).toBe(msg.constructor);
@@ -24,7 +24,7 @@ describe('message batches', () => {
   for (let i = 0; i < length; i++) {
     const batch = list.slice(0, i + 1);
     test(`batch of ${i + 1} messages`, () => {
-      const codec = new RpcMessageBinaryMsgCodec(cbor);
+      const codec = new RxBinaryBatchCodec(cbor);
       const u8 = codec.toChunk(batch);
       const decoded = codec.fromChunk(u8);
       expect(decoded.length).toBe(batch.length);
