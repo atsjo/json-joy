@@ -4,12 +4,63 @@ Implements Reactive RPC procedure calling semantics abstracted away from any
 transport or serialization format. Built on top of `@jsonjoy.com/rpc-messages`
 and `@jsonjoy.com/rpc-error`.
 
+
 ## Concepts
 
-- **Procedure** &mdash; A specification of a single RPC procedure (remote function).
-- **Callee** &mdash; A collection of procedures that can be called, the server side.
-- **Caller** &mdash; A client that can call procedures on a callee, the client side.
-- **Channel** &mdash; A logical communication channel between caller and callee.
+Transport:
+
+- `PhysicalChannel` &mdash; comes from `@jsonjoy.com/channel` package, represents
+  a low-level transport (WebSocket, HTTP, etc). It is a duplex stream of raw messages
+  in `string` or `Uint8Array` format.
+- `LogicalChannel` &mdash; an abstraction over `PhysicalChannel` that provides
+  message framing/encoding/decoding. It transforms raw messages into structured
+  RPC messages and vice versa.
+
+RPC:
+
+- `Procedure` &mdash; A specification of a single RPC procedure (remote function).
+- `Callee` &mdash; A collection of procedures that can be called, on the server side.
+- `Caller` &mdash; A client that can call remote procedures.
+- `Dispatcher` &mdash; connects a `LogicalChannel` to a `Callee`, routing incoming
+  messages to the appropriate procedure and sending responses back.
+
+
+## Architectural Overview
+
+A high-level overview of the RPC building blocks:
+
+```
+Caller → LogicalChannel → PhysicalChannel ← LogicalChannel ← Dispatcher → Callee → Procedure
+         ↓  |                               ↓  |
+         Codec                              Codec
+            ↓                                  ↓
+            Buffering/Batching                 Buffering/Batching
+```
+
+A more realistic detailed setup with reconnection (persistent channel), batching,
+and codecs:
+
+```
+PersistentCaller → PersistentPhysicalChannel → PhysicalChannel
+  ↓                                             ┊
+LogicalChannelRxCaller(Caller)                  ┊
+  ↓                                             ┊
+BufferedLogicalChannel                          ┊
+  ↓                                             ┊
+MsgCodecLogicalChannel(LogicalChannel) ------→ PhysicalChannel
+                                                ↑
+                                                │
+MsgStreamCodecLogicalChannel(LogicalChannel) ---╯
+ ↑
+BufferedLogicalChannel
+ ↑
+RxDispatcher - Reactive RPC message router to Callee/Procedure
+ ↓
+Callee
+ ↓
+Procedure
+```
+
 
 ## Callers
 
