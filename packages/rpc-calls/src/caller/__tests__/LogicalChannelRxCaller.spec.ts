@@ -1,5 +1,5 @@
 import {firstValueFrom, of, Subject} from 'rxjs';
-import {RxCaller} from '../RxCaller';
+import {LogicalChannelRxCaller} from '../LogicalChannelRxCaller';
 import {
   NotificationMessage,
   RequestCompleteMessage,
@@ -25,7 +25,7 @@ const setup = () => {
     msg$: new Subject<RpcServerMessage[]>(),
     send: send,
   };
-  const client = new RxCaller({channel});
+  const client = new LogicalChannelRxCaller({channel});
   return {send, channel, client};
 };
 
@@ -37,7 +37,7 @@ const setupBuffered = () => {
     send,
   };
   const bufferedChannel = new BufferedLogicalChannel({channel, bufferTime: 1});
-  const client = new RxCaller({channel: bufferedChannel});
+  const client = new LogicalChannelRxCaller({channel: bufferedChannel});
   return {send, channel, client};
 };
 

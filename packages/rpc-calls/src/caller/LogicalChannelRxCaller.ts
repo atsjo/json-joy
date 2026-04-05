@@ -20,9 +20,9 @@ class Call {
 }
 
 /**
- * Configuration parameters for {@link RxCaller}.
+ * Configuration parameters for {@link LogicalChannelRxCaller}.
  */
-export interface RxCallerOptions {
+export interface LogicalChannelRxCallerOptions {
   /**
    * Channel to send and receive messages.
    */
@@ -30,36 +30,10 @@ export interface RxCallerOptions {
 }
 
 /**
- * Implements client-side part of Reactive-RPC protocol.
- *
- * ## Usage
- *
- * Connect RPC client to WebSocket:
- *
- * ```ts
- * const client = new RxCaller({
- *   send: (messages) => ws.send(serialize(messages)),
- * });
- * ws.on('message', (event) => {
- *   client.onMessages(deserialize(event.data));
- * });
- * ```
- *
- * Send notifications to the server:
- *
- * ```ts
- * client.notify(method, payload);
- * ```
- *
- * Execute RPC methods with streaming support:
- *
- * ```ts
- * client.call(method, data$).subscribe((value) => {
- *   // ...
- * });
- * ```
+ * Implements {@link Caller} on top of a {@link LogicalChannel}, using
+ * Reactive RPC semantics.
  */
-export class RxCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
+export class LogicalChannelRxCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
   /** In-flight RPC calls. */
   private readonly calls = new Map<number, Call>();
   /** Message ID counter. */
@@ -68,7 +42,7 @@ export class RxCaller<Methods extends CallerMethods<any> = CallerMethods> implem
   public readonly channel: LogicalChannel<msg.RpcServerMessage[], msg.RpcClientMessage[]>;
   public readonly notification$: Observable<msg.NotificationMessage> = new Subject<msg.NotificationMessage>();
 
-  constructor({channel}: RxCallerOptions) {
+  constructor({channel}: LogicalChannelRxCallerOptions) {
     this.channel = channel;
     this._msgSub = channel.msg$.subscribe({
       next: (messages) => this.onMessages(messages),
