@@ -1,0 +1,38 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "src/demo",
+    "src/__tests__",
+    "src/**/__demos__/**/*.*",
+    "src/**/__tests__/**/*.*",
+    "src/**/__bench__/**/*.*",
+    "src/**/__mocks__/**/*.*",
+    "src/**/__jest__/**/*.*",
+    "src/**/__mocha__/**/*.*",
+    "src/**/__tap__/**/*.*",
+    "src/**/__tape__/**/*.*",
+    "*.test.ts",
+    "*.spec.ts",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx"
+  ],
+  "references": [
+    {"path": "../buffers"},
+    {"path": "../channel"},
+    {"path": "../json-pack"},
+    {"path": "../json-type"},
+    {"path": "../rpc-calls"},
+    {"path": "../rpc-codec"},
+    {"path": "../rpc-codec-base"},
+    {"path": "../rpc-error"},
+    {"path": "../rpc-messages"},
+    {"path": "../util"}
+  ]
+}

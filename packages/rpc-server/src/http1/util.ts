@@ -1,0 +1,88 @@
+import {PayloadTooLarge} from '../errors';
+import type {ConnectionContext} from '../types';
+import type * as http from 'http';
+import type {RpcCodecs} from '@jsonjoy.com/rpc-codec';
+
+export const getBody = (request: http.IncomingMessage, max: number): Promise<Buffer[]> => {
+  return new Promise<Buffer[]>((resolve, reject) => {
+    let size = 0;
+    const chunks: Buffer[] = [];
+    request.on('error', (error) => {
+      request.removeAllListeners();
+      reject(error);
+    });
+    request.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > max) {
+        request.removeAllListeners();
+        reject(new PayloadTooLarge());
+        return;
+      }
+      chunks.push(chunk);
+    });
+    request.on('end', () => {
+      // request.removeAllListeners();
+      resolve(chunks);
+    });
+  });
+};
+
+const REGEX_CODECS_SPECIFIER = /rpc\.(\w{0,32})\.(\w{0,32})\.(\w{0,32})(?:\-(\w{0,32}))?/;
+
+/**
+ * @param specifier A string which may contain a codec specifier. For example:
+ *  - `rpc.rx.compact.cbor` for Rx-RPC with compact messages and CBOR values.
+ *  - `rpc.json2.verbose.json` for JSON-RPC 2.0 with verbose messages encoded as JSON.
+ */
+export const setCodecs = (ctx: ConnectionContext, specifier: string, codecs: RpcCodecs): void => {
+  const match = REGEX_CODECS_SPECIFIER.exec(specifier);
+  if (!match) return;
+  const [, protocol, messageFormat, request, response] = match;
+  switch (protocol) {
+    case 'rx': {
+      switch (messageFormat) {
+        case 'compact': {
+          ctx.msgCodec = codecs.msg.compact;
+          break;
+        }
+        case 'binary': {
+          ctx.msgCodec = codecs.msg.binary;
+          break;
+        }
+      }
+      break;
+    }
+    case 'json2': {
+      ctx.msgCodec = codecs.msg.jsonRpc2;
+      break;
+    }
+  }
+  switch (request) {
+    case 'cbor': {
+      ctx.resCodec = ctx.reqCodec = codecs.val.cbor;
+      break;
+    }
+    case 'json': {
+      ctx.resCodec = ctx.reqCodec = codecs.val.json;
+      break;
+    }
+    case 'msgpack': {
+      ctx.resCodec = ctx.reqCodec = codecs.val.msgpack;
+      break;
+    }
+  }
+  switch (response) {
+    case 'cbor': {
+      ctx.resCodec = codecs.val.cbor;
+      break;
+    }
+    case 'json': {
+      ctx.resCodec = codecs.val.json;
+      break;
+    }
+    case 'msgpack': {
+      ctx.resCodec = codecs.val.msgpack;
+      break;
+    }
+  }
+};

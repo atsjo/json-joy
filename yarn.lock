@@ -2719,7 +2719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/rpc-calls@workspace:packages/rpc-calls":
+"@jsonjoy.com/rpc-calls@workspace:*, @jsonjoy.com/rpc-calls@workspace:packages/rpc-calls":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-calls@workspace:packages/rpc-calls"
   dependencies:
@@ -2821,6 +2821,27 @@ __metadata:
     "@jsonjoy.com/json-type": "workspace:*"
     "@jsonjoy.com/rpc-error": "workspace:*"
   peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-server@workspace:packages/rpc-server":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-server@workspace:packages/rpc-server"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/jit-router": "npm:^1.0.1"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-calls": "workspace:*"
+    "@jsonjoy.com/rpc-codec": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    tree-dump: "npm:^1.1.0"
+  peerDependencies:
+    rxjs: 7
     tslib: "*"
   languageName: unknown
   linkType: soft
