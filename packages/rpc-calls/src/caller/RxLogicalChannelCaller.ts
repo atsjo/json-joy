@@ -210,8 +210,11 @@ export class RxLogicalChannelCaller<Methods extends CallerMethods<any> = CallerM
     this._msgSub?.unsubscribe();
     // this.buffer.onFlush = () => {};
     for (const call of this.calls.values()) {
-      call.req$.error(new Error(reason));
-      call.req$.error(new Error(reason));
+      if (!call.req$.closed && !call.req$.isStopped) call.req$.error(new Error(reason));
+      if (!call.resFinalized) {
+        call.resFinalized = true;
+        if (!call.res$.closed && !call.res$.isStopped) call.res$.complete();
+      }
     }
     this.calls.clear();
   }

@@ -1,6 +1,6 @@
 import {firstValueFrom, from, type Observable, Subject} from 'rxjs';
 import {catchError, finalize, first, mergeWith, share, switchMap, take, takeUntil, tap} from 'rxjs/operators';
-import {RpcError, RpcErrorCodes} from 'rpc-error';
+import {RpcError, RpcErrorCodes} from '@jsonjoy.com/rpc-error';
 import {BufferSubject} from './BufferSubject';
 import {Call} from './Call';
 import {printTree} from 'tree-dump/lib/printTree';

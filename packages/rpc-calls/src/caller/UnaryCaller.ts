@@ -86,7 +86,7 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
         })
         .catch((error) => {
           for (const message of messages) {
-            if (message instanceof ResponseCompleteMessage) {
+            if (message instanceof RequestCompleteMessage) {
               const id = message.id;
               const calls = this.calls;
               const future = calls.get(id);
@@ -95,9 +95,6 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
               future.reject(error);
             }
           }
-        })
-        .finally(() => {
-          for (const message of messages) if (message instanceof RequestCompleteMessage) this.calls.delete(message.id);
         });
     };
   }

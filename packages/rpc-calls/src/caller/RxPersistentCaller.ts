@@ -81,11 +81,11 @@ export class RxPersistentCaller<Methods extends CallerMethods<any> = CallerMetho
     );
   }
 
-  public async call<K extends keyof Methods>(method: K, request: Observable<Methods[K][0]>): Promise<Methods[K][1]> {
+  public async call<K extends keyof Methods>(method: K, request: Methods[K][0]): Promise<Methods[K][1]> {
     return firstValueFrom(this.call$(method, request));
   }
 
-  public notify<K extends keyof Methods>(method: K, data: Observable<Methods[K][0]>): void {
+  public notify<K extends keyof Methods>(method: K, data: Methods[K][0]): void {
     this.rpc$.subscribe((rpc) => rpc.notify(method, data));
   }
 

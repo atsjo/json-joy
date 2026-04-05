@@ -42,7 +42,7 @@ export class BufferedLogicalChannelBase<Incoming, Outgoing> implements LogicalCh
     };
   }
 
-  public async send(outgoing: Outgoing[]): Promise<void> {
+  public send(outgoing: Outgoing[]): void {
     const buffer = this.buffer;
     const length = outgoing.length;
     for (let i = 0; i < length; i++) buffer.push(outgoing[i]);

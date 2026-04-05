@@ -74,7 +74,10 @@ export class RxLogicalChannelBaseDispatcher<Ctx> {
   }
 
   protected sendCompleteMessage(id: number, value: Value | unknown | undefined): void {
-    const message = new msg.ResponseCompleteMessage(id, value instanceof Value ? value : unknown(value));
+    const message = new msg.ResponseCompleteMessage(
+      id,
+      value !== undefined ? (value instanceof Value ? value : unknown(value)) : undefined,
+    );
     this.send(message);
   }
 

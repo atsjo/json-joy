@@ -101,13 +101,13 @@ Callee → Procedure
 
 Several caller implementations are provided:
 
-- `RxCaller` &mdash; Full streaming RPC client using RxJS observables over a
+- `RxLogicalChannelCaller` &mdash; Full streaming RPC client using RxJS observables over a
   logical message channel.
 - `UnaryCaller` &mdash; Unary (request/response) RPC client with batching
   support using compact message format.
-- `PersistentCaller` &mdash; Reconnecting RPC client that wraps `RxCaller` and
+- `RxPersistentCaller` &mdash; Reconnecting RPC client that wraps `RxLogicalChannelCaller` and
   re-establishes the logical channel on each new physical connection.
-- `FetchRpcCaller` &mdash; Simple HTTP-based unary RPC client using the
+- `FetchCaller` &mdash; Simple HTTP-based unary RPC client using the
   browser `fetch()` API.
 - `CalleeCaller` &mdash; In-process caller that directly invokes a callee,
   useful for testing and local execution.

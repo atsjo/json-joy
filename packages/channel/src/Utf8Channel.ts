@@ -33,7 +33,9 @@ export class Utf8Channel implements PhysicalChannel<string> {
     this.message$ = channel.message$.pipe(
       map((data) => (typeof data === 'string' ? data : decodeUtf8(data, 0, data.length))),
     );
-    channel.onclose = this.onclose;
+    channel.onclose = (code, reason, wasClean) => {
+      this.onclose?.(code, reason, wasClean);
+    };
     this.message$.subscribe((message) => {
       this.onmessage?.(message, true);
     });

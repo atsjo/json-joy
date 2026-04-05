@@ -1,7 +1,7 @@
 import {map} from 'rxjs';
 import {toMessage} from '@jsonjoy.com/rpc-messages';
 import type {CompactMessage, RxMessage} from '@jsonjoy.com/rpc-messages';
-import type {Observable} from 'rxjs/internal/Observable';
+import type {Observable} from 'rxjs';
 import type {LogicalChannel} from './types';
 
 export class CompactToNativeTransform implements LogicalChannel<CompactMessage[], CompactMessage[]> {
