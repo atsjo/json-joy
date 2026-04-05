@@ -31,39 +31,68 @@ A high-level overview of the RPC building blocks:
 
 ```
 Caller → LogicalChannel → PhysicalChannel ← LogicalChannel ← Dispatcher → Callee → Procedure
-         ↓  |                               ↓  |
+^^^^^^   ↓  |                               ↓  |                          ^^^^^^
          Codec                              Codec
             ↓                                  ↓
             Buffering/Batching                 Buffering/Batching
 ```
 
-A more realistic detailed setup with reconnection (persistent channel), batching,
-and codecs:
+Simplest in-process for API testing:
 
 ```
+Caller → CalleeCaller → Callee → Procedure
+^^^^^^                  ^^^^^^
+```
+
+A more realistic detailed setup with reconnection (persistent channel), batching,
+and codecs over a WebSocket transport:
+
+```
+ReliableCaller
+  ↓
 RxPersistentCaller → PersistentPhysicalChannel → WebSocketChannel(PhysicalChannel)
   ↓                                               ┊
 RxLogicalChannelCaller(Caller)                    ┊
-  ↓                                               ┊
+  ↓                    ^^^^^^                     ┊
 BufferedLogicalChannel                            ┊
   ↓                                               ┊
 RxBatchCodecLogicalChannel(                       ┊
   BatchCodecLogicalChannel(LogicalChannel)) ---→ WebSocketChannel(PhysicalChannel)
-                                                  ┊↑
+     ╰→ BatchCodec                                ┊↑
                                             (TCP network)
                                                   ↓┊
-                                                 PhysicalChannel
+                                                 PhysicalChannelBase
                                                   ↑
-RxStreamCodecLogicalChannel(LogicalChannel) ------╯
- ↑     ╰→ RpcCodec
- │
+RxStreamCodecLogicalChannel(LogicalChannelBase) --╯
+ ↑     ╰→ RpcCodec → (StreamCodec + JsonValueCodec)
+ │                     ╰→ | rx.binary        ╰→ | cbor
+ │                        | rx.compact          | json
+ │                        | json2.verbose       | msgpack
 BufferedLogicalChannel
  ↑
-RxDispatcher (Reactive RPC message router to Callee/Procedure)
+RxLogicalChannelDispatcher (Reactive RPC message router to Callee/Procedure)
  ↓
-Callee
+Callee → Procedure
+^^^^^^
+```
+
+A realistic HTTP-based unary RPC client using `fetch()`:
+
+```
+FetchCaller(UnaryCaller(Caller))
+  ↓                     ^^^^^^
+fetch()
+  ┊↑
+(HTTP network)
+  ↓┊
+RxBatchCodecDispatcher
+ │     ╰→ RpcCodec → (StreamCodec + JsonValueCodec)
+ │                     ╰→ | rx.binary        ╰→ | cbor
+ │                        | rx.compact          | json
+ │                        | json2.verbose       | msgpack
  ↓
-Procedure
+Callee → Procedure
+^^^^^^
 ```
 
 
