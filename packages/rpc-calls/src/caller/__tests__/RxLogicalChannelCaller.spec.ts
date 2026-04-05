@@ -1,4 +1,4 @@
-import {firstValueFrom, of, Subject} from 'rxjs';
+import {firstValueFrom, Subject} from 'rxjs';
 import {RxLogicalChannelCaller} from '../RxLogicalChannelCaller';
 import {
   NotificationMessage,
@@ -116,7 +116,7 @@ test('sends Response Un-subscribe Message to the server on unsubscribe', async (
 });
 
 test('server can immediately complete the subscription', async () => {
-  const {send, client} = setup();
+  const {client} = setup();
   const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
@@ -251,7 +251,7 @@ test('can subscribe to multiple methods', async () => {
 });
 
 test('can respond with error', async () => {
-  const {send, client} = setup();
+  const {client} = setup();
   const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
@@ -268,7 +268,7 @@ test('can respond with error', async () => {
 });
 
 test('response can complete without sending any data', async () => {
-  const {send, client} = setup();
+  const {client} = setup();
   const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();

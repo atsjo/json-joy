@@ -24,7 +24,7 @@ export interface PhysicalChannelBase<T extends string | Uint8Array<any> = string
    * @param reason Closure reason.
    */
   close(code?: number, reason?: string): void;
-  
+
   /**
    * Sends an outgoing message to the channel immediately.
    *
@@ -39,7 +39,8 @@ export interface PhysicalChannelBase<T extends string | Uint8Array<any> = string
   buffer(): number;
 }
 
-export interface PhysicalChannel<T extends string | Uint8Array<any> = string | Uint8Array<any>> extends PhysicalChannelBase<T> {
+export interface PhysicalChannel<T extends string | Uint8Array<any> = string | Uint8Array<any>>
+  extends PhysicalChannelBase<T> {
   /**
    * Emits on every new incoming message.
    */

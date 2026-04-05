@@ -1,5 +1,5 @@
-import {TimedQueue} from "thingies";
-import type {LogicalChannelBase} from "./types";
+import {TimedQueue} from 'thingies';
+import type {LogicalChannelBase} from './types';
 
 export interface BufferedLogicalChannelBaseOptions<Incoming, Outgoing> {
   channel: LogicalChannelBase<Incoming[], Outgoing[]>;
@@ -39,7 +39,7 @@ export class BufferedLogicalChannelBase<Incoming, Outgoing> implements LogicalCh
     this.buffer.timeLimit = bufferTime;
     this.buffer.onFlush = (list: Outgoing[]) => {
       channel.send(list);
-    }
+    };
   }
 
   public async send(outgoing: Outgoing[]): Promise<void> {

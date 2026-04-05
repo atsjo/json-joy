@@ -1,13 +1,20 @@
 import {TypedCallee} from '../TypedCallee';
 import {ObjValue} from '@jsonjoy.com/json-type';
-import {procedures, SampleCtx} from './Callee.fixtures';
+import {procedures, type SampleCtx} from './Callee.fixtures';
 
 const base = ObjValue.new();
 const t = base.system.t;
 
 export const obj = base
   .add('ping', t.fn.inp(t.undef).out(t.con('pong')).ctx<SampleCtx>(), procedures.ping.call.bind(procedures.ping))
-  .add('getIp', t.fn.inp(t.undef).out(t.object({ip: t.str})).ctx<SampleCtx>(), procedures.getIp.call.bind(procedures.getIp))
+  .add(
+    'getIp',
+    t.fn
+      .inp(t.undef)
+      .out(t.object({ip: t.str}))
+      .ctx<SampleCtx>(),
+    procedures.getIp.call.bind(procedures.getIp),
+  )
   .add(
     'delay',
     t.fn
@@ -60,7 +67,11 @@ export const obj = base
     procedures.double.call.bind(procedures.double),
   )
   .add('error', t.fn.inp(t.undef).out(t.undef).ctx<SampleCtx>(), procedures.error.call.bind(procedures.error))
-  .add('streamError', t.fn.inp(t.undef).out(t.undef).ctx<SampleCtx>(), procedures.streamError.call.bind(procedures.streamError))
+  .add(
+    'streamError',
+    t.fn.inp(t.undef).out(t.undef).ctx<SampleCtx>(),
+    procedures.streamError.call.bind(procedures.streamError),
+  )
   .add(
     'auth.users.get',
     t.fn
@@ -69,7 +80,11 @@ export const obj = base
       .ctx<SampleCtx>(),
     procedures['auth.users.get'].call.bind(procedures['auth.users.get']),
   )
-  .add('utilTimer', t.fn.inp(t.undef).out(t.num).ctx<SampleCtx>(), procedures.utilTimer.call.bind(procedures.utilTimer));
+  .add(
+    'utilTimer',
+    t.fn.inp(t.undef).out(t.num).ctx<SampleCtx>(),
+    procedures.utilTimer.call.bind(procedures.utilTimer),
+  );
 
 export const createTypedCallee = () =>
   new TypedCallee<SampleCtx | void, typeof obj>({

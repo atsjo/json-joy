@@ -27,7 +27,7 @@ export const procedures = {
     valueHolder.value = value;
   }),
 
-  notificationSetValueFromCtx: Procedure.new(function (inp, ctx: SampleCtx) {
+  notificationSetValueFromCtx: Procedure.new((inp, ctx: SampleCtx) => {
     valueHolder.value = ctx?.ip?.length ?? 0;
   }),
 

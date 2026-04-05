@@ -1,4 +1,4 @@
-import {PhysicalChannelBase} from '@jsonjoy.com/channel';
+import type {PhysicalChannelBase} from '@jsonjoy.com/channel';
 
 export class MockServerWebSocketChannel implements PhysicalChannelBase<Uint8Array> {
   public closed = false;
@@ -6,8 +6,6 @@ export class MockServerWebSocketChannel implements PhysicalChannelBase<Uint8Arra
   public onclose: (code: number, reason: string) => void = () => {};
 
   public sentData: Uint8Array[] = [];
-
-  constructor() {}
 
   public close(code?: number, reason?: string): void {
     this.closed = true;

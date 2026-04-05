@@ -43,7 +43,10 @@ export class FetchCaller<Methods extends CallerMethods<any> = CallerMethods> imp
     });
   }
 
-  public call$<K extends keyof Methods>(method: K, data: Observable<Methods[K][0]> | Methods[K][0]): Observable<Methods[K][1]> {
+  public call$<K extends keyof Methods>(
+    method: K,
+    data: Observable<Methods[K][0]> | Methods[K][0],
+  ): Observable<Methods[K][1]> {
     return this.caller.call$(method, data);
   }
 

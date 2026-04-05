@@ -1,4 +1,4 @@
-import {firstValueFrom, from, of, switchMap, take, type Observable, isObservable} from "rxjs";
+import {firstValueFrom, from, of, switchMap, take, type Observable, isObservable} from 'rxjs';
 
 export type Procedures<Ctx = unknown> = Record<string, Procedure<any, any, Ctx>>;
 export type ProceduresCtx<P extends Procedures> = P extends Procedures<infer Ctx> ? Ctx : unknown;
@@ -21,17 +21,16 @@ export abstract class Procedure<Req = unknown, Res = unknown, Ctx = unknown> {
     validate: ((request: Req) => void) | undefined = undefined,
     preCall: ((ctx: Ctx, request: Req) => Promise<void>) | undefined = undefined,
   ) => {
-    if (typeof fn !== 'function')
-      return Procedure.unary(async () => (fn as Res), validate, preCall);
+    if (typeof fn !== 'function') return Procedure.unary(async () => fn as Res, validate, preCall);
     const streamingCall = (req: Observable<Req>, ctx: Ctx) => {
       return req.pipe(
         take(1),
-        switchMap(r => {
-          const res = (fn as ((request: Req, ctx: Ctx) => Res | Promise<Res> | Observable<Res>))(r, ctx);
+        switchMap((r) => {
+          const res = (fn as (request: Req, ctx: Ctx) => Res | Promise<Res> | Observable<Res>)(r, ctx);
           if (isObservable(res)) return res;
           if (res instanceof Promise) return res;
           return Promise.resolve(res);
-        })
+        }),
       );
     };
     return new RxProcedure<Req, Res, Ctx>(streamingCall, validate, preCall);
@@ -45,8 +44,7 @@ export abstract class Procedure<Req = unknown, Res = unknown, Ctx = unknown> {
     fn: (request: Req, ctx: Ctx) => Promise<Res>,
     validate: ((request: Req) => void) | undefined = undefined,
     preCall: ((ctx: Ctx, request: Req) => Promise<void>) | undefined = undefined,
-  ): UnaryProcedure<Req, Res, Ctx> =>
-    new UnaryProcedure<Req, Res, Ctx>(fn, validate, preCall);
+  ): UnaryProcedure<Req, Res, Ctx> => new UnaryProcedure<Req, Res, Ctx>(fn, validate, preCall);
 
   /**
    * Convenience method for creating a *reactive procedure*, which receives a
@@ -56,8 +54,7 @@ export abstract class Procedure<Req = unknown, Res = unknown, Ctx = unknown> {
     fn: (request$: Observable<Req>, ctx: Ctx) => Observable<Res>,
     validate: ((request: Req) => void) | undefined = undefined,
     preCall: ((ctx: Ctx, request: Req) => Promise<void>) | undefined = undefined,
-  ): RxProcedure<Req, Res, Ctx> =>
-    new RxProcedure<Req, Res, Ctx>(fn, validate, preCall);
+  ): RxProcedure<Req, Res, Ctx> => new RxProcedure<Req, Res, Ctx>(fn, validate, preCall);
 
   /**
    * Specifies if request or response of the method could be a stream.

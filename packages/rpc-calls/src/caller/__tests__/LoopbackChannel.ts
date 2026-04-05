@@ -104,16 +104,8 @@ export class LoopbackChannel implements LogicalChannel<msg.RxServerMessage[], ms
     this.methodNames.set(id, method);
     call = this.callee.createCall(method, this.ctx);
     this.calls.set(id, call);
-
-    // Subscribe to response stream and send messages back.
-    // Responses are deferred to the microtask queue to avoid synchronous
-    // re-entrancy: RxCaller's call$() sends the request and returns a lazy
-    // Observable; if the response fires synchronously inside send(), the
-    // inner Subject has no subscribers yet and values are lost.
-    let emitted = false;
     call.res$.subscribe({
       next: (value) => {
-        emitted = true;
         queueMicrotask(() => {
           this.msg$.next([new msg.ResponseDataMessage(id, unknown(value))]);
         });

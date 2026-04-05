@@ -3,7 +3,13 @@ import {Defer} from 'thingies/lib/Defer';
 import {Observable, of, switchMap} from 'rxjs';
 import {CompactBinBatchCodec} from '@jsonjoy.com/rpc-codec/lib/CompactBinBatchCodec';
 import {unknown} from '@jsonjoy.com/json-type/lib/value/Value';
-import {type RxMessage, NotificationMessage, RequestCompleteMessage, ResponseCompleteMessage, ResponseErrorMessage} from '@jsonjoy.com/rpc-messages';
+import {
+  type RxMessage,
+  NotificationMessage,
+  RequestCompleteMessage,
+  ResponseCompleteMessage,
+  ResponseErrorMessage,
+} from '@jsonjoy.com/rpc-messages';
 import type {Caller, CallerMethods} from './types';
 import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base';
 
@@ -48,7 +54,7 @@ export interface UnaryCallerOptions {
 export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
   private id = 1;
   public readonly buffer: TimedQueue<RxMessage>;
-  public onsend: ((messages: Uint8Array) => Promise<Uint8Array>) = async () => {
+  public onsend: (messages: Uint8Array) => Promise<Uint8Array> = async () => {
     throw new Error('onsend not implemented');
   };
 
@@ -91,13 +97,15 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
           }
         })
         .finally(() => {
-          for (const message of messages)
-            if (message instanceof RequestCompleteMessage) this.calls.delete(message.id);
+          for (const message of messages) if (message instanceof RequestCompleteMessage) this.calls.delete(message.id);
         });
     };
   }
 
-  public call$<K extends keyof Methods>(method: K, data: Observable<Methods[K][0]> | Methods[K][0]): Observable<Methods[K][1]> {
+  public call$<K extends keyof Methods>(
+    method: K,
+    data: Observable<Methods[K][0]> | Methods[K][0],
+  ): Observable<Methods[K][1]> {
     return (data instanceof Observable ? data : of(data)).pipe(switchMap((data) => this.call(method, data)));
   }
 

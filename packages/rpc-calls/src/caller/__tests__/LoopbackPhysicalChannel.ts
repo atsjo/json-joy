@@ -1,4 +1,4 @@
-import {BehaviorSubject, Subject, Observable, NEVER, of} from 'rxjs';
+import {BehaviorSubject, Subject, type Observable, NEVER, of} from 'rxjs';
 import type * as msg from '@jsonjoy.com/rpc-messages';
 import type {PhysicalChannel, CloseEventBase} from '@jsonjoy.com/channel';
 import type {BatchCodec} from '@jsonjoy.com/rpc-codec-base';

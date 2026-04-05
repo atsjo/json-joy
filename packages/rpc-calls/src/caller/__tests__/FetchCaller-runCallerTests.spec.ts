@@ -2,7 +2,13 @@ import {createRpcCallee} from '../../callee/__tests__/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
 import {FetchCaller} from '../FetchCaller';
 import {CompactBinBatchCodec} from '@jsonjoy.com/rpc-codec/lib/CompactBinBatchCodec';
-import {RequestCompleteMessage, NotificationMessage, ResponseCompleteMessage, ResponseErrorMessage, type RxServerMessage} from '@jsonjoy.com/rpc-messages';
+import {
+  RequestCompleteMessage,
+  NotificationMessage,
+  ResponseCompleteMessage,
+  ResponseErrorMessage,
+  type RxServerMessage,
+} from '@jsonjoy.com/rpc-messages';
 import {unknown} from '@jsonjoy.com/json-type/lib/value/Value';
 
 runCallerTests(

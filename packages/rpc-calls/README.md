@@ -37,7 +37,7 @@ Caller → LogicalChannel → PhysicalChannel ← LogicalChannel ← Dispatcher 
             Buffering/Batching                 Buffering/Batching
 ```
 
-Simplest in-process for API testing:
+Simplest in-process setup for API testing:
 
 ```
 Caller → CalleeCaller → Callee → Procedure

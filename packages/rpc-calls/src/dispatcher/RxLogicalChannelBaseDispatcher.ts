@@ -145,7 +145,7 @@ export class RxLogicalChannelBaseDispatcher<Ctx> {
         this.sendDataMessage(id, value);
       },
       error: (error: unknown) => {
-        this.onStreamError(id, error as Value)
+        this.onStreamError(id, error as Value);
       },
       complete: (value: Value | undefined) => {
         this.activeStreamCalls.delete(id);

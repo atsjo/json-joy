@@ -10,15 +10,15 @@ export class BufferSubject<T> extends Subject<T> {
   }
 
   protected _subscribe(subscriber: Subscriber<T>): Subscription {
-    // @ts-ignore
+    // @ts-expect-error
     this._throwIfClosed();
-    // @ts-ignore
+    // @ts-expect-error
     const subscription = this._innerSubscribe(subscriber);
     const {buffer} = this;
     for (let i = 0; i < buffer.length && !subscriber.closed; i += 1) {
       subscriber.next(buffer[i] as T);
     }
-    // @ts-ignore
+    // @ts-expect-error
     this._checkFinalizedStatuses(subscriber);
     return subscription;
   }

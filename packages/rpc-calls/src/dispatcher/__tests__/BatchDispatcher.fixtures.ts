@@ -1,6 +1,6 @@
-import {Callee} from '../../callee';
-import {createRpcCallee, SampleCtx} from '../../callee/__tests__/Callee.fixtures';
-import {Procedures} from '../../procedures';
+import type {Callee} from '../../callee';
+import {createRpcCallee, type SampleCtx} from '../../callee/__tests__/Callee.fixtures';
+import type {Procedures} from '../../procedures';
 import {BatchDispatcher} from '../BatchDispatcher';
 
 export const createBatchDispatcher = () => {

@@ -1,4 +1,4 @@
-import {createRpcCallee, SampleCtx} from '../../callee/__tests__/Callee.fixtures';
+import {createRpcCallee, type SampleCtx} from '../../callee/__tests__/Callee.fixtures';
 import {RxLogicalChannelBaseDispatcher} from '../RxLogicalChannelBaseDispatcher';
 import {MockServerWebSocketChannel} from './MockServerWebSocketChannel';
 import {RxLogicalChannelBase} from '../../channel/RxLogicalChannelBase';

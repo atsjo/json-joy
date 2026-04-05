@@ -1,6 +1,6 @@
-import {TimedQueue} from "thingies";
-import type {Observable} from "rxjs/internal/Observable";
-import type {LogicalChannel} from "./types";
+import {TimedQueue} from 'thingies';
+import type {Observable} from 'rxjs/internal/Observable';
+import type {LogicalChannel} from './types';
 
 export interface BufferedLogicalChannelOpts<Incoming, Outgoing> {
   channel: LogicalChannel<Incoming[], Outgoing[]>;
@@ -38,10 +38,11 @@ export class BufferedLogicalChannel<Incoming, Outgoing> implements LogicalChanne
     this.buffer.timeLimit = bufferTime;
     this.buffer.onFlush = (list: Outgoing[]) => {
       const promise = channel.send(list);
-      if (promise instanceof Promise) promise.catch((error) => {
-        console.error(error);
-      });
-    }
+      if (promise instanceof Promise)
+        promise.catch((error) => {
+          console.error(error);
+        });
+    };
   }
 
   public async send(outgoing: Outgoing[]): Promise<void> {

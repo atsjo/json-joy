@@ -27,7 +27,7 @@ export interface RxPersistentCallerOptions {
 
 /**
  * Persistent Reactive (Rx) JSON RPC client, with the following features:
- * 
+ *
  * - Automatically reconnects if disconnected.
  * - Sends periodic keep-alive ".ping" notifications to keep the connection alive.
  *
@@ -70,7 +70,10 @@ export class RxPersistentCaller<Methods extends CallerMethods<any> = CallerMetho
     });
   }
 
-  public call$<K extends keyof Methods>(method: K, data: Observable<Methods[K][0]> | Methods[K][0]): Observable<Methods[K][1]> {
+  public call$<K extends keyof Methods>(
+    method: K,
+    data: Observable<Methods[K][0]> | Methods[K][0],
+  ): Observable<Methods[K][1]> {
     return this.rpc$.pipe(
       first(),
       switchMap((rpc) => rpc.call$(method, data as any)),

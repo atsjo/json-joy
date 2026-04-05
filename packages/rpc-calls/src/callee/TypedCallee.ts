@@ -1,11 +1,11 @@
 import * as Rx from 'rxjs';
-import {ObjValue} from '@jsonjoy.com/json-type';
+import type {ObjValue} from '@jsonjoy.com/json-type';
 import {RpcError} from '@jsonjoy.com/rpc-error';
 import {RpcCallee, type RpcCallerOptions} from './RpcCallee';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Procedure} from '../procedures';
 import {Call} from './Call';
-import {t, KeyType, Type, Value, type Schema} from '@jsonjoy.com/json-type';
+import {type t, type KeyType, type Type, Value, type Schema} from '@jsonjoy.com/json-type';
 import {ValidatorCodegen} from '@jsonjoy.com/json-type/lib/codegen/validator/ValidatorCodegen';
 import {type AbsType, FnRxType, FnType} from '@jsonjoy.com/json-type/lib/type/classes';
 import type {UnObjType, UnObjValue} from '@jsonjoy.com/json-type/lib/value/ObjValue';
@@ -14,19 +14,25 @@ import type {Printable} from 'tree-dump';
 import type {ProcedureReq, ProcedureRes, Procedures} from '../procedures';
 
 type ObjectFieldToTuple<F> = F extends KeyType<infer K, infer V> ? [K, V] : never;
-type ToObject<T> = T extends [string, unknown][] ? {[K in T[number]as K[0]]: K[1]} : never;
+type ToObject<T> = T extends [string, unknown][] ? {[K in T[number] as K[0]]: K[1]} : never;
 type ObjectFieldsToMap<F> = ToObject<{[K in keyof F]: ObjectFieldToTuple<F[K]>}>;
 type ObjectValueToTypeMap<V> = ObjectFieldsToMap<UnObjType<UnObjValue<V>>>;
 
 export type ObjectValueToRpcCallerProcedures<V extends ObjValue<any>, Ctx = unknown> = {
-  [K in keyof ObjectValueToTypeMap<V>]:
-  ObjectValueToTypeMap<V>[K] extends FnType<infer Req, infer Res>
-  ? Procedure<t.infer<Req>, Value<Res>, Ctx> : never}
+  [K in keyof ObjectValueToTypeMap<V>]: ObjectValueToTypeMap<V>[K] extends FnType<infer Req, infer Res>
+    ? Procedure<t.infer<Req>, Value<Res>, Ctx>
+    : never;
+};
 
 export type ObjectValueToProcedures<V extends ObjValue<any>, Ctx = unknown> = {
-  [K in keyof ObjectValueToRpcCallerProcedures<V, Ctx>]:
-  ObjectValueToRpcCallerProcedures<V, Ctx>[K] extends Procedure<infer Req, Value<infer Res>, infer Ctx>
-  ? Procedure<Req, Value<Res extends Type ? Res : never>, Ctx> : never}
+  [K in keyof ObjectValueToRpcCallerProcedures<V, Ctx>]: ObjectValueToRpcCallerProcedures<V, Ctx>[K] extends Procedure<
+    infer Req,
+    Value<infer Res>,
+    infer Ctx
+  >
+    ? Procedure<Req, Value<Res extends Type ? Res : never>, Ctx>
+    : never;
+};
 
 export interface ObjectValueCallerOptions<V extends ObjValue<any>, Ctx = unknown>
   extends Omit<RpcCallerOptions<ObjectValueToRpcCallerProcedures<V, Ctx>>, 'procedures'> {
@@ -38,14 +44,14 @@ const fnValueToProcedure = <V extends Value<any>>(fn: V) => {
   const requestSchema = (fn.type.req as AbsType<Schema>).getSchema();
   const isRequestVoid = requestSchema.kind === 'con' && requestSchema.value === undefined;
   const validate = isRequestVoid
-    ? () => { }
+    ? () => {}
     : (req: unknown) => {
-      const error: any = validator(req);
-      if (error) {
-        const message = error.message + (Array.isArray(error?.path) ? ' Path: /' + error.path.join('/') : '');
-        throw RpcError.validation(message, error);
-      }
-    };
+        const error: any = validator(req);
+        if (error) {
+          const message = error.message + (Array.isArray(error?.path) ? ' Path: /' + error.path.join('/') : '');
+          throw RpcError.validation(message, error);
+        }
+      };
   const procedure =
     fn.type instanceof FnRxType
       ? Procedure.rx(fn.data as any, validate)
@@ -71,7 +77,12 @@ const objectValueToProcedures = <V extends ObjValue<any>, Ctx = unknown>(router:
  * ObjectValue. Wraps all responses and errors into JSON Type {@link Value}
  * objects.
  */
-export class TypedCallee<Ctx, V extends ObjValue<any>, P extends ObjectValueToProcedures<V, Ctx> = ObjectValueToProcedures<V, Ctx>> implements Callee<Ctx, P>, Printable {
+export class TypedCallee<
+  Ctx,
+  V extends ObjValue<any>,
+  P extends ObjectValueToProcedures<V, Ctx> = ObjectValueToProcedures<V, Ctx>,
+> implements Callee<Ctx, P>, Printable
+{
   public readonly router: V;
   public readonly rpc: RpcCallee;
 
@@ -100,7 +111,7 @@ export class TypedCallee<Ctx, V extends ObjValue<any>, P extends ObjectValueToPr
   public createCall<K extends keyof P>(name: K, ctx: Ctx): Call<ProcedureReq<P[K]>, ProcedureRes<P[K]>> {
     const call = this.rpc.createCall(name as string, ctx);
     const type = this.getResType(name);
-    const res$ = call.res$.pipe(Rx.map(data => new Value(data, type))) as Rx.Observable<ProcedureRes<P[K]>>;
+    const res$ = call.res$.pipe(Rx.map((data) => new Value(data, type))) as Rx.Observable<ProcedureRes<P[K]>>;
     return new Call(call.req$, call.reqUnsubscribe$, call.stop$, res$);
   }
 
@@ -111,11 +122,13 @@ export class TypedCallee<Ctx, V extends ObjValue<any>, P extends ObjectValueToPr
     return value as ProcedureRes<P[K]>;
   }
 
-  public call$<K extends keyof P>(name: K, request$: Rx.Observable<ProcedureReq<P[K]>>, ctx: Ctx): Rx.Observable<ProcedureRes<P[K]>> {
+  public call$<K extends keyof P>(
+    name: K,
+    request$: Rx.Observable<ProcedureReq<P[K]>>,
+    ctx: Ctx,
+  ): Rx.Observable<ProcedureRes<P[K]>> {
     return Rx.of(this.getResType(name as string) as Type).pipe(
-      Rx.switchMap((type) => this.rpc.call$(name as any, request$, ctx).pipe(
-        Rx.map(data => new Value(data, type)))
-      )
+      Rx.switchMap((type) => this.rpc.call$(name as any, request$, ctx).pipe(Rx.map((data) => new Value(data, type)))),
     ) as any;
   }
 

@@ -19,7 +19,9 @@ export interface WebSocketChannelParams {
 /**
  * A client WebSocket wrapper.
  */
-export class WebSocketChannel<T extends string | Uint8Array<any> = string | Uint8Array<any>> implements PhysicalChannel<T> {
+export class WebSocketChannel<T extends string | Uint8Array<any> = string | Uint8Array<any>>
+  implements PhysicalChannel<T>
+{
   /**
    * Native WebSocket reference, or `undefined` if construction of WebSocket
    * failed.

@@ -54,7 +54,6 @@ describe('.notify()', () => {
     expect((val2 as any).value).toBe(456);
   });
 
-
   test('can specify a context', async () => {
     const {callee} = setup();
     await callee.call('notificationSetValueFromCtx', void 0, {ip: '1.2.3.4'});

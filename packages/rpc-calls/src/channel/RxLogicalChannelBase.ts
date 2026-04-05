@@ -1,5 +1,5 @@
-import * as msg from '@jsonjoy.com/rpc-messages';
-import {PhysicalChannelBase} from '@jsonjoy.com/channel';
+import type * as msg from '@jsonjoy.com/rpc-messages';
+import type {PhysicalChannelBase} from '@jsonjoy.com/channel';
 import type {RpcCodec} from '@jsonjoy.com/rpc-codec';
 import type {LogicalChannelBase} from './types';
 
@@ -10,7 +10,7 @@ export class RxLogicalChannelBase implements LogicalChannelBase<Incoming[], Outg
   public onmsg: (msg: Incoming[]) => void = () => {};
   public onerr: (err: unknown) => void = () => {};
   public onclose?: (code: number, reason: string, wasClean: boolean) => void;
-  
+
   constructor(
     private readonly channel: PhysicalChannelBase<Uint8Array>,
     private readonly codec: RpcCodec,

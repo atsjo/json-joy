@@ -12,6 +12,10 @@ export interface Callee<Ctx = unknown, P extends Procedures<any> = Procedures<Ct
   info<K extends keyof P>(name: K): Pick<P[K], 'pretty' | 'rx'> | undefined;
   createCall<K extends keyof P>(name: K, ctx: Ctx): Call<ProcedureReq<P[K]>, ProcedureRes<P[K]>>;
   call<K extends keyof P>(name: K, request: ProcedureReq<P[K]>, ctx: Ctx): Promise<ProcedureRes<P[K]>>;
-  call$<K extends keyof P>(name: K, request$: Observable<ProcedureReq<P[K]>> | ProcedureReq<P[K]>, ctx: Ctx): Observable<ProcedureRes<P[K]>>;
+  call$<K extends keyof P>(
+    name: K,
+    request$: Observable<ProcedureReq<P[K]>> | ProcedureReq<P[K]>,
+    ctx: Ctx,
+  ): Observable<ProcedureRes<P[K]>>;
   notify<K extends keyof P>(method: K, data: ProcedureReq<P[K]>, ctx: Ctx): Promise<void>;
 }

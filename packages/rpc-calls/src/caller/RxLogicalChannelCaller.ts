@@ -1,4 +1,4 @@
-import {firstValueFrom, isObservable, Observable, type Observer, of, Subject, Subscription} from 'rxjs';
+import {firstValueFrom, isObservable, Observable, type Observer, of, Subject, type Subscription} from 'rxjs';
 import {unknown} from '@jsonjoy.com/json-type';
 import * as msg from '@jsonjoy.com/rpc-messages';
 import {subscribeCompleteObserver} from './util/subscribeCompleteObserver';
@@ -79,7 +79,8 @@ export class RxLogicalChannelCaller<Methods extends CallerMethods<any> = CallerM
     else if (message instanceof msg.ResponseDataMessage) this.onResponseData(message);
     else if (message instanceof msg.ResponseErrorMessage) this.onResponseError(message);
     else if (message instanceof msg.RequestUnsubscribeMessage) this.onRequestUnsubscribe(message);
-    else if (message instanceof msg.NotificationMessage) (this.notification$ as Subject<msg.NotificationMessage>).next(message);
+    else if (message instanceof msg.NotificationMessage)
+      (this.notification$ as Subject<msg.NotificationMessage>).next(message);
     else console.warn('Unknown message type', message);
   }
 
@@ -127,7 +128,10 @@ export class RxLogicalChannelCaller<Methods extends CallerMethods<any> = CallerM
    * @param method RPC method name.
    * @param data RPC method static payload or stream of data.
    */
-  public call$<K extends keyof Methods>(method: K, data: Observable<Methods[K][0]> | Methods[K][0]): Observable<Methods[K][1]> {
+  public call$<K extends keyof Methods>(
+    method: K,
+    data: Observable<Methods[K][0]> | Methods[K][0],
+  ): Observable<Methods[K][1]> {
     const id = this.id++;
     if (this.id >= 0xffff) this.id = 1;
     if (this.calls.has(id)) return this.call$(method, data as any);

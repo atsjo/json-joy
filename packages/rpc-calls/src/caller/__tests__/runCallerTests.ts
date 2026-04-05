@@ -12,7 +12,10 @@ export interface ApiTestSetupResult {
 
 export type ApiTestSetup = () => ApiTestSetupResult | Promise<ApiTestSetupResult>;
 
-export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests, skipStreamingTests}: {skipValidationTests?: boolean; skipStreamingTests?: boolean} = {}) => {
+export const runCallerTests = (
+  setup: ApiTestSetup,
+  {skipValidationTests, skipStreamingTests}: {skipValidationTests?: boolean; skipStreamingTests?: boolean} = {},
+) => {
   describe('API', () => {
     describe('ping', () => {
       test('can execute static RPC method', async () => {
@@ -140,7 +143,9 @@ export const runCallerTests = (setup: ApiTestSetup, {skipValidationTests, skipSt
           if (!skipValidationTests) {
             test('throws on invalid data', async () => {
               const {caller, stop} = await setup();
-              const [, error] = await of(firstValueFrom(caller.call$('doubleStringWithValidation2', {foo: 123 as any})));
+              const [, error] = await of(
+                firstValueFrom(caller.call$('doubleStringWithValidation2', {foo: 123 as any})),
+              );
               expect(error).toMatchObject({
                 message: '"foo" property missing.',
               });

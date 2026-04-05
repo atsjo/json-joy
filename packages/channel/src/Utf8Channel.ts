@@ -26,7 +26,9 @@ export class Utf8Channel implements PhysicalChannel<string> {
   constructor(protected readonly channel: PhysicalChannel<string | Uint8Array>) {
     this.state$ = channel.state$;
     this.open$ = channel.open$.pipe(map(() => this));
-    this.close$ = channel.close$.pipe(map(([self, event]) => [this, event] as [self: PhysicalChannel<string>, event: CloseEventBase]));
+    this.close$ = channel.close$.pipe(
+      map(([self, event]) => [this, event] as [self: PhysicalChannel<string>, event: CloseEventBase]),
+    );
     this.error$ = channel.error$;
     this.message$ = channel.message$.pipe(
       map((data) => (typeof data === 'string' ? data : decodeUtf8(data, 0, data.length))),

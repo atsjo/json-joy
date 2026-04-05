@@ -1,4 +1,4 @@
-import {Observable, Observer, Subject} from "rxjs";
+import type {Observable, Observer, Subject} from 'rxjs';
 
 /**
  * Represents an in-flight call.
