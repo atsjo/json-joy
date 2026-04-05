@@ -2,11 +2,11 @@ import {createRpcCallee} from '../../callee/__tests__/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
 import {RxPersistentCaller} from '../RxPersistentCaller';
 import {LoopbackPhysicalChannel} from './LoopbackPhysicalChannel';
-import {JsonCompactMsgCodec} from '@jsonjoy.com/rpc-codec/lib/JsonCompactMsgCodec';
+import {CompactStrBatchCodec} from '@jsonjoy.com/rpc-codec/lib/CompactStrBatchCodec';
 import {firstValueFrom} from 'rxjs';
 import {filter} from 'rxjs/operators';
 
-const codec = new JsonCompactMsgCodec();
+const codec = new CompactStrBatchCodec();
 
 runCallerTests(async () => {
   const callee = createRpcCallee();
