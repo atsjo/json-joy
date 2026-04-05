@@ -48,9 +48,11 @@ LogicalChannelRxCaller(Caller)                  ┊
 BufferedLogicalChannel                          ┊
   ↓                                             ┊
 MsgCodecLogicalChannel(LogicalChannel) ------→ WebSocketChannel(PhysicalChannel)
-                                                ↑
-                                                ↑
+                                                ┊↑
+                                                ┊┊
+                                                ↓┊
                                                PhysicalChannel
+                                                ↑
 MsgStreamCodecLogicalChannel(LogicalChannel) ---╯
  ↑
 BufferedLogicalChannel
