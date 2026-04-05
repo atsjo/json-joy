@@ -3,7 +3,7 @@ import {firstValueFrom, type Observable, ReplaySubject, timer} from 'rxjs';
 import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
 import {RxLogicalChannelCaller} from './RxLogicalChannelCaller';
 import {PersistentPhysicalChannel, type PersistentPhysicalChannelOptions} from '@jsonjoy.com/channel';
-import {RxMsgCodecLogicalChannel} from '../channel/RxMsgCodecLogicalChannel';
+import {RxBatchCodecLogicalChannel} from '../channel/RxBatchCodecLogicalChannel';
 import type {BatchCodec} from '@jsonjoy.com/rpc-codec-base';
 import type {Caller, CallerMethods} from './types';
 
@@ -32,7 +32,7 @@ export interface RxPersistentCallerOptions {
  * - Sends periodic keep-alive ".ping" notifications to keep the connection alive.
  *
  * Uses a {@link PersistentPhysicalChannel} to maintain a physical connection. On
- * each new connection a {@link MsgCodecLogicalChannel} is constructed from the
+ * each new connection a {@link RxBatchCodecLogicalChannel} is constructed from the
  * physical channel and the provided codec, then an {@link RxCaller} is created
  * on top of it.
  */
@@ -48,7 +48,7 @@ export class RxPersistentCaller<Methods extends CallerMethods<any> = CallerMetho
       const close$ = this.channel.open$.pipe(filter((open) => !open));
       const physicalChannel = this.channel.channel$.value;
       if (!physicalChannel) return;
-      const channel = new RxMsgCodecLogicalChannel({
+      const channel = new RxBatchCodecLogicalChannel({
         codec: params.codec,
         channel: physicalChannel,
       });

@@ -3,19 +3,19 @@ import type {BatchCodec} from "@jsonjoy.com/rpc-codec-base";
 import type {PhysicalChannel} from '@jsonjoy.com/channel';
 import type {LogicalChannel} from "./types";
 
-export interface MsgCodecLogicalChannelOptions<Chunk extends string | Uint8Array, Message> {
+export interface BatchCodecLogicalChannelOptions<Chunk extends string | Uint8Array, Message> {
   codec: BatchCodec<Chunk, Message>;
   channel: PhysicalChannel<Chunk>;
 }
 
-export class MsgCodecLogicalChannel<Chunk extends string | Uint8Array, Message> implements LogicalChannel<Message[], Message[]> {
+export class BatchCodecLogicalChannel<Chunk extends string | Uint8Array, Message> implements LogicalChannel<Message[], Message[]> {
   public readonly msg$: Observable<Message[]> = new Subject<Message[]>();
   public readonly err$: Observable<unknown>;
 
   protected _codec: BatchCodec<Chunk, Message>;
   protected _channel: PhysicalChannel<Chunk>;
 
-  constructor({codec, channel}: MsgCodecLogicalChannelOptions<Chunk, Message>) {
+  constructor({codec, channel}: BatchCodecLogicalChannelOptions<Chunk, Message>) {
     this._codec = codec;
     this._channel = channel;
 

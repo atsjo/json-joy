@@ -47,18 +47,19 @@ RxLogicalChannelCaller(Caller)                    ┊
   ↓                                               ┊
 BufferedLogicalChannel                            ┊
   ↓                                               ┊
-RxMsgCodecLogicalChannel(                         ┊
-  MsgCodecLogicalChannel(LogicalChannel)) -----→ WebSocketChannel(PhysicalChannel)
+RxBatchCodecLogicalChannel(                       ┊
+  BatchCodecLogicalChannel(LogicalChannel)) ---→ WebSocketChannel(PhysicalChannel)
                                                   ┊↑
-                                                  ┊┊
+                                            (TCP network)
                                                   ↓┊
                                                  PhysicalChannel
                                                   ↑
-MsgStreamCodecLogicalChannel(LogicalChannel) -----╯
- ↑
+RxStreamCodecLogicalChannel(LogicalChannel) ------╯
+ ↑     ╰→ RpcCodec
+ │
 BufferedLogicalChannel
  ↑
-RxDispatcher - Reactive RPC message router to Callee/Procedure
+RxDispatcher (Reactive RPC message router to Callee/Procedure)
  ↓
 Callee
  ↓
