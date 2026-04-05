@@ -1,5 +1,4 @@
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 import type {RpcMessageFormat} from './constants';
 
 /**

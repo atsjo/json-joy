@@ -3,7 +3,8 @@ import type {Observable} from "rxjs";
 export interface LogicalChannelBase<Incoming, Outgoing> {
   onmsg: (msg: Incoming) => void;
   onerr: (err: unknown) => void;
-  send(outgoing: Outgoing): Promise<void>;
+  onclose?: (code: number, reason: string, wasClean: boolean) => void;
+  send(outgoing: Outgoing): void;
 }
 
 export interface LogicalChannel<Incoming, Outgoing> {
