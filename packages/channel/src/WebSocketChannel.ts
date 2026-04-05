@@ -17,9 +17,11 @@ export interface WebSocketChannelParams {
 }
 
 /**
- * A `Channel` interface using WebSocket implementation.
+ * A client WebSocket wrapper.
  */
-export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Array> implements PhysicalChannel<T> {
+export class WebSocketChannel<T extends string | Uint8Array<any> = string | Uint8Array<any>>
+  implements PhysicalChannel<T>
+{
   /**
    * Native WebSocket reference, or `undefined` if construction of WebSocket
    * failed.
@@ -27,10 +29,14 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
   public readonly ws: WebSocketBase | undefined;
 
   public readonly state$ = new BehaviorSubject<ChannelState>(ChannelState.CONNECTING);
-  public readonly open$ = new ReplaySubject<PhysicalChannel>(1);
-  public readonly close$ = new ReplaySubject<[self: PhysicalChannel, event: CloseEventBase]>(1);
+  public readonly open$ = new ReplaySubject<PhysicalChannel<T>>(1);
+  public readonly close$ = new ReplaySubject<[self: PhysicalChannel<T>, event: CloseEventBase]>(1);
   public readonly error$ = new Subject<Error>();
   public readonly message$ = new Subject<T>();
+
+  public closed: boolean = true;
+  public onmessage?: (data: T, isUtf8: boolean) => void;
+  public onclose?: (code: number, reason: string, wasClean: boolean) => void;
 
   constructor({newSocket}: WebSocketChannelParams) {
     try {
@@ -38,11 +44,13 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
         this.state$.next(ChannelState.OPEN);
+        this.closed = false;
         this.open$.next(this);
         this.open$.complete();
       };
       ws.onclose = (event) => {
         this.state$.next(ChannelState.CLOSED);
+        this.closed = true;
         this.close$.next([this, event]);
         this.close$.complete();
         this.message$.complete();
@@ -57,7 +65,12 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
         const data = event.data;
         const message: T = (typeof data === 'string' ? data : toUint8Array(data)) as unknown as T;
         this.message$.next(message);
+        this.onmessage?.(message, typeof data === 'string');
       };
+      this.close$.subscribe(([, {code, reason, wasClean}]) => {
+        this.closed = true;
+        this.onclose?.(code, reason, wasClean);
+      });
     } catch (error) {
       this.state$.next(ChannelState.CLOSED);
       this.error$.next(error as Error);

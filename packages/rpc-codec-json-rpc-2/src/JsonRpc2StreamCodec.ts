@@ -1,0 +1,134 @@
+import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
+import {getEncoder as getTypeEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
+import {RpcMessageFormat} from '@jsonjoy.com/rpc-codec-base/lib/constants';
+import {RpcError} from '@jsonjoy.com/rpc-error';
+import {toMessage} from './toMessage';
+import * as msg from '@jsonjoy.com/rpc-messages';
+import * as schema from './schema';
+import type {TlvBinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
+import type {JsonJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/json';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
+import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+
+const RESPONSE_TYPE = schema.JsonRpc2Response.type;
+const ERROR_TYPE = schema.JsonRpc2Error.type;
+const NOTIFICATION_TYPE = schema.JsonRpc2Notification.type;
+const REQUEST_TYPE = schema.JsonRpc2Request.type;
+
+export class JsonRpc2StreamCodec implements StreamCodec<msg.RxMessage> {
+  id = 'json2.verbose';
+  format = RpcMessageFormat.JsonRpc2;
+
+  public write(jsonCodec: JsonValueCodec, message: msg.RxMessage): void {
+    if (message instanceof msg.ResponseCompleteMessage || message instanceof msg.ResponseDataMessage) {
+      const pojo: schema.JsonRpc2ResponseMessage = {
+        id: message.id,
+        result: message.value,
+      } as schema.JsonRpc2ResponseMessage;
+      const encoder = getTypeEncoder(jsonCodec, RESPONSE_TYPE);
+      encoder(pojo, jsonCodec.encoder);
+    } else if (message instanceof msg.ResponseErrorMessage) {
+      const error = message.value.data;
+      let pojo: schema.JsonRpc2ErrorMessage;
+      if (error instanceof RpcError) {
+        pojo = {
+          id: message.id,
+          error: {
+            message: error.message,
+            code: error.errno,
+            data: error.toJson(),
+          },
+        } as schema.JsonRpc2ErrorMessage;
+      } else {
+        pojo = {
+          id: message.id,
+          error: {
+            message: 'Unknown error',
+            code: 0,
+            data: error,
+          },
+        } as schema.JsonRpc2ErrorMessage;
+      }
+      const encoder = getTypeEncoder(jsonCodec, ERROR_TYPE);
+      encoder(pojo, jsonCodec.encoder);
+    } else if (message instanceof msg.NotificationMessage) {
+      const pojo: schema.JsonRpc2NotificationMessage = {
+        method: message.method,
+        params: message.value,
+      } as schema.JsonRpc2NotificationMessage;
+      const encoder = getTypeEncoder(jsonCodec, NOTIFICATION_TYPE);
+      encoder(pojo, jsonCodec.encoder);
+    } else if (
+      message instanceof msg.RequestCompleteMessage ||
+      message instanceof msg.RequestDataMessage ||
+      message instanceof msg.RequestErrorMessage
+    ) {
+      const pojo: schema.JsonRpc2RequestMessage = {
+        jsonrpc: '2.0',
+        id: message.id,
+        method: message.method,
+        params: message.value,
+      };
+      const encoder = getTypeEncoder(jsonCodec, REQUEST_TYPE);
+      encoder(pojo, jsonCodec.encoder);
+    }
+  }
+
+  public writeBatch(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): void {
+    const length = batch.length;
+    if (length === 1) {
+      this.write(jsonCodec, batch[0]);
+    } else {
+      switch (jsonCodec.format) {
+        case EncodingFormat.Cbor:
+        case EncodingFormat.MsgPack: {
+          const encoder = jsonCodec.encoder as unknown as TlvBinaryJsonEncoder;
+          encoder.writeArrHdr(length);
+          for (let i = 0; i < length; i++) {
+            this.write(jsonCodec, batch[i]);
+          }
+          break;
+        }
+        case EncodingFormat.Json: {
+          const encoder = (jsonCodec as JsonJsonValueCodec).encoder;
+          encoder.writeStartArr();
+          const last = length - 1;
+          for (let i = 0; i < last; i++) {
+            this.write(jsonCodec, batch[i]);
+            encoder.writeArrSeparator();
+          }
+          if (length > 0) this.write(jsonCodec, batch[last]);
+          encoder.writeEndArr();
+          break;
+        }
+      }
+    }
+  }
+
+  public encode(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): Uint8Array {
+    const encoder = jsonCodec.encoder;
+    const writer = encoder.writer;
+    writer.reset();
+    this.writeBatch(jsonCodec, batch);
+    return writer.flush();
+  }
+
+  public read(jsonCodec: JsonValueCodec): msg.RxMessage[] {
+    try {
+      let jsonRpcMessages = jsonCodec.decoder.readAny() as unknown as schema.JsonRpc2Message[];
+      if (!Array.isArray(jsonRpcMessages)) jsonRpcMessages = [jsonRpcMessages];
+      const messages: msg.RxMessage[] = [];
+      const length = jsonRpcMessages.length;
+      for (let i = 0; i < length; i++) messages.push(toMessage(jsonRpcMessages[i]));
+      return messages;
+    } catch (error) {
+      if (error instanceof RpcError) throw error;
+      throw RpcError.badRequest();
+    }
+  }
+
+  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
+    jsonCodec.decoder.reader.reset(uint8);
+    return this.read(jsonCodec);
+  }
+}

@@ -3,7 +3,7 @@ import {unknown} from '@jsonjoy.com/json-type';
 import * as msg from '@jsonjoy.com/rpc-messages';
 import type * as schema from './schema';
 
-export const toMessage = (message: schema.JsonRpc2Message): msg.RpcMessage => {
+export const toMessage = (message: schema.JsonRpc2Message): msg.RxMessage => {
   if (!message || typeof message !== 'object') throw RpcError.badRequest();
   if ((message as any).id === undefined) {
     const notification = message as schema.JsonRpc2NotificationMessage;

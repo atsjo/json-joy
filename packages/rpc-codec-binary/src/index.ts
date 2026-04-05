@@ -1,2 +1,3 @@
 export * from './constants';
-export * from './BinaryMsgStreamCodec';
+export * from './RxBinaryStreamCodec';
+export * from './RxBinaryBatchCodec';

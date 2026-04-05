@@ -1,3 +1,8 @@
+export interface RpcLogger {
+  log(msg: unknown): void;
+  error(kind: string, error?: Error | unknown | null, meta?: unknown): void;
+}
+
 export interface IRpcError {
   /**
    * Human readable error message.

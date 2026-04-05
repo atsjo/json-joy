@@ -11,19 +11,34 @@ import type {CloseEventBase, PhysicalChannel} from './types';
  */
 export class Utf8Channel implements PhysicalChannel<string> {
   public readonly state$: BehaviorSubject<ChannelState>;
-  public readonly open$: Observable<PhysicalChannel>;
-  public readonly close$: Observable<[self: PhysicalChannel, event: CloseEventBase]>;
+  public readonly open$: Observable<PhysicalChannel<string>>;
+  public readonly close$: Observable<[self: PhysicalChannel<string>, event: CloseEventBase]>;
   public readonly error$: Observable<Error>;
   public readonly message$: Observable<string>;
 
+  public get closed(): boolean {
+    return this.channel.closed;
+  }
+
+  public onmessage?: (data: string, isUtf8: boolean) => void;
+  public onclose?: (code: number, reason: string, wasClean: boolean) => void;
+
   constructor(protected readonly channel: PhysicalChannel<string | Uint8Array>) {
     this.state$ = channel.state$;
-    this.open$ = channel.open$;
-    this.close$ = channel.close$;
+    this.open$ = channel.open$.pipe(map(() => this));
+    this.close$ = channel.close$.pipe(
+      map(([self, event]) => [this, event] as [self: PhysicalChannel<string>, event: CloseEventBase]),
+    );
     this.error$ = channel.error$;
     this.message$ = channel.message$.pipe(
       map((data) => (typeof data === 'string' ? data : decodeUtf8(data, 0, data.length))),
     );
+    channel.onclose = (code, reason, wasClean) => {
+      this.onclose?.(code, reason, wasClean);
+    };
+    this.message$.subscribe((message) => {
+      this.onmessage?.(message, true);
+    });
   }
 
   public buffer(): number {
