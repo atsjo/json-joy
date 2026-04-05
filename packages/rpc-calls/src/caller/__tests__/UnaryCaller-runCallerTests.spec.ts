@@ -1,38 +1,47 @@
 import {createRpcCallee} from '../../callee/__tests__/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
 import {UnaryCaller} from '../UnaryCaller';
-import {CompactMessageType} from '@jsonjoy.com/rpc-messages/lib/constants';
-import type {CompactClientMessage, CompactServerMessage} from '@jsonjoy.com/rpc-messages';
+import {CompactBinBatchCodec} from '@jsonjoy.com/rpc-codec/lib/CompactBinBatchCodec';
+import {RequestCompleteMessage, NotificationMessage, ResponseCompleteMessage, ResponseErrorMessage, type RxServerMessage} from '@jsonjoy.com/rpc-messages';
+import {unknown} from '@jsonjoy.com/json-type/lib/value/Value';
 
 runCallerTests(
   async () => {
     const callee = createRpcCallee();
     const ctx = {ip: '127.0.0.1'};
+    const codec = new CompactBinBatchCodec();
+    const serializeError = (error: unknown): unknown => {
+      if (error instanceof Error) {
+        const obj: Record<string, unknown> = {message: error.message};
+        for (const key of Object.keys(error)) obj[key] = (error as any)[key];
+        return obj;
+      }
+      return error;
+    };
     const caller = new UnaryCaller({
       bufferTime: 1,
-      send: async (messages: CompactClientMessage[]): Promise<CompactServerMessage[]> => {
-        const responses: CompactServerMessage[] = [];
-        for (const message of messages) {
-          const type = message[0];
-          if (type === CompactMessageType.RequestComplete) {
-            const id = message[1];
-            const method = message[2] as string;
-            const request = message[3];
+      send: async (messages: Uint8Array): Promise<Uint8Array> => {
+        const responses: RxServerMessage[] = [];
+        const decodedMessages = codec.fromChunk(messages);
+        for (const message of decodedMessages) {
+          if (message instanceof RequestCompleteMessage) {
+            const id = message.id;
+            const method = message.method as string;
+            const request = message.value?.data;
             try {
               const result = await callee.call(method as any, request, ctx);
-              responses.push([CompactMessageType.ResponseComplete, id, result] as CompactServerMessage);
+              responses.push(new ResponseCompleteMessage(id, unknown(result)));
             } catch (error) {
-              responses.push([CompactMessageType.ResponseError, id, error] as CompactServerMessage);
+              responses.push(new ResponseErrorMessage(id, unknown(serializeError(error))));
             }
           }
-          // Notifications don't produce responses.
-          if (type === CompactMessageType.Notification) {
-            const method = message[1] as string;
-            const data = message[2];
+          if (message instanceof NotificationMessage) {
+            const method = message.method as string;
+            const data = message.value?.data;
             callee.notify(method as any, data, ctx);
           }
         }
-        return responses;
+        return codec.toChunk(responses);
       },
     });
     return {

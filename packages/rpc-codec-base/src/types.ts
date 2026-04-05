@@ -20,8 +20,8 @@ export interface BatchCodec<Chunk, Message> {
   fromChunk(chunk: Chunk): Message[];
 }
 
-export type TextMsgCodec<Message> = BatchCodec<string, Message>;
-export type BinaryMsgCodec<Message> = BatchCodec<Uint8Array, Message>;
+export type StrBatchCodec<Message> = BatchCodec<string, Message>;
+export type BinBatchCodec<Message> = BatchCodec<Uint8Array, Message>;
 
 /**
  * Encodes/decodes messages one-by-one or in batches. Can `.write()` directly

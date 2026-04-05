@@ -17,7 +17,6 @@ export interface UnaryCallerOptions {
    */
   send?: (messages: Uint8Array) => Promise<Uint8Array>;
 
-
   /**
    * Codec used to encode/decode Rx RPC messages over the wire.
    */
@@ -75,8 +74,8 @@ export class UnaryCaller<Methods extends CallerMethods<any> = CallerMethods> imp
             const future = calls.get(id);
             calls.delete(id);
             if (!future) continue;
-            if (message instanceof ResponseCompleteMessage) future.resolve(message.value);
-            else if (message instanceof ResponseErrorMessage) future.reject(message.value);
+            if (message instanceof ResponseCompleteMessage) future.resolve(message.value?.data);
+            else if (message instanceof ResponseErrorMessage) future.reject(message.value?.data);
           }
         })
         .catch((error) => {
