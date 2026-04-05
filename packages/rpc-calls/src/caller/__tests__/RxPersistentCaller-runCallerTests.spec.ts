@@ -1,6 +1,6 @@
-import {createRpcCaller} from '../../callee/__tests__/Callee.fixtures';
+import {createRpcCallee} from '../../callee/__tests__/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
-import {PersistentCaller} from '../PersistentCaller';
+import {RxPersistentCaller} from '../RxPersistentCaller';
 import {LoopbackPhysicalChannel} from './LoopbackPhysicalChannel';
 import {JsonCompactMsgCodec} from '@jsonjoy.com/rpc-codec';
 import {firstValueFrom} from 'rxjs';
@@ -9,10 +9,10 @@ import {filter} from 'rxjs/operators';
 const codec = new JsonCompactMsgCodec();
 
 runCallerTests(async () => {
-  const callee = createRpcCaller();
+  const callee = createRpcCallee();
   const ctx = {ip: '127.0.0.1'};
-  const caller = new PersistentCaller({
-    channel: {
+  const caller = new RxPersistentCaller({
+    physical: {
       newChannel: () => new LoopbackPhysicalChannel(codec, callee as any, ctx),
     },
     codec,

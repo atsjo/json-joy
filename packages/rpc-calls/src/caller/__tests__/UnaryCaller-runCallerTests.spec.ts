@@ -1,4 +1,4 @@
-import {createRpcCaller} from '../../callee/__tests__/Callee.fixtures';
+import {createRpcCallee} from '../../callee/__tests__/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
 import {UnaryCaller} from '../UnaryCaller';
 import {CompactMessageType} from '@jsonjoy.com/rpc-messages/lib/constants';
@@ -6,7 +6,7 @@ import type {CompactClientMessage, CompactServerMessage} from '@jsonjoy.com/rpc-
 
 runCallerTests(
   async () => {
-    const callee = createRpcCaller();
+    const callee = createRpcCallee();
     const ctx = {ip: '127.0.0.1'};
     const caller = new UnaryCaller({
       bufferTime: 1,

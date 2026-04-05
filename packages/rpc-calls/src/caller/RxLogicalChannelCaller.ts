@@ -20,29 +20,29 @@ class Call {
 }
 
 /**
- * Configuration parameters for {@link LogicalChannelRxCaller}.
+ * Configuration parameters for {@link RxLogicalChannelCaller}.
  */
-export interface LogicalChannelRxCallerOptions {
+export interface RxLogicalChannelCallerOptions {
   /**
    * Channel to send and receive messages.
    */
-  channel: LogicalChannel<msg.RpcServerMessage[], msg.RpcClientMessage[]>;
+  channel: LogicalChannel<msg.RxServerMessage[], msg.RxClientMessage[]>;
 }
 
 /**
  * Implements {@link Caller} on top of a {@link LogicalChannel}, using
  * Reactive RPC semantics.
  */
-export class LogicalChannelRxCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
+export class RxLogicalChannelCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
   /** In-flight RPC calls. */
   private readonly calls = new Map<number, Call>();
   /** Message ID counter. */
   private id = 1;
   private readonly _msgSub: Subscription | undefined;
-  public readonly channel: LogicalChannel<msg.RpcServerMessage[], msg.RpcClientMessage[]>;
+  public readonly channel: LogicalChannel<msg.RxServerMessage[], msg.RxClientMessage[]>;
   public readonly notification$: Observable<msg.NotificationMessage> = new Subject<msg.NotificationMessage>();
 
-  constructor({channel}: LogicalChannelRxCallerOptions) {
+  constructor({channel}: RxLogicalChannelCallerOptions) {
     this.channel = channel;
     this._msgSub = channel.msg$.subscribe({
       next: (messages) => this.onMessages(messages),
@@ -64,7 +64,7 @@ export class LogicalChannelRxCaller<Methods extends CallerMethods<any> = CallerM
    *
    * @param messages List of messages from server.
    */
-  public onMessages(messages: msg.RpcServerMessage[]): void {
+  public onMessages(messages: msg.RxServerMessage[]): void {
     const length = messages.length;
     for (let i = 0; i < length; i++) this.onMessage(messages[i]);
   }
@@ -74,7 +74,7 @@ export class LogicalChannelRxCaller<Methods extends CallerMethods<any> = CallerM
    *
    * @param messages A message from the server.
    */
-  public onMessage(message: msg.RpcServerMessage): void {
+  public onMessage(message: msg.RxServerMessage): void {
     if (message instanceof msg.ResponseCompleteMessage) this.onResponseComplete(message);
     else if (message instanceof msg.ResponseDataMessage) this.onResponseData(message);
     else if (message instanceof msg.ResponseErrorMessage) this.onResponseError(message);

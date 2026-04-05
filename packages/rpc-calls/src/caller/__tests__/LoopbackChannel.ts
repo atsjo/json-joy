@@ -1,8 +1,3 @@
-/**
- * A loopback logical channel that processes RPC client messages through
- * a local {@link Callee} and sends responses back. Useful for testing
- * {@link RxCaller} and {@link PersistentCaller} without network transport.
- */
 import {Subject} from 'rxjs';
 import * as msg from '@jsonjoy.com/rpc-messages';
 import {unknown} from '@jsonjoy.com/json-type';
@@ -10,8 +5,13 @@ import type {LogicalChannel} from '../../channel/types';
 import type {Callee} from '../../callee/types';
 import type {Call} from '../../callee/Call';
 
-export class LoopbackChannel implements LogicalChannel<msg.RpcServerMessage[], msg.RpcClientMessage[]> {
-  public readonly msg$ = new Subject<msg.RpcServerMessage[]>();
+/**
+ * A loopback logical channel that processes RPC client messages through
+ * a local {@link Callee} and sends responses back. Useful for testing
+ * {@link RxCaller} and {@link PersistentCaller} without network transport.
+ */
+export class LoopbackChannel implements LogicalChannel<msg.RxServerMessage[], msg.RxClientMessage[]> {
+  public readonly msg$ = new Subject<msg.RxServerMessage[]>();
   public readonly err$ = new Subject<unknown>();
 
   /** Active server-side calls keyed by request id. */
@@ -35,13 +35,13 @@ export class LoopbackChannel implements LogicalChannel<msg.RpcServerMessage[], m
     return error;
   }
 
-  public async send(outgoing: msg.RpcClientMessage[]): Promise<void> {
+  public async send(outgoing: msg.RxClientMessage[]): Promise<void> {
     for (const message of outgoing) {
       this.processMessage(message);
     }
   }
 
-  private processMessage(message: msg.RpcClientMessage): void {
+  private processMessage(message: msg.RxClientMessage): void {
     if (message instanceof msg.RequestCompleteMessage) {
       this.onRequestComplete(message);
     } else if (message instanceof msg.RequestDataMessage) {

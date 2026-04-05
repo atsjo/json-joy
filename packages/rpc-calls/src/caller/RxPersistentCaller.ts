@@ -1,16 +1,15 @@
 import type * as msg from '@jsonjoy.com/rpc-messages';
 import {firstValueFrom, type Observable, ReplaySubject, timer} from 'rxjs';
 import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
-import {RxCaller, type RxCallerOptions} from './RxCaller';
-import {PersistentChannel, type PersistentChannelParams} from '@jsonjoy.com/channel';
-import {MsgCodecLogicalChannel} from '../channel';
-import type {MsgCodec} from '@jsonjoy.com/rpc-codec-base';
+import {RxLogicalChannelCaller} from './RxLogicalChannelCaller';
+import {PersistentPhysicalChannel, type PersistentPhysicalChannelOptions} from '@jsonjoy.com/channel';
+import {RxMsgCodecLogicalChannel} from '../channel/RxMsgCodecLogicalChannel';
+import type {BatchCodec} from '@jsonjoy.com/rpc-codec-base';
 import type {Caller, CallerMethods} from './types';
 
-export interface PersistentCallerOptions {
-  channel: PersistentChannelParams;
-  codec: MsgCodec<string | Uint8Array, msg.RpcMessage>;
-  client?: Omit<RxCallerOptions, 'channel'>;
+export interface RxPersistentCallerOptions {
+  physical: PersistentPhysicalChannelOptions;
+  codec: BatchCodec<string | Uint8Array, msg.RxMessage>;
 
   /**
    * Number of milliseconds to periodically send keep-alive ".ping" notification
@@ -27,48 +26,47 @@ export interface PersistentCallerOptions {
 }
 
 /**
- * RPC client which automatically reconnects if disconnected.
+ * Persistent Reactive (Rx) JSON RPC client, with the following features:
+ * 
+ * - Automatically reconnects if disconnected.
+ * - Sends periodic keep-alive ".ping" notifications to keep the connection alive.
  *
- * Uses a {@link PersistentChannel} to maintain a physical connection. On each
- * new connection a {@link MsgCodecLogicalChannel} is constructed from the
+ * Uses a {@link PersistentPhysicalChannel} to maintain a physical connection. On
+ * each new connection a {@link MsgCodecLogicalChannel} is constructed from the
  * physical channel and the provided codec, then an {@link RxCaller} is created
  * on top of it.
  */
-export class PersistentCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
-  public channel: PersistentChannel;
-  public rpc?: RxCaller<Methods>;
-  public readonly rpc$ = new ReplaySubject<RxCaller<Methods>>(1);
+export class RxPersistentCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
+  public channel: PersistentPhysicalChannel;
+  public rpc?: RxLogicalChannelCaller<Methods>;
+  public readonly rpc$ = new ReplaySubject<RxLogicalChannelCaller<Methods>>(1);
 
-  constructor(params: PersistentCallerOptions) {
+  constructor(params: RxPersistentCallerOptions) {
     const ping = params.ping ?? 15000;
-    this.channel = new PersistentChannel(params.channel);
+    this.channel = new PersistentPhysicalChannel(params.physical);
     this.channel.open$.pipe(filter((open) => open)).subscribe(() => {
       const close$ = this.channel.open$.pipe(filter((open) => !open));
       const physicalChannel = this.channel.channel$.value;
       if (!physicalChannel) return;
-
-      const channel = new MsgCodecLogicalChannel({
+      const channel = new RxMsgCodecLogicalChannel({
         codec: params.codec,
         channel: physicalChannel,
       });
-
-      const client = new RxCaller<Methods>({
-        ...params.client,
+      const caller = new RxLogicalChannelCaller<Methods>({
         channel: channel as any,
       });
-
       // Send ping notifications to keep the connection alive.
       if (ping) {
         timer(ping, ping)
           .pipe(takeUntil(close$))
           .subscribe(() => {
-            client.notify(params.pingMethod || '.ping', undefined as any);
+            caller.notify(params.pingMethod || '.ping', undefined as any);
           });
       }
 
       if (this.rpc) this.rpc.disconnect();
-      this.rpc = client;
-      this.rpc$.next(client);
+      this.rpc = caller;
+      this.rpc$.next(caller);
     });
   }
 

@@ -1,5 +1,5 @@
 import {firstValueFrom, of, Subject} from 'rxjs';
-import {LogicalChannelRxCaller} from '../LogicalChannelRxCaller';
+import {RxLogicalChannelCaller} from '../RxLogicalChannelCaller';
 import {
   NotificationMessage,
   RequestCompleteMessage,
@@ -9,8 +9,8 @@ import {
   ResponseDataMessage,
   ResponseErrorMessage,
   ResponseUnsubscribeMessage,
-  type RpcClientMessage,
-  type RpcServerMessage,
+  type RxClientMessage,
+  type RxServerMessage,
 } from '@jsonjoy.com/rpc-messages';
 import type {LogicalChannel} from '../../channel/types';
 import {BufferedLogicalChannel} from '../../channel/BufferedLogicalChannel';
@@ -20,24 +20,24 @@ import {until} from 'thingies';
 
 const setup = () => {
   const send = jest.fn().mockImplementation(async () => {});
-  const channel: LogicalChannel<RpcServerMessage[], RpcClientMessage[]> = {
+  const channel: LogicalChannel<RxServerMessage[], RxClientMessage[]> = {
     err$: new Subject<unknown>(),
-    msg$: new Subject<RpcServerMessage[]>(),
+    msg$: new Subject<RxServerMessage[]>(),
     send: send,
   };
-  const client = new LogicalChannelRxCaller({channel});
+  const client = new RxLogicalChannelCaller({channel});
   return {send, channel, client};
 };
 
 const setupBuffered = () => {
   const send = jest.fn();
-  const channel: LogicalChannel<RpcServerMessage[], RpcClientMessage[]> = {
+  const channel: LogicalChannel<RxServerMessage[], RxClientMessage[]> = {
     err$: new Subject<unknown>(),
-    msg$: new Subject<RpcServerMessage[]>(),
+    msg$: new Subject<RxServerMessage[]>(),
     send,
   };
   const bufferedChannel = new BufferedLogicalChannel({channel, bufferTime: 1});
-  const client = new LogicalChannelRxCaller({channel: bufferedChannel});
+  const client = new RxLogicalChannelCaller({channel: bufferedChannel});
   return {send, channel, client};
 };
 
