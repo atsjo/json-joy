@@ -7,6 +7,7 @@ import {RxBatchCodecLogicalChannel} from '../channel/RxBatchCodecLogicalChannel'
 import {MessageLogicalChannel} from '../channel/MessageLogicalChannel';
 import type {Caller, CallerMethods} from './types';
 import type {RpcCodec} from '@jsonjoy.com/rpc-codec';
+import {BufferedLogicalChannel} from '../channel';
 
 export interface RxPersistentCallerOptions {
   physical: PersistentPhysicalChannelOptions<Uint8Array>;
@@ -51,8 +52,9 @@ export class RxPersistentCaller<Methods extends CallerMethods<any> = CallerMetho
       const physicalChannel = this.channel.channel$.value;
       if (!physicalChannel) return;
       const channel = new MessageLogicalChannel<msg.RxMessage>(physicalChannel, codec);
+      const channelBuffered = new BufferedLogicalChannel({channel});
       const caller = new RxLogicalChannelCaller<Methods>({
-        channel: channel as any,
+        channel: channelBuffered as any,
       });
       // Send ping notifications to keep the connection alive.
       if (ping) {

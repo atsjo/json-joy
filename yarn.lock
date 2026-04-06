@@ -1903,6 +1903,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/buffers": "workspace:*"
     rxjs: "npm:^7.8.2"
+    thingies: "npm:^2.6.0"
   peerDependencies:
     tslib: "*"
   languageName: unknown
@@ -2829,6 +2830,7 @@ __metadata:
     "@jsonjoy.com/rpc-codec-binary": "workspace:*"
     "@jsonjoy.com/rpc-codec-compact": "workspace:*"
     "@jsonjoy.com/rpc-codec-json-rpc-2": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
     "@jsonjoy.com/rpc-messages": "workspace:*"
   peerDependencies:
     tslib: "*"

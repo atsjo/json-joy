@@ -1,11 +1,11 @@
-import {WebSocketMock} from './WebSocketMock';
+import {WebSocketMock} from '../testing/WebSocketMock';
 import {firstValueFrom} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {of} from './of';
+import {of} from 'thingies/lib/of';
 import {PersistentPhysicalChannel, type PersistentPhysicalChannelOptions} from '../PersistentPhysicalChannel';
 import {WebSocketChannel} from '../WebSocketChannel';
 import type {PhysicalChannel} from '../types';
-import {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
+import {WebSocketMockServerConnection} from '../testing/WebSocketMockServerConnection';
 
 const setup = <T extends string | Uint8Array = string | Uint8Array>(
   params: Partial<PersistentPhysicalChannelOptions<T>> = {},

@@ -90,7 +90,7 @@ export class RpcServer implements Printable {
     if (!res.socket) return;
     try {
       const messageCodec = ctx.msgCodec;
-      const incomingMessages = messageCodec.readChunk(ctx.reqCodec, body);
+      const incomingMessages = messageCodec.decode(ctx.reqCodec, body);
       try {
         const callee = this.opts.callee;
         const promises: Promise<unknown>[] = [];

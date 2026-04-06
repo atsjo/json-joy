@@ -33,6 +33,7 @@
     "@jsonjoy.com/rpc-codec-binary": "workspace:*",
     "@jsonjoy.com/rpc-codec-compact": "workspace:*",
     "@jsonjoy.com/rpc-codec-json-rpc-2": "workspace:*",
+    "@jsonjoy.com/rpc-error": "workspace:*",
     "@jsonjoy.com/rpc-messages": "workspace:*"
   },
   "peerDependencies": {
