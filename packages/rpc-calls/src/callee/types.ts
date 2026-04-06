@@ -26,7 +26,7 @@ export interface Callee<Ctx = unknown, P extends Procedures<any> = Procedures<Ct
  * map is not needed.
  */
 export interface AnyCallee {
-  info(name: string): {pretty: string; rx: boolean} | undefined;
+  info(name: string): {pretty: boolean; rx: boolean} | undefined;
   createCall(name: string, ctx: unknown): Call<unknown, unknown>;
   call(name: string, request: unknown, ctx: unknown): Promise<unknown>;
   call$(name: string, request$: Observable<unknown> | unknown, ctx: unknown): Observable<unknown>;

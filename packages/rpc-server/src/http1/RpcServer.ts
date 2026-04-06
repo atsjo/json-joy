@@ -4,6 +4,9 @@ import {RpcError} from '@jsonjoy.com/rpc-error';
 import {gzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {ResponseCompleteMessage, ResponseErrorMessage} from '@jsonjoy.com/rpc-messages';
 import {unknown} from '@jsonjoy.com/json-type/lib/value/Value';
+import {RxLogicalChannelBase} from '@jsonjoy.com/rpc-calls/lib/channel/RxLogicalChannelBase';
+import {RxLogicalChannelBaseDispatcher} from '@jsonjoy.com/rpc-calls/lib/dispatcher/RxLogicalChannelBaseDispatcher';
+import {RpcCodec} from '@jsonjoy.com/rpc-codec';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AnyCallee} from '@jsonjoy.com/rpc-calls';
 import type {RpcLogger} from '@jsonjoy.com/rpc-error';
@@ -159,31 +162,10 @@ export class RpcServer implements Printable {
       path,
       maxIncomingMessage: 2 * 1024 * 1024,
       maxOutgoingBackpressure: 2 * 1024 * 1024,
-      handler: (ctx, req) => {
-        const connection = ctx.connection;
-        connection.onmessage = async (data: Uint8Array) => {
-          try {
-            const messages = ctx.msgCodec.decode(ctx.reqCodec, data);
-            for (const msg of messages) {
-              if ('method' in msg && 'id' in msg) {
-                try {
-                  const result = await callee.call((msg as any).method, (msg as any).value?.data, ctx);
-                  const resCodec = ctx.resCodec;
-                  ctx.msgCodec.write(resCodec, new ResponseCompleteMessage((msg as any).id, unknown(result)));
-                  const buf = resCodec.encoder.writer.flush();
-                  connection.sendBinMsg(buf);
-                } catch (error) {
-                  const resCodec = ctx.resCodec;
-                  ctx.msgCodec.write(resCodec, new ResponseErrorMessage((msg as any).id, unknown(error)));
-                  const buf = resCodec.encoder.writer.flush();
-                  connection.sendBinMsg(buf);
-                }
-              } else if ('method' in msg) {
-                callee.notify((msg as any).method, (msg as any).value?.data, ctx).catch(() => {});
-              }
-            }
-          } catch {}
-        };
+      handler: (ctx) => {
+        const codec = new RpcCodec(ctx.msgCodec, ctx.reqCodec, ctx.resCodec);
+        const logicalChannel = new RxLogicalChannelBase(ctx.connection, codec);
+        new RxLogicalChannelBaseDispatcher(logicalChannel, callee as any, ctx);
       },
     });
   }
