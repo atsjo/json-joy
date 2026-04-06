@@ -15,13 +15,13 @@ const CLOSED = 2 as const;
  * transport. Uses a {@link LoopbackChannel} internally for message processing
  * and wraps it in the {@link PhysicalChannel} interface.
  */
-export class LoopbackPhysicalChannel implements PhysicalChannel<string | Uint8Array> {
+export class LoopbackPhysicalChannel implements PhysicalChannel<string> {
   public closed = false;
-  public readonly message$ = new Subject<string | Uint8Array>();
+  public readonly message$ = new Subject<string>();
   public readonly error$: Observable<Error> = NEVER;
   public readonly state$ = new BehaviorSubject<any>(OPEN);
-  public readonly open$: Observable<PhysicalChannel<string | Uint8Array>>;
-  public readonly close$: Observable<[PhysicalChannel<string | Uint8Array>, CloseEventBase]> = NEVER;
+  public readonly open$: Observable<PhysicalChannel<string>>;
+  public readonly close$: Observable<[PhysicalChannel<string>, CloseEventBase]> = NEVER;
 
   private readonly loopback: LoopbackChannel;
 

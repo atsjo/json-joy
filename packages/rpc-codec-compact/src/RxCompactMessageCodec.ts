@@ -5,7 +5,7 @@ import {toMessage} from './toMessage';
 import {getEncoder as getTypeEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import {CompactMessageType} from './constants';
 import type {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
-import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {MessageCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type * as types from './types';
 import type {TlvBinaryJsonEncoder} from '@jsonjoy.com/json-pack';
@@ -90,7 +90,7 @@ const encodeCompactWithPayload = (
   } else encoder.writeArr(msg.toCompact());
 };
 
-export class RxCompactStreamCodec implements StreamCodec<msg.RxMessage> {
+export class RxCompactMessageCodec implements MessageCodec<msg.RxMessage> {
   id = 'rx.compact';
   format = RpcMessageFormat.Compact;
 
@@ -196,7 +196,7 @@ export class RxCompactStreamCodec implements StreamCodec<msg.RxMessage> {
     return result;
   }
 
-  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
+  public decode(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
     jsonCodec.decoder.reader.reset(uint8);
     return this.read(jsonCodec);
   }

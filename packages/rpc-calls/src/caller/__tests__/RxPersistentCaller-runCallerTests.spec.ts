@@ -2,18 +2,20 @@ import {createRpcCallee} from '../../testing/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
 import {RxPersistentCaller} from '../RxPersistentCaller';
 import {LoopbackPhysicalChannel} from './LoopbackPhysicalChannel';
-import {CompactStrBatchCodec} from '@jsonjoy.com/rpc-codec/lib/CompactStrBatchCodec';
+import {createCodecs} from '@jsonjoy.com/rpc-codec/lib/build';
+import {Uint8Channel} from '@jsonjoy.com/channel/lib/Uint8Channel';
 import {firstValueFrom} from 'rxjs';
 import {filter} from 'rxjs/operators';
-
-const codec = new CompactStrBatchCodec();
+import {RpcCodec} from '@jsonjoy.com/rpc-codec';
 
 runCallerTests(async () => {
   const callee = createRpcCallee();
   const ctx = {ip: '127.0.0.1'};
+  const codecs = createCodecs();
+  const codec = new RpcCodec(codecs.msg.compact, codecs.val.json, codecs.val.json);
   const caller = new RxPersistentCaller({
     physical: {
-      newChannel: () => new LoopbackPhysicalChannel(codec, callee as any, ctx),
+      newChannel: () => new Uint8Channel(new LoopbackPhysicalChannel(codec, callee as any, ctx)),
     },
     codec,
     ping: 0,

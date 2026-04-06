@@ -8,14 +8,14 @@ import * as schema from './schema';
 import type {TlvBinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
 import type {JsonJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/json';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {MessageCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 
 const RESPONSE_TYPE = schema.JsonRpc2Response.type;
 const ERROR_TYPE = schema.JsonRpc2Error.type;
 const NOTIFICATION_TYPE = schema.JsonRpc2Notification.type;
 const REQUEST_TYPE = schema.JsonRpc2Request.type;
 
-export class JsonRpc2StreamCodec implements StreamCodec<msg.RxMessage> {
+export class JsonRpc2StreamCodec implements MessageCodec<msg.RxMessage> {
   id = 'json2.verbose';
   format = RpcMessageFormat.JsonRpc2;
 
@@ -127,7 +127,7 @@ export class JsonRpc2StreamCodec implements StreamCodec<msg.RxMessage> {
     }
   }
 
-  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
+  public decode(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
     jsonCodec.decoder.reader.reset(uint8);
     return this.read(jsonCodec);
   }

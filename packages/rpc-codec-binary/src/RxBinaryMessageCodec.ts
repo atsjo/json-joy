@@ -6,9 +6,9 @@ import {BinaryMessageWriter} from './BinaryMessageWriter';
 import type {getEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 import type {Uint8ArrayCut} from '@jsonjoy.com/buffers/lib/Uint8ArrayCut';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {MessageCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 
-export class RxBinaryStreamCodec implements StreamCodec<msg.RxMessage> {
+export class RxBinaryMessageCodec implements MessageCodec<msg.RxMessage> {
   id = 'rx.binary';
   format = RpcMessageFormat.Binary;
 
@@ -41,21 +41,21 @@ export class RxBinaryStreamCodec implements StreamCodec<msg.RxMessage> {
     }
   }
 
-  public writeBatch(codec: JsonValueCodec, batch: msg.RxMessage[]): void {
+  public writeBatch(valueCodec: JsonValueCodec, batch: msg.RxMessage[]): void {
     const length = batch.length;
-    for (let i = 0; i < length; i++) this.write(codec, batch[i]);
+    for (let i = 0; i < length; i++) this.write(valueCodec, batch[i]);
   }
 
-  public encode(jsonCodec: JsonValueCodec, batch: msg.RxMessage[]): Uint8Array {
-    const encoder = jsonCodec.encoder;
+  public encode(valueCodec: JsonValueCodec, batch: msg.RxMessage[]): Uint8Array {
+    const encoder = valueCodec.encoder;
     const writer = encoder.writer;
     writer.reset();
-    this.writeBatch(jsonCodec, batch);
+    this.writeBatch(valueCodec, batch);
     return writer.flush();
   }
 
-  public read(codec: JsonValueCodec): msg.RxMessage[] {
-    const decoder = codec.decoder;
+  public read(valueCodec: JsonValueCodec): msg.RxMessage[] {
+    const decoder = valueCodec.decoder;
     const reader = decoder.reader;
     const messages: msg.RxMessage[] = [];
     while (reader.x < reader.uint8.length) {
@@ -94,8 +94,8 @@ export class RxBinaryStreamCodec implements StreamCodec<msg.RxMessage> {
     return messages;
   }
 
-  public readChunk(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
-    jsonCodec.decoder.reader.reset(uint8);
-    return this.read(jsonCodec);
+  public decode(valueCodec: JsonValueCodec, uint8: Uint8Array): msg.RxMessage[] {
+    valueCodec.decoder.reader.reset(uint8);
+    return this.read(valueCodec);
   }
 }
