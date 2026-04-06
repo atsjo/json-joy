@@ -1,4 +1,4 @@
-import {createRpcCallee} from '../../callee/__tests__/Callee.fixtures';
+import {createRpcCallee} from '../../testing/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
 import {RxLogicalChannelCaller} from '../RxLogicalChannelCaller';
 import {LoopbackChannel} from './LoopbackChannel';

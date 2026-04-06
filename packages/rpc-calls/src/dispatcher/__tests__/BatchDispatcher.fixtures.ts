@@ -1,5 +1,5 @@
 import type {Callee} from '../../callee';
-import {createRpcCallee, type SampleCtx} from '../../callee/__tests__/Callee.fixtures';
+import {createRpcCallee, type SampleCtx} from '../../testing/Callee.fixtures';
 import type {Procedures} from '../../procedures';
 import {BatchDispatcher} from '../BatchDispatcher';
 

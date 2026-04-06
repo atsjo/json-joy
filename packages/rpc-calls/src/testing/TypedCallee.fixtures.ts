@@ -1,4 +1,4 @@
-import {TypedCallee} from '../TypedCallee';
+import {TypedCallee} from '../callee/TypedCallee';
 import {ObjValue} from '@jsonjoy.com/json-type';
 import {procedures, type SampleCtx} from './Callee.fixtures';
 

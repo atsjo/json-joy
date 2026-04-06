@@ -1,8 +1,8 @@
 import {timer, from, Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {RpcError} from 'rpc-error';
-import {Procedure} from '../../procedures';
-import {RpcCallee} from '../RpcCallee';
+import {Procedure} from '../procedures';
+import {RpcCallee} from '../callee/RpcCallee';
 
 export interface SampleCtx {
   ip?: string;
