@@ -2,10 +2,9 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {type Http1CreateServerOpts, Http1Server, type Http1ServerOpts} from './Http1Server';
 import {RpcError} from '@jsonjoy.com/rpc-error';
 import {gzip} from '@jsonjoy.com/util/lib/compression/gzip';
-import {ResponseCompleteMessage, ResponseErrorMessage} from '@jsonjoy.com/rpc-messages';
-import {unknown} from '@jsonjoy.com/json-type/lib/value/Value';
 import {RxLogicalChannelBase} from '@jsonjoy.com/rpc-calls/lib/channel/RxLogicalChannelBase';
 import {RxLogicalChannelBaseDispatcher} from '@jsonjoy.com/rpc-calls/lib/dispatcher/RxLogicalChannelBaseDispatcher';
+import {BatchDispatcher} from '@jsonjoy.com/rpc-calls/lib/dispatcher/BatchDispatcher';
 import {RpcCodec} from '@jsonjoy.com/rpc-codec';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AnyCallee} from '@jsonjoy.com/rpc-calls';
@@ -48,8 +47,10 @@ export class RpcServer implements Printable {
   };
 
   public readonly http1: Http1Server;
+  public readonly dispatcher: BatchDispatcher;
 
   constructor(protected readonly opts: RpcServerOpts) {
+    this.dispatcher = new BatchDispatcher({callee: opts.callee as any});
     const http1 = (this.http1 = opts.http1);
     const onInternalError = http1.oninternalerror;
     http1.oninternalerror = (error, res, req) => {
@@ -95,30 +96,9 @@ export class RpcServer implements Printable {
       const messageCodec = ctx.msgCodec;
       const incomingMessages = messageCodec.decode(ctx.reqCodec, body);
       try {
-        const callee = this.opts.callee;
-        const promises: Promise<unknown>[] = [];
-        for (const msg of incomingMessages) {
-          if ('method' in msg && 'id' in msg) {
-            promises.push(callee.call((msg as any).method, (msg as any).value?.data, ctx));
-          } else if ('method' in msg) {
-            callee.notify((msg as any).method, (msg as any).value?.data, ctx).catch(() => {});
-          }
-        }
-        const results = await Promise.allSettled(promises);
+        const outgoing = await this.dispatcher.onBatch(incomingMessages as any, ctx);
         if (!res.socket) return;
         const resCodec = ctx.resCodec;
-        const outgoing: unknown[] = [];
-        let idx = 0;
-        for (const msg of incomingMessages) {
-          if ('method' in msg && 'id' in msg) {
-            const result = results[idx++];
-            if (result.status === 'fulfilled') {
-              outgoing.push(new ResponseCompleteMessage((msg as any).id, unknown(result.value)));
-            } else {
-              outgoing.push(new ResponseErrorMessage((msg as any).id, unknown(result.reason)));
-            }
-          }
-        }
         messageCodec.writeBatch(resCodec, outgoing as any);
         const buf = resCodec.encoder.writer.flush();
         if (!res.socket) return;
