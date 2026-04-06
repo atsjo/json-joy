@@ -163,7 +163,7 @@ export class RpcServer implements Printable {
         const connection = ctx.connection;
         connection.onmessage = async (data: Uint8Array) => {
           try {
-            const messages = ctx.msgCodec.readChunk(ctx.reqCodec, data);
+            const messages = ctx.msgCodec.decode(ctx.reqCodec, data);
             for (const msg of messages) {
               if ('method' in msg && 'id' in msg) {
                 try {

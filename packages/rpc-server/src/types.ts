@@ -1,9 +1,9 @@
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {MessageCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 import type {PhysicalChannelBase} from '@jsonjoy.com/channel';
 
-export type RpcMessageCodec = StreamCodec<RxMessage>;
+export type RpcMessageCodec = MessageCodec<RxMessage>;
 
 export interface ConnectionContext<Meta = Record<string, unknown>> {
   path: string;

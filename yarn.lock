@@ -2749,6 +2749,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/rpc-client@workspace:packages/rpc-client":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-client@workspace:packages/rpc-client"
+  dependencies:
+    "@jsonjoy.com/channel": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-calls": "workspace:*"
+    "@jsonjoy.com/rpc-codec": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/rpc-codec-base@workspace:*, @jsonjoy.com/rpc-codec-base@workspace:packages/rpc-codec-base":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-codec-base@workspace:packages/rpc-codec-base"
@@ -2857,7 +2874,7 @@ __metadata:
     classic-level: "npm:^1.4.0"
     json-joy: "workspace:*"
     memory-level: "npm:^1.0.0"
-    sonic-forest: "npm:^1.2.0"
+    sonic-forest: "npm:^1.2.1"
     thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
     ws: "npm:^8.0.0"
