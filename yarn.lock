@@ -2433,6 +2433,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/jit-router@workspace:packages/jit-router":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/jit-router@workspace:packages/jit-router"
+  dependencies:
+    "@jsonjoy.com/util": "workspace:*"
+    sonic-forest: "npm:^1.2.1"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-equal@workspace:*, @jsonjoy.com/json-equal@workspace:packages/json-equal":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-equal@workspace:packages/json-equal"
@@ -2830,6 +2842,7 @@ __metadata:
   resolution: "@jsonjoy.com/rpc-server@workspace:packages/rpc-server"
   dependencies:
     "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/channel": "workspace:*"
     "@jsonjoy.com/jit-router": "npm:^1.0.1"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-type": "workspace:*"
