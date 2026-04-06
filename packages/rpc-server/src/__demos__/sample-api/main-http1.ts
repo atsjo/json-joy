@@ -6,7 +6,8 @@
 import {createRpcCallee} from '@jsonjoy.com/rpc-calls/lib/testing/Callee.fixtures';
 import {RpcServer} from '../../http1/RpcServer';
 
-const server = RpcServer.startWithDefaults({
+const main = async () => {
+const server = await RpcServer.startWithDefaults({
   port: +(process.env.PORT || 9999),
   callee: createRpcCallee(),
   logger: console,
@@ -14,3 +15,7 @@ const server = RpcServer.startWithDefaults({
 
 // tslint:disable-next-line no-console
 console.log(server + '');
+};
+
+// tslint:disable-next-line no-console
+main().catch(console.error);

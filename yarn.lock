@@ -2879,6 +2879,7 @@ __metadata:
     sonic-forest: "npm:^1.2.1"
     thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
+    uWebSockets.js: "uNetworking/uWebSockets.js#v20.61.0"
     ws: "npm:^8.0.0"
   peerDependencies:
     rxjs: 7
@@ -14602,6 +14603,13 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
+  languageName: node
+  linkType: hard
+
+"uWebSockets.js@uNetworking/uWebSockets.js#v20.61.0":
+  version: 20.61.0
+  resolution: "uWebSockets.js@https://github.com/uNetworking/uWebSockets.js.git#commit=cf2e4a85cc7b600ffa5a0729249bc3907e58c89a"
+  checksum: 10c0/ee30266193ed34a467f310cd9f85b52b8f48d0342f84da07c67b8e534ac04ba6b1ca2adb89509f86a5dca9bc94fd78d209771a9c690b16b4221d0c7f87b826d1
   languageName: node
   linkType: hard
 
