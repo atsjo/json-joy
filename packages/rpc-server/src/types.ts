@@ -29,8 +29,3 @@ export interface WsConnection extends PhysicalChannelBase<Uint8Array> {
   sendBinMsg(data: Uint8Array): void;
   sendTxtMsg(txt: string): void;
 }
-
-export interface ServerLogger {
-  log(...args: unknown[]): void;
-  error(...args: unknown[]): void;
-}

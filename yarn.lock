@@ -2433,7 +2433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/jit-router@workspace:packages/jit-router":
+"@jsonjoy.com/jit-router@workspace:*, @jsonjoy.com/jit-router@workspace:packages/jit-router":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/jit-router@workspace:packages/jit-router"
   dependencies:
@@ -2843,7 +2843,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/buffers": "workspace:*"
     "@jsonjoy.com/channel": "workspace:*"
-    "@jsonjoy.com/jit-router": "npm:^1.0.1"
+    "@jsonjoy.com/jit-router": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-type": "workspace:*"
     "@jsonjoy.com/rpc-calls": "workspace:*"

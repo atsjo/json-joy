@@ -26,6 +26,7 @@
   "references": [
     {"path": "../buffers"},
     {"path": "../channel"},
+    {"path": "../jit-router"},
     {"path": "../json-pack"},
     {"path": "../json-type"},
     {"path": "../rpc-calls"},

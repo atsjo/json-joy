@@ -1,20 +1,20 @@
-import type {Printable} from 'tree-dump/lib/types';
 import {printTree} from 'tree-dump/lib/printTree';
 import {type Http1CreateServerOpts, Http1Server, type Http1ServerOpts} from './Http1Server';
 import {RpcError} from '@jsonjoy.com/rpc-error';
 import {gzip} from '@jsonjoy.com/util/lib/compression/gzip';
-import type {Callee} from '@jsonjoy.com/rpc-calls';
 import {ResponseCompleteMessage, ResponseErrorMessage} from '@jsonjoy.com/rpc-messages';
 import {unknown} from '@jsonjoy.com/json-type/lib/value/Value';
-import type {ConnectionContext, ServerLogger} from '../types';
+import type {Printable} from 'tree-dump/lib/types';
+import type {AnyCallee} from '@jsonjoy.com/rpc-calls';
+import type {RpcLogger} from '@jsonjoy.com/rpc-error';
 import type {Http1ConnectionContext} from './Http1ConnectionContext';
 
 const DEFAULT_MAX_PAYLOAD = 4 * 1024 * 1024;
 
 export interface RpcServerOpts {
   http1: Http1Server;
-  caller: Callee<any, any>;
-  logger?: ServerLogger;
+  callee: AnyCallee;
+  logger?: RpcLogger;
 }
 
 export interface RpcServerStartOpts extends Omit<RpcServerOpts, 'http1'> {
@@ -30,7 +30,7 @@ export class RpcServer implements Printable {
     const server = await Http1Server.create(opts.create);
     const http1 = new Http1Server({...opts.server, server});
     const rpc = new RpcServer({
-      caller: opts.caller,
+      callee: opts.callee,
       http1,
       logger,
     });
@@ -92,13 +92,13 @@ export class RpcServer implements Printable {
       const messageCodec = ctx.msgCodec;
       const incomingMessages = messageCodec.readChunk(ctx.reqCodec, body);
       try {
-        const caller = this.opts.caller;
+        const callee = this.opts.callee;
         const promises: Promise<unknown>[] = [];
         for (const msg of incomingMessages) {
           if ('method' in msg && 'id' in msg) {
-            promises.push(caller.call((msg as any).method, (msg as any).value?.data, ctx));
+            promises.push(callee.call((msg as any).method, (msg as any).value?.data, ctx));
           } else if ('method' in msg) {
-            caller.notify((msg as any).method, (msg as any).value?.data, ctx).catch(() => {});
+            callee.notify((msg as any).method, (msg as any).value?.data, ctx).catch(() => {});
           }
         }
         const results = await Promise.allSettled(promises);
@@ -154,7 +154,7 @@ export class RpcServer implements Printable {
 
   public enableWsRpc(path = '/rx'): void {
     const opts = this.opts;
-    const caller = opts.caller;
+    const callee = opts.callee;
     this.http1.ws({
       path,
       maxIncomingMessage: 2 * 1024 * 1024,
@@ -167,7 +167,7 @@ export class RpcServer implements Printable {
             for (const msg of messages) {
               if ('method' in msg && 'id' in msg) {
                 try {
-                  const result = await caller.call((msg as any).method, (msg as any).value?.data, ctx);
+                  const result = await callee.call((msg as any).method, (msg as any).value?.data, ctx);
                   const resCodec = ctx.resCodec;
                   ctx.msgCodec.write(resCodec, new ResponseCompleteMessage((msg as any).id, unknown(result)));
                   const buf = resCodec.encoder.writer.flush();
@@ -179,7 +179,7 @@ export class RpcServer implements Printable {
                   connection.sendBinMsg(buf);
                 }
               } else if ('method' in msg) {
-                caller.notify((msg as any).method, (msg as any).value?.data, ctx).catch(() => {});
+                callee.notify((msg as any).method, (msg as any).value?.data, ctx).catch(() => {});
               }
             }
           } catch {}
@@ -228,7 +228,7 @@ export class RpcServer implements Printable {
       printTree(tab, [
         (tab) => this.http1.toString(tab),
         () => '',
-        (tab) => (this.opts.caller as unknown as Printable).toString(tab),
+        (tab) => (this.opts.callee as unknown as Printable).toString(tab),
       ])
     );
   }

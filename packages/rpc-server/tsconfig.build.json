@@ -25,6 +25,7 @@
   "references": [
     {"path": "../buffers/tsconfig.build.json"},
     {"path": "../channel/tsconfig.build.json"},
+    {"path": "../jit-router/tsconfig.build.json"},
     {"path": "../json-pack/tsconfig.build.json"},
     {"path": "../json-type/tsconfig.build.json"},
     {"path": "../rpc-calls/tsconfig.build.json"},
