@@ -31,6 +31,8 @@ runCallerTests(async () => {
   return {
     caller: caller as any,
     stop: async () => {
+      dispatcher.stop();
+      rxLogicalChannelBuffered.buffer.flush();
       caller.stop();
     },
   };
