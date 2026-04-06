@@ -211,8 +211,14 @@ export class RxLogicalChannelBaseDispatcher<Ctx> {
       this.sendError(id, RpcErrorCodes.METHOD_UNK);
       return;
     }
-    const data = value ? value.data : undefined;
-    this.execStaticCall(id, method, data, ctx);
+    if (info.rx) {
+      const streamCall = this.createStreamCall(id, method, ctx);
+      streamCall.req$.next(value ? value.data : undefined);
+      streamCall.req$.complete();
+    } else {
+      const data = value ? value.data : undefined;
+      this.execStaticCall(id, method, data, ctx);
+    }
   }
 
   public onRequestErrorMessage(message: msg.RequestErrorMessage, ctx: Ctx): void {
