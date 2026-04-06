@@ -136,3 +136,6 @@ debug-storybook.log
 .storybook/certs/
 
 /.docs/
+
+# LevelDB files
+/db/

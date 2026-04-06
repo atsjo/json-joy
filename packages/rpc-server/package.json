@@ -47,6 +47,16 @@
     "@jsonjoy.com/util": "workspace:*",
     "tree-dump": "^1.1.0"
   },
+  "devDependencies": {
+    "abstract-level": "^2.0.0",
+    "benchmark": "^2.1.0",
+    "classic-level": "^1.4.0",
+    "json-joy": "workspace:*",
+    "memory-level": "^1.0.0",
+    "sonic-forest": "^1.2.1",
+    "thingies": "^2.6.0",
+    "ws": "^8.0.0"
+  },
   "engines": {
     "node": ">=10.0"
   },

@@ -2852,7 +2852,15 @@ __metadata:
     "@jsonjoy.com/rpc-error": "workspace:*"
     "@jsonjoy.com/rpc-messages": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
+    abstract-level: "npm:^2.0.0"
+    benchmark: "npm:^2.1.0"
+    classic-level: "npm:^1.4.0"
+    json-joy: "workspace:*"
+    memory-level: "npm:^1.0.0"
+    sonic-forest: "npm:^1.2.0"
+    thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
+    ws: "npm:^8.0.0"
   peerDependencies:
     rxjs: 7
     tslib: "*"
@@ -5638,7 +5646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"benchmark@npm:^2.1.4":
+"benchmark@npm:^2.1.0, benchmark@npm:^2.1.4":
   version: 2.1.4
   resolution: "benchmark@npm:2.1.4"
   dependencies:
@@ -6187,7 +6195,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classic-level@npm:^1.4.1":
+"classic-level@npm:^1.4.0, classic-level@npm:^1.4.1":
   version: 1.4.1
   resolution: "classic-level@npm:1.4.1"
   dependencies:
@@ -15377,6 +15385,21 @@ __metadata:
     imurmurhash: "npm:^0.1.4"
     signal-exit: "npm:^4.0.1"
   checksum: 10c0/e8c850a8e3e74eeadadb8ad23c9d9d63e4e792bd10f4836ed74189ef6e996763959f1249c5650e232f3c77c11169d239cbfc8342fc70f3fe401407d23810505d
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.0.0":
+  version: 8.20.0
+  resolution: "ws@npm:8.20.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/956ac5f11738c914089b65878b9223692ace77337ba55379ae68e1ecbeae9b47a0c6eb9403688f609999a58c80d83d99865fe0029b229d308b08c1ef93d4ea14
   languageName: node
   linkType: hard
 
