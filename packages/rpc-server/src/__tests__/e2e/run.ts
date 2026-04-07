@@ -78,17 +78,24 @@ const runTests = async () => {
 };
 
 (async () => {
+  let server: Awaited<ReturnType<typeof startServer>> | undefined;
+  const killServer = async () => {
+    if (server && !server.cp.killed) {
+      server.cp.kill();
+      await Promise.race([server.exitCode, new Promise((r) => setTimeout(r, 3000))]);
+    }
+  };
   try {
-    const server = await startServer();
+    server = await startServer();
     await server.started;
-    let exitCode = 0;
     const test = await runTests();
-    exitCode = await test.exitCode;
-    if (exitCode !== 0) throw exitCode;
+    const exitCode = await test.exitCode;
+    await killServer();
     process.exit(exitCode);
   } catch (error) {
     // tslint:disable-next-line no-console
     console.error(error);
+    await killServer();
     process.exit(1);
   }
 })();
