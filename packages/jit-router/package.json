@@ -1,0 +1,78 @@
+{
+  "name": "@jsonjoy.com/jit-router",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.0",
+  "description": "High-performance HTTP router with JIT compilation.",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/jit-router",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/jit-router"
+  },
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "router",
+    "jit",
+    "tree",
+    "trie",
+    "radix",
+    "path",
+    "url",
+    "http"
+  ],
+  "peerDependencies": {
+    "rxjs": "7",
+    "tslib": "*"
+  },
+  "dependencies": {
+    "@jsonjoy.com/util": "workspace:*",
+    "sonic-forest": "^1.2.1"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit",
+    "test": "jest --maxWorkers 7"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}

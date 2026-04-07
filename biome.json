@@ -49,7 +49,8 @@
 				"noUselessLabel": "off",
 				"noBannedTypes": "off",
 				"noUselessUndefinedInitialization": "off",
-				"noUselessEscapeInRegex": "off"
+				"noUselessEscapeInRegex": "off",
+				"useIndexOf": "off"
 			},
 			"security": {
 				"noGlobalEval": "off"

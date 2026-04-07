@@ -1,3 +1,3 @@
 export * from './constants';
-export * from './RxBinaryStreamCodec';
+export * from './RxBinaryMessageCodec';
 export * from './RxBinaryBatchCodec';

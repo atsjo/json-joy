@@ -1903,6 +1903,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/buffers": "workspace:*"
     rxjs: "npm:^7.8.2"
+    thingies: "npm:^2.6.0"
   peerDependencies:
     tslib: "*"
   languageName: unknown
@@ -2433,6 +2434,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/jit-router@workspace:*, @jsonjoy.com/jit-router@workspace:packages/jit-router":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/jit-router@workspace:packages/jit-router"
+  dependencies:
+    "@jsonjoy.com/util": "workspace:*"
+    sonic-forest: "npm:^1.2.1"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-equal@workspace:*, @jsonjoy.com/json-equal@workspace:packages/json-equal":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-equal@workspace:packages/json-equal"
@@ -2719,7 +2732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/rpc-calls@workspace:packages/rpc-calls":
+"@jsonjoy.com/rpc-calls@workspace:*, @jsonjoy.com/rpc-calls@workspace:packages/rpc-calls":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-calls@workspace:packages/rpc-calls"
   dependencies:
@@ -2731,6 +2744,23 @@ __metadata:
     "@jsonjoy.com/rpc-messages": "workspace:*"
     thingies: "npm:^2.6.0"
     tree-dump: "npm:^1.1.0"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-client@workspace:packages/rpc-client":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-client@workspace:packages/rpc-client"
+  dependencies:
+    "@jsonjoy.com/channel": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-calls": "workspace:*"
+    "@jsonjoy.com/rpc-codec": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
   peerDependencies:
     rxjs: 7
     tslib: "*"
@@ -2800,6 +2830,7 @@ __metadata:
     "@jsonjoy.com/rpc-codec-binary": "workspace:*"
     "@jsonjoy.com/rpc-codec-compact": "workspace:*"
     "@jsonjoy.com/rpc-codec-json-rpc-2": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
     "@jsonjoy.com/rpc-messages": "workspace:*"
   peerDependencies:
     tslib: "*"
@@ -2821,6 +2852,37 @@ __metadata:
     "@jsonjoy.com/json-type": "workspace:*"
     "@jsonjoy.com/rpc-error": "workspace:*"
   peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/rpc-server@workspace:packages/rpc-server":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/rpc-server@workspace:packages/rpc-server"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/channel": "workspace:*"
+    "@jsonjoy.com/jit-router": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-calls": "workspace:*"
+    "@jsonjoy.com/rpc-codec": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    abstract-level: "npm:^2.0.0"
+    benchmark: "npm:^2.1.0"
+    classic-level: "npm:^1.4.0"
+    json-joy: "workspace:*"
+    memory-level: "npm:^1.0.0"
+    sonic-forest: "npm:^1.2.1"
+    thingies: "npm:^2.6.0"
+    tree-dump: "npm:^1.1.0"
+    uWebSockets.js: "uNetworking/uWebSockets.js#v20.61.0"
+    ws: "npm:^8.0.0"
+  peerDependencies:
+    rxjs: 7
     tslib: "*"
   languageName: unknown
   linkType: soft
@@ -5604,7 +5666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"benchmark@npm:^2.1.4":
+"benchmark@npm:^2.1.0, benchmark@npm:^2.1.4":
   version: 2.1.4
   resolution: "benchmark@npm:2.1.4"
   dependencies:
@@ -6153,7 +6215,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classic-level@npm:^1.4.1":
+"classic-level@npm:^1.4.0, classic-level@npm:^1.4.1":
   version: 1.4.1
   resolution: "classic-level@npm:1.4.1"
   dependencies:
@@ -14544,6 +14606,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uWebSockets.js@uNetworking/uWebSockets.js#v20.61.0":
+  version: 20.61.0
+  resolution: "uWebSockets.js@https://github.com/uNetworking/uWebSockets.js.git#commit=cf2e4a85cc7b600ffa5a0729249bc3907e58c89a"
+  checksum: 10c0/ee30266193ed34a467f310cd9f85b52b8f48d0342f84da07c67b8e534ac04ba6b1ca2adb89509f86a5dca9bc94fd78d209771a9c690b16b4221d0c7f87b826d1
+  languageName: node
+  linkType: hard
+
 "ua-parser-js@npm:^0.7.30":
   version: 0.7.41
   resolution: "ua-parser-js@npm:0.7.41"
@@ -15343,6 +15412,21 @@ __metadata:
     imurmurhash: "npm:^0.1.4"
     signal-exit: "npm:^4.0.1"
   checksum: 10c0/e8c850a8e3e74eeadadb8ad23c9d9d63e4e792bd10f4836ed74189ef6e996763959f1249c5650e232f3c77c11169d239cbfc8342fc70f3fe401407d23810505d
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.0.0":
+  version: 8.20.0
+  resolution: "ws@npm:8.20.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/956ac5f11738c914089b65878b9223692ace77337ba55379ae68e1ecbeae9b47a0c6eb9403688f609999a58c80d83d99865fe0029b229d308b08c1ef93d4ea14
   languageName: node
   linkType: hard
 

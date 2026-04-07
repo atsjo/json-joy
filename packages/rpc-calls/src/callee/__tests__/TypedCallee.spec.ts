@@ -1,5 +1,5 @@
 import * as Rx from 'rxjs';
-import {createTypedCallee} from './TypedCallee.fixtures';
+import {createTypedCallee} from '../../testing/TypedCallee.fixtures';
 import {RpcError} from 'rpc-error';
 
 describe('.call()', () => {

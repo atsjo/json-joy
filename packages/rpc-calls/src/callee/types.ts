@@ -19,3 +19,16 @@ export interface Callee<Ctx = unknown, P extends Procedures<any> = Procedures<Ct
   ): Observable<ProcedureRes<P[K]>>;
   notify<K extends keyof P>(method: K, data: ProcedureReq<P[K]>, ctx: Ctx): Promise<void>;
 }
+
+/**
+ * A type-erased version of {@link Callee} that is structurally compatible with
+ * any `Callee` or `RpcCallee` instance. Useful where the concrete procedure
+ * map is not needed.
+ */
+export interface AnyCallee {
+  info(name: string): {pretty: boolean; rx: boolean} | undefined;
+  createCall(name: string, ctx: unknown): Call<unknown, unknown>;
+  call(name: string, request: unknown, ctx: unknown): Promise<unknown>;
+  call$(name: string, request$: Observable<unknown> | unknown, ctx: unknown): Observable<unknown>;
+  notify(method: string, data: unknown, ctx: unknown): Promise<void>;
+}

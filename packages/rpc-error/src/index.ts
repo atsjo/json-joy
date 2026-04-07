@@ -61,6 +61,9 @@ export enum RpcErrorCodes {
   AUTH = 11,
   AUTHC = 12,
   AUTHZ = 13,
+
+  /** Unsupported format. */
+  CODEC = 415,
 }
 
 export class RpcError extends Error implements IRpcError {
@@ -100,6 +103,9 @@ export class RpcError extends Error implements IRpcError {
 
   public static notFound = (message = 'Not Found', meta?: unknown, originalError?: unknown): RpcError =>
     RpcError.fromErrno(RpcErrorCodes.NOT_FOUND, message, meta, originalError);
+
+  public static codec = (message = 'Unsupported Media Type', meta?: unknown, originalError?: unknown): RpcError =>
+    RpcError.fromErrno(RpcErrorCodes.CODEC, message, meta, originalError);
 
   public static validation = (message?: string, meta?: unknown, originalError?: unknown): RpcError =>
     RpcError.fromErrno(RpcErrorCodes.BAD_REQUEST, message, meta, originalError);

@@ -1,7 +1,7 @@
-import {CloseEvent, WebSocketMock} from './WebSocketMock';
+import {CloseEvent, WebSocketMock} from '../testing/WebSocketMock';
 import {ChannelState, WebSocketState} from '../constants';
 import {WebSocketChannel} from '../WebSocketChannel';
-import {WebSocketMockServerConnection} from './WebSocketMockServerConnection';
+import {WebSocketMockServerConnection} from '../testing/WebSocketMockServerConnection';
 
 test('creates raw socket and initializes it with listeners', () => {
   let ws: WebSocketMock;

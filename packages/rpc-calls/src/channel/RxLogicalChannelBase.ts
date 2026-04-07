@@ -13,13 +13,11 @@ export class RxLogicalChannelBase implements LogicalChannelBase<Incoming[], Outg
 
   constructor(
     private readonly channel: PhysicalChannelBase<Uint8Array>,
-    private readonly codec: RpcCodec,
+    private readonly codec: RpcCodec<msg.RxMessage>,
   ) {
-    const reqValueCodec = codec.req;
-    const msgCodec = codec.msg;
     channel.onmessage = (data: Uint8Array) => {
       try {
-        const messages = msgCodec.readChunk(reqValueCodec, data) as Incoming[];
+        const messages = codec.decode(data) as Incoming[];
         this.onmsg(messages);
       } catch (error) {
         channel.close();
@@ -33,8 +31,7 @@ export class RxLogicalChannelBase implements LogicalChannelBase<Incoming[], Outg
   }
 
   public send(messages: Outgoing[]): void {
-    const {msg, res} = this.codec;
-    const encoded = msg.encode(res, messages);
+    const encoded = this.codec.encode(messages);
     this.channel.send(encoded);
   }
 

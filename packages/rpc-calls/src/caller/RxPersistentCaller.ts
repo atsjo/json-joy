@@ -4,12 +4,14 @@ import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
 import {RxLogicalChannelCaller} from './RxLogicalChannelCaller';
 import {PersistentPhysicalChannel, type PersistentPhysicalChannelOptions} from '@jsonjoy.com/channel';
 import {RxBatchCodecLogicalChannel} from '../channel/RxBatchCodecLogicalChannel';
-import type {BatchCodec} from '@jsonjoy.com/rpc-codec-base';
+import {MessageLogicalChannel} from '../channel/MessageLogicalChannel';
 import type {Caller, CallerMethods} from './types';
+import type {RpcCodec} from '@jsonjoy.com/rpc-codec';
+import {BufferedLogicalChannel} from '../channel';
 
 export interface RxPersistentCallerOptions {
-  physical: PersistentPhysicalChannelOptions;
-  codec: BatchCodec<string | Uint8Array, msg.RxMessage>;
+  physical: PersistentPhysicalChannelOptions<Uint8Array>;
+  codec: RpcCodec<msg.RxMessage>;
 
   /**
    * Number of milliseconds to periodically send keep-alive ".ping" notification
@@ -37,23 +39,22 @@ export interface RxPersistentCallerOptions {
  * on top of it.
  */
 export class RxPersistentCaller<Methods extends CallerMethods<any> = CallerMethods> implements Caller<Methods> {
-  public channel: PersistentPhysicalChannel;
+  public channel: PersistentPhysicalChannel<Uint8Array>;
   public rpc?: RxLogicalChannelCaller<Methods>;
   public readonly rpc$ = new ReplaySubject<RxLogicalChannelCaller<Methods>>(1);
 
   constructor(params: RxPersistentCallerOptions) {
     const ping = params.ping ?? 15000;
     this.channel = new PersistentPhysicalChannel(params.physical);
+    const codec = params.codec;
     this.channel.open$.pipe(filter((open) => open)).subscribe(() => {
       const close$ = this.channel.open$.pipe(filter((open) => !open));
       const physicalChannel = this.channel.channel$.value;
       if (!physicalChannel) return;
-      const channel = new RxBatchCodecLogicalChannel({
-        codec: params.codec,
-        channel: physicalChannel,
-      });
+      const channel = new MessageLogicalChannel<msg.RxMessage>(physicalChannel, codec);
+      const channelBuffered = new BufferedLogicalChannel({channel});
       const caller = new RxLogicalChannelCaller<Methods>({
-        channel: channel as any,
+        channel: channelBuffered as any,
       });
       // Send ping notifications to keep the connection alive.
       if (ping) {

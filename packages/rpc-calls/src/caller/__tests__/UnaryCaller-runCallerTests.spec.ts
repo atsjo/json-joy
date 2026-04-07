@@ -1,4 +1,4 @@
-import {createRpcCallee} from '../../callee/__tests__/Callee.fixtures';
+import {createRpcCallee} from '../../testing/Callee.fixtures';
 import {runCallerTests} from './runCallerTests';
 import {UnaryCaller} from '../UnaryCaller';
 import {CompactBinBatchCodec} from '@jsonjoy.com/rpc-codec/lib/CompactBinBatchCodec';

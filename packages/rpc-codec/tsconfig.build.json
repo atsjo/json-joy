@@ -28,6 +28,7 @@
     {"path": "../rpc-codec-binary/tsconfig.build.json"},
     {"path": "../rpc-codec-compact/tsconfig.build.json"},
     {"path": "../rpc-codec-json-rpc-2/tsconfig.build.json"},
+    {"path": "../rpc-error/tsconfig.build.json"},
     {"path": "../rpc-messages/tsconfig.build.json"}
   ]
 }

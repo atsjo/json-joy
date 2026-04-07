@@ -1,17 +1,17 @@
-import {RxBinaryStreamCodec} from '@jsonjoy.com/rpc-codec-binary';
-import {RxCompactStreamCodec} from '@jsonjoy.com/rpc-codec-compact';
+import {RxBinaryMessageCodec} from '@jsonjoy.com/rpc-codec-binary';
+import {RxCompactMessageCodec} from '@jsonjoy.com/rpc-codec-compact';
 import {JsonRpc2StreamCodec} from '@jsonjoy.com/rpc-codec-json-rpc-2';
-import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {MessageCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 
 export class RpcMessageCodecs {
-  binary: StreamCodec<RxMessage>;
-  compact: StreamCodec<RxMessage>;
-  jsonRpc2: StreamCodec<RxMessage>;
+  binary: MessageCodec<RxMessage>;
+  compact: MessageCodec<RxMessage>;
+  jsonRpc2: MessageCodec<RxMessage>;
 
   constructor() {
-    this.binary = new RxBinaryStreamCodec();
-    this.compact = new RxCompactStreamCodec();
+    this.binary = new RxBinaryMessageCodec();
+    this.compact = new RxCompactMessageCodec();
     this.jsonRpc2 = new JsonRpc2StreamCodec();
   }
 }

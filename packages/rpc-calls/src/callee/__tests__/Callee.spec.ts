@@ -1,5 +1,5 @@
 import * as Rx from 'rxjs';
-import {createRpcCallee} from './Callee.fixtures';
+import {createRpcCallee} from '../../testing/Callee.fixtures';
 import {RpcCallee} from '../RpcCallee';
 import {Procedure} from '../../procedures';
 import {of} from 'thingies';

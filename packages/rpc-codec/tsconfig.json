@@ -27,6 +27,7 @@
     {"path": "../rpc-codec-binary"},
     {"path": "../rpc-codec-compact"},
     {"path": "../rpc-codec-json-rpc-2"},
+    {"path": "../rpc-error"},
     {"path": "../rpc-messages"}
   ]
 }

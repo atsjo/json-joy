@@ -1,0 +1,106 @@
+{
+  "name": "@jsonjoy.com/rpc-server",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.0",
+  "description": "HTTP and WebSocket server implementations for Reactive JSON RPC.",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/rpc-server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/rpc-server"
+  },
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "rpc",
+    "server",
+    "rpc-server",
+    "json-rpc",
+    "server",
+    "json",
+    "joy"
+  ],
+  "peerDependencies": {
+    "rxjs": "7",
+    "tslib": "*"
+  },
+  "dependencies": {
+    "@jsonjoy.com/buffers": "workspace:*",
+    "@jsonjoy.com/channel": "workspace:*",
+    "@jsonjoy.com/jit-router": "workspace:*",
+    "@jsonjoy.com/json-pack": "workspace:*",
+    "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/rpc-calls": "workspace:*",
+    "@jsonjoy.com/rpc-codec": "workspace:*",
+    "@jsonjoy.com/rpc-codec-base": "workspace:*",
+    "@jsonjoy.com/rpc-error": "workspace:*",
+    "@jsonjoy.com/rpc-messages": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
+    "tree-dump": "^1.1.0"
+  },
+  "devDependencies": {
+    "abstract-level": "^2.0.0",
+    "benchmark": "^2.1.0",
+    "classic-level": "^1.4.0",
+    "json-joy": "workspace:*",
+    "memory-level": "^1.0.0",
+    "sonic-forest": "^1.2.1",
+    "thingies": "^2.6.0",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.61.0",
+    "ws": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "test:e2e": "node -r ts-node/register/transpile-only src/__tests__/e2e/run.ts",
+    "test:e2e:all": "node -r ts-node/register/transpile-only src/__tests__/e2e/run-all.ts",
+    "test:e2e:vitest:sample-api": "TEST_E2E=1 vitest run --config ../../vitest.config.ts --reporter=verbose packages/rpc-server/src/__tests__/e2e/sample-api/",
+    "test:e2e:vitest:json-crdt-server": "TEST_E2E=1 vitest run --config ../../vitest.config.ts --reporter=verbose packages/rpc-server/src/__tests__/e2e/json-crdt-server/",
+    "demo:e2e:sample-api:http1": "ts-node src/__demos__/sample-api/main-http1.ts",
+    "demo:e2e:sample-api:uws": "ts-node src/__demos__/sample-api/main-uws.ts",
+    "demo:e2e:json-crdt-server:http1": "ts-node src/__demos__/json-crdt-server/main-http1.ts",
+    "demo:e2e:json-crdt-server:uws": "ts-node src/__demos__/json-crdt-server/main-uws.ts",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit",
+    "test": "jest --maxWorkers 7"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": ["ts-jest", {"tsconfig": "<rootDir>/tsconfig.test.json"}]
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!@jsonjoy\\.com/)"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}

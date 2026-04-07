@@ -1,15 +1,14 @@
-import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
-import type {StreamCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
+import type {MessageCodec} from '@jsonjoy.com/rpc-codec-base/lib/types';
 import type {RpcSpecifier} from './types';
 
 /**
  * Represents a single message and value request/response pair. Typically to be
  * used for a single HTTP request/response, or a connection over WebSocket or similar.
  */
-export class RpcCodec {
+export class RpcCodec<Message> {
   constructor(
-    public readonly msg: StreamCodec<RxMessage>,
+    public readonly msg: MessageCodec<Message>,
     public readonly req: JsonValueCodec,
     public readonly res: JsonValueCodec,
   ) {}
@@ -19,18 +18,11 @@ export class RpcCodec {
     return specifier as RpcSpecifier;
   }
 
-  public encode(messages: RxMessage[]): Uint8Array {
-    const encoder = this.req.encoder;
-    const writer = encoder.writer;
-    writer.reset();
-    this.msg.writeBatch(this.req, messages);
-    return writer.flush();
+  public encode(messages: Message[], valueCodec: JsonValueCodec = this.res): Uint8Array {
+    return this.msg.encode(valueCodec, messages);
   }
 
-  public decode(data: Uint8Array, valueCodec: JsonValueCodec): RxMessage[] {
-    const decoder = valueCodec.decoder;
-    const reader = decoder.reader;
-    reader.reset(data);
-    return this.msg.readChunk(valueCodec, data);
+  public decode(data: Uint8Array, valueCodec: JsonValueCodec = this.req): Message[] {
+    return this.msg.decode(valueCodec, data);
   }
 }

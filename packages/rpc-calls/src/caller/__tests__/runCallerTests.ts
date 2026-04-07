@@ -2,7 +2,7 @@ import * as Rx from 'rxjs';
 import {firstValueFrom, lastValueFrom} from 'rxjs';
 import {of} from 'thingies/lib/of';
 import type {ProceduresToCallerMethods, Caller} from '../types';
-import type {procedures} from '../../callee/__tests__/Callee.fixtures';
+import type {procedures} from '../../testing/Callee.fixtures';
 import type {RpcError} from 'rpc-error';
 
 export interface ApiTestSetupResult {
