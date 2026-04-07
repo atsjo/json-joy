@@ -62,6 +62,9 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - run: yarn vitest
-      - run: yarn workspace @jsonjoy.com/rpc-server test:e2e
+      - run: yarn workspace @jsonjoy.com/rpc-server test:e2e --server=http1 --suite=sample-api
+      - run: yarn workspace @jsonjoy.com/rpc-server test:e2e --server=http1 --suite=json-crdt-server
+      - run: yarn workspace @jsonjoy.com/rpc-server test:e2e --server=uws --suite=sample-api
+      - run: yarn workspace @jsonjoy.com/rpc-server test:e2e --server=uws --suite=json-crdt-server
       - run: yarn typecheck
       - run: yarn typedoc

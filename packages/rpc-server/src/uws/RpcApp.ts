@@ -67,11 +67,16 @@ export interface RpcAppOptions {
   logger?: RpcLogger;
 }
 
+interface RouteMatch {
+  handler: RouteHandler;
+  msgCodec?: RpcMessageCodec;
+}
+
 export class RpcApp implements Printable {
   public readonly codecs: RpcCodecs;
   protected readonly app: types.TemplatedApp;
   protected readonly maxRequestBodySize: number;
-  protected readonly router = new Router();
+  protected readonly router = new Router<RouteMatch>();
   protected readonly dispatcher: BatchDispatcher;
 
   constructor(protected readonly options: RpcAppOptions) {
@@ -85,9 +90,9 @@ export class RpcApp implements Printable {
     enableCors(this.options.uws);
   }
 
-  public routeRaw(method: types.HttpMethodPermissive, path: string, handler: RouteHandler): void {
+  public routeRaw(method: types.HttpMethodPermissive, path: string, handler: RouteHandler, msgCodec?: RpcMessageCodec): void {
     method = method.toLowerCase() as types.HttpMethodPermissive;
-    this.router.add(method + path, handler);
+    this.router.add(method + path, {handler, msgCodec});
   }
 
   public route(method: types.HttpMethodPermissive, path: string, handler: types.JsonRouteHandler): void {
@@ -119,7 +124,6 @@ export class RpcApp implements Printable {
     this.routeRaw('POST', path, async (ctx: UwsHttpConnectionContext) => {
       try {
         const res = ctx.res;
-        ctx.msgCodec = defaultMsgCodec;
         const bodyUint8 = await ctx.body(this.maxRequestBodySize);
         if (res.aborted) return;
         const messageCodec = ctx.msgCodec;
@@ -144,7 +148,7 @@ export class RpcApp implements Printable {
           if ((error as any).message === 'Invalid JSON') throw RpcError.badRequest();
         throw RpcError.from(error);
       }
-    });
+    }, defaultMsgCodec);
     return this;
   }
 
@@ -244,7 +248,7 @@ export class RpcApp implements Printable {
         const url = req.getUrl();
         const query = req.getQuery();
         try {
-          const match = matcher(method + url) as undefined | Match;
+          const match = matcher(method + url) as undefined | Match<RouteMatch>;
           if (!match) {
             res.cork(() => {
               res.writeStatus(HDR_NOT_FOUND);
@@ -252,7 +256,8 @@ export class RpcApp implements Printable {
             });
             return;
           }
-          const handler = match.data as RouteHandler;
+          const matchData = match.data;
+          const handler = matchData.handler;
           const params = match.params;
           const ip =
             req.getHeader('x-forwarded-for') ||
@@ -273,7 +278,7 @@ export class RpcApp implements Printable {
             new NullObject(),
             codecs.val.json,
             codecs.val.json,
-            codecs.msg.jsonRpc2,
+            matchData.msgCodec ?? codecs.msg.jsonRpc2,
           );
           if (contentType) setCodecs(ctx, contentType, codecs);
           augmentContext(ctx);
