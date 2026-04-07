@@ -25,7 +25,7 @@ const startServer = async () => {
   const started = new Defer<void>();
   const exitCode = new Defer<number>();
   const entryPoint = path.join('src', '__demos__', suite!, `main-${server}.ts`);
-  const cp = spawn('npx', ['ts-node', entryPoint], {
+  const cp = spawn('npx', ['ts-node', '--transpile-only', entryPoint], {
     cwd: pkgDir,
   });
   process.on('exit', () => {
