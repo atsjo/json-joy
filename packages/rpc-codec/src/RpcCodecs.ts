@@ -4,7 +4,7 @@ import {RpcError} from '@jsonjoy.com/rpc-error';
 import type {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import type {RpcMessageCodecs} from './RpcMessageCodecs';
 import type {RxMessage} from '@jsonjoy.com/rpc-messages';
-import type {JsonValueCodec} from '@jsonjoy.com/json-pack/src/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {MessageCodec} from '@jsonjoy.com/rpc-codec-base';
 
 const REGEX_CODECS_SPECIFIER = /rpc\.(\w{0,32})\.(\w{0,32})\.(\w{0,32})(?:\-(\w{0,32}))?/;
@@ -50,29 +50,29 @@ export class RpcCodecs {
     }
     switch (request) {
       case 'cbor': {
-        resCodec = reqCodec = val.cbor;
+        resCodec = reqCodec = val.cbor as unknown as JsonValueCodec;
         break;
       }
       case 'json': {
-        resCodec = reqCodec = val.json;
+        resCodec = reqCodec = val.json as unknown as JsonValueCodec;
         break;
       }
       case 'msgpack': {
-        resCodec = reqCodec = val.msgpack;
+        resCodec = reqCodec = val.msgpack as unknown as JsonValueCodec;
         break;
       }
     }
     switch (response) {
       case 'cbor': {
-        resCodec = val.cbor;
+        resCodec = val.cbor as unknown as JsonValueCodec;
         break;
       }
       case 'json': {
-        resCodec = val.json;
+        resCodec = val.json as unknown as JsonValueCodec;
         break;
       }
       case 'msgpack': {
-        resCodec = val.msgpack;
+        resCodec = val.msgpack as unknown as JsonValueCodec;
         break;
       }
     }
