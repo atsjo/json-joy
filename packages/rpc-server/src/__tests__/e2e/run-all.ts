@@ -1,34 +1,20 @@
 import {spawn} from 'child_process';
 import {Defer} from 'thingies/lib/Defer';
-import {parseArgs} from 'util';
 import * as path from 'path';
-
-const {
-  values: {server, suite},
-} = parseArgs({
-  options: {
-    server: {
-      type: 'string',
-      default: 'http1',
-    },
-    suite: {
-      type: 'string',
-      default: 'sample-api',
-    },
-  },
-});
 
 const pkgDir = path.resolve(__dirname, '../../..');
 const rootDir = path.resolve(pkgDir, '../..');
+const port = 9999;
 
-const startServer = async () => {
+const startServer = async (serverType: string, suite: string) => {
   const started = new Defer<void>();
   const exitCode = new Defer<number>();
-  const entryPoint = path.join('src', '__demos__', suite!, `main-${server}.ts`);
+  const entryPoint = path.join('src', '__demos__', suite, `main-${serverType}.ts`);
   const cp = spawn('npx', ['ts-node', '--transpile-only', entryPoint], {
     cwd: pkgDir,
     env: {
       ...process.env,
+      PORT: String(port),
     },
   });
   process.on('exit', () => {
@@ -41,7 +27,6 @@ const startServer = async () => {
   });
   cp.stderr.on('data', (data) => {
     const msg = Buffer.isBuffer(data) ? data.toString() : String(data);
-    // tslint:disable-next-line no-console
     console.error('Could not start server', msg);
     started.reject(data);
     process.stderr.write('ERROR: [server] ' + msg);
@@ -57,13 +42,14 @@ const startServer = async () => {
   };
 };
 
-const runTests = async () => {
+const runTests = async (suite: string) => {
   const exitCode = new Defer<number>();
   const cp = spawn('npx', ['vitest', 'run', '--reporter=verbose', `packages/rpc-server/src/__tests__/e2e/${suite}/`], {
     cwd: rootDir,
     env: {
       ...process.env,
       TEST_E2E: '1',
+      PORT: String(port),
     },
     stdio: 'inherit',
   });
@@ -81,22 +67,43 @@ const runTests = async () => {
 };
 
 (async () => {
-  let server: Awaited<ReturnType<typeof startServer>> | undefined;
+  let serverProc: Awaited<ReturnType<typeof startServer>> | undefined;
   const killServer = async () => {
-    if (server && !server.cp.killed) {
-      server.cp.kill();
-      await Promise.race([server.exitCode, new Promise((r) => setTimeout(r, 3000))]);
+    if (serverProc && !serverProc.cp.killed) {
+      serverProc.cp.kill();
+      await Promise.race([serverProc.exitCode, new Promise((r) => setTimeout(r, 3000))]);
+      // Wait for OS to release the port after process exits
+      await new Promise((r) => setTimeout(r, 1000));
     }
   };
   try {
-    server = await startServer();
-    await server.started;
-    const test = await runTests();
-    const exitCode = await test.exitCode;
-    await killServer();
-    process.exit(exitCode);
+    const specs = [
+      {server: 'http1', suite: 'sample-api'},
+      {server: 'http1', suite: 'json-crdt-server'},
+      {server: 'uws', suite: 'sample-api'},
+      {server: 'uws', suite: 'json-crdt-server'},
+    ];
+    let overallExitCode = 0;
+
+    for (const {server, suite} of specs) {
+      console.log(`\n[RUN] ${server} + ${suite}`);
+      // Start server for this combination
+      serverProc = await startServer(server, suite);
+      await serverProc.started;
+
+      // Run tests against server
+      const test = await runTests(suite);
+      const testExitCode = await test.exitCode;
+      if (testExitCode !== 0) {
+        overallExitCode = testExitCode;
+      }
+
+      // Kill server before next combination
+      await killServer();
+    }
+
+    process.exit(overallExitCode);
   } catch (error) {
-    // tslint:disable-next-line no-console
     console.error(error);
     await killServer();
     process.exit(1);
