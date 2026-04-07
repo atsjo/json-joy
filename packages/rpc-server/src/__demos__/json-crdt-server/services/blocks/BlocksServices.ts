@@ -1,7 +1,6 @@
 import {MemoryStore} from './store/MemoryStore';
 import {RpcError} from '@jsonjoy.com/rpc-error';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
-import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
 import {go} from 'thingies/lib/go';
 import {storageSpaceReclaimDecision} from './util';
 import * as fs from 'fs';
@@ -59,7 +58,7 @@ export class BlocksServices {
   public async create(id: string, batch?: StoreIncomingBatch) {
     const now = Date.now();
     if (!batch) {
-      const model = Model.create(void 0, SESSION.GLOBAL);
+      const model = Model.create(void 0, 2 /* SESSION.GLOBAL */);
       const snapshot: StoreSnapshot = {
         id,
         seq: -1,
@@ -71,7 +70,7 @@ export class BlocksServices {
       return await this.store.create(snapshot, snapshot);
     }
     validateBatch(batch);
-    const model = Model.create(void 0, SESSION.GLOBAL);
+    const model = Model.create(void 0, 2 /* SESSION.GLOBAL */);
     const start: StoreSnapshot = {
       id,
       seq: -1,

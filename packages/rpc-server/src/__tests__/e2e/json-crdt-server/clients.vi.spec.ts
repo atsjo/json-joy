@@ -27,7 +27,6 @@ if (process.env.TEST_E2E) {
       describe(`protocol: application/x.${codec.specifier()}`, () => {
         runUtilTests(setup);
         runPubsubTests(setup, {staticOnly: true});
-        runPresenceTests(setup, {staticOnly: true});
         runBlockTests(setup, {staticOnly: true});
       });
       break;

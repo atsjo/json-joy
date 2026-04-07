@@ -1,5 +1,4 @@
 import {Model, Patch} from 'json-joy/lib/json-crdt';
-import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
 import {RpcErrorCodes} from '@jsonjoy.com/rpc-error';
 import {of, tick, until} from 'thingies';
 import type {ApiTestSetup, JsonCrdtTestSetup} from '../../__demos__/json-crdt-server/__tests__/setup';
@@ -38,7 +37,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
         });
         const model2 = Model.fromBinary(response2.block.snapshot.blob);
         expect(model2.view()).toBe(undefined);
-        expect(model2.clock.sid).toBe(SESSION.GLOBAL);
+        expect(model2.clock.sid).toBe(2 /* SESSION.GLOBAL */);
         await stop();
       });
 
@@ -706,7 +705,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
         });
         const model = Model.fromBinary(result.snapshot!.blob);
         expect(model.view()).toBe(undefined);
-        expect(model.clock.sid).toBe(SESSION.GLOBAL);
+        expect(model.clock.sid).toBe(2 /* SESSION.GLOBAL */);
         expect(model.clock.time).toBe(1);
         const get2 = await call('block.get', {id});
         expect(get2).toMatchObject({
@@ -722,7 +721,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
         });
         const model2 = Model.fromBinary(get2.block.snapshot.blob);
         expect(model2.view()).toBe(undefined);
-        expect(model2.clock.sid).toBe(SESSION.GLOBAL);
+        expect(model2.clock.sid).toBe(2 /* SESSION.GLOBAL */);
         expect(model2.clock.time).toBe(1);
         await stop();
       });

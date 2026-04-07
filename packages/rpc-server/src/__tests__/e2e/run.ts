@@ -19,6 +19,7 @@ const {
 });
 
 const pkgDir = path.resolve(__dirname, '../../..');
+const rootDir = path.resolve(pkgDir, '../..');
 
 const startServer = async () => {
   const started = new Defer<void>();
@@ -55,8 +56,8 @@ const startServer = async () => {
 
 const runTests = async () => {
   const exitCode = new Defer<number>();
-  const cp = spawn('npx', ['jest', '--maxWorkers', '1', '--no-cache', '--forceExit', `src/__tests__/e2e/${suite}/`], {
-    cwd: pkgDir,
+  const cp = spawn('npx', ['vitest', 'run', '--reporter=verbose', `packages/rpc-server/src/__tests__/e2e/${suite}/`], {
+    cwd: rootDir,
     env: {
       ...process.env,
       TEST_E2E: '1',
@@ -68,7 +69,7 @@ const runTests = async () => {
   });
   cp.on('close', (code) => {
     exitCode.resolve(code || 0);
-    process.stdout.write('[jest] ' + `process exited with code ${code}\n`);
+    process.stdout.write('[vitest] ' + `process exited with code ${code}\n`);
   });
   return {
     cp,
@@ -81,8 +82,8 @@ const runTests = async () => {
     const server = await startServer();
     await server.started;
     let exitCode = 0;
-    const jest = await runTests();
-    exitCode = await jest.exitCode;
+    const test = await runTests();
+    exitCode = await test.exitCode;
     if (exitCode !== 0) throw exitCode;
     process.exit(exitCode);
   } catch (error) {
