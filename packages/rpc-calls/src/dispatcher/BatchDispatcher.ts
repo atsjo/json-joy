@@ -3,7 +3,6 @@ import {validateId, validateMethod} from '@jsonjoy.com/rpc-messages/lib/validati
 import {unknown, Value} from '@jsonjoy.com/json-type';
 import {TypedRpcError} from '../callee/error/typed';
 import type {Callee} from '../callee';
-import type {RpcErrorValue} from '../callee/error/types';
 import type {Procedures} from '../procedures';
 
 export type IncomingBatchMessage =
@@ -85,7 +84,7 @@ export class BatchDispatcher<Ctx = unknown> {
       const typedResult = result instanceof Value ? result : unknown(result);
       return new msg.ResponseCompleteMessage(id, typedResult);
     } catch (error) {
-      throw new msg.ResponseErrorMessage(id, error as RpcErrorValue);
+      throw new msg.ResponseErrorMessage(id, TypedRpcError.valueFrom(error));
     }
   }
 }

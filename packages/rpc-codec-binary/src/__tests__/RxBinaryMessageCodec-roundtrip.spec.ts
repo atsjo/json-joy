@@ -1,6 +1,6 @@
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
-import {RxBinaryStreamCodec} from '../RxBinaryStreamCodec';
+import {RxBinaryMessageCodec} from '../RxBinaryMessageCodec';
 import {messages} from '@jsonjoy.com/rpc-messages/lib/testing/fixtures';
 import {getEncoder} from '@jsonjoy.com/json-type/lib/codegen/binary/shared';
 
@@ -10,9 +10,9 @@ const valueCodecs = new Codecs(writer);
 describe('one message at a time', () => {
   for (const [name, msg] of Object.entries(messages)) {
     test(name, () => {
-      const streamCodec = new RxBinaryStreamCodec(getEncoder);
+      const streamCodec = new RxBinaryMessageCodec(getEncoder);
       const u8 = streamCodec.encode(valueCodecs.cbor, [msg]);
-      const [decoded] = streamCodec.readChunk(valueCodecs.cbor, u8);
+      const [decoded] = streamCodec.decode(valueCodecs.cbor, u8);
       expect(decoded.constructor).toBe(msg.constructor);
       expect((decoded as any).method).toBe((msg as any).method);
       expect((decoded as any).value?.data).toEqual((msg as any).value?.data);
@@ -23,9 +23,9 @@ describe('one message at a time', () => {
 describe('one message at a time (no type encoder)', () => {
   for (const [name, msg] of Object.entries(messages)) {
     test(name, () => {
-      const streamCodec = new RxBinaryStreamCodec();
+      const streamCodec = new RxBinaryMessageCodec();
       const u8 = streamCodec.encode(valueCodecs.cbor, [msg]);
-      const [decoded] = streamCodec.readChunk(valueCodecs.cbor, u8);
+      const [decoded] = streamCodec.decode(valueCodecs.cbor, u8);
       expect(decoded.constructor).toBe(msg.constructor);
       expect((decoded as any).method).toBe((msg as any).method);
       expect((decoded as any).value?.data).toEqual((msg as any).value?.data);
@@ -39,9 +39,9 @@ describe('message batches', () => {
   for (let i = 0; i < length; i++) {
     const batch = list.slice(0, i + 1);
     test(`batch of ${i + 1} messages`, () => {
-      const streamCodec = new RxBinaryStreamCodec(getEncoder);
+      const streamCodec = new RxBinaryMessageCodec(getEncoder);
       const u8 = streamCodec.encode(valueCodecs.cbor, batch);
-      const decoded = streamCodec.readChunk(valueCodecs.cbor, u8);
+      const decoded = streamCodec.decode(valueCodecs.cbor, u8);
       expect(decoded.length).toBe(batch.length);
       for (let j = 0; j < batch.length; j++) {
         const msg = batch[j];

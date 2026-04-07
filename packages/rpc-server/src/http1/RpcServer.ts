@@ -21,6 +21,7 @@ export interface RpcServerOpts {
 
 export interface RpcServerStartOpts extends Omit<RpcServerOpts, 'http1'> {
   port?: number;
+  host?: string;
   server?: Omit<Http1ServerOpts, 'server'>;
   create?: Http1CreateServerOpts;
 }
@@ -38,11 +39,14 @@ export class RpcServer implements Printable {
     });
     rpc.enableDefaults();
     await http1.start();
-    server.listen(port, () => {
+    const listenArgs: any[] = [port];
+    if (opts.host) listenArgs.push(opts.host);
+    listenArgs.push(() => {
       let host = server.address() || 'localhost';
       if (typeof host === 'object') host = (host as any).address;
       logger.log({msg: 'SERVER_STARTED', host, port});
     });
+    server.listen(...listenArgs);
     return rpc;
   };
 

@@ -43,7 +43,7 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
       - run: yarn test --testPathIgnorePatterns packages/json-joy/
-  linter-and-types:
+  tests-03:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -62,5 +62,6 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - run: yarn vitest
+      - run: yarn workspace @jsonjoy.com/rpc-server test:e2e
       - run: yarn typecheck
       - run: yarn typedoc
