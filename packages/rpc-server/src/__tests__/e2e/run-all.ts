@@ -4,9 +4,8 @@ import * as path from 'path';
 
 const pkgDir = path.resolve(__dirname, '../../..');
 const rootDir = path.resolve(pkgDir, '../..');
-const port = 9999;
 
-const startServer = async (serverType: string, suite: string) => {
+const startServer = async (serverType: string, suite: string, port: number) => {
   const started = new Defer<void>();
   const exitCode = new Defer<number>();
   const entryPoint = path.join('src', '__demos__', suite, `main-${serverType}.ts`);
@@ -42,7 +41,7 @@ const startServer = async (serverType: string, suite: string) => {
   };
 };
 
-const runTests = async (suite: string) => {
+const runTests = async (suite: string, port: number) => {
   const exitCode = new Defer<number>();
   const cp = spawn('npx', ['vitest', 'run', '--reporter=verbose', `packages/rpc-server/src/__tests__/e2e/${suite}/`], {
     cwd: rootDir,
@@ -72,27 +71,25 @@ const runTests = async (suite: string) => {
     if (serverProc && !serverProc.cp.killed) {
       serverProc.cp.kill();
       await Promise.race([serverProc.exitCode, new Promise((r) => setTimeout(r, 3000))]);
-      // Wait for OS to release the port after process exits
-      await new Promise((r) => setTimeout(r, 1000));
     }
   };
   try {
     const specs = [
-      {server: 'http1', suite: 'sample-api'},
-      {server: 'http1', suite: 'json-crdt-server'},
-      {server: 'uws', suite: 'sample-api'},
-      {server: 'uws', suite: 'json-crdt-server'},
+      {server: 'http1', suite: 'sample-api', port: 9999},
+      {server: 'http1', suite: 'json-crdt-server', port: 10000},
+      {server: 'uws', suite: 'sample-api', port: 10001},
+      {server: 'uws', suite: 'json-crdt-server', port: 10002},
     ];
     let overallExitCode = 0;
 
-    for (const {server, suite} of specs) {
-      console.log(`\n[RUN] ${server} + ${suite}`);
+    for (const {server, suite, port} of specs) {
+      console.log(`\n[RUN] ${server} + ${suite} (port ${port})`);
       // Start server for this combination
-      serverProc = await startServer(server, suite);
+      serverProc = await startServer(server, suite, port);
       await serverProc.started;
 
       // Run tests against server
-      const test = await runTests(suite);
+      const test = await runTests(suite, port);
       const testExitCode = await test.exitCode;
       if (testExitCode !== 0) {
         overallExitCode = testExitCode;
