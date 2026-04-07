@@ -19,7 +19,7 @@ export const echo =
     const Request = t.any;
     const Response = t.any;
     const Func = t.Function(Request, Response);
-    return r.add('util.echo', Func, async function(this: {}, msg: any) {
+    return r.add('util.echo', Func, async function (this: {}, msg: any) {
       return msg;
     });
   };

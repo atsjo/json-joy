@@ -1,10 +1,10 @@
 import {JsExpression} from '@jsonjoy.com/codegen/lib/util/JsExpression';
 import {printTree} from 'sonic-forest/lib/print/printTree';
-import {Printable} from 'sonic-forest/lib/print/types';
-import {RouteMatcher, RouterCodegenCtx, RouterCodegenOpts} from './codegen';
+import type {Printable} from 'sonic-forest/lib/print/types';
+import {type RouteMatcher, RouterCodegenCtx, RouterCodegenOpts} from './codegen';
 import {ExactStep, RegexStep, UntilStep} from './steps';
 import {RoutingTreeNode} from './tree';
-import {Step} from './types';
+import type {Step} from './types';
 
 export interface RouterOptions {
   defaultUntil?: string;

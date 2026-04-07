@@ -158,7 +158,7 @@ export class RpcServer implements Printable {
    * Exposes JSON Type schema under the GET /schema endpoint.
    */
   public enableSchema(path: string = '/schema', method: string = 'GET'): void {
-    let responseBody: Uint8Array = Buffer.from('{}');
+    const responseBody: Uint8Array = Buffer.from('{}');
     let responseBodyCompressed: Uint8Array = new Uint8Array(0);
     gzip(responseBody).then((compressed) => (responseBodyCompressed = compressed));
     this.http1.route({

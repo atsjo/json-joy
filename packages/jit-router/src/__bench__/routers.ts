@@ -2,7 +2,7 @@
 
 import {Router} from '..';
 import findMyWay from 'find-my-way';
-import {RouteDefinition} from './routes';
+import type {RouteDefinition} from './routes';
 
 export type RouterDefinition = {
   name: string;

@@ -1,10 +1,10 @@
 import {emitStringMatch} from '@jsonjoy.com/codegen/lib/util/helpers';
 import {printTree} from 'sonic-forest/lib/print/printTree';
-import {Printable} from 'sonic-forest/lib/print/types';
+import type {Printable} from 'sonic-forest/lib/print/types';
 import {RadixTree} from 'sonic-forest/lib/radix/RadixTree';
-import {TrieNode} from 'sonic-forest/lib/trie/TrieNode';
-import {RouterCodegenCtx, RouterCodegenOpts} from './codegen';
-import {Destination, Route} from './router';
+import type {TrieNode} from 'sonic-forest/lib/trie/TrieNode';
+import type {RouterCodegenCtx, RouterCodegenOpts} from './codegen';
+import {Destination, type Route} from './router';
 import {ExactStep, RegexStep, UntilStep} from './steps';
 
 const genExactMatchCondition = (text: string, opts: RouterCodegenOpts) => {

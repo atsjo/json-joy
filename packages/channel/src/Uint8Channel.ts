@@ -5,8 +5,7 @@ import type {CloseEventBase, PhysicalChannel} from './types';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const toU8 = (data: string | Uint8Array): Uint8Array =>
-  typeof data === 'string' ? encoder.encode(data) : data;
+const toU8 = (data: string | Uint8Array): Uint8Array => (typeof data === 'string' ? encoder.encode(data) : data);
 const fromU8 = (u8: Uint8Array): string => decoder.decode(u8);
 
 /**

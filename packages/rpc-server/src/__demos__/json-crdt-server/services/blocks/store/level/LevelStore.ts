@@ -100,7 +100,6 @@ export class LevelStore implements types.Store {
       const key = keys[0].slice(base.length);
       if (!key) return;
       const seq = Number.parseInt(key, 36);
-      // biome-ignore lint: check for NaN
       if (seq !== seq) return;
       return seq;
     });

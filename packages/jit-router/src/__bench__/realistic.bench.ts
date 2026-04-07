@@ -16,7 +16,7 @@ for (const router of routers) {
   // console.log();
   // console.log(`Test "${router.name}":`);
   for (const [method, path] of routes) {
-    const match = router.find(method, path);
+    const _match = router.find(method, path);
     // console.log(router.name, `${method} ${path}`, match);
   }
 }

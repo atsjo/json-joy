@@ -15,7 +15,6 @@ import {UwsConnection} from './UwsConnection';
 import {setCodecs} from '../http1/util';
 import {findTokenInText} from '../util';
 import {printTree} from 'tree-dump/lib/printTree';
-import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {Printable} from 'tree-dump/lib/types';
 import type * as types from './types';
 import type {RouteHandler, RpcWebSocket} from './types';
@@ -90,7 +89,12 @@ export class RpcApp implements Printable {
     enableCors(this.options.uws);
   }
 
-  public routeRaw(method: types.HttpMethodPermissive, path: string, handler: RouteHandler, msgCodec?: RpcMessageCodec): void {
+  public routeRaw(
+    method: types.HttpMethodPermissive,
+    path: string,
+    handler: RouteHandler,
+    msgCodec?: RpcMessageCodec,
+  ): void {
     method = method.toLowerCase() as types.HttpMethodPermissive;
     this.router.add(method + path, {handler, msgCodec});
   }
@@ -121,34 +125,39 @@ export class RpcApp implements Printable {
 
   public enableHttpRpc(path = '/rx', msgCodec?: RpcMessageCodec): this {
     const defaultMsgCodec = msgCodec ?? this.codecs.msg.compact;
-    this.routeRaw('POST', path, async (ctx: UwsHttpConnectionContext) => {
-      try {
-        const res = ctx.res;
-        const bodyUint8 = await ctx.body(this.maxRequestBodySize);
-        if (res.aborted) return;
-        const messageCodec = ctx.msgCodec;
-        const incomingMessages = messageCodec.decode(ctx.reqCodec, bodyUint8);
+    this.routeRaw(
+      'POST',
+      path,
+      async (ctx: UwsHttpConnectionContext) => {
         try {
-          const outgoingMessages = await this.dispatcher.onBatch(incomingMessages as any, ctx);
+          const res = ctx.res;
+          const bodyUint8 = await ctx.body(this.maxRequestBodySize);
           if (res.aborted) return;
-          const resCodec = ctx.resCodec;
-          messageCodec.writeBatch(resCodec, outgoingMessages as any);
-          const buf = resCodec.encoder.writer.flush();
-          if (res.aborted) return;
-          res.cork(() => {
-            res.end(buf);
-          });
+          const messageCodec = ctx.msgCodec;
+          const incomingMessages = messageCodec.decode(ctx.reqCodec, bodyUint8);
+          try {
+            const outgoingMessages = await this.dispatcher.onBatch(incomingMessages as any, ctx);
+            if (res.aborted) return;
+            const resCodec = ctx.resCodec;
+            messageCodec.writeBatch(resCodec, outgoingMessages as any);
+            const buf = resCodec.encoder.writer.flush();
+            if (res.aborted) return;
+            res.cork(() => {
+              res.end(buf);
+            });
+          } catch (error) {
+            const logger = this.options.logger ?? console;
+            logger.error('HTTP_RPC_PROCESSING', error, {messages: incomingMessages});
+            throw RpcError.from(error);
+          }
         } catch (error) {
-          const logger = this.options.logger ?? console;
-          logger.error('HTTP_RPC_PROCESSING', error, {messages: incomingMessages});
+          if (typeof error === 'object' && error)
+            if ((error as any).message === 'Invalid JSON') throw RpcError.badRequest();
           throw RpcError.from(error);
         }
-      } catch (error) {
-        if (typeof error === 'object' && error)
-          if ((error as any).message === 'Invalid JSON') throw RpcError.badRequest();
-        throw RpcError.from(error);
-      }
-    }, defaultMsgCodec);
+      },
+      defaultMsgCodec,
+    );
     return this;
   }
 

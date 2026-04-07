@@ -1,5 +1,5 @@
 import {RpcCodec} from './RpcCodec';
-import {RpcSpecifier} from './types';
+import type {RpcSpecifier} from './types';
 import {RpcError} from '@jsonjoy.com/rpc-error';
 import type {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import type {RpcMessageCodecs} from './RpcMessageCodecs';

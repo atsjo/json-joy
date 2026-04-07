@@ -7,15 +7,15 @@ import {createRpcCallee} from '@jsonjoy.com/rpc-calls/lib/testing/Callee.fixture
 import {RpcServer} from '../../http1/RpcServer';
 
 const main = async () => {
-const server = await RpcServer.startWithDefaults({
-  port: +(process.env.PORT || 9999),
-  host: '127.0.0.1',
-  callee: createRpcCallee(),
-  logger: console,
-});
+  const server = await RpcServer.startWithDefaults({
+    port: +(process.env.PORT || 9999),
+    host: '127.0.0.1',
+    callee: createRpcCallee(),
+    logger: console,
+  });
 
-// tslint:disable-next-line no-console
-console.log(server + '');
+  // tslint:disable-next-line no-console
+  console.log(server + '');
 };
 
 // tslint:disable-next-line no-console
