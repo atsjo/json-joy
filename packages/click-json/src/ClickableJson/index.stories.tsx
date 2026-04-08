@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {ClickableJson, type ClickableJsonProps} from '.';
 import {applyPatch, type Operation} from 'json-joy/lib/json-patch';
 
@@ -157,7 +157,7 @@ const pkg = {
     '@storybook/addon-onboarding': '^1.0.8',
     '@storybook/addons': '^7.5.3',
     '@storybook/blocks': '^7.5.3',
-    '@storybook/react': '^7.5.3',
+    '@storybook/react-webpack5': '^7.5.3',
     '@storybook/react-webpack5': '^7.5.3',
     '@storybook/testing-library': '^0.2.2',
     '@types/jest': '^29.5.9',

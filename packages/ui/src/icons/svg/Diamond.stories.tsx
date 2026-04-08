@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Component from './Diamond';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Component> = {
   title: 'Icons/SVG/Diamond',

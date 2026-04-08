@@ -3,7 +3,7 @@ import {ClickableJsonCrdt, type ClickableJsonCrdtProps} from '.';
 import {Model} from 'json-joy/lib/json-crdt';
 import {s} from 'json-joy/lib/json-crdt-patch';
 import {ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Text> = {
   title: 'ClickableJsonCrdt',

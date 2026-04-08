@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Component from './Settings';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Text> = {
   title: 'Icons/SVG/Settings',

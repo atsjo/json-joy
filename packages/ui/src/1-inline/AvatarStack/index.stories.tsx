@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {AvatarStack as Component} from '.';
 import {Avatar} from '../Avatar';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Component> = {
   title: '1. Inline/AvatarStack',

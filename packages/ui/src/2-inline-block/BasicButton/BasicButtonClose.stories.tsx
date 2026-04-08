@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {BasicButtonClose as Component} from './BasicButtonClose';
 
 const meta: Meta<typeof Component> = {

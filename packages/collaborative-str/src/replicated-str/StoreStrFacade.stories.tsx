@@ -5,7 +5,7 @@ import {InputFacade0, InputFacade1, InputFacade2, InputFacade3, InputFacade4} fr
 import {model0} from '../__tests__/fixtures';
 import {StoreStrFacade} from './StoreStrFacade';
 import {ReplicatedStr} from './ReplicatedStr';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const Demo: React.FC<{textarea: boolean; Facade: any}> = ({textarea, Facade}) => {
   const inputRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(null);

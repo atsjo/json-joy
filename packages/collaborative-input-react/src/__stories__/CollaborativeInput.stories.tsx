@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Model} from 'json-joy/lib/json-crdt';
 import {bind} from '@jsonjoy.com/collaborative-input';
 import {CollaborativeInput} from '../CollaborativeInput';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const Demo: React.FC<{textarea: boolean}> = ({textarea}) => {
   const inputRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(null);

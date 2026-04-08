@@ -3,7 +3,7 @@ import {Menu as Component} from '.';
 import {Code} from '../../1-inline/Code';
 import {Iconista} from '../../icons/Iconista';
 import {MenuItem} from './MenuItem';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Component> = {
   title: '4. Card/Menu',

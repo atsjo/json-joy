@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ContextMenu, StatefulContextMenu, ContextMenuState} from '.';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {Popup} from '../Popup';
 import {BasicButtonMore} from '../../2-inline-block/BasicButton/BasicButtonMore';
 import * as menuItems from './__stories__/menuItems';

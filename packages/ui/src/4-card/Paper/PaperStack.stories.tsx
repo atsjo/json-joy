@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {PaperStack as Component} from './PaperStack';
 import {Paper} from '.';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Component> = {
   title: '4. Card/Paper/PaperStack',

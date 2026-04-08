@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Model} from 'json-joy/lib/json-crdt';
 import {CollaborativeAce} from '.';
 import type {Ace} from 'ace-builds';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 interface EditorProps {
   src: string;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ScrollArea, Viewport, ScrollRail, Thumb, Marker, Header, Footer} from '.';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta = {
   title: '4. Card/ScrollArea',

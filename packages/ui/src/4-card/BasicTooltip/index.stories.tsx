@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {type BasicTooltipProps, BasicTooltip as Component} from '.';
 import {BasicButtonMore} from '../../2-inline-block/BasicButton/BasicButtonMore';
 

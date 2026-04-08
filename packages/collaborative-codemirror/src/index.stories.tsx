@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Model, s} from 'json-joy/lib/json-crdt';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {EditorView} from 'codemirror';
 import {bind} from '.';
 
