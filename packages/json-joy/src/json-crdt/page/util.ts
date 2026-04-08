@@ -46,3 +46,35 @@ export const rld = (encoded: number[]): number[] => {
   }
   return result;
 };
+
+/**
+ * Delta encoding for unsigned integers. Encodes an array of unsigned integers as
+ * a sequence of deltas (differences between consecutive values). The first value
+ * is encoded as-is, and subsequent values are encoded as the difference from
+ * the previous value.
+ */
+export const de = (uint: number[]): number[] => {
+  const length = uint.length;
+  if (!length) return [];
+  let last = uint[0];
+  const encoded: number[] = [last];
+  for (let i = 1; i < length; i++) {
+    const value = uint[i];
+    encoded.push(value - last);
+    last = value;
+  }
+  return encoded;
+};
+
+/**
+ * Delta decoding for unsigned integers. Decodes an array encoded with
+ * the {@link de} function back to its original form.
+ */
+export const dd = (encoded: number[]): number[] => {
+  const length = encoded.length;
+  if (!length) return [];
+  let curr = encoded[0];
+  const uint: number[] = [curr];
+  for (let i = 1; i < length; i++) uint.push(curr += encoded[i]);
+  return uint;
+};
