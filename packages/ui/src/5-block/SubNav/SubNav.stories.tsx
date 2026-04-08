@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {SubNav as Component} from '.';
 import {TopNav} from '../TopNav';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Component> = {
   title: '5. Block/SubNav',

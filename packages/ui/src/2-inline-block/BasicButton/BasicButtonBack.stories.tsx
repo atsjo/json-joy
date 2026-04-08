@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {BasicButtonBack} from './BasicButtonBack';
 
 const meta: Meta<typeof BasicButtonBack> = {

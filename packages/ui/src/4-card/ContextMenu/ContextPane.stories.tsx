@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {ContextItem, ContextPane, ContextSep, ContextTitle} from '.';
 import {Iconista} from '../../icons/Iconista';
 import {Split} from '../../3-list-item/Split';

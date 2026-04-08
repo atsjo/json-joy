@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {useToasts} from './context';
 import {Space} from '../../3-list-item/Space';
 import {Checkbox} from '../../2-inline-block/Checkbox';

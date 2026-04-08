@@ -2,7 +2,7 @@ import * as React from 'react';
 import {ArgSelect, type ArgSelectProps} from './ArgSelect';
 import {ContextPane} from '../../ContextPane';
 import {ContextSep} from '../../ContextSep';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta = {
   title: '4. Card/ContextMenu/ArgsPane/ArgSelect',

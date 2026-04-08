@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {StrBinding} from './StrBinding';
 import {InputFacade0, InputFacade1, InputFacade2, InputFacade3, InputFacade4} from './InputFacade';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {model0} from './__tests__/fixtures';
 
 const Demo: React.FC<{textarea: boolean; Facade: any}> = ({textarea, Facade}) => {

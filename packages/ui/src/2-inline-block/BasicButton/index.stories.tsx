@@ -5,7 +5,7 @@ import {Split} from '../../3-list-item/Split';
 import {FixedColumn} from '../../3-list-item/FixedColumn';
 import IconSettings from '../../icons/svg/Settings';
 import Arrow from '../../icons/interactive/Arrow';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Component> = {
   title: '2. Inline Block/BasicButton',

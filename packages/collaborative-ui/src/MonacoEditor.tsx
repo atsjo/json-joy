@@ -2,7 +2,7 @@ import * as React from 'react';
 import type {StrApi} from 'json-joy/lib/json-crdt';
 import * as monaco from 'monaco-editor';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
-import {bind} from 'collaborative-monaco';
+import {bind} from '@jsonjoy.com/collaborative-monaco';
 
 export interface CollaborativeMonacoProps extends React.HTMLAttributes<HTMLDivElement> {
   str: () => StrApi;

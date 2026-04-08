@@ -50,7 +50,6 @@
     "tslib": "*"
   },
   "devDependencies": {
-    "@storybook/react": "^10.2.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "codemirror": "^6.0.2",

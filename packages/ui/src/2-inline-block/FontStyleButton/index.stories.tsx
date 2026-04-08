@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FontStyleButton} from '.';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof FontStyleButton> = {
   title: '2. Inline Block/FontStyleButton',

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {DocsPages as Component} from '.';
 import {augmentContentPages} from './util';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import type {ContentPage} from './types';
 
 const meta: Meta<typeof Component> = {

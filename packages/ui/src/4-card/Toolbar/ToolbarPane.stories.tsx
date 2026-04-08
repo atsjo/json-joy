@@ -2,7 +2,7 @@ import * as React from 'react';
 import {ToolbarPane} from './ToolbarPane';
 import {ToolbarItem} from './ToolbarItem';
 import {Iconista} from '../../icons/Iconista';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof ToolbarPane> = {
   title: '4. Card/Toolbar/ToolbarPane',

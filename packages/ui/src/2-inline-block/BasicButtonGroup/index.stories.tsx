@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {BasicButtonGroup as Component} from '.';
 import {BasicButton} from '../BasicButton';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
 const meta: Meta<typeof Component> = {
   title: '2. Inline Block/BasicButtonGroup',

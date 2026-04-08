@@ -3,7 +3,7 @@ import {StatefulToolbarMenu, ToolbarMenu} from './ToolbarMenu';
 import * as menuItems from '../ContextMenu/__stories__/menuItems';
 import {rule} from 'nano-theme';
 import {CaretToolbar, type CaretToolbarProps} from './ToolbarMenu/CaretToolbar';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {ToolbarMenuState} from './ToolbarMenu/state';
 import type {ToolbarMenuProps} from './ToolbarMenu/types';
 import {ToolbarItem} from './ToolbarItem';
