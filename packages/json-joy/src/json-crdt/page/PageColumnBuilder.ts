@@ -1,5 +1,6 @@
 import {JsonCrdtOperation, JsonCrdtOperationGroup, Timestamp} from "../../json-crdt-patch";
 import {JsonCrdtPatchOpcodeOverlay} from "../../json-crdt-patch/enums";
+import {de, rle, ze} from "./util";
 import * as operations from "../../json-crdt-patch/operations";
 import type {Page} from "./types";
 
@@ -8,7 +9,7 @@ export class PageColumnBuilder {
   public minSeq: number = 0;
   public maxSeq: number = 0;
   public readonly sids: Set<number> = new Set();
-  // public readonly sidTable: number[] = [];
+  public sidTable: number[] = [];
   public readonly sidMap: Map<number, number> = new Map();
   
   // ------------------------------------------------------------------ Columns
@@ -22,17 +23,17 @@ export class PageColumnBuilder {
    */
   public readonly uint: number[] = [];
 
-  /** Old timestamp (`obj` and `ref` fields) SID (session ID). */
-  public readonly osid: number[] = [];
-
-  /** Old timestamp (`obj` and `ref` fields) sequence number (`time` component). */
-  public readonly oseq: number[] = [];
-
-  /** New timestamp (`id` and `val` fields) SID (session ID). */
-  public readonly nsid: number[] = [];
-
-  /** New timestamp (`id` and `val` fields) sequence number (`time` component). */
-  public readonly nseq: number[] = [];
+  /** SID old. */
+  public s_old: number[] = [];
+  /** SID new. */
+  public s_new: number[] = [];
+  
+  /** Time for existing obj references (obj, ref). */
+  public t_obj: number[] = [];
+  /** Time for operation IDs. */
+  public t_id: number[] = [];
+  /** Time for operation values. */
+  public t_val: number[] = [];
 
   /** JSON data or ID (encoded as CBOR). */
   public readonly data: unknown[] = [];
@@ -40,29 +41,35 @@ export class PageColumnBuilder {
   public build(page: Page): void {
     const length = page.length;
     for (let i = 0; i < length; i++) this.buildGroup(page[i]);
+    const {sidMap, s_old: osid, s_new: nsid} = this;
+    this.sidTable = [...this.sids];
+    this.sids.clear();
+    this.sidTable.sort();
+    const sidTableLength = this.sidTable.length;
+    for (let i = 0; i < sidTableLength; i++) sidMap.set(this.sidTable[i], i);
+    const osidLength = osid.length;
+    for (let i = 0; i < osidLength; i++) osid[i] = sidMap.get(osid[i])!;
+    const nsidLength = nsid.length;
+    for (let i = 0; i < nsidLength; i++) nsid[i] = sidMap.get(nsid[i])!;
+    this.s_old = ze(rle(this.s_old));
+    this.s_new = ze(rle(this.s_new));
+    this.t_obj = ze(rle(ze(de(this.t_obj))));
+    this.t_id = ze(rle(ze(de(this.t_id))));
+    this.t_val = ze(rle(ze(de(this.t_val))));
   }
 
   private buildGroup(group: JsonCrdtOperationGroup): void {
     const {ops, meta} = group;
     const length = ops.length;
+    if (!length) return;
     this.uint.push(length);
     this.data.push(meta ?? null);
     for (let i = 0; i < length; i++) this.buildOp(ops[i]);
-    const {sidMap, osid, nsid} = this;
-    const sidTable = [...this.sids];
-    this.sids.clear();
-    sidTable.sort();
-    const sidTableLength = sidTable.length;
-    for (let i = 0; i < sidTableLength; i++) sidMap.set(sidTable[i], i);
-    const osidLength = osid.length;
-    for (let i = 0; i < osidLength; i++) osid[i] = sidMap.get(osid[i])!;
-    const nsidLength = nsid.length;
-    for (let i = 0; i < nsidLength; i++) nsid[i] = sidMap.get(nsid[i])!;
   }
 
   private buildOp(op: JsonCrdtOperation): void {
     const {uint: size, uint: type, data} = this;
-    this.writeTsNew(op.id);
+    this.writeId(op.id);
     switch (op.constructor) {
       case operations.NewConOp: {
         const operation = op as operations.NewConOp;
@@ -214,17 +221,25 @@ export class PageColumnBuilder {
     }
   }
 
+  private writeId({sid, time}: Timestamp): void {
+    this.s_new.push(sid);
+    this.t_id.push(time);
+    this.sids.add(sid);
+    if (!this.minSeq || time < this.minSeq) this.minSeq = time;
+    this.maxSeq = Math.max(this.maxSeq, time);
+  }
+
   private writeTsNew({sid, time}: Timestamp): void {
-    this.nsid.push(sid);
-    this.nseq.push(time);
+    this.s_new.push(sid);
+    this.t_val.push(time);
     this.sids.add(sid);
     if (!this.minSeq || time < this.minSeq) this.minSeq = time;
     this.maxSeq = Math.max(this.maxSeq, time);
   }
 
   private writeTsOld({sid, time}: Timestamp): void {
-    this.osid.push(sid);
-    this.oseq.push(time);
+    this.s_old.push(sid);
+    this.t_obj.push(time);
     this.sids.add(sid);
     if (!this.minSeq || time < this.minSeq) this.minSeq = time;
     this.maxSeq = Math.max(this.maxSeq, time);

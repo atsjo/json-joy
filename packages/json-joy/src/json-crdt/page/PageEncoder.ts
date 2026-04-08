@@ -18,5 +18,31 @@ export class PageEncoder extends CborEncoder<CrdtWriter> {
     const columns = new PageColumnBuilder();
     columns.build(page);
     console.log(columns);
+    const writer = this.writer;
+    writer.vu57(columns.minSeq);
+    writer.vu57(columns.maxSeq);
+    this.writeUintCol(columns.sidTable);
+    this.writeUintCol(columns.uint);
+    this.writeUintCol(columns.s_old);
+    this.writeUintCol(columns.s_new);
+    this.writeUintCol(columns.t_obj);
+    this.writeUintCol(columns.t_id);
+    this.writeUintCol(columns.t_val);
+    this.writeDataCol(columns.data);
+  }
+
+  private writeUintCol(uint: number[]): void {
+    const length = uint.length;
+    const writer = this.writer;
+    writer.ensureCapacity(8 + 8 * length);
+    writer.vu57(length);
+    for (let i = 0; i < length; i++) writer.vu57(uint[i]);
+  }
+
+  private writeDataCol(data: unknown[]): void {
+    const length = data.length;
+    const writer = this.writer;
+    writer.vu57(length);
+    for (let i = 0; i < length; i++) this.writeAny(data[i]);
   }
 }
