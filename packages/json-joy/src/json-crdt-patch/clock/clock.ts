@@ -178,6 +178,14 @@ export class ClockVector extends LogicalClock implements IClockVector {
     if (edge >= this.time) this.time = edge + 1;
   }
 
+  /** Checks if the timestamp "has been observed" by this causal context. */
+  public has(ts: ITimestampStruct): boolean {
+    const sid = ts.sid;
+    if (sid === this.sid) return ts.time < this.time;
+    const peer = this.peers.get(sid);
+    return !!peer && ts.time <= peer.time;
+  }
+
   /**
    * Returns a deep copy of the current vector clock with the same session ID.
    *
@@ -225,7 +233,7 @@ export class ClockVector extends LogicalClock implements IClockVector {
  * Implements a clock vector with a fixed session ID. The *server clock*
  * is used when the CRDT is powered by a central server.
  */
-export class ServerClockVector extends LogicalClock implements IClockVector {
+export class ServerClockVector extends ClockVector implements IClockVector {
   /** A stub for other peers. Not used in the server clock. */
   public readonly peers = new Map<number, ITimespanStruct>();
 
@@ -242,14 +250,5 @@ export class ServerClockVector extends LogicalClock implements IClockVector {
 
   public fork(): ServerClockVector {
     return new ServerClockVector(SESSION.SERVER, this.time);
-  }
-
-  /**
-   * Returns a human-readable string representation of the clock vector.
-   *
-   * @returns Human-readable string representation of the clock vector.
-   */
-  public toString(): string {
-    return `clock ${this.sid}.${this.time}`;
   }
 }

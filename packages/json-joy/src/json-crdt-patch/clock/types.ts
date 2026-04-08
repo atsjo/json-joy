@@ -69,6 +69,9 @@ export interface IClockVector extends IClock {
    */
   observe(ts: ITimestampStruct, span: number): void;
 
+  /** Checks if the timestamp "has been observed" by this causal context. */
+  has(ts: ITimestampStruct): boolean;
+
   /** Copy the clock while keeping the same session ID. */
   clone(): IClockVector;
 
