@@ -158,7 +158,6 @@ const pkg = {
     '@storybook/addons': '^7.5.3',
     '@storybook/blocks': '^7.5.3',
     '@storybook/react-webpack5': '^7.5.3',
-    '@storybook/react-webpack5': '^7.5.3',
     '@storybook/testing-library': '^0.2.2',
     '@types/jest': '^29.5.9',
     '@types/react': '^18.2.38',
