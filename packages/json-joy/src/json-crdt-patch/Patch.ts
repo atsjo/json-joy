@@ -36,7 +36,7 @@ export type JsonCrdtPatchOperation = operations.JsonCrdtOperation;
  *
  * @category Patch
  */
-export class Patch implements Printable {
+export class Patch implements operations.JsonCrdtOperationGroup<JsonCrdtPatchOperation>, Printable {
   /**
    * Un-marshals a JSON CRDT patch from a binary representation.
    */

@@ -3,6 +3,14 @@ import {type ITimestampStruct, type ITimespanStruct, Timestamp, printTs} from '.
 import type {IJsonCrdtPatchEditOperation, IJsonCrdtPatchOperation} from './types';
 import type {JsonCrdtPatchMnemonic} from './codec/verbose';
 
+export interface JsonCrdtOperationGroup<T extends JsonCrdtOperation = JsonCrdtOperation, Meta = unknown> {
+  /** The list of operations in the group. */
+  ops: T[];
+
+  /** Arbitrary metadata associated with the group, if any. */
+  meta?: Meta;
+}
+
 export type JsonCrdtOperation =
   | NewConOp
   | NewValOp
