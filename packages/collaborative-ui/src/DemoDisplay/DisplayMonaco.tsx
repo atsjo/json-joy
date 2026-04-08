@@ -9,7 +9,7 @@ const DisplayMonaco: React.FC<DisplayMonacoProps> = ({model, path = []}) => {
     const str = model.api.str(path);
     return (
       <div style={{boxSizing: 'border-box', padding: 16, width: '100%', height: '100%'}}>
-        {!str ? null : <CollaborativeMonaco height={'200px'} str={() => str} />}
+        {!str ? null : <CollaborativeMonaco style={{height: '200px'}} str={() => str} />}
       </div>
     );
   } catch {
