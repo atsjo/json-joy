@@ -1,4 +1,4 @@
-import {de, dd, rld, rle} from "../util";
+import {de, dd, rld, rle, ze, zd} from "../util";
 
 describe('rle()', () => {
   test('encodes empty array', () => {
@@ -161,6 +161,115 @@ describe('de() and dd() roundtrip', () => {
   test('fuzz', () => {
     for (let i = 0; i < 100; i++) {
       const arr = randomArray(i, 100);
+      assertRoundtrip(arr);
+    }
+  });
+});
+
+describe('ze()', () => {
+  test('zigzag encodes empty array', () => {
+    expect(ze([])).toEqual([]);
+  });
+
+  test('zigzag encodes array with positive integers', () => {
+    expect(ze([0, 1, 2])).toEqual([0, 2, 4]);
+  });
+
+  test('zigzag encodes array with negative integers', () => {
+    expect(ze([-1, -2, -3])).toEqual([1, 3, 5]);
+  });
+
+  test('zigzag encodes array with mixed integers', () => {
+    expect(ze([-1, 0, 1, -2, 2])).toEqual([1, 0, 2, 3, 4]);
+  });
+
+  test('zigzag encodes array with large integers', () => {
+    expect(ze([-2147483648, 2147483647])).toEqual([4294967295, 4294967294]);
+  });
+
+  // Zigzag doubles the value, so inputs must be within [-2^52, 2^52-1] to stay
+  // within safe integer range. 2^52 - 1 = 4503599627370495.
+  test('max encodable positive and negative values', () => {
+    expect(ze([4503599627370495, -4503599627370496])).toEqual([9007199254740990, 9007199254740991]);
+  });
+});
+
+describe('zd()', () => {
+  test('zigzag decodes empty array', () => {
+    expect(zd([])).toEqual([]);
+  });
+
+  test('zigzag decodes array with positive integers', () => {
+    expect(zd([0, 2, 4])).toEqual([0, 1, 2]);
+  });
+
+  test('zigzag decodes array with negative integers', () => {
+    expect(zd([1, 3, 5])).toEqual([-1, -2, -3]);
+  });
+
+  test('zigzag decodes array with mixed integers', () => {
+    expect(zd([1, 0, 2, 3, 4])).toEqual([-1, 0, 1, -2, 2]);
+  });
+
+  test('zigzag decodes array with large integers', () => {
+    expect(zd([4294967295, 4294967294])).toEqual([-2147483648, 2147483647]);
+  });
+
+  test('max encodable positive and negative values', () => {
+    expect(zd([9007199254740990, 9007199254740991])).toEqual([4503599627370495, -4503599627370496]);
+  });
+});
+
+describe('ze() and zd() roundtrip', () => {
+  const assertRoundtrip = (input: number[]) => {
+    expect(zd(ze(input))).toEqual(input);
+  };
+
+  test('roundtrips empty array', () => {
+    assertRoundtrip([]);
+  });
+
+  test('roundtrips zero', () => {
+    assertRoundtrip([0]);
+  });
+
+  test('roundtrips positive integers', () => {
+    assertRoundtrip([0, 1, 2, 100, 1000]);
+  });
+
+  test('roundtrips negative integers', () => {
+    assertRoundtrip([-1, -2, -3, -100, -1000]);
+  });
+
+  test('roundtrips mixed integers', () => {
+    assertRoundtrip([-1, 0, 1, -2, 2]);
+  });
+
+  test('roundtrips 32-bit boundary values', () => {
+    assertRoundtrip([-2147483648, 2147483647]);
+  });
+
+  // Zigzag doubles the value; max safe input is floor(MAX_SAFE_INTEGER / 2) = 2^52 - 1.
+  test('roundtrips max encodable boundary values', () => {
+    assertRoundtrip([4503599627370495, -4503599627370496]);
+  });
+
+  test('fuzz with small values', () => {
+    for (let i = 0; i < 100; i++) {
+      const arr: number[] = [];
+      for (let j = 0; j < i; j++) arr.push(Math.floor(Math.random() * 200) - 100);
+      assertRoundtrip(arr);
+    }
+  });
+
+  test('fuzz with large values', () => {
+    const MAX_INPUT = Math.floor(Number.MAX_SAFE_INTEGER / 2); // 2^52 - 1
+    for (let i = 0; i < 100; i++) {
+      const arr: number[] = [];
+      for (let j = 0; j < i; j++) {
+        const sign = Math.random() < 0.5 ? 1 : -1;
+        arr.push(sign * Math.floor(Math.random() * MAX_INPUT));
+      }
       assertRoundtrip(arr);
     }
   });

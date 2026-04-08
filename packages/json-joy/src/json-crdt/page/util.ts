@@ -78,3 +78,26 @@ export const dd = (encoded: number[]): number[] => {
   for (let i = 1; i < length; i++) uint.push(curr += encoded[i]);
   return uint;
 };
+
+/**
+ * Zigzag encoding for signed integers. Encodes signed integers as unsigned
+ * integers by mapping negative numbers to odd positive numbers and non-negative
+ * numbers to even positive numbers.
+ *
+ * For example, the sequence `[-1, 0, 1, -2, 2]` would be encoded as `[1, 0, 2, 3, 4]`.
+ */
+export const ze = (int: number[]): number[] => {
+  const encoded: number[] = [];
+  for (const value of int) encoded.push(value >= 0 ? value * 2 : -value * 2 - 1);
+  return encoded;
+};
+
+/**
+ * Zigzag decoding for signed integers. Decodes an array encoded with
+ * the {@link ze} function back to its original form.
+ */
+export const zd = (encoded: number[]): number[] => {
+  const int: number[] = [];
+  for (const value of encoded) int.push(value & 1 ? -(value + 1) / 2 : value / 2);
+  return int;
+};
