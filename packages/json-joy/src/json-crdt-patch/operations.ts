@@ -3,6 +3,24 @@ import {type ITimestampStruct, type ITimespanStruct, Timestamp, printTs} from '.
 import type {IJsonCrdtPatchEditOperation, IJsonCrdtPatchOperation} from './types';
 import type {JsonCrdtPatchMnemonic} from './codec/verbose';
 
+export type JsonCrdtOperation =
+  | NewConOp
+  | NewValOp
+  | NewVecOp
+  | NewObjOp
+  | NewStrOp
+  | NewBinOp
+  | NewArrOp
+  | InsValOp
+  | InsObjOp
+  | InsVecOp
+  | InsStrOp
+  | InsBinOp
+  | InsArrOp
+  | UpdArrOp
+  | DelOp
+  | NopOp;
+
 abstract class Op implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct) {}
 

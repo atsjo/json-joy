@@ -7,28 +7,12 @@ import type {Printable} from 'tree-dump/lib/types';
 /**
  * A union type of all possible JSON CRDT patch operations.
  */
-export type JsonCrdtPatchOperation =
-  | operations.NewConOp
-  | operations.NewValOp
-  | operations.NewVecOp
-  | operations.NewObjOp
-  | operations.NewStrOp
-  | operations.NewBinOp
-  | operations.NewArrOp
-  | operations.InsValOp
-  | operations.InsObjOp
-  | operations.InsVecOp
-  | operations.InsStrOp
-  | operations.InsBinOp
-  | operations.InsArrOp
-  | operations.UpdArrOp
-  | operations.DelOp
-  | operations.NopOp;
+export type JsonCrdtPatchOperation = operations.JsonCrdtOperation;
 
 /**
- * Represents a JSON CRDT patch.
- *
- * Normally, you would create a new patch using the {@link PatchBuilder} class.
+ * Represents a JSON CRDT patch. Normally, you would create a new patch using
+ * the {@link PatchBuilder} class. IDs of all operations share the same `sid`
+ * (the `sid` of the replica) and have strictly increasing `time` values.
  *
  * ```ts
  * import {Patch, PatchBuilder, LogicalClock} from 'json-joy/lib/json-crdt-patch';
