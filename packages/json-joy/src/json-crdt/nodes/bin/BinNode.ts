@@ -1,6 +1,8 @@
 import type {JsonNode} from '..';
-import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {type IClockVector, type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
+import type {DeltaMutator} from '../../delta/Delta';
+import type {Model} from '../../model';
 
 /**
  * @ignore
@@ -126,6 +128,11 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
       return ret!;
     });
     return clone;
+  }
+  
+  /** @ignore */
+  public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
+    throw new Error('Not implemented');
   }
 
   /** @ignore */

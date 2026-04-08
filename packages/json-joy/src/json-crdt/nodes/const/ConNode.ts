@@ -1,7 +1,10 @@
 import {con as printCon} from '../../../util/print';
-import {type ITimestampStruct, printTs, Timestamp} from '../../../json-crdt-patch/clock';
+import {NewConOp} from '../../../json-crdt-patch';
+import {type IClockVector, type ITimestampStruct, printTs, Timestamp} from '../../../json-crdt-patch/clock';
+import type {Model} from '../../model';
 import type {JsonNode} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
+import type {DeltaMutator} from '../../delta/Delta';
 
 /**
  * Represents the `con` type of the JSON CRDT specification.
@@ -49,6 +52,12 @@ export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View
   /** @ignore */
   public clone(): ConNode<View> {
     return new ConNode(this.id, this.val);
+  }
+
+  /** @ignore */
+  public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
+    const {id, val} = this;
+    if (!cc.has(id)) ops.push(new NewConOp(id, val));
   }
 
   /** @ignore */

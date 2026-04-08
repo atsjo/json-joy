@@ -27,6 +27,9 @@ export abstract class ExtNode<N extends JsonNode, View = unknown> implements Jso
   public container(): JsonNode | undefined {
     return this.data.container();
   }
+    
+  /** @ignore */
+  public delta(): void {}
 
   public api: undefined | unknown = undefined;
 

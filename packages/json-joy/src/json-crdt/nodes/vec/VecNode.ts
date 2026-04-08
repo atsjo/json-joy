@@ -1,12 +1,13 @@
 import {ConNode} from '../const/ConNode';
 import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from 'tree-dump/lib/printTree';
-import {compare, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
+import {compare, type IClockVector, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
 import type {ExtNode} from '../../extensions/ExtNode';
 import type {VecNodeExtensionData} from '../../schema/types';
+import type {DeltaMutator} from '../../delta/Delta';
 
 /**
  * Represents a `vec` JSON CRDT node, which is a LWW array.
@@ -167,12 +168,6 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     return useCache ? _view : (this._view = arr);
   }
 
-  /** @ignore */
-  public api: undefined | unknown = undefined;
-
-  /** @ignore */
-  public parent: JsonNode | undefined = undefined;
-
   /**
    * @ignore
    *
@@ -190,6 +185,17 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     for (let i = 0; i < length; i++) clone.elements.push(elements[i]);
     return clone as any;
   }
+
+  /** @ignore */
+  public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
+    throw new Error('Not implemented');
+  }
+
+  /** @ignore */
+  public api: undefined | unknown = undefined;
+
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
 
   /** ----------------------------------------------------- {@link Printable} */
 

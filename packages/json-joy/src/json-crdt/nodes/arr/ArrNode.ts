@@ -1,10 +1,11 @@
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
-import {compare, type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {compare, type IClockVector, type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
+import type {DeltaMutator} from '../../delta/Delta';
 
 type E = ITimestampStruct;
 
@@ -240,6 +241,11 @@ export class ArrNode<Element extends JsonNode = JsonNode>
       return ret!;
     });
     return clone;
+  }
+    
+  /** @ignore */
+  public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
+    throw new Error('Not implemented');
   }
 
   /** @ignore */

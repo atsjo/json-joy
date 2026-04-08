@@ -1,10 +1,12 @@
-import {compare, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
-import {SESSION} from '../../../json-crdt-patch/constants';
+import {compare, type IClockVector, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
+import {ORIGIN, SESSION} from '../../../json-crdt-patch/constants';
 import {printTree} from 'tree-dump/lib/printTree';
 import {UNDEFINED} from '../../model/Model';
+import {InsValOp, NewValOp} from '../../../json-crdt-patch';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Model} from '../../model';
 import type {Printable} from 'tree-dump/lib/types';
+import type {DeltaMutator} from '../../delta/Delta';
 
 /**
  * Represents a `val` JSON CRDT node, which is a Last-write-wins (LWW) register.
@@ -50,6 +52,10 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
 
   // ----------------------------------------------------------------- JsonNode
 
+  public name(): string {
+    return 'val';
+  }
+
   public view(): JsonNodeView<Value> {
     return this.node()?.view() as JsonNodeView<Value>;
   }
@@ -76,6 +82,19 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
     return child ? child.container() : undefined;
   }
 
+  /** @ignore */
+  public clone(doc: Model<any>): ValNode<Value> {
+    return new ValNode(doc, this.id, this.val);
+  }
+
+  /** @ignore */
+  public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
+    const {id, val} = this;
+    if (id.sid !== SESSION.SYSTEM && !cc.has(id)) ops.push(new NewValOp(id));
+    this.child().delta(model, cc, ops);
+    if (!cc.has(val)) ops.push(new InsValOp(ORIGIN, id, val));
+  }
+
   /**
    * @ignore
    */
@@ -83,15 +102,6 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
 
   /** @ignore */
   public parent: JsonNode | undefined = undefined;
-
-  public name(): string {
-    return 'val';
-  }
-
-  /** @ignore */
-  public clone(doc: Model<any>): ValNode<Value> {
-    return new ValNode(doc, this.id, this.val);
-  }
 
   // ---------------------------------------------------------------- Printable
 
