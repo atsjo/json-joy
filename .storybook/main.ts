@@ -4,6 +4,8 @@ import { dirname, resolve } from "path"
 
 import { fileURLToPath } from "url"
 
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin'
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
@@ -89,12 +91,18 @@ const config: StorybookConfig = {
       '@jsonjoy.com/collaborative-codemirror': resolve(__dirname, '../packages/collaborative-codemirror/src'),
       '@jsonjoy.com/collaborative-monaco/lib': resolve(__dirname, '../packages/collaborative-monaco/src'),
       '@jsonjoy.com/collaborative-monaco': resolve(__dirname, '../packages/collaborative-monaco/src'),
+      'collaborative-monaco/lib': resolve(__dirname, '../packages/collaborative-monaco/src'),
+      'collaborative-monaco': resolve(__dirname, '../packages/collaborative-monaco/src'),
       '@jsonjoy.com/collaborative-monaco-react/lib': resolve(__dirname, '../packages/collaborative-monaco-react/src'),
       '@jsonjoy.com/collaborative-monaco-react': resolve(__dirname, '../packages/collaborative-monaco-react/src'),
       '@jsonjoy.com/collaborative-ui/lib': resolve(__dirname, '../packages/collaborative-ui/src'),
       '@jsonjoy.com/collaborative-ui': resolve(__dirname, '../packages/collaborative-ui'),
       '@jsonjoy.com/collaborative-react/lib': resolve(__dirname, '../packages/collaborative-react/src'),
       '@jsonjoy.com/collaborative-react': resolve(__dirname, '../packages/collaborative-react/src'),
+      '@jsonjoy.com/collaborative-presence/lib': resolve(__dirname, '../packages/collaborative-presence/src'),
+      '@jsonjoy.com/collaborative-presence': resolve(__dirname, '../packages/collaborative-presence/src'),
+      '@jsonjoy.com/json-equal/lib': resolve(__dirname, '../packages/json-equal/src'),
+      '@jsonjoy.com/json-equal': resolve(__dirname, '../packages/json-equal/src'),
       '@jsonjoy.com/keyboard/lib': resolve(__dirname, '../packages/keyboard/src'),
       '@jsonjoy.com/keyboard': resolve(__dirname, '../packages/keyboard/src'),
       '@jsonjoy.com/json-expression/lib': resolve(__dirname, '../packages/json-expression/src'),
@@ -106,6 +114,8 @@ const config: StorybookConfig = {
       '@jsonjoy.com/json-type/lib': resolve(__dirname, '../packages/json-type/src'),
       '@jsonjoy.com/util/lib': resolve(__dirname, '../packages/util/src'),
     };
+    config.plugins = config.plugins || [];
+    config.plugins.push(new MonacoWebpackPlugin({languages: ['json', 'typescript', 'javascript']}));
     return config;
   },
 };

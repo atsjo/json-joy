@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {CollaborativeMonaco} from 'collaborative-monaco/lib/CollaborativeMonaco';
+import {CollaborativeMonaco} from '../MonacoEditor';
 import type {DemoProps} from './types';
 
 export interface DisplayMonacoProps extends DemoProps {}
