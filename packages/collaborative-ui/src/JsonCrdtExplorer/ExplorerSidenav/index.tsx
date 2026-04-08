@@ -49,7 +49,6 @@ export const ExplorerSidenav: React.FC<ExplorerSidenavProps> = () => {
           <CreateButton
             radius={1}
             primary
-            color={'accent'}
             colorStep={'el-1'}
             block
             fill
