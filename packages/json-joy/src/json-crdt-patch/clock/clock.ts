@@ -1,5 +1,5 @@
 import {SESSION} from '../enums';
-import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct} from './types';
+import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct, VersionVector} from './types';
 
 export class Timestamp implements ITimestampStruct {
   constructor(
@@ -153,9 +153,34 @@ export class LogicalClock extends Timestamp implements IClock {
  */
 export class ClockVector extends LogicalClock implements IClockVector {
   /**
+   * Create a new clock out of the version vector. The first element is the
+   * local clock, and the rest are the clocks of other peers.
+   */
+  public static from(vv: VersionVector): ClockVector {
+    const length = vv.length;
+    if (length === 0) throw new Error('INV_VV');
+    const local = vv[0]
+    const clock = new ClockVector(local.sid, local.time + 1);
+    for (let i = 1; i < length; i++) {
+      const ts = vv[i];
+      clock.peers.set(ts.sid, ts);
+    }
+    return clock;
+  }
+
+  /**
    * A set of logical clocks of other peers.
    */
   public readonly peers = new Map<number, ITimestampStruct>();
+
+  /**
+   * @returns This clock serialized as a version vector.
+   */
+  public vv(): VersionVector {
+    const vv: VersionVector = [tick(this, -1)];
+    this.peers.forEach((peer) => vv.push(peer));
+    return vv;
+  }
 
   /**
    * Advances local time every time we see any timestamp with higher time value.
@@ -238,7 +263,7 @@ export class ServerClockVector extends ClockVector implements IClockVector {
   public readonly peers = new Map<number, ITimespanStruct>();
 
   public observe(ts: ITimespanStruct, span: number) {
-    if (ts.sid > 8) throw new Error('INVALID_SERVER_SESSION');
+    if (ts.sid > 8) throw new Error('INV_SERVER_SESSION');
     if (this.time < ts.time) throw new Error('TIME_TRAVEL');
     const time = ts.time + span;
     if (time > this.time) this.time = time;

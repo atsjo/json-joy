@@ -12,3 +12,5 @@ export const con = (value: unknown) => {
 };
 
 export const bin = (value: Uint8Array) => '{ ' + ('' + value).replaceAll(',', ', ') + ' }';
+
+export const indent = (tab: string, pojo: unknown) => String(JSON.stringify(pojo, null, 2)).replace(/\n/g, '\n' + tab);

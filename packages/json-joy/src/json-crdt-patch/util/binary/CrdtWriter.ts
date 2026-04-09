@@ -1,4 +1,5 @@
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+import type {VersionVector} from '../../clock';
 
 export class CrdtWriter extends Writer {
   /**
@@ -227,6 +228,17 @@ export class CrdtWriter extends Writer {
           uint8[this.x++] = hi32 >>> 16;
         }
       }
+    }
+  }
+
+  public vv(vv: VersionVector): void {
+    const length = vv.length;
+    this.ensureCapacity(8 + length * 8 * 2);
+    this.vu57(length);
+    for (let i = 0; i < length; i++) {
+      const ts = vv[i];
+      this.vu57(ts.sid);
+      this.vu57(ts.time);
     }
   }
 }

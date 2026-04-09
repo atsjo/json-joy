@@ -17,9 +17,16 @@ export interface ITimestampStruct {
    *
    * Needs to be mutable in vector clock. Other than that, it should be
    * treated as immutable.
+   * 
+   * @todo Rename to `seq`?
    */
   time: number;
 }
+
+/**
+ * Causal Context - the latest sequence numbers (time) for each peer (sid).
+ */
+export type VersionVector = ITimestampStruct[];
 
 /**
  * Similar to ITimestamp, but represents a logical time interval, instead of
@@ -71,6 +78,9 @@ export interface IClockVector extends IClock {
 
   /** Checks if the timestamp "has been observed" by this causal context. */
   has(ts: ITimestampStruct): boolean;
+
+  /** Returns current causal context as a version vector. */
+  vv(): VersionVector;
 
   /** Copy the clock while keeping the same session ID. */
   clone(): IClockVector;
