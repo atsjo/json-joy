@@ -1,4 +1,6 @@
 import {SESSION} from '../enums';
+import {CrdtReader} from '../util/binary/CrdtReader';
+import {CrdtWriter} from '../util/binary/CrdtWriter';
 import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct, VersionVector} from './types';
 
 export class Timestamp implements ITimestampStruct {
@@ -168,6 +170,13 @@ export class ClockVector extends LogicalClock implements IClockVector {
     return clock;
   }
 
+  /** Un-marshals a clock vector from a binary format. */
+  public static fromU8(buf: Uint8Array): ClockVector {
+    const reader = new CrdtReader(buf);
+    const vv = reader.vv();
+    return ClockVector.from(vv);
+  }
+
   /**
    * A set of logical clocks of other peers.
    */
@@ -180,6 +189,13 @@ export class ClockVector extends LogicalClock implements IClockVector {
     const vv: VersionVector = [tick(this, -1)];
     this.peers.forEach((peer) => vv.push(peer));
     return vv;
+  }
+
+  /** Serializes the clock vector to a binary format. */
+  public toU8(): Uint8Array {
+    const writer = new CrdtWriter(64);
+    writer.vv(this.vv());
+    return writer.flush();
   }
 
   /**
@@ -212,7 +228,7 @@ export class ClockVector extends LogicalClock implements IClockVector {
   }
 
   /** Returns the gap between the observed timestamp and the provided timestamp. */
-  gap(ts: ITimestampStruct): number {
+  public gap(ts: ITimestampStruct): number {
     const sid = ts.sid;
     if (sid === this.sid) {
       const diff = ts.time - this.time + 1;

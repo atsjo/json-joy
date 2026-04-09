@@ -88,6 +88,9 @@ export interface IClockVector extends IClock {
   /** Returns current causal context as a version vector. */
   vv(): VersionVector;
 
+  /** Serializes the clock vector to a binary format. */
+  toU8(): Uint8Array;
+
   /** Jump logical clocks to match the provided version vector. */
   advanceCC(vv: IClockVector): void;
 
