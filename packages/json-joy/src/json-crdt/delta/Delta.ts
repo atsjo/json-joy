@@ -1,11 +1,10 @@
 import {printTree} from 'tree-dump';
 import {Batch} from '../../json-crdt-patch/Batch';
-import {IClockVector, Patch} from '../../json-crdt-patch';
+import {IClockVector} from '../../json-crdt-patch';
 import {encoder, decoder} from './codec/binary/shared';
 import {indent} from '../../util/print';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonCrdtOperation} from '../../json-crdt-patch/operations';
-import type {Model} from '../model';
 
 /**
  * Represents a single operation in a delta group. Conveniently, this is the
@@ -18,13 +17,7 @@ export type DeltaMutator = JsonCrdtOperation;
  * a CRDT state of another peer to "fill in" the missing state.
  */
 export class Delta implements Printable {
-  public static make(model: Model<any>, vv: IClockVector, ops: DeltaMutator[] = []): Delta {
-    model.root.delta(model, vv, ops);
-    const batch = new Batch(ops.map((op) => new Patch([op])));
-    return new Delta(vv, model.clock.clone(), batch);
-  }
-
-  public static fromU8(data: Uint8Array): Delta {
+  public static from(data: Uint8Array): Delta {
     return decoder.decodeDelta(data);
   }
 

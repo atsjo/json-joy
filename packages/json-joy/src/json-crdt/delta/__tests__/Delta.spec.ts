@@ -1,7 +1,6 @@
 import {b} from "@jsonjoy.com/buffers/src/b";
 import {ClockVector, s, tick, ts} from "../../../json-crdt-patch";
 import {Model} from "../../model";
-import {Delta} from "../Delta";
 
 const covers: (upper: ClockVector, lower: ClockVector) => boolean = (upper, lower) => {
   for (const ts of lower.peers.values()) if (!upper.has(ts)) return false;
@@ -13,7 +12,7 @@ test('`new_con` + `ins_obj`', () => {
   const model = Model.create({});
   const model2 = model.fork();
   model2.api.add('/baz', true);
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
@@ -24,7 +23,7 @@ test('`new_obj`', () => {
   const model = Model.create();
   const model2 = model.fork();
   model2.api.add('', {});
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
@@ -35,7 +34,7 @@ test('`new_val` + `new_con` + `ins_val` + `ins_obj`', () => {
   const model = Model.create({});
   const model2 = model.fork();
   model2.api.add('/foo', s.val(s.con(0)));
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
@@ -46,7 +45,7 @@ test('`new_vec` + `ins_vec` + `new_con`', () => {
   const model = Model.create(s.vec());
   const model2 = model.fork();
   model2.api.add('', s.vec(s.con(0)));
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
@@ -57,7 +56,7 @@ test('`ins_str` + `del`', () => {
   const model = Model.create('hello world');
   const model2 = model.fork();
   model2.api.merge('', 'Hello, world!');
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
   expect(covers(model.clock, model2.clock)).toBe(true);
@@ -75,7 +74,7 @@ test('`ins_str` with split chunk "ab"', () => {
   expect(model2.api.str([]).node.size()).toBe(1);
   expect(model2.view()).toBe('a');
 
-  const delta = Delta.make(model, model2.clock);
+  const delta = model.delta(model2.clock);
   model2.applyDelta(delta);
   model2.applyDelta(delta);
   model2.applyDelta(delta);
@@ -87,7 +86,7 @@ test('`ins_bin` + `del`', () => {
   const model = Model.create(b(0, 2));
   const model2 = model.fork();
   model2.api.merge('', b(0, 1, 2));
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
@@ -106,7 +105,7 @@ test('`ins_bin` with split chunk', () => {
   expect(model2.api.bin([]).node.size()).toBe(1);
   expect(model2.view()).toEqual(b(6));
 
-  const delta = Delta.make(model, model2.clock);
+  const delta = model.delta(model2.clock);
   model2.applyDelta(delta);
   model2.applyDelta(delta);
   model2.applyDelta(delta);
@@ -120,7 +119,7 @@ test('`ins_arr` + `new_str` + `new_bin` + `new_arr` + `del`', () => {
   const model2 = model.fork();
   model2.api.arr([]).ins(1, ['b', 'c', b(5, 0, 0, 5), []]);
   model2.api.arr([]).del(5, 1);;
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
   expect(covers(model.clock, model2.clock)).toBe(true);
@@ -155,7 +154,7 @@ test('complex case with many ops', () => {
       {group: 'B', members: ['Carol', 'Dave']},
     ],
   });
-  const delta = Delta.make(model2, model.clock);
+  const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
   expect(covers(model.clock, model2.clock)).toBe(true);

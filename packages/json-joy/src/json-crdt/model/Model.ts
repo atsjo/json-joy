@@ -12,9 +12,10 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
 import {cmpNode} from '../equal/cmpNode';
 import {indent} from '../../util/print';
-import type {Delta} from '../delta/Delta';
+import {Delta, DeltaMutator} from '../delta/Delta';
+import {Batch} from '../../json-crdt-patch/Batch';
+import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {SchemaToJsonNode} from '../schema/types';
-import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {NodeApi} from './api/nodes';
@@ -584,6 +585,18 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     });
     this.tick++;
     this.onreset?.(changed);
+  }
+
+  public delta(vv: clock.IClockVector): Delta {
+    const ops: DeltaMutator[] = [];
+    this.root.delta(this as Model<any>, vv, ops);
+    const batch = new Batch(ops.map((op) => new Patch([op])));
+    return new Delta(vv, this.clock.clone(), batch);
+  }
+
+  public merge(model: Model<N>): void {
+    const delta = model.delta(this.clock);
+    this.applyDelta(delta);
   }
 
   /**
