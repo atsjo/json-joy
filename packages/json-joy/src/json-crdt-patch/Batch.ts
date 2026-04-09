@@ -1,3 +1,4 @@
+import {printTree} from 'tree-dump';
 import {type ITimestampStruct, printTs} from './clock';
 import type {Patch} from './Patch';
 
@@ -30,12 +31,7 @@ export class Batch {
 
   public toString(tab: string = ''): string {
     const id = this.getId();
-    let out = `Batch ${id ? printTs(id) : '(nil)'}\n`;
-    for (let i = 0; i < this.patches.length; i++) {
-      const patch = this.patches[i];
-      const isLast = i === this.patches.length - 1;
-      out += `${tab}${isLast ? '└─' : '├─'} ${patch.toString(tab + `${isLast ? ' ' : '│'} `)}\n`;
-    }
-    return out;
+    const header = `Batch ${id ? printTs(id) : '(nil)'}`;
+    return header + printTree(tab, this.patches.map((patch) => (tab) => patch.toString(tab)));
   }
 }

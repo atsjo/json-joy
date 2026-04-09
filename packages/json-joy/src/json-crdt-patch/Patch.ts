@@ -44,16 +44,18 @@ export class Patch implements operations.JsonCrdtOperationGroup<JsonCrdtPatchOpe
     return decode(data);
   }
 
-  /**
-   * A list of operations in the patch.
-   */
-  public ops: JsonCrdtPatchOperation[] = [];
+  constructor(
+    /**
+     * A list of operations in the patch.
+     */
+    public ops: JsonCrdtPatchOperation[] = [],
 
-  /**
-   * Arbitrary metadata associated with the patch, which is not used by the
-   * library.
-   */
-  public meta: unknown = undefined;
+    /**
+     * Arbitrary metadata associated with the patch, which is not used by the
+     * library.
+     */
+    public meta: unknown = undefined,
+  ) {}
 
   /**
    * Returns the patch ID, which is equal to the ID of the first operation

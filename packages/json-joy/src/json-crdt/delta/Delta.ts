@@ -1,5 +1,8 @@
 import {printTree} from 'tree-dump';
-import type {IClockVector} from '../../json-crdt-patch';
+import {Batch} from '../../json-crdt-patch/Batch';
+import {IClockVector, Patch} from '../../json-crdt-patch';
+import {encoder, decoder} from './codec/binary/shared';
+import {indent} from '../../util/print';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonCrdtOperation} from '../../json-crdt-patch/operations';
 import type {Model} from '../model';
@@ -15,31 +18,42 @@ export type DeltaMutator = JsonCrdtOperation;
  * a CRDT state of another peer to "fill in" the missing state.
  */
 export class Delta implements Printable {
-  public static make(model: Model<any>, cc: IClockVector, ops: DeltaMutator[] = []): Delta {
-    model.root.delta(model, cc, ops);
-    // const index = model.index;
-    // const iterator = index.iterator0();
-    // while (true) {
-    //   const next = iterator();
-    //   if (!next) break;
-    // }
-    return new Delta(cc, ops);
+  public static make(model: Model<any>, vv: IClockVector, ops: DeltaMutator[] = []): Delta {
+    model.root.delta(model, vv, ops);
+    const batch = new Batch(ops.map((op) => new Patch([op])));
+    return new Delta(vv, model.clock.clone(), batch);
   }
+
+  public static fromU8(data: Uint8Array): Delta {
+    return decoder.decodeDelta(data);
+  }
+
+  public meta: unknown = void 0;
 
   constructor(
     /**
-     * The *Causal Context* - version vector of the start of the delta. I.e. this
-     * is usually what the other peer sends to us, this is what the other peer has
-     * incorporated in their state.
+     * The *Version Vector* - causal context of the start of the delta. I.e. this
+     * is time boundary what the other peer sends to us, this is what the other
+     * peer has already incorporated into their state.
      */
-    public readonly cc: IClockVector,
+    public readonly vv0: IClockVector,
 
     /**
-     * A list of *Delta Mutators* (operations) in the delta group. MUST be applied
-     * in order.
+     * The *Version Vector* - causal context of the end of the delta. I.e. this
+     * is the time boundary of the delta, this is what the delta incorporates up to.
      */
-    public readonly ops: DeltaMutator[] = [],
+    public readonly vv1: IClockVector,
+
+    /**
+     * A list of *Delta Mutators* (operations) in the delta group. MUST be
+     * applied in order.
+     */
+    public readonly batch: Batch,
   ) {}
+
+  public toU8(): Uint8Array {
+    return encoder.encodeDelta(this);
+  }
 
   // ---------------------------------------------------------------- Printable
 
@@ -52,8 +66,10 @@ export class Delta implements Printable {
    */
   public toString(tab: string = ''): string {
     return 'Delta' + printTree(tab, [
-      (tab: string) => this.cc.toString(tab),
-      ...this.ops.map((op) => (tab: string) => op.toString(tab)),
+      (tab) => `meta${printTree(tab, [(tab) => indent(tab, this.meta)])}`,
+      (tab: string) => 'vv0: ' +this.vv0.toString(tab),
+      (tab: string) => 'vv1: ' + this.vv1.toString(tab),
+      (tab: string) => this.batch.toString(tab),
     ]);
   }
 }
