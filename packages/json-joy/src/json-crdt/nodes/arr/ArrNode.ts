@@ -1,7 +1,9 @@
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
-import {compare, type IClockVector, type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {compare, type IClockVector, type ITimestampStruct, tick, tss} from '../../../json-crdt-patch/clock';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {printTree} from 'tree-dump/lib/printTree';
+import {DelOp, InsArrOp, NewArrOp} from '../../../json-crdt-patch';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
@@ -242,10 +244,38 @@ export class ArrNode<Element extends JsonNode = JsonNode>
     });
     return clone;
   }
-    
+      
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
-    throw new Error('Not implemented');
+    const obj = this.id;
+    if (!cc.has(obj)) ops.push(new NewArrOp(obj));
+    this.children(child => {
+      child.delta(model, cc, ops);
+    });
+    const iterator = this.iterator();
+    let lastChunk: ReturnType<typeof iterator> | undefined;
+    while (true) {
+      const chunk = iterator();
+      if (!chunk) break;
+      const {id, span} = chunk;
+      if (chunk.del) ops.push(new DelOp(ORIGIN, obj, [tss(id.sid, id.time, span)]));
+      else {
+        const gap = cc.gap(tick(id, span - 1));
+        const data = chunk.data!;
+        if (data && gap > 0) {
+          const offset = Math.max(0, span - gap);
+          if (!offset) {
+            const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : obj;
+            ops.push(new InsArrOp(id, obj, ref, data));
+          } else {
+            const text = data.slice(offset);
+            const ref = tick(id, offset - 1);
+            ops.push(new InsArrOp(tick(id, offset), obj, ref, text));
+          }
+        }
+      }
+      lastChunk = chunk;
+    }
   }
 
   /** @ignore */

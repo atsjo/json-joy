@@ -1,7 +1,7 @@
 import {IClockVector, type ITimestampStruct, tick, tss} from '../../../json-crdt-patch/clock';
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
 import {next} from 'sonic-forest/lib/util';
-import {DelOp, InsStrOp} from '../../../json-crdt-patch';
+import {DelOp, InsStrOp, NewStrOp} from '../../../json-crdt-patch';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import type {JsonNode} from '..';
 import type {Model} from '../../model';
@@ -135,26 +135,27 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
   
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
-    const strId = this.id;
+    const obj = this.id;
+    if (!cc.has(obj)) ops.push(new NewStrOp(obj));
     const iterator = this.iterator();
     let lastChunk: ReturnType<typeof iterator> | undefined;
     while (true) {
       const chunk = iterator();
       if (!chunk) break;
       const {id, span} = chunk;
-      if (chunk.del) ops.push(new DelOp(ORIGIN, strId, [tss(id.sid, id.time, span)]));
+      if (chunk.del) ops.push(new DelOp(ORIGIN, obj, [tss(id.sid, id.time, span)]));
       else {
         const gap = cc.gap(tick(id, span - 1));
         if (gap > 0) {
           const offset = Math.max(0, span - gap);
           const data = chunk.data ?? '';
           if (!offset) {
-            const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : strId;
-            ops.push(new InsStrOp(id, strId, ref, data));
+            const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : obj;
+            ops.push(new InsStrOp(id, obj, ref, data));
           } else {
             const text = data.slice(offset);
             const ref = tick(id, offset - 1);
-            ops.push(new InsStrOp(tick(id, offset), strId, ref, text));
+            ops.push(new InsStrOp(tick(id, offset), obj, ref, text));
           }
         }
       }

@@ -1,5 +1,5 @@
 import {b} from "@jsonjoy.com/buffers/src/b";
-import {ClockVector, s, tick} from "../../../json-crdt-patch";
+import {ClockVector, s, tick, ts} from "../../../json-crdt-patch";
 import {Model} from "../../model";
 import {Delta} from "../Delta";
 
@@ -8,25 +8,6 @@ const covers: (upper: ClockVector, lower: ClockVector) => boolean = (upper, lowe
   const local = tick(lower, -1);
   return upper.has(local);
 };
-
-// - [x] new_con — creates a new con node.
-// - [x] new_val — creates a new val node.
-// - [ ] new_obj — creates a new obj node.
-// - [ ] new_vec — creates a new vec node.
-// - [ ] new_str — creates a new str node.
-// - [ ] new_bin — creates a new bin node.
-// - [ ] new_arr — creates a new arr node.
-// - [x] ins_val — updates value of a val node.
-// - [x] ins_obj — inserts or updates key-value pairs of an obj node.
-// - [ ] ins_vec — inserts or updates elements of a vec node.
-// - [x] ins_str — inserts text contents into a str node.
-// - [x] ins_bin — inserts binary contents into a bin node.
-// - [ ] ins_arr — inserts elements into an arr node.
-// - [ ] del — deletes contents from list CRDT nodes (str, bin, and arr).
-//   - [ ] "str"
-//   - [ ] "bin"
-//   - [ ] "arr"
-// - [ ] nop — does nothing.
 
 test('`new_con` + `ins_obj`', () => {
   const model = Model.create({});
@@ -39,10 +20,32 @@ test('`new_con` + `ins_obj`', () => {
   expect(covers(model.clock, model2.clock)).toBe(true);
 });
 
+test('`new_obj`', () => {
+  const model = Model.create();
+  const model2 = model.fork();
+  model2.api.add('', {});
+  const delta = Delta.make(model2, model.clock);
+  model.applyDelta(delta);
+  model.applyDelta(delta);
+  expect(model2.view()).toEqual(model.view());
+  expect(covers(model.clock, model2.clock)).toBe(true);
+});
+
 test('`new_val` + `new_con` + `ins_val` + `ins_obj`', () => {
   const model = Model.create({});
   const model2 = model.fork();
   model2.api.add('/foo', s.val(s.con(0)));
+  const delta = Delta.make(model2, model.clock);
+  model.applyDelta(delta);
+  model.applyDelta(delta);
+  expect(model2.view()).toEqual(model.view());
+  expect(covers(model.clock, model2.clock)).toBe(true);
+});
+
+test('`new_vec` + `ins_vec` + `new_con`', () => {
+  const model = Model.create(s.vec());
+  const model2 = model.fork();
+  model2.api.add('', s.vec(s.con(0)));
   const delta = Delta.make(model2, model.clock);
   model.applyDelta(delta);
   model.applyDelta(delta);
@@ -110,4 +113,50 @@ test('`ins_bin` with split chunk', () => {
   model2.applyDelta(delta);
   expect(model.view()).toEqual(model2.view());
   expect(covers(model2.clock, model.clock)).toBe(true);
+});
+
+test('`ins_arr` + `new_str` + `new_bin` + `new_arr` + `del`', () => {
+  const model = Model.create(['a', 'x']);
+  const model2 = model.fork();
+  model2.api.arr([]).ins(1, ['b', 'c', b(5, 0, 0, 5), []]);
+  model2.api.arr([]).del(5, 1);;
+  const delta = Delta.make(model2, model.clock);
+  model.applyDelta(delta);
+  expect(model2.view()).toEqual(model.view());
+  expect(covers(model.clock, model2.clock)).toBe(true);
+});
+
+test('complex case with many ops', () => {
+  const model = Model.create({
+    foo: 'bar',
+    arr: [1, 2, 3],
+    true: false,
+    binary: b(1, 2, 3),
+  });
+  const model2 = model.fork();
+  model2.api.merge({
+    foo: 'Bar!',
+    arr: [1, 4, 3, 5],
+    true: true,
+    hello: 'world',
+    list: [s.con(0), 0, 1],
+    vector: s.vec(s.con('b'), s.str('...'), s.con(2)),
+    time: ts(123, 456),
+    binary: b(2, 3, 4, 5, 6, 8, 9, 10),
+    users: [
+      {id: 1, name: 'Alice'},
+      {id: 2, name: 'Bob'},
+    ],
+    verified: true,
+    tags: [
+      'Silk',
+      'Road',
+      {group: 'A', members: ['Alice', 'Bob']},
+      {group: 'B', members: ['Carol', 'Dave']},
+    ],
+  });
+  const delta = Delta.make(model2, model.clock);
+  model.applyDelta(delta);
+  expect(model2.view()).toEqual(model.view());
+  expect(covers(model.clock, model2.clock)).toBe(true);
 });

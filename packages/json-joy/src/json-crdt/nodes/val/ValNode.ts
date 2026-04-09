@@ -91,7 +91,7 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
     const {id, val} = this;
     if (id.sid !== SESSION.SYSTEM && !cc.has(id)) ops.push(new NewValOp(id));
-    this.child().delta(model, cc, ops);
+    this.child()?.delta(model, cc, ops);
     if (!cc.has(val)) ops.push(new InsValOp(ORIGIN, id, val));
   }
 
