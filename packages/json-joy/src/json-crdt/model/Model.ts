@@ -12,6 +12,7 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
 import {cmpNode} from '../equal/cmpNode';
 import {indent} from '../../util/print';
+import type {Delta} from '../delta/Delta';
 import type {SchemaToJsonNode} from '../schema/types';
 import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
@@ -281,6 +282,16 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * @ignore
    */
   public tick: number = 0;
+
+  /**
+   * Applies a delta to the model.
+   *
+   * @param delta Delta group - computed metadata difference between two models.
+   */
+  public applyDelta(delta: Delta): void {
+    this.applyBatch(delta.batch.patches);
+    this.clock.advanceCC(delta.vv1);
+  }
 
   /**
    * Applies a batch of patches to the document.

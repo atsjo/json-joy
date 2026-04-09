@@ -79,8 +79,17 @@ export interface IClockVector extends IClock {
   /** Checks if the timestamp "has been observed" by this causal context. */
   has(ts: ITimestampStruct): boolean;
 
+  /**
+   * Returns the gap between the observed timestamp and the provided timestamp,
+   * or `0` if the provided timestamp is not in the future.
+   */
+  gap(ts: ITimestampStruct): number;
+
   /** Returns current causal context as a version vector. */
   vv(): VersionVector;
+
+  /** Jump logical clocks to match the provided version vector. */
+  advanceCC(vv: IClockVector): void;
 
   /** Copy the clock while keeping the same session ID. */
   clone(): IClockVector;

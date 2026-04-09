@@ -211,6 +211,28 @@ export class ClockVector extends LogicalClock implements IClockVector {
     return !!peer && ts.time <= peer.time;
   }
 
+  /** Returns the gap between the observed timestamp and the provided timestamp. */
+  gap(ts: ITimestampStruct): number {
+    const sid = ts.sid;
+    if (sid === this.sid) {
+      const diff = ts.time - this.time + 1;
+      return diff > 0 ? diff : 0;
+    }
+    const peer = this.peers.get(sid);
+    if (!peer) return ts.time;
+    const diff = ts.time - peer.time;
+    return diff > 0 ? diff : 0;
+  }
+
+  /** Jump logical clocks to match the provided version vector. */
+  public advanceCC(vv: IClockVector): void {
+    vv.peers.forEach((peer) => {
+      this.observe(peer, 1);
+    });
+    const local = tick(vv, -1);
+    this.observe(local, 1);
+  }
+
   /**
    * Returns a deep copy of the current vector clock with the same session ID.
    *

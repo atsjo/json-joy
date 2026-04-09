@@ -66,7 +66,7 @@ export class Delta implements Printable {
    */
   public toString(tab: string = ''): string {
     return 'Delta' + printTree(tab, [
-      (tab) => `meta${printTree(tab, [(tab) => indent(tab, this.meta)])}`,
+      (tab) => 'meta' + printTree(tab, [(tab) => indent(tab, this.meta)]),
       (tab: string) => 'vv0: ' +this.vv0.toString(tab),
       (tab: string) => 'vv1: ' + this.vv1.toString(tab),
       (tab: string) => this.batch.toString(tab),

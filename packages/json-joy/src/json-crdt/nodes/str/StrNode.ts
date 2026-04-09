@@ -1,6 +1,8 @@
-import {IClockVector, type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {IClockVector, type ITimestampStruct, tick, tss} from '../../../json-crdt-patch/clock';
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
 import {next} from 'sonic-forest/lib/util';
+import {DelOp, InsStrOp} from '../../../json-crdt-patch';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import type {JsonNode} from '..';
 import type {Model} from '../../model';
 import type {DeltaMutator} from '../../delta/Delta';
@@ -133,7 +135,31 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
   
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
-    // throw new Error('Not implemented');
+    const strId = this.id;
+    const iterator = this.iterator();
+    let lastChunk: ReturnType<typeof iterator> | undefined;
+    while (true) {
+      const chunk = iterator();
+      if (!chunk) break;
+      const {id, span} = chunk;
+      if (chunk.del) ops.push(new DelOp(ORIGIN, strId, [tss(id.sid, id.time, span)]));
+      else {
+        const gap = cc.gap(tick(id, span - 1));
+        if (gap > 0) {
+          const offset = Math.max(0, span - gap);
+          const data = chunk.data ?? '';
+          if (!offset) {
+            const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : strId;
+            ops.push(new InsStrOp(id, strId, ref, data));
+          } else {
+            const text = data.slice(offset);
+            const ref = tick(id, offset - 1);
+            ops.push(new InsStrOp(tick(id, offset), strId, ref, text));
+          }
+        }
+      }
+      lastChunk = chunk;
+    }
   }
 
   // -------------------------------------------------------------- AbstractRga

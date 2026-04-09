@@ -1,6 +1,8 @@
-import type {JsonNode} from '..';
-import {type IClockVector, type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {type IClockVector, type ITimestampStruct, tick, tss} from '../../../json-crdt-patch/clock';
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
+import {DelOp, InsBinOp} from '../../../json-crdt-patch';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
+import type {JsonNode} from '..';
 import type {DeltaMutator} from '../../delta/Delta';
 import type {Model} from '../../model';
 
@@ -129,10 +131,34 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
     });
     return clone;
   }
-  
+    
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
-    throw new Error('Not implemented');
+    const strId = this.id;
+    const iterator = this.iterator();
+    let lastChunk: ReturnType<typeof iterator> | undefined;
+    while (true) {
+      const chunk = iterator();
+      if (!chunk) break;
+      const {id, span} = chunk;
+      if (chunk.del) ops.push(new DelOp(ORIGIN, strId, [tss(id.sid, id.time, span)]));
+      else {
+        const gap = cc.gap(tick(id, span - 1));
+        const data = chunk.data!;
+        if (data && gap > 0) {
+          const offset = Math.max(0, span - gap);
+          if (!offset) {
+            const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : strId;
+            ops.push(new InsBinOp(id, strId, ref, data));
+          } else {
+            const text = data.slice(offset);
+            const ref = tick(id, offset - 1);
+            ops.push(new InsBinOp(tick(id, offset), strId, ref, text));
+          }
+        }
+      }
+      lastChunk = chunk;
+    }
   }
 
   /** @ignore */
