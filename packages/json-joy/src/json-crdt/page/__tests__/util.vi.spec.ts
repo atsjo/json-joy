@@ -1,4 +1,4 @@
-import {de, dd, rld, rle, ze, zd} from "../util";
+import {de, dd, rld, rle, ze, zd, drle, drld} from "../util";
 
 describe('rle()', () => {
   test('encodes empty array', () => {
@@ -86,6 +86,67 @@ describe('rle() and rld() roundtrip', () => {
   test('fuzz', () => {
     for (let i = 0; i < 100; i++) {
       const arr = randomArray(i, 10);
+      assertRoundtrip(arr);
+    }
+  });
+});
+
+describe('drle()', () => {
+  test('encodes empty array', () => {
+    expect(drle([])).toEqual([]);
+  });
+
+  test('encodes array with no repeats', () => {
+    expect(drle([{}, null, 3])).toEqual([{}, null, 1, 3]);
+  });
+
+  test.only('encodes array with repeats', () => {
+    expect(drle([{}, null, null, 3])).toEqual([{}, null, 2, 3]);
+  });
+
+  test('encodes array with all repeats', () => {
+    expect(drle([null, null, null])).toEqual([null, 3]);
+  });
+
+  test('one repeat', () => {
+    expect(drle([null])).toEqual([null, 1]);
+  });
+
+  test('two repeats', () => {
+    expect(drle([null, null])).toEqual([null, 2]);
+  });
+
+  test('encodes array with non-consecutive repeats', () => {
+    expect(drle([{}, null, null, 3, null, null, null])).toEqual([{}, null, 2, 3, null, 3]);
+  });
+
+  test('no repeats', () => {
+    expect(drle([{}, 1, 2])).toEqual([{}, 1, 2]);
+  });
+});
+
+describe('drle() and drld() roundtrip', () => {
+  const assertRoundtrip = (input: unknown[]) => {
+    const encoded = drle(input);
+    const decoded = drld(encoded);
+    expect(decoded).toEqual(input);
+  };
+
+  test('roundtrips empty array', () => {
+    assertRoundtrip([]);
+  });
+
+  test('roundtrips array with no repeats', () => {
+    assertRoundtrip([{}, 1, 2]);
+    assertRoundtrip([1]);
+    assertRoundtrip(['asdf']);
+    assertRoundtrip([2, 'adsf', {}, null]);
+    assertRoundtrip([2, 'adsf', {}, null, {foo: 'bar'}, [1, 2, 3], null, null, undefined, 123]);
+  });
+
+  test('fuzz', () => {
+    for (let i = 0; i < 100; i++) {
+      const arr = Array.from({ length: i }, () => Math.random() > 0.5 ? null : {});
       assertRoundtrip(arr);
     }
   });

@@ -48,6 +48,57 @@ export const rld = (encoded: number[]): number[] => {
 };
 
 /**
+ * Data RLE (Run-Length Encoding) for arbitrary data. Similar to {@link rle}, but
+ * with arbitrarily complex POJO objects. Records repeats only of missing items
+ * (null or undefined), other items are copied over as-is. A run of missing items
+ * is recorded as `null` followed by a count of how many missing items there are.
+ * 
+ * For example, the sequence `[{}, null, null, 3]` would be encoded as `[{}, null, 2, 3]`.
+ *
+ * @param data List of arbitrary POJO data structures.
+ */
+export const drle = (data: unknown[]): unknown[] => {
+  const length = data.length;
+  if (!length) return [];
+  const first = data[0];
+  let missing = first == null;
+  const encoded: unknown[] = missing ? [null, 1] : [first];
+  for (let i = 1; i < length; i++) {
+    const value = data[i];
+    if (value != null) {
+      missing = false;
+      encoded.push(value);
+    } else {
+      const prev = encoded.length - 1;
+      if (missing) {
+        encoded[prev] = (encoded[prev] as number) + 1;
+      } else {
+        missing = true;
+        encoded.push(null, 1);
+      }
+    }
+  }
+  return encoded;
+};
+
+/**
+ * Data RLD (Run-Length Decoding) for arbitrary data. Decodes an array encoded
+ * with the {@link drle} function back to its original form.
+ */
+export const drld = (encoded: unknown[]): unknown[] => {
+  const result: unknown[] = [];
+  const length = encoded.length;
+  for (let i = 0; i < length; i++) {
+    const value = encoded[i];
+    if (value === null) {
+      const count = encoded[++i] as number;
+      for (let j = 0; j < count; j++) result.push(null);
+    } else result.push(value);
+  }
+  return result;
+};
+
+/**
  * Delta encoding for unsigned integers. Encodes an array of unsigned integers as
  * a sequence of deltas (differences between consecutive values). The first value
  * is encoded as-is, and subsequent values are encoded as the difference from

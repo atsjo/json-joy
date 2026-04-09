@@ -1,6 +1,6 @@
 import {JsonCrdtOperation, JsonCrdtOperationGroup, Timestamp} from "../../json-crdt-patch";
 import {JsonCrdtPatchOpcodeOverlay} from "../../json-crdt-patch/enums";
-import {de, rle, ze} from "./util";
+import {de, drle, rle, ze} from "./util";
 import * as operations from "../../json-crdt-patch/operations";
 import type {Page} from "./types";
 
@@ -37,6 +37,7 @@ export class PageColumnBuilder {
 
   /** JSON data or ID (encoded as CBOR). */
   public readonly data: unknown[] = [];
+  public meta: unknown[] = [];
 
   public build(page: Page): void {
     const length = page.length;
@@ -56,6 +57,7 @@ export class PageColumnBuilder {
     this.t_obj = ze(rle(ze(de(this.t_obj))));
     this.t_id = ze(rle(ze(de(this.t_id))));
     this.t_val = ze(rle(ze(de(this.t_val))));
+    this.meta = drle(this.meta);
   }
 
   private buildGroup(group: JsonCrdtOperationGroup): void {
@@ -63,7 +65,7 @@ export class PageColumnBuilder {
     const length = ops.length;
     if (!length) return;
     this.uint.push(length);
-    this.data.push(meta ?? null);
+    this.meta.push(meta ?? null);
     for (let i = 0; i < length; i++) this.buildOp(ops[i]);
   }
 

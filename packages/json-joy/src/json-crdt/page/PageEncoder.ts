@@ -29,6 +29,7 @@ export class PageEncoder extends CborEncoder<CrdtWriter> {
     this.writeUintCol(columns.t_id);
     this.writeUintCol(columns.t_val);
     this.writeDataCol(columns.data);
+    this.writeDataCol(columns.meta);
   }
 
   private writeUintCol(uint: number[]): void {
