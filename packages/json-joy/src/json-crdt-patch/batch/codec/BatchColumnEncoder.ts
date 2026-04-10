@@ -79,10 +79,10 @@ export class BatchColumnEncoder {
         const operation = op as operations.NewConOp;
         const val = operation.val;
         if (val instanceof Timestamp) {
-          type.push(JsonCrdtPatchOpcodeOverlay.new_val + 1);
+          type.push(JsonCrdtPatchOpcodeOverlay.new_con + 1);
           this.writeTsNew(val);
         } else {
-          type.push(JsonCrdtPatchOpcodeOverlay.new_val);
+          type.push(JsonCrdtPatchOpcodeOverlay.new_con);
           data.push(val);
         }
         break;

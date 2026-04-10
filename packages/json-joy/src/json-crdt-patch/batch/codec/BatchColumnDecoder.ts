@@ -60,10 +60,13 @@ export class BatchColumnDecoder {
     const base = opRaw & ~0b111;
     const extra = opRaw & 0b111;
     switch (base) {
-      case JsonCrdtPatchOpcodeOverlay.new_val: {
+      case JsonCrdtPatchOpcodeOverlay.new_con: {
         if (extra === 1)
           return new operations.NewConOp(id, this.readTsNew());
         return new operations.NewConOp(id, this.data[this.dataIdx++]);
+      }
+      case JsonCrdtPatchOpcodeOverlay.new_val: {
+        return new operations.NewValOp(id);
       }
       case JsonCrdtPatchOpcodeOverlay.new_obj: {
         return new operations.NewObjOp(id);
