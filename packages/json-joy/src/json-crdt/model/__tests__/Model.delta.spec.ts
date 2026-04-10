@@ -1,3 +1,4 @@
+import {b} from '@jsonjoy.com/buffers/src/b';
 import {Delta} from '../../delta/Delta';
 import {Model} from '../Model';
 
@@ -58,5 +59,100 @@ describe('.merge()', () => {
     expect(model1.view()).not.toEqual(model2.view());
     model2.merge(model1);
     expect(model1.view()).toEqual(model2.view());
+  });
+
+  test('three users edit a "str" independently', () => {
+    const model = Model.create('12345');
+    const u1 = model.fork();
+    const u2 = model.fork();
+    const u3 = model.fork();
+    u1.api.str().del(1, 1);
+    u1.api.str().ins(1, 'abc');
+    u1.api.str().del(1, 2);
+    u1.api.str().ins(0, 'xy');
+    u1.api.str().del(1, 1);
+    u2.api.str().del(2, 2);
+    u2.api.str().ins(3, 'ab');
+    u2.api.str().del(4, 1);
+    u2.api.str().ins(0, 'xy');
+    u2.api.str().del(0, 1);
+    u3.api.str().del(3, 2);
+    u3.api.str().ins(1, '!@#');
+    u3.api.str().del(2, 1);
+    u3.merge(u2);
+    u1.merge(u3);
+    model.merge(u1);
+    u1.merge(model);
+    u2.merge(model);
+    u3.merge(model);
+    const view = model.view();
+    expect(view).toBe(u1.view());
+    expect(view).toBe(u2.view());
+    expect(view).toBe(u3.view());
+    expect(view).toContain('x');
+    expect(view).toContain('y');
+    expect(view).toContain('!');
+    expect(view).toContain('#');
+    expect(view).toContain('a');
+  });
+
+  test('three users edit a "bin" independently', () => {
+    const model = Model.create(b(1, 2, 3, 4, 5));
+    const u1 = model.fork();
+    const u2 = model.fork();
+    const u3 = model.fork();
+    u1.api.bin().del(1, 1);
+    u1.api.bin().ins(1, b(0x61, 0x62, 0x63)); // 'abc'
+    u1.api.bin().del(1, 2);
+    u1.api.bin().ins(0, b(0x78, 0x79)); // 'xy'
+    u1.api.bin().del(1, 1);
+    u2.api.bin().del(2, 2);
+    u2.api.bin().ins(3, b(0x61, 0x62)); // 'ab'
+    u2.api.bin().del(4, 1);
+    u2.api.bin().ins(0, b(0x78, 0x79)); // 'xy'
+    u2.api.bin().del(0, 1);
+    u3.api.bin().del(3, 2);
+    u3.api.bin().ins(1, b(0x21, 0x40, 0x23)); // '!@#'
+    u3.api.bin().del(2, 1);
+    u3.merge(u2);
+    u1.merge(u3);
+    model.merge(u1);
+    u1.merge(model);
+    u2.merge(model);
+    u3.merge(model);
+    const view = model.view();
+    expect(view).toEqual(u1.view());
+    expect(view).toEqual(u2.view());
+    expect(view).toEqual(u3.view());
+  });
+
+  test('three users edit a "arr" independently', () => {
+    const model = Model.create([1, 2, 3, 4, 5]);
+    const u1 = model.fork();
+    const u2 = model.fork();
+    const u3 = model.fork();
+    u1.api.arr().del(1, 1);
+    u1.api.arr().ins(1, [0x61, 0x62, 0x63]); // 'abc'
+    u1.api.arr().del(1, 2);
+    u1.api.arr().ins(0, [0x78, 0x79]); // 'xy'
+    u1.api.arr().del(1, 1);
+    u2.api.arr().del(2, 2);
+    u2.api.arr().ins(3, [0x61, 0x62]); // 'ab'
+    u2.api.arr().del(4, 1);
+    u2.api.arr().ins(0, [0x78, 0x79]); // 'xy'
+    u2.api.arr().del(0, 1);
+    u3.api.arr().del(3, 2);
+    u3.api.arr().ins(1, [0x21, 0x40, 0x23]); // '!@#'
+    u3.api.arr().del(2, 1);
+    u3.merge(u2);
+    u1.merge(u3);
+    model.merge(u1);
+    u1.merge(model);
+    u2.merge(model);
+    u3.merge(model);
+    const view = model.view();
+    expect(view).toEqual(u1.view());
+    expect(view).toEqual(u2.view());
+    expect(view).toEqual(u3.view());
   });
 });
