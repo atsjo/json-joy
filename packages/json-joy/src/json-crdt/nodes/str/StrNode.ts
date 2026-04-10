@@ -142,23 +142,21 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
     while (true) {
       const chunk = iterator();
       if (!chunk) break;
-      const {id, span} = chunk;
-      if (chunk.del) ops.push(new DelOp(ORIGIN, obj, [tss(id.sid, id.time, span)]));
-      else {
-        const gap = cc.gap(tick(id, span - 1));
-        if (gap > 0) {
-          const offset = Math.max(0, span - gap);
-          const data = chunk.data ?? '';
-          if (!offset) {
-            const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : obj;
-            ops.push(new InsStrOp(id, obj, ref, data));
-          } else {
-            const text = data.slice(offset);
-            const ref = tick(id, offset - 1);
-            ops.push(new InsStrOp(tick(id, offset), obj, ref, text));
-          }
+      const {id, span, del} = chunk;
+      const gap = cc.gap(tick(id, span - 1));
+      if (gap > 0) {
+        const offset = Math.max(0, span - gap);
+        const data = chunk.data || ' '.repeat(span);
+        if (!offset) {
+          const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : obj;
+          ops.push(new InsStrOp(id, obj, ref, data));
+        } else {
+          const text = data.slice(offset);
+          const ref = tick(id, offset - 1);
+          ops.push(new InsStrOp(tick(id, offset), obj, ref, text));
         }
       }
+      if (del) ops.push(new DelOp(ORIGIN, obj, [tss(id.sid, id.time, span)]));
       lastChunk = chunk;
     }
   }

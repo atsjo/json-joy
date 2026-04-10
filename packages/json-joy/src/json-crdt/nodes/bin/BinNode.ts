@@ -141,23 +141,21 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
     while (true) {
       const chunk = iterator();
       if (!chunk) break;
-      const {id, span} = chunk;
-      if (chunk.del) ops.push(new DelOp(ORIGIN, obj, [tss(id.sid, id.time, span)]));
-      else {
-        const gap = cc.gap(tick(id, span - 1));
-        const data = chunk.data!;
-        if (data && gap > 0) {
-          const offset = Math.max(0, span - gap);
-          if (!offset) {
-            const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : obj;
-            ops.push(new InsBinOp(id, obj, ref, data));
-          } else {
-            const text = data.slice(offset);
-            const ref = tick(id, offset - 1);
-            ops.push(new InsBinOp(tick(id, offset), obj, ref, text));
-          }
+      const {id, span, del} = chunk;
+      const gap = cc.gap(tick(id, span - 1));
+      if (gap > 0) {
+        const data = chunk.data || new Uint8Array(span);
+        const offset = Math.max(0, span - gap);
+        if (!offset) {
+          const ref = lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : obj;
+          ops.push(new InsBinOp(id, obj, ref, data));
+        } else {
+          const text = data.slice(offset);
+          const ref = tick(id, offset - 1);
+          ops.push(new InsBinOp(tick(id, offset), obj, ref, text));
         }
       }
+      if (del) ops.push(new DelOp(ORIGIN, obj, [tss(id.sid, id.time, span)]));
       lastChunk = chunk;
     }
   }
