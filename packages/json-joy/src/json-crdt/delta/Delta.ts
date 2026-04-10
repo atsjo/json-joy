@@ -33,12 +33,12 @@ export class Delta implements Printable {
 
     /**
      * The *Version Vector* - causal context of the end of the delta. I.e. this
-     * is the time boundary of the delta, this is what the delta incorporates up to.
+     * is what the delta incorporates up to. This is what peer 2 replies with.
      */
     public readonly vv1: IClockVector,
 
     /**
-     * A list of *Delta Mutators* (operations) in the delta group. MUST be
+     * A list of *Delta Mutators* (operations) in this *Delta Group*. MUST be
      * applied in order.
      */
     public readonly batch: Batch,
