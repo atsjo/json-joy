@@ -8,13 +8,13 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     super(writer);
   }
 
-  public encode(batch: Batch): Uint8Array {
+  public encodeBatch(batch: Batch): Uint8Array {
     this.writer.reset();
-    this.write(batch);
+    this.writeBatch(batch);
     return this.writer.flush();
   }
 
-  public write(batch: Batch): void {
+  public writeBatch(batch: Batch): void {
     const columns = new BatchColumnEncoder();
     columns.build(batch);
     // console.log(columns);

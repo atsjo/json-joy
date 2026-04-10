@@ -1,6 +1,7 @@
 import {b} from "@jsonjoy.com/buffers/src/b";
 import {ClockVector, s, tick, ts} from "../../../json-crdt-patch";
 import {Model} from "../../model";
+import {Delta} from "../Delta";
 
 const covers: (upper: ClockVector, lower: ClockVector) => boolean = (upper, lower) => {
   for (const ts of lower.peers.values()) if (!upper.has(ts)) return false;
@@ -155,7 +156,9 @@ test('complex case with many ops', () => {
     ],
   });
   const delta = model2.delta(model.clock);
-  model.applyDelta(delta);
+  const blob = delta.toBinary();
+  const delta2 = Delta.from(blob);
+  model.applyDelta(delta2);
   expect(model2.view()).toEqual(model.view());
   expect(covers(model.clock, model2.clock)).toBe(true);
 });

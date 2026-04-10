@@ -44,7 +44,7 @@ export class Delta implements Printable {
     public readonly batch: Batch,
   ) {}
 
-  public toU8(): Uint8Array {
+  public toBinary(): Uint8Array {
     return encoder.encodeDelta(this);
   }
 

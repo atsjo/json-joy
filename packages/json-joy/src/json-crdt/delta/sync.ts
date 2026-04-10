@@ -58,7 +58,7 @@ export const peer2Reply = async (
   message1: Uint8Array,
   send: (message2: Uint8Array) => Promise<Uint8Array>,
 ): Promise<Uint8Array> => 
-  await send(peer2Model.delta(ClockVector.fromU8(message1)).toU8());
+  await send(peer2Model.delta(ClockVector.fromU8(message1)).toBinary());
 
 export const peer1Finalize = async (
   peer1Model: Model<any>,
@@ -68,7 +68,7 @@ export const peer1Finalize = async (
   const incomingDelta = Delta.from(message2);
   const outgoingDelta = peer1Model.delta(incomingDelta.vv1);
   peer1Model.applyDelta(incomingDelta);
-  await send(outgoingDelta.toU8());
+  await send(outgoingDelta.toBinary());
 };
 
 export const peer2Finalize = (

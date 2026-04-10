@@ -33,8 +33,8 @@ describe('.delta()', () => {
       foo: 'baz',
       qux: [1, 2, 3, 4],
     });
-    const delta1 = Delta.from(model2.delta(model1.clock).toU8());
-    const delta2 = Delta.from(model1.delta(model2.clock).toU8());
+    const delta1 = Delta.from(model2.delta(model1.clock).toBinary());
+    const delta2 = Delta.from(model1.delta(model2.clock).toBinary());
     model1.applyDelta(delta1);
     model2.applyDelta(delta2);
     expect(model1.view()).toEqual(model2.view());
