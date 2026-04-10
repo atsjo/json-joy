@@ -39,10 +39,13 @@ export class BatchColumnDecoder {
     this.t_id = dd(zd(rld(zd(this.t_id))));
     this.t_val = dd(zd(rld(zd(this.t_val))));
     this.meta = drld(this.meta);
+    const batchMeta = this.meta[this.metaIdx++];
     const patchCount = this.uint[this.uintIdx++];
     const patches: Patch[] = [];
     for (let i = 0; i < patchCount; i++) patches.push(this.decodeGroup());
-    return new Batch(patches);
+    const batch = new Batch(patches);
+    if (batchMeta != null) batch.meta = batchMeta;
+    return batch;
   }
 
   public decodeGroup(): Patch {

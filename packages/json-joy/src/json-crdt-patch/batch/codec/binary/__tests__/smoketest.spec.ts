@@ -11,6 +11,12 @@ test('empty batch', () => {
   assertRoundtrip(void 0, void 0, new Batch([]));
 });
 
+test('batch metadata', () => {
+  const batch = new Batch([]);
+  batch.meta = {foo: 'bar'};
+  assertRoundtrip(void 0, void 0, batch);
+});
+
 test('', () => {
   assertRoundtrip(void 0, void 0, new Batch([]));
 });

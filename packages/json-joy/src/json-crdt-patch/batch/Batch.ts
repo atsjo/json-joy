@@ -3,6 +3,8 @@ import {type ITimestampStruct, printTs} from '../clock';
 import type {Patch} from '../Patch';
 
 export class Batch {
+  public meta: unknown = undefined;
+
   constructor(public patches: Patch[]) {}
 
   public getId(): ITimestampStruct | undefined {

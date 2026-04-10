@@ -42,6 +42,7 @@ export class BatchColumnEncoder {
   public build(batch: Batch): void {
     const patches = batch.patches;
     const length = patches.length;
+    this.meta.push(batch.meta ?? null);
     this.uint.push(length);
     for (let i = 0; i < length; i++) this.buildGroup(patches[i]);
     const {sidMap, s_old: osid, s_new: nsid} = this;
