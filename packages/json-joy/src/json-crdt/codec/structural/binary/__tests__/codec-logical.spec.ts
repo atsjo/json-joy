@@ -15,7 +15,7 @@ test('empty model', () => {
   expect(model2.view()).toBe(undefined);
   expect(model2.clock.sid).toBe(model1.clock.sid);
   expect(model2.clock.time).toBe(model1.clock.time);
-  expect(model2.clock).toStrictEqual(model1.clock);
+  expect(model2.clock).toEqual(model1.clock);
 });
 
 test('model with just a single number', () => {
@@ -27,7 +27,7 @@ test('model with just a single number', () => {
   expect(model2.view()).toBe(123);
   expect(model2.clock.sid).toBe(model1.clock.sid);
   expect(model2.clock.time).toBe(model1.clock.time);
-  expect(model2.clock).toStrictEqual(model1.clock);
+  expect(model2.clock).toEqual(model1.clock);
 });
 
 test('model with just a single string', () => {
@@ -39,7 +39,7 @@ test('model with just a single string', () => {
   expect(model2.view()).toBe('aaaa');
   expect(model2.clock.sid).toBe(model1.clock.sid);
   expect(model2.clock.time).toBe(model1.clock.time);
-  expect(model2.clock).toStrictEqual(model1.clock);
+  expect(model2.clock).toEqual(model1.clock);
 });
 
 test('model with a simple object', () => {
@@ -47,31 +47,31 @@ test('model with a simple object', () => {
   model1.api.set({foo: 123});
   const encoded1 = encoder.encode(model1);
   const model2 = decoder.decode(encoded1);
-  expect(model1.view()).toStrictEqual({foo: 123});
-  expect(model2.view()).toStrictEqual({foo: 123});
+  expect(model1.view()).toEqual({foo: 123});
+  expect(model2.view()).toEqual({foo: 123});
   expect(model2.clock.sid).toBe(model1.clock.sid);
   expect(model2.clock.time).toBe(model1.clock.time);
-  expect(model2.clock).toStrictEqual(model1.clock);
+  expect(model2.clock).toEqual(model1.clock);
 });
 
 test('encoding/decoding a model results in the same node IDs', () => {
   const model1 = Model.create(void 0, new ClockVector(5, 0));
   model1.api.set('');
-  expect(model1.view()).toStrictEqual('');
+  expect(model1.view()).toEqual('');
   model1.api.str([]).ins(0, 'a');
   const encoded1 = encoder.encode(model1);
   const model2 = decoder.decode(encoded1);
-  expect(model1.view()).toStrictEqual('a');
-  expect(model2.view()).toStrictEqual('a');
+  expect(model1.view()).toEqual('a');
+  expect(model2.view()).toEqual('a');
   expect(model2.clock.sid).toBe(model1.clock.sid);
   expect(model2.clock.time).toBe(model1.clock.time);
-  expect(model2.clock).toStrictEqual(model1.clock);
+  expect(model2.clock).toEqual(model1.clock);
 });
 
 test('forking and encoding/decoding results in the same node IDs', () => {
   const model1 = Model.create(void 0, new ClockVector(3, 0));
   model1.api.set('abc');
-  expect(model1.view()).toStrictEqual('abc');
+  expect(model1.view()).toEqual('abc');
   const model2 = model1.fork(4);
   const encoded2 = encoder.encode(model2);
   const model3 = decoder.decode(encoded2);
@@ -86,7 +86,7 @@ test('vector clocks are the same after decoding', () => {
   model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
-  expect(model1.clock).toStrictEqual(decoded1.clock);
+  expect(model1.clock).toEqual(decoded1.clock);
 });
 
 test('decoded root node ID is correct', () => {

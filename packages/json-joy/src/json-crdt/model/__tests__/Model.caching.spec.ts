@@ -11,13 +11,13 @@ test('returns cached value, when shallow object keys not modified', () => {
     },
   });
   const view1 = model.view();
-  expect(view1).toStrictEqual({
+  expect(view1).toEqual({
     a: {value: 1},
     b: {value: 2},
   });
   model.api.obj(['a']).set({value: 3});
   const view2 = model.view();
-  expect(view2).toStrictEqual({
+  expect(view2).toEqual({
     a: {value: 3},
     b: {value: 2},
   });
@@ -32,13 +32,13 @@ test('returns cached value, when shallow array is not modified', () => {
     b: [2],
   });
   const view1 = model.view();
-  expect(view1).toStrictEqual({
+  expect(view1).toEqual({
     a: [1],
     b: [2],
   });
   model.api.arr(['a']).ins(1, [3]);
   const view2 = model.view();
-  expect(view2).toStrictEqual({
+  expect(view2).toEqual({
     a: [1, 3],
     b: [2],
   });

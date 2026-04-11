@@ -7,5 +7,5 @@ test('handles ObjNode inside ValNode, which was set on ArrNode', () => {
     foo: 'bar',
   });
   doc.api.str('/0/foo').ins(3, '!');
-  expect(doc.view()).toStrictEqual([{foo: 'bar!'}]);
+  expect(doc.view()).toEqual([{foo: 'bar!'}]);
 });

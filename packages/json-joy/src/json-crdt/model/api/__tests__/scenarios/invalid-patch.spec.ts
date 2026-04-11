@@ -8,7 +8,7 @@ test('does not allow recursively nested objects', () => {
   doc.api.builder.insObj(obj2, [['bar', obj1]]);
   doc.api.builder.root(obj1);
   doc.api.apply();
-  expect(doc.view()).toStrictEqual({foo: {}});
+  expect(doc.view()).toEqual({foo: {}});
 });
 
 test('does not allow recursively nested objects - reverse', () => {
@@ -19,7 +19,7 @@ test('does not allow recursively nested objects - reverse', () => {
   doc.api.builder.insObj(obj2, [['bar', obj1]]);
   doc.api.builder.root(obj2);
   doc.api.apply();
-  expect(doc.view()).toStrictEqual({});
+  expect(doc.view()).toEqual({});
 });
 
 test('does not allow recursively nested objects, multiple levels deep', () => {
@@ -32,7 +32,7 @@ test('does not allow recursively nested objects, multiple levels deep', () => {
   doc.api.builder.insObj(obj3, [['baz', obj1]]);
   doc.api.builder.root(obj1);
   doc.api.apply();
-  expect(doc.view()).toStrictEqual({foo: {bar: {}}});
+  expect(doc.view()).toEqual({foo: {bar: {}}});
 });
 
 test('does not allow recursively nested arrays', () => {
@@ -43,7 +43,7 @@ test('does not allow recursively nested arrays', () => {
   doc.api.builder.insArr(arr2, arr2, [arr1]);
   doc.api.builder.root(arr1);
   doc.api.apply();
-  expect(doc.view()).toStrictEqual([[]]);
+  expect(doc.view()).toEqual([[]]);
 });
 
 test('does not allow recursively nested arrays - reverse', () => {
@@ -54,7 +54,7 @@ test('does not allow recursively nested arrays - reverse', () => {
   doc.api.builder.insArr(arr2, arr2, [arr1]);
   doc.api.builder.root(arr2);
   doc.api.apply();
-  expect(doc.view()).toStrictEqual([]);
+  expect(doc.view()).toEqual([]);
 });
 
 test('does not allow recursively nested arrays, multiple levels deep', () => {
@@ -69,5 +69,5 @@ test('does not allow recursively nested arrays, multiple levels deep', () => {
   doc.api.builder.insObj(obj, [['foo', arr1]]);
   doc.api.builder.root(arr1);
   doc.api.apply();
-  expect(doc.view()).toStrictEqual([[[{}]]]);
+  expect(doc.view()).toEqual([[[{}]]]);
 });

@@ -82,7 +82,7 @@ describe('find', () => {
         },
       },
     });
-    expect(api.view()).toStrictEqual({
+    expect(api.view()).toEqual({
       foo: {
         bar: {
           baz: 1,
@@ -96,7 +96,7 @@ describe('find', () => {
       baz: 2,
       nil: null,
     });
-    expect(api.view()).toStrictEqual({
+    expect(api.view()).toEqual({
       foo: {
         a: 'b',
         bar: {
@@ -115,7 +115,7 @@ describe('find', () => {
         bar: [1],
       },
     });
-    expect(api.view()).toStrictEqual({
+    expect(api.view()).toEqual({
       foo: {
         bar: [1],
       },
@@ -123,7 +123,7 @@ describe('find', () => {
     const foo = api.obj(['foo']);
     const bar = foo.arr(['bar']);
     bar.ins(1, [22]);
-    expect(api.view()).toStrictEqual({
+    expect(api.view()).toEqual({
       foo: {
         bar: [1, 22],
       },

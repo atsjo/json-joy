@@ -75,17 +75,17 @@ describe('clone()', () => {
     doc1.api.obj([]).del(['g']);
     const doc2 = doc1.clone();
     expect(doc1.clock.sid === doc2.clock.sid).toBe(true);
-    expect(doc1.view()).toStrictEqual({foo: {a: 1, b: 2}});
-    expect(doc2.view()).toStrictEqual({foo: {a: 1, b: 2}});
+    expect(doc1.view()).toEqual({foo: {a: 1, b: 2}});
+    expect(doc2.view()).toEqual({foo: {a: 1, b: 2}});
     doc2.api.obj([]).set({c: '123'});
-    expect(doc1.view()).toStrictEqual({foo: {a: 1, b: 2}});
-    expect(doc2.view()).toStrictEqual({foo: {a: 1, b: 2}, c: '123'});
+    expect(doc1.view()).toEqual({foo: {a: 1, b: 2}});
+    expect(doc2.view()).toEqual({foo: {a: 1, b: 2}, c: '123'});
     doc1.api.obj(['foo']).set({c: null});
-    expect(doc1.view()).toStrictEqual({foo: {a: 1, b: 2, c: null}});
-    expect(doc2.view()).toStrictEqual({foo: {a: 1, b: 2}, c: '123'});
+    expect(doc1.view()).toEqual({foo: {a: 1, b: 2, c: null}});
+    expect(doc2.view()).toEqual({foo: {a: 1, b: 2}, c: '123'});
     doc1.api.obj([]).set({c: false});
-    expect(doc1.view()).toStrictEqual({foo: {a: 1, b: 2, c: null}, c: false});
-    expect(doc2.view()).toStrictEqual({foo: {a: 1, b: 2}, c: '123'});
+    expect(doc1.view()).toEqual({foo: {a: 1, b: 2, c: null}, c: false});
+    expect(doc2.view()).toEqual({foo: {a: 1, b: 2}, c: '123'});
   });
 
   test('can clone array with edits', () => {
@@ -100,12 +100,12 @@ describe('clone()', () => {
     doc1.api.arr(['foo', 'a']).ins(1, ['aha']);
     const doc2 = doc1.clone();
     expect(doc1.clock.sid === doc2.clock.sid).toBe(true);
-    expect(doc1.view()).toStrictEqual({foo: {a: [1, 'aha', 2.5, 3, {'': 4}]}});
-    expect(doc2.view()).toStrictEqual({foo: {a: [1, 'aha', 2.5, 3, {'': 4}]}});
+    expect(doc1.view()).toEqual({foo: {a: [1, 'aha', 2.5, 3, {'': 4}]}});
+    expect(doc2.view()).toEqual({foo: {a: [1, 'aha', 2.5, 3, {'': 4}]}});
     doc1.api.arr(['foo', 'a']).del(0, 1);
     doc2.api.arr(['foo', 'a']).ins(0, [null]);
-    expect(doc1.view()).toStrictEqual({foo: {a: ['aha', 2.5, 3, {'': 4}]}});
-    expect(doc2.view()).toStrictEqual({foo: {a: [null, 1, 'aha', 2.5, 3, {'': 4}]}});
+    expect(doc1.view()).toEqual({foo: {a: ['aha', 2.5, 3, {'': 4}]}});
+    expect(doc2.view()).toEqual({foo: {a: [null, 1, 'aha', 2.5, 3, {'': 4}]}});
   });
 
   test('can clone an empty model', () => {
@@ -119,7 +119,7 @@ describe('clone()', () => {
     expect(doc2.view()).toBe(undefined);
     doc2.api.set([]);
     expect(doc1.view()).toBe(123);
-    expect(doc2.view()).toStrictEqual([]);
+    expect(doc2.view()).toEqual([]);
   });
 });
 

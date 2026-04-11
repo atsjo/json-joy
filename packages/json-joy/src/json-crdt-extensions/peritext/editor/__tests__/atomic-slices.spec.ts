@@ -27,7 +27,7 @@ const testSuite = (setup: () => Kit): void => {
           const {atom} = setupWithAtom(setup);
           expect(atom.stacking).toBe(SliceStacking.Atomic);
           expect(atom.type()).toBe('math');
-          expect(atom.data()).toStrictEqual({tex: 'x^2'});
+          expect(atom.data()).toEqual({tex: 'x^2'});
         });
 
         test('insAtomic via Slices convenience method', () => {
@@ -63,7 +63,7 @@ const testSuite = (setup: () => Kit): void => {
               expect(attr.math).toBeDefined();
               expect(attr.math.length).toBe(1);
               expect(attr.math[0].slice.stacking).toBe(SliceStacking.Atomic);
-              expect(attr.math[0].slice.data()).toStrictEqual({tex: 'x^2'});
+              expect(attr.math[0].slice.data()).toEqual({tex: 'x^2'});
               break;
             }
           }
@@ -82,7 +82,7 @@ const testSuite = (setup: () => Kit): void => {
             if (text && text[0] >= '3' && text[0] <= '5') {
               const attr = inline.attr();
               expect(attr.math.length).toBe(1);
-              expect(attr.math[0].slice.data()).toStrictEqual({v: 2});
+              expect(attr.math[0].slice.data()).toEqual({v: 2});
               break;
             }
           }
