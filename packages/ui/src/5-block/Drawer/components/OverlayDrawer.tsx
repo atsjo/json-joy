@@ -3,12 +3,10 @@ import {rule, makeRule} from 'nano-theme';
 import {Portal} from '../../../utils/portal/Portal';
 import {useLockScrolling} from '../../../hooks/useLockScrolling';
 import {useFocusTrap} from '../hooks/useFocusTrap';
-import {DrawerState} from '../state';
-import {ctx} from '../context';
 import type {DrawerSide, CloseSource} from '../types';
 
-const PANEL_INSET = '1px';
-const PANEL_RADIUS = '18px';
+const PANEL_INSET = '0px';
+const PANEL_RADIUS = '16px';
 
 const backdropClass = rule({
   pos: 'fixed',
@@ -90,8 +88,7 @@ const rightOpenClass = rule({
 });
 
 export interface OverlayDrawerProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
-  state?: DrawerState;
-  open: boolean;
+  open?: boolean;
   onOpenChange: (open: boolean, source: CloseSource) => void;
   side?: DrawerSide;
   width?: number | string;
@@ -103,8 +100,7 @@ export interface OverlayDrawerProps extends Omit<React.HTMLAttributes<HTMLElemen
 }
 
 export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
-  state: _state,
-  open,
+  open = true,
   onOpenChange,
   side = 'left',
   width = 320,
@@ -118,25 +114,14 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
   ...rest
 }) => {
   const panelRef = React.useRef<HTMLDivElement>(null);
-
-  const state = React.useMemo(() => {
-    if (_state) return _state;
-    return new DrawerState({open, side, width: typeof width === 'number' ? width : 320});
-  }, [_state]);
-
-  React.useLayoutEffect(() => {
-    state.open$.next(open);
-  }, [open, state]);
-
-  const isOpen = state.open$.use();
   const dynamicBackdropClass = useBackdropClass();
   const dynamicPanelClass = usePanelClass();
 
-  useLockScrolling(isOpen && modalType === 'modal');
-  useFocusTrap(panelRef, isOpen && modalType === 'modal');
+  useLockScrolling(open && modalType === 'modal');
+  useFocusTrap(panelRef, open && modalType === 'modal');
 
   React.useEffect(() => {
-    if (!isOpen || preventClose) return;
+    if (!open || preventClose) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
@@ -145,7 +130,7 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [isOpen, preventClose, onOpenChange]);
+  }, [open, preventClose, onOpenChange]);
 
   const onBackdropClick = React.useCallback(() => {
     if (!preventClose) onOpenChange(false, 'backdrop');
@@ -160,22 +145,22 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
       ref={panelRef}
       role="dialog"
       aria-modal={modalType === 'modal' ? true : undefined}
-      data-state={isOpen ? 'open' : 'closed'}
+      data-state={open ? 'open' : 'closed'}
       data-side={side}
       tabIndex={-1}
       className={
         panelClass +
         dynamicPanelClass +
         (isLeft ? leftPanelShapeClass : rightPanelShapeClass) +
-        (isOpen ? panelOpenClass : '') +
+        (open ? panelOpenClass : '') +
         (isLeft
-          ? isOpen ? leftOpenClass : leftClosedClass
-          : isOpen ? rightOpenClass : rightClosedClass) +
+          ? open ? leftOpenClass : leftClosedClass
+          : open ? rightOpenClass : rightClosedClass) +
         (className ? ' ' + className : '')
       }
       style={{
         width: resolvedWidth,
-        maxWidth: 'calc(100vw - 2px)',
+        maxWidth: '100vw',
         ...style,
       }}
     >
@@ -183,17 +168,15 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
     </div>
   );
 
-  if (!isOpen && !panelRef.current) return null;
+  if (!open && !panelRef.current) return null;
 
-  const content = (
-    <ctx.Provider value={state}>
-      {backdrop && isOpen && (
+  return (
+    <Portal parent={mountNode ?? undefined}>
+      {backdrop && open && (
         // biome-ignore lint/a11y/useKeyWithClickEvents: Escape key handled separately
         <div className={backdropClass + dynamicBackdropClass} onClick={onBackdropClick} aria-hidden="true" />
       )}
       {panel}
-    </ctx.Provider>
+    </Portal>
   );
-
-  return <Portal parent={mountNode ?? undefined}>{content}</Portal>;
 };

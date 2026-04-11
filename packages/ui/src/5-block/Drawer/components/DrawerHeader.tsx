@@ -1,24 +1,23 @@
 import * as React from 'react';
-import {rule, makeRule} from 'nano-theme';
+import {drule, useTheme} from 'nano-theme';
 
-const headerClass = rule({
+const headerClass = drule({
   d: 'flex',
   ai: 'center',
   flexShrink: 0,
   bxz: 'border-box',
-  pad: '14px 16px 12px',
+  pd: '16px',
 });
-
-const useHeaderClass = makeRule((theme) => ({
-  bdb: `1px solid ${theme.isLight ? 'rgba(15,23,42,.08)' : 'rgba(255,255,255,.08)'}`,
-}));
 
 export interface DrawerHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const DrawerHeader: React.FC<DrawerHeaderProps> = ({children, className, ...rest}) => {
-  const dynamicClass = useHeaderClass();
+export const DrawerHeader: React.FC<DrawerHeaderProps> = ({children, className = '', ...rest}) => {
+  const theme = useTheme();
+
   return (
-    <div {...rest} className={headerClass + dynamicClass + (className ? ' ' + className : '')}>
+    <div {...rest} className={className + headerClass({
+      bdb: `1px solid ${theme.g(0, 0.08)}`,
+    })}>
       {children}
     </div>
   );

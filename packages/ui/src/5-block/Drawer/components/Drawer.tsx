@@ -1,13 +1,12 @@
 import * as React from 'react';
 import {DrawerState} from '../state';
-import {useMediaQuery} from '../hooks/useMediaQuery';
+import useMedia from 'react-use/lib/useMedia';
 import {InlineDrawer} from './InlineDrawer';
 import {OverlayDrawer} from './OverlayDrawer';
 import type {DrawerSide, DrawerMode, CloseSource} from '../types';
 
 export interface DrawerProps extends React.HTMLAttributes<HTMLElement> {
   state?: DrawerState;
-  open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean, source?: CloseSource) => void;
   side?: DrawerSide;
@@ -25,7 +24,6 @@ const DEFAULT_BREAKPOINT = '(max-width: 768px)';
 
 export const Drawer: React.FC<DrawerProps> = ({
   state: _state,
-  open,
   defaultOpen,
   onOpenChange,
   side = 'left',
@@ -43,20 +41,15 @@ export const Drawer: React.FC<DrawerProps> = ({
   const state = React.useMemo(() => {
     if (_state) return _state;
     return new DrawerState({
-      open: open ?? defaultOpen ?? false,
+      open: defaultOpen ?? false,
       side,
       width: typeof width === 'number' ? width : 260,
     });
   }, [_state]);
 
-  React.useLayoutEffect(() => {
-    if (_state) return;
-    if (open !== undefined) state.open$.next(open);
-  }, [open, _state, state]);
-
-  const isSmall = useMediaQuery(overlayBreakpoint);
-  const useOverlay = type === 'overlay' || (type === 'auto' && isSmall);
-  const isOpen = state.open$.use();
+  const isSmall = useMedia(overlayBreakpoint);
+  const overlay = type === 'overlay' || (type === 'auto' && isSmall);
+  const open = state.open$.use();
 
   const handleOpenChange = React.useCallback(
     (next: boolean, source?: CloseSource) => {
@@ -66,12 +59,11 @@ export const Drawer: React.FC<DrawerProps> = ({
     [state, onOpenChange],
   );
 
-  if (useOverlay) {
+  if (overlay) {
     return (
       <OverlayDrawer
         {...rest}
-        state={state}
-        open={isOpen}
+        open={open}
         onOpenChange={handleOpenChange}
         side={side}
         width={width}
@@ -89,7 +81,7 @@ export const Drawer: React.FC<DrawerProps> = ({
     <InlineDrawer
       {...rest}
       state={state}
-      open={isOpen}
+      open={open}
       side={side}
       width={width}
       separator={separator}
