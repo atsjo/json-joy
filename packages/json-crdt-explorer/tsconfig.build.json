@@ -23,11 +23,8 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {"path": "../channel/tsconfig.build.json"},
-    {"path": "../json-type/tsconfig.build.json"},
-    {"path": "../rpc-codec/tsconfig.build.json"},
-    {"path": "../rpc-codec-base/tsconfig.build.json"},
-    {"path": "../rpc-error/tsconfig.build.json"},
-    {"path": "../rpc-messages/tsconfig.build.json"}
+    {"path": "../json-joy/tsconfig.build.json"},
+    {"path": "../ui/tsconfig.build.json"},
+    {"path": "../collaborative-ui/tsconfig.build.json"}
   ]
 }

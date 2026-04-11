@@ -1,0 +1,75 @@
+{
+  "name": "@jsonjoy.com/json-crdt-server",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.9.0",
+  "description": "JSON CRDT HTTP/Websocket server with persistent storage",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/json-crdt-server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/json-crdt-server"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "json-crdt-server",
+    "json-crdt",
+    "crdt",
+    "server",
+    "json",
+    "crdt",
+    "json-crdt",
+    "json-crdt-server",
+    "json-crdt-repo",
+    "syncing",
+    "local",
+    "local-first",
+    "local-first-client",
+    "reactive",
+    "rpc",
+    "reactive-rpc",
+    "json-joy"
+  ],
+  "peerDependencies": {
+    "rxjs": "7",
+    "tslib": "*"
+  },
+  "dependencies": {
+    "@jsonjoy.com/reactive-rpc": "workspace:*",
+    "json-joy": "workspace:*",
+    "tslib": "^2.8.1"
+  },
+  "engines": {
+    "node": ">=18.0"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "deploy": "yarn build && wrangler pages deploy dist",
+    "deploy:preview": "yarn build && wrangler pages deploy dist --branch=preview",
+    "typecheck": "npx tsc --noEmit -p tsconfig.app.json",
+    "clean": "npx rimraf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "webpack": "^5.99.5",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1",
+    "wrangler": "^4.81.1"
+  }
+}
