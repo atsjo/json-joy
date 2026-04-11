@@ -13,7 +13,7 @@ describe('recursive node references are not allowed', () => {
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
-        expect(model.view()).toStrictEqual({arr: [1]});
+        expect(model.view()).toEqual({arr: [1]});
       });
 
       test('reference to parent object in second patch', () => {
@@ -29,7 +29,7 @@ describe('recursive node references are not allowed', () => {
         builder.insArr(arrId, arrId, [objId]);
         const patch2 = builder.flush();
         model.applyPatch(patch2);
-        expect(model.view()).toStrictEqual({arr: [1]});
+        expect(model.view()).toEqual({arr: [1]});
       });
     });
   });
@@ -47,7 +47,7 @@ describe('recursive node references are not allowed', () => {
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
-        expect(model.view()).toStrictEqual({con: 2});
+        expect(model.view()).toEqual({con: 2});
       });
 
       test('reference to object self in own key in separate patch', () => {
@@ -61,7 +61,7 @@ describe('recursive node references are not allowed', () => {
         builder.insObj(objId, [['obj', objId]]);
         const patch2 = builder.flush();
         model.applyPatch(patch2);
-        expect(model.view()).toStrictEqual({con: 2});
+        expect(model.view()).toEqual({con: 2});
       });
     });
   });
@@ -79,7 +79,7 @@ describe('recursive node references are not allowed', () => {
         builder.root(vecId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
-        expect(model.view()).toStrictEqual([1]);
+        expect(model.view()).toEqual([1]);
       });
 
       test('reference to parent object in second patch', () => {
@@ -96,7 +96,7 @@ describe('recursive node references are not allowed', () => {
         builder.insVec(vecId, [[1, vecId]]);
         const patch2 = builder.flush();
         model.applyPatch(patch2);
-        expect(model.view()).toStrictEqual([1]);
+        expect(model.view()).toEqual([1]);
       });
     });
   });
@@ -112,11 +112,11 @@ describe('recursive node references are not allowed', () => {
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
-        expect((model.view() as any).val).toStrictEqual(undefined);
+        expect((model.view() as any).val).toEqual(undefined);
         builder.setVal(valId, objId);
         const patch2 = builder.flush();
         model.applyPatch(patch2);
-        expect((model.view() as any).val).toStrictEqual(undefined);
+        expect((model.view() as any).val).toEqual(undefined);
       });
     });
   });

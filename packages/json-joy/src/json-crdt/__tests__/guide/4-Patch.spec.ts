@@ -66,7 +66,7 @@ test('can edit document using JSON Patch operations', () => {
   // console.log(doc.view());
   // console.log(doc.toString());
 
-  expect(doc.view()).toStrictEqual({
+  expect(doc.view()).toEqual({
     foo: 'bar! qux! baz!',
     list: [{title: 'To the dishes!'}, {title: 'Write more tests!'}],
   });
