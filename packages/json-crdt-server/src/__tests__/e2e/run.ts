@@ -44,15 +44,19 @@ const startServer = async (port: number) => {
 
 const runTests = async (port: number) => {
   const exitCode = new Defer<number>();
-  const cp = spawn('npx', ['vitest', 'run', '--reporter=verbose', 'packages/json-crdt-server/src/__tests__/e2e/json-crdt-server/'], {
-    cwd: rootDir,
-    env: {
-      ...process.env,
-      TEST_E2E: '1',
-      PORT: String(port),
+  const cp = spawn(
+    'npx',
+    ['vitest', 'run', '--reporter=verbose', 'packages/json-crdt-server/src/__tests__/e2e/json-crdt-server/'],
+    {
+      cwd: rootDir,
+      env: {
+        ...process.env,
+        TEST_E2E: '1',
+        PORT: String(port),
+      },
+      stdio: 'inherit',
     },
-    stdio: 'inherit',
-  });
+  );
   process.on('exit', () => {
     cp.kill();
   });

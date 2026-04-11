@@ -77,7 +77,7 @@ describe('LevelStore.removeAccessedBefore()', () => {
     const newExists = await kit.store.exists(newId);
 
     expect(oldExists).toBe(false); // Should be removed (accessed before cutoff)
-    expect(newExists).toBe(true);  // Should still exist (accessed after cutoff)
+    expect(newExists).toBe(true); // Should still exist (accessed after cutoff)
   });
 });
 
