@@ -80,6 +80,15 @@ export class FuzzerContext extends Fuzzer {
     }
   }
 
+  syncByOps() {
+    const {models} = this;
+    const length = models.length;
+    for (let i = 0; i < length; i++) {
+      const model = models[i].model;
+      for (let j = 0; j < length; j++) model.applyBatch(this.patches[j]);
+    }
+  }
+
   assertAllModelViews() {
     const {models} = this;
     const length = models.length;
