@@ -3,14 +3,14 @@ import {useT} from 'use-t';
 import {ContextItem} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
-import {useNiceUiServices} from '@jsonjoy.com/ui/lib/context';
+import {useUiServices} from '@jsonjoy.com/ui/lib/context';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 
 export type Props = Record<string, never>;
 
 export const ThemeContextItem: React.FC<Props> = () => {
   const [t] = useT();
-  const services = useNiceUiServices();
+  const services = useUiServices();
   const theme = useBehaviorSubject(services.theme$);
 
   const isLight = theme !== 'dark';

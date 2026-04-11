@@ -13,13 +13,13 @@ npm install react react-dom rxjs tslib
 In your React application you will want to set up the Nice UI context provider.
 
 ```jsx
-import {NiceUiProvider} from '@onp4/ui/';
+import {UiProvider} from '@onp4/ui/';
 
 const App = () => {
   return (
-    <NiceUiProvider>
+    <UiProvider>
       <MyComponent />
-    </NiceUiProvider>
+    </UiProvider>
   );
 };
 ```

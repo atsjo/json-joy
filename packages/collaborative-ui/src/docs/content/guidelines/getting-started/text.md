@@ -13,13 +13,13 @@ npm install react react-dom rxjs tslib
 In your React application you will want to set up the UI context provider.
 
 ```jsx
-import {NiceUiProvider} from '@jsonjoy.com/ui';
+import {UiProvider} from '@jsonjoy.com/ui';
 
 const App = () => {
   return (
-    <NiceUiProvider>
+    <UiProvider>
       <MyComponent />
-    </NiceUiProvider>
+    </UiProvider>
   );
 };
 ```
