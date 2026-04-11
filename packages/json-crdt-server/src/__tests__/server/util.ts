@@ -10,7 +10,7 @@ export const runUtilTests = (_setup: ApiTestSetup) => {
         const {call, stop} = await setup();
         const res = await call('util.ping', undefined);
         expect(res).toBe('pong');
-        stop();
+        await stop();
       });
     });
 
@@ -19,14 +19,14 @@ export const runUtilTests = (_setup: ApiTestSetup) => {
         const {call, stop} = await setup();
         const res = await call('util.echo', 'hello world');
         expect(res).toBe('hello world');
-        stop();
+        await stop();
       });
 
       test('returns objects', async () => {
         const {call, stop} = await setup();
         const res = await call('util.echo', {foo: 'bar'});
         expect(res).toStrictEqual({foo: 'bar'});
-        stop();
+        await stop();
       });
     });
 
@@ -52,7 +52,7 @@ export const runUtilTests = (_setup: ApiTestSetup) => {
             },
           },
         });
-        stop();
+        await stop();
       });
     });
   });

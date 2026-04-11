@@ -37,7 +37,7 @@ export const runPresenceTests = (_setup: ApiTestSetup, params: {staticOnly?: tru
             },
           ],
         });
-        stop();
+        await stop();
       });
 
       test('can receive an existing record when subscribing after it was created', async () => {
@@ -74,7 +74,7 @@ export const runPresenceTests = (_setup: ApiTestSetup, params: {staticOnly?: tru
           ],
         });
         subscription.unsubscribe();
-        stop();
+        await stop();
       });
 
       test('can remove existing entries', async () => {
@@ -100,7 +100,7 @@ export const runPresenceTests = (_setup: ApiTestSetup, params: {staticOnly?: tru
         });
         await tick(50);
         expect(emits2.length).toBe(0);
-        stop();
+        await stop();
       });
 
       test('emits entry deletion messages', async () => {
@@ -125,7 +125,7 @@ export const runPresenceTests = (_setup: ApiTestSetup, params: {staticOnly?: tru
           validUntil: 0,
           data: expect.any(Object),
         });
-        stop();
+        await stop();
       });
     }
   });

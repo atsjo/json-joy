@@ -30,6 +30,7 @@
     {"path": "../json-type"},
     {"path": "../json-pointer"},
     {"path": "../json-pack"},
+    {"path": "../rpc-error"},
     {"path": "../rpc-server"}
   ]
 }

@@ -29,6 +29,7 @@
     {"path": "../json-type/tsconfig.build.json"},
     {"path": "../json-pointer/tsconfig.build.json"},
     {"path": "../json-pack/tsconfig.build.json"},
+    {"path": "../rpc-error/tsconfig.build.json"},
     {"path": "../rpc-server/tsconfig.build.json"}
   ]
 }

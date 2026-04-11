@@ -25,9 +25,8 @@ export const scan =
         .options({
           title: 'Number of Patches',
           description:
-            'The minimum number of patches to return. Defaults to 10. ' +
-            'When positive, returns the patches ahead of the starting sequence number. ' +
-            'When negative, returns the patches behind the starting sequence number.',
+            'The number of patches to return. Defaults to 10. ' +
+            'Returns the patches ahead of the starting sequence number.',
         }),
       t.KeyOpt('snapshot', t.bool).options({
         title: 'Include Start Snapshot',

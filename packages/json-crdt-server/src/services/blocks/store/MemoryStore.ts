@@ -1,4 +1,4 @@
-import {RpcError} from 'rpc-error';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import type * as types from './types';
 

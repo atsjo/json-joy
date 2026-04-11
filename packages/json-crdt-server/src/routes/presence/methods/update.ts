@@ -2,7 +2,7 @@ import type {ResolveType} from '@jsonjoy.com/json-type';
 import type {PresenceEntry} from '../schema';
 import type {RouteDeps, Router, RouterBase} from '../../types';
 
-/** Entry TLL in seconds. */
+/** Entry TTL in seconds. */
 const ttl = 30;
 
 export const update =

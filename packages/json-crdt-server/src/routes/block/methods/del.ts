@@ -22,7 +22,7 @@ export const del =
     const Func = t.Function(Request, Response).options({
       title: 'Delete Block',
       intro: 'Deletes a block by ID.',
-      description: 'Deletes a block by ID. It will not rise an error if the block does not exist.',
+      description: 'Deletes a block by ID. It will not raise an error if the block does not exist.',
     });
 
     return r.add('block.del', Func, async ({id}) => {

@@ -29,7 +29,7 @@ export const publish =
     });
 
     return r.add('pubsub.publish', Func, async ({channel, message}) => {
-      services.pubsub.publish(channel, message);
+      services.pubsub.publish(channel, message).catch(() => {});
       return {};
     });
   };

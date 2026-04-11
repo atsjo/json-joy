@@ -1,4 +1,4 @@
-import {RpcError} from 'rpc-error';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
@@ -95,7 +95,7 @@ export class LevelStore implements types.Store {
   public async seq(id: string): Promise<number | undefined> {
     return await this.mutex.acquire(id, async () => {
       const base = this.batchBase(id);
-      const keys = await this.kv.keys({lt: base + '~', limit: 1, reverse: true}).all();
+      const keys = await this.kv.keys({gte: base, lt: base + '~', limit: 1, reverse: true}).all();
       if (!keys || keys.length < 1) return;
       const key = keys[0].slice(base.length);
       if (!key) return;
@@ -246,15 +246,16 @@ export class LevelStore implements types.Store {
    * @todo Need to add GC tests.
    */
   public async removeAccessedBefore(ts: number, limit: number = 10): Promise<void> {
-    const from = this.touchKey('');
-    const to = from + '~';
+    const keyBase = this.touchKeyBase();
+    const from = keyBase + '';
+    const to = keyBase + '~';
     const decoder = this.codec.decoder;
     let cnt = 0;
     for await (const [key, blob] of this.kv.iterator({gte: from, lte: to})) {
       const value = Number(decoder.decode(blob));
-      if (ts >= value) continue;
+      if (value >= ts) continue;
       cnt++;
-      const id = key.slice(from.length);
+      const id = key.slice(keyBase.length, -1);
       this.remove(id).catch(() => {});
       if (cnt >= limit) return;
     }

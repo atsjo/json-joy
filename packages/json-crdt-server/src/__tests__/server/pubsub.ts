@@ -19,7 +19,7 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
       } catch (err: any) {
         expect(err.meta.path).toStrictEqual(['channel2']);
       }
-      stop();
+      await stop();
     });
 
     if (!params.staticOnly) {
@@ -37,7 +37,7 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
         await until(() => emits.length === 1);
         expect(emits).toStrictEqual(['hello world']);
         subscription.unsubscribe();
-        stop();
+        await stop();
       });
 
       test('does not receive messages after un-subscription', async () => {
@@ -65,7 +65,7 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
         await tick(50);
         expect(emits.indexOf('msg1') > -1).toBe(true);
         expect(emits.indexOf('msg2') > -1).toBe(true);
-        stop();
+        await stop();
       });
 
       test('multiple multiple subscribers can subscribe to multiple channels', async () => {
@@ -122,7 +122,7 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
         expect(user3.indexOf('msg1') > -1).toBe(true);
         expect(user3.indexOf('msg2') > -1).toBe(true);
         expect(user3.indexOf('msg3') > -1).toBe(true);
-        stop();
+        await stop();
       });
     }
   });

@@ -12,7 +12,7 @@ export interface StoreBlock {
   snapshot: StoreSnapshot;
 
   /**
-   * The latest changes that have been stored, but not yet applied to the the
+   * The latest changes that have been stored, but not yet applied to the
    * latest snapshot.
    */
   tip: StoreBatch[];

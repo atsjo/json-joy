@@ -1,4 +1,4 @@
-import {RpcError} from 'rpc-error';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 import {MemoryStore} from './store/MemoryStore';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {go} from 'thingies/lib/go';
@@ -143,13 +143,18 @@ export class BlocksServices {
     if (typeof offset !== 'number') throw RpcError.notFound();
     let min = 0,
       max = 0;
-    if (!limit || Math.round(limit) !== limit) throw RpcError.badRequest('INVALID_LIMIT');
+    if (limit !== 0 && (!limit || Math.round(limit) !== limit)) throw RpcError.badRequest('INVALID_LIMIT');
+    if (limit === 0) {
+      return includeStartSnapshot
+        ? {snapshot: (await store.getSnapshot(id, Number(offset) || 0)).snapshot, batches: []}
+        : {batches: []};
+    }
     if (limit > 0) {
       min = Number(offset) || 0;
       max = min + limit - 1;
     } else {
       max = Number(offset) || 0;
-      min = max - limit + 1;
+      min = max + limit + 1;
     }
     if (min < 0) {
       min = 0;

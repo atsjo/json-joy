@@ -54,6 +54,7 @@
     "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/json-pointer": "workspace:*",
     "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/rpc-error": "workspace:*",
     "@jsonjoy.com/rpc-server": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "abstract-level": "^2.0.1",
