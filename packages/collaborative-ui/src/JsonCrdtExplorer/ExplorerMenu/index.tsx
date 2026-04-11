@@ -30,7 +30,7 @@ export const ExplorerMenu: React.FC<ExplorerMenuProps> = () => {
                 }}
                 style={{margin: '-6px 0', padding: '4px 0 0'}}
               >
-                <BasicButtonClose onClick={() => state.close(file.id)} />
+                <BasicButtonClose comp="span" onClick={() => state.close(file.id)} />
               </div>
             </div>
           </Split>

@@ -56,6 +56,9 @@ export interface BasicButtonProps extends React.AllHTMLAttributes<any> {
   disabled?: boolean;
   selected?: boolean;
   onClick?: React.MouseEventHandler;
+
+  /** Override the rendered element type (forwarded to react-router-lite Link's `comp` prop). Useful to avoid invalid nesting, e.g. pass "span" when inside another button. */
+  comp?: string;
 }
 
 export const BasicButton: React.FC<BasicButtonProps> = ({
