@@ -45,6 +45,8 @@
   "scripts": {
     "dev": "webpack serve --mode development",
     "build": "webpack --mode production",
+    "deploy": "yarn build && wrangler pages deploy dist",
+    "deploy:preview": "yarn build && wrangler pages deploy dist --branch=preview",
     "typecheck": "npx tsc --noEmit -p tsconfig.app.json",
     "clean": "npx rimraf dist"
   },
@@ -57,6 +59,7 @@
     "ts-loader": "^9.5.2",
     "webpack": "^5.99.5",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.1"
+    "webpack-dev-server": "^5.2.1",
+    "wrangler": "^4.81.1"
   }
 }
