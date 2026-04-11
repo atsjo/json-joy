@@ -6,6 +6,9 @@ const meta: Meta<typeof App> = {
   component: App,
   tags: ['autodocs'],
   argTypes: {},
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
 
 export default meta;
