@@ -2,7 +2,7 @@
 // curl localhost:9999/rpc -H 'Content-Type: rpc.rx.compact.json' -d '[1,1,"util.ping"]'
 
 import {createCaller, createServices} from './routes';
-import {RpcServer} from '@jsonjoy.com/reactive-rpc/lib/server/http1/RpcServer';
+import {RpcServer} from '@jsonjoy.com/rpc-server/lib/http1/RpcServer';
 
 export type JsonJoyDemoRpcCaller = ReturnType<typeof createCaller>['caller'];
 
@@ -10,7 +10,7 @@ const main = async () => {
   const services = await createServices();
   const server = await RpcServer.startWithDefaults({
     port: +(process.env.PORT || 9999),
-    caller: createCaller(services).caller,
+    callee: createCaller(services).caller,
     logger: console,
   });
 

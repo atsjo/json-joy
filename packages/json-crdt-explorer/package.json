@@ -51,8 +51,8 @@
   "scripts": {
     "dev": "webpack serve --mode development",
     "build": "webpack --mode production",
-    "deploy": "yarn build && wrangler pages deploy dist",
-    "deploy:preview": "yarn build && wrangler pages deploy dist --branch=preview",
+    "deploy": "yarn build && wrangler pages deploy --branch=master dist",
+    "deploy:preview": "yarn build && wrangler pages deploy --branch=preview dist",
     "typecheck": "npx tsc --noEmit -p tsconfig.app.json",
     "clean": "npx rimraf dist"
   },

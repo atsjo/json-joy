@@ -1,10 +1,9 @@
 import {routes} from './routes';
-import {RpcError} from '@jsonjoy.com/reactive-rpc/lib/common/rpc/caller';
-import {RpcValue} from '@jsonjoy.com/reactive-rpc/lib/common/messages/Value';
-import {ObjectValueCaller} from '@jsonjoy.com/reactive-rpc/lib/common/rpc/caller/ObjectValueCaller';
-import {TypedRpcError} from '@jsonjoy.com/reactive-rpc/lib/common/rpc/caller/error/typed';
+import {RpcError} from '@jsonjoy.com/rpc-error';
+import {Value, ObjValue} from '@jsonjoy.com/json-type';
+import {TypedCallee} from '@jsonjoy.com/rpc-calls';
+import {TypedRpcError} from '@jsonjoy.com/rpc-calls/lib/callee/error/typed';
 import {system} from './system';
-import {ObjValue} from '@jsonjoy.com/json-type';
 import {Services} from '../services/Services';
 import {MemoryStore} from '../services/blocks/store/MemoryStore';
 import {LevelStore} from '../services/blocks/store/level/LevelStore';
@@ -25,10 +24,10 @@ export const createRouter = (services: Services) => {
 
 export const createCaller = (services: Services = new Services()) => {
   const router = createRouter(services);
-  const caller = new ObjectValueCaller<typeof router>({
+  const caller = new TypedCallee<any, typeof router>({
     router,
     wrapInternalError: (error: unknown) => {
-      if (error instanceof RpcValue) return error;
+      if (error instanceof Value) return error;
       if (error instanceof RpcError) return TypedRpcError.value(error);
       // tslint:disable-next-line:no-console
       console.error(error);
