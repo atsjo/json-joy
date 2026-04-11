@@ -53,7 +53,7 @@ export class Encoder {
   }
 
   protected cObj(obj: nodes.ObjNode): t.JsonCrdtCompactObj {
-    const map: t.JsonCrdtCompactObj[2] = {};
+    const map: t.JsonCrdtCompactObj[2] = Object.create(null);
     obj.nodes((child, key) => (map[key] = this.cNode(child)));
     const res: t.JsonCrdtCompactObj = [JsonCrdtDataType.obj, this.ts(obj.id), map];
     return res;

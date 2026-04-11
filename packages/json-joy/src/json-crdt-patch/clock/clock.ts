@@ -1,5 +1,7 @@
 import {SESSION} from '../enums';
-import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct} from './types';
+import {CrdtReader} from '../util/binary/CrdtReader';
+import {CrdtWriter} from '../util/binary/CrdtWriter';
+import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct, VersionVector} from './types';
 
 export class Timestamp implements ITimestampStruct {
   constructor(
@@ -153,9 +155,48 @@ export class LogicalClock extends Timestamp implements IClock {
  */
 export class ClockVector extends LogicalClock implements IClockVector {
   /**
+   * Create a new clock out of the version vector. The first element is the
+   * local clock, and the rest are the clocks of other peers.
+   */
+  public static from(vv: VersionVector): ClockVector {
+    const length = vv.length;
+    if (length === 0) throw new Error('INV_VV');
+    const local = vv[0];
+    const clock = new ClockVector(local.sid, local.time + 1);
+    for (let i = 1; i < length; i++) {
+      const ts = vv[i];
+      clock.peers.set(ts.sid, ts);
+    }
+    return clock;
+  }
+
+  /** Un-marshals a clock vector from a binary format. */
+  public static fromU8(buf: Uint8Array): ClockVector {
+    const reader = new CrdtReader(buf);
+    const vv = reader.vv();
+    return ClockVector.from(vv);
+  }
+
+  /**
    * A set of logical clocks of other peers.
    */
   public readonly peers = new Map<number, ITimestampStruct>();
+
+  /**
+   * @returns This clock serialized as a version vector.
+   */
+  public vv(): VersionVector {
+    const vv: VersionVector = [tick(this, -1)];
+    this.peers.forEach((peer) => vv.push(peer));
+    return vv;
+  }
+
+  /** Serializes the clock vector to a binary format. */
+  public toU8(): Uint8Array {
+    const writer = new CrdtWriter(64);
+    writer.vv(this.vv());
+    return writer.flush();
+  }
 
   /**
    * Advances local time every time we see any timestamp with higher time value.
@@ -176,6 +217,36 @@ export class ClockVector extends LogicalClock implements IClockVector {
       else if (edge > clock.time) clock.time = edge;
     }
     if (edge >= this.time) this.time = edge + 1;
+  }
+
+  /** Checks if the timestamp "has been observed" by this causal context. */
+  public has(ts: ITimestampStruct): boolean {
+    const sid = ts.sid;
+    if (sid === this.sid) return ts.time < this.time;
+    const peer = this.peers.get(sid);
+    return !!peer && ts.time <= peer.time;
+  }
+
+  /** Returns the gap between the observed timestamp and the provided timestamp. */
+  public gap(ts: ITimestampStruct): number {
+    const sid = ts.sid;
+    if (sid === this.sid) {
+      const diff = ts.time - this.time + 1;
+      return diff > 0 ? diff : 0;
+    }
+    const peer = this.peers.get(sid);
+    if (!peer) return ts.time;
+    const diff = ts.time - peer.time;
+    return diff > 0 ? diff : 0;
+  }
+
+  /** Jump logical clocks to match the provided version vector. */
+  public advanceCC(vv: IClockVector): void {
+    vv.peers.forEach((peer) => {
+      this.observe(peer, 1);
+    });
+    const local = tick(vv, -1);
+    this.observe(local, 1);
   }
 
   /**
@@ -225,12 +296,12 @@ export class ClockVector extends LogicalClock implements IClockVector {
  * Implements a clock vector with a fixed session ID. The *server clock*
  * is used when the CRDT is powered by a central server.
  */
-export class ServerClockVector extends LogicalClock implements IClockVector {
+export class ServerClockVector extends ClockVector implements IClockVector {
   /** A stub for other peers. Not used in the server clock. */
   public readonly peers = new Map<number, ITimespanStruct>();
 
   public observe(ts: ITimespanStruct, span: number) {
-    if (ts.sid > 8) throw new Error('INVALID_SERVER_SESSION');
+    if (ts.sid > 8) throw new Error('INV_SERVER_SESSION');
     if (this.time < ts.time) throw new Error('TIME_TRAVEL');
     const time = ts.time + span;
     if (time > this.time) this.time = time;
@@ -242,14 +313,5 @@ export class ServerClockVector extends LogicalClock implements IClockVector {
 
   public fork(): ServerClockVector {
     return new ServerClockVector(SESSION.SERVER, this.time);
-  }
-
-  /**
-   * Returns a human-readable string representation of the clock vector.
-   *
-   * @returns Human-readable string representation of the clock vector.
-   */
-  public toString(): string {
-    return `clock ${this.sid}.${this.time}`;
   }
 }

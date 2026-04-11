@@ -1,8 +1,8 @@
 import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
 import {ts, ClockVector, ServerClockVector, tss, type ITimestampStruct} from '../../clock';
 import {SESSION} from '../../constants';
-import type {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
+import type {Patch} from '../../Patch';
 import type * as types from './types';
 
 const decodeId = (time: types.JsonCodecTimestamp): ITimestampStruct =>

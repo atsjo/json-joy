@@ -65,7 +65,7 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
   }
 
   protected cObj(length: number): Record<string, unknown> {
-    const obj: Record<string, unknown> = {};
+    const obj: Record<string, unknown> = Object.create(null);
     for (let i = 0; i < length; i++) {
       const key: string = this.key();
       const value = this.cNode();

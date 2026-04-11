@@ -11,8 +11,11 @@ import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
 import {cmpNode} from '../equal/cmpNode';
+import {indent} from '../../util/print';
+import {Delta, type DeltaMutator} from '../delta/Delta';
+import {Batch} from '../../json-crdt-patch/Batch';
+import {type JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {SchemaToJsonNode} from '../schema/types';
-import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {NodeApi} from './api/nodes';
@@ -280,6 +283,16 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * @ignore
    */
   public tick: number = 0;
+
+  /**
+   * Applies a delta to the model.
+   *
+   * @param delta Delta group - computed metadata difference between two models.
+   */
+  public applyDelta(delta: Delta): void {
+    this.applyBatch(delta.batch.patches);
+    this.clock.advanceCC(delta.vv1);
+  }
 
   /**
    * Applies a batch of patches to the document.
@@ -574,6 +587,18 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     this.onreset?.(changed);
   }
 
+  public delta(vv: clock.IClockVector): Delta {
+    const ops: DeltaMutator[] = [];
+    this.root.delta(this as Model<any>, vv, ops);
+    const batch = new Batch(ops.map((op) => new Patch([op])));
+    return new Delta(vv, this.clock.clone(), batch);
+  }
+
+  public merge(model: Model<N>): void {
+    const delta = model.delta(this.clock);
+    this.applyDelta(delta);
+  }
+
   /**
    * Returns the view of the model.
    *
@@ -672,8 +697,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           );
         },
         nl,
-        (tab) =>
-          `view${printTree(tab, [(tab) => String(JSON.stringify(this.view(), null, 2)).replace(/\n/g, '\n' + tab)])}`,
+        (tab) => `view${printTree(tab, [(tab) => indent(tab, this.view())])}`,
         nl,
         (tab) => this.clock.toString(tab),
         hasExtensions ? nl : null,

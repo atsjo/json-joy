@@ -19,11 +19,11 @@ describe('.ins()', () => {
     const range = peritext.rangeAt(12, 7);
     const slice = slices.ins(range, SliceStacking.Many, 'b', {bold: true});
     expect(peritext.savedSlices.size()).toBe(1);
-    expect(slice.start).toStrictEqual(range.start);
-    expect(slice.end).toStrictEqual(range.end);
+    expect(slice.start).toEqual(range.start);
+    expect(slice.end).toEqual(range.end);
     expect(slice.stacking).toBe(SliceStacking.Many);
     expect(slice.type()).toBe('b');
-    expect(slice.data()).toStrictEqual({bold: true});
+    expect(slice.data()).toEqual({bold: true});
   });
 
   test('can insert two slices', () => {
@@ -35,8 +35,8 @@ describe('.ins()', () => {
     const [slice2] = editor.saved.insStack('i', {italic: true});
     peritext.refresh();
     expect(peritext.savedSlices.size()).toBe(2);
-    expect(slice1.data()).toStrictEqual({bold: true});
-    expect(slice2.data()).toStrictEqual({italic: true});
+    expect(slice1.data()).toEqual({bold: true});
+    expect(slice2.data()).toEqual({italic: true});
   });
 
   test('updates hash on slice insert', () => {
@@ -57,7 +57,7 @@ describe('.ins()', () => {
     const hash4 = peritext.savedSlices.hash;
     expect(changed3).toBe(true);
     expect(changed4).toBe(false);
-    expect(hash1).not.toStrictEqual(hash3);
+    expect(hash1).not.toEqual(hash3);
     expect(hash3).toBe(hash4);
     editor.cursor.setAt(12, 4);
     editor.saved.insStack('em', {italic: true});
@@ -90,8 +90,8 @@ describe('.ins()', () => {
             expect(slice.start.cmp(range.start)).toBe(0);
             expect(slice.end.cmp(range.end)).toBe(0);
             expect(slice.stacking).toBe(stacking);
-            expect(slice.type()).toStrictEqual(type);
-            expect(slice.data()).toStrictEqual(data);
+            expect(slice.type()).toEqual(type);
+            expect(slice.data()).toEqual(data);
             const buf = model.toBinary();
             const model2 = Model.fromBinary(buf);
             const peritext2 = new Peritext(model2, model2.api.str(['text']).node, model2.api.arr(['slices']).node);
@@ -100,8 +100,8 @@ describe('.ins()', () => {
             expect(slice2.start.cmp(range.start)).toBe(0);
             expect(slice2.end.cmp(range.end)).toBe(0);
             expect(slice2.stacking).toBe(stacking);
-            expect(slice2.type()).toStrictEqual(type);
-            expect(slice2.data()).toStrictEqual(data);
+            expect(slice2.type()).toEqual(type);
+            expect(slice2.data()).toEqual(data);
           }
         }
       }

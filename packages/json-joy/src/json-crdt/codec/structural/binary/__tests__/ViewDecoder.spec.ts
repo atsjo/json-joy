@@ -18,8 +18,8 @@ describe('logical', () => {
       // console.log(decoded);
       // console.log(decoded2);
       // console.log(doc1.view());
-      expect(decoded).toStrictEqual(doc1.view());
-      expect(decoded2).toStrictEqual(doc1.view());
+      expect(decoded).toEqual(doc1.view());
+      expect(decoded2).toEqual(doc1.view());
     };
     assertCanDecode();
     doc1.api.set([1, 'asdf', false, {}, {foo: 'bar', s: {foo: 'foo'}}]);
@@ -61,7 +61,7 @@ describe('logical', () => {
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);
     const view = viewDecoder.decode(encoded);
-    expect(view).toStrictEqual(123);
+    expect(view).toEqual(123);
   });
 
   test('can decode a simple string', () => {
@@ -71,7 +71,7 @@ describe('logical', () => {
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);
     const view = viewDecoder.decode(encoded);
-    expect(view).toStrictEqual('asdf');
+    expect(view).toEqual('asdf');
   });
 
   test('can decode a simple object', () => {
@@ -81,6 +81,6 @@ describe('logical', () => {
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);
     const view = viewDecoder.decode(encoded);
-    expect(view).toStrictEqual({yes: false});
+    expect(view).toEqual({yes: false});
   });
 });

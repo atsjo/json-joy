@@ -22,7 +22,7 @@ test('two concurrent users can apply partial updates', () => {
   const patch1 = doc2.api.flush();
   doc2.api.obj([]).set({name: 'Johnny Bravo'});
   const patch2 = doc2.api.flush();
-  expect(doc2.view()).toStrictEqual({
+  expect(doc2.view()).toEqual({
     id: 123,
     name: 'Johnny Bravo',
     verified: false,
@@ -35,7 +35,7 @@ test('two concurrent users can apply partial updates', () => {
   str.ins(2, 'was');
   doc3.api.obj([]).set({verified: true});
   const patch3 = doc3.api.builder.flush();
-  expect(doc3.view()).toStrictEqual({
+  expect(doc3.view()).toEqual({
     id: 123,
     name: 'John',
     verified: true,
@@ -59,7 +59,7 @@ test('two concurrent users can apply partial updates', () => {
   Object.assign(fields, edits.updates);
   for (const field of edits.deletes) delete fields[field];
   const doc4 = decoder.decode(fields);
-  expect(doc4.view()).toStrictEqual({
+  expect(doc4.view()).toEqual({
     id: 123,
     name: 'Johnny Bravo',
     verified: false,
@@ -68,7 +68,7 @@ test('two concurrent users can apply partial updates', () => {
 
   doc3.applyPatch(patch1);
   doc3.applyPatch(patch2);
-  expect(doc3.view()).toStrictEqual({
+  expect(doc3.view()).toEqual({
     id: 123,
     name: 'Johnny Bravo',
     verified: true,
@@ -89,7 +89,7 @@ test('two concurrent users can apply partial updates', () => {
   Object.assign(fields, edits2.updates);
   for (const field of edits2.deletes) delete fields[field];
   const doc5 = decoder.decode(fields);
-  expect(doc5.view()).toStrictEqual({
+  expect(doc5.view()).toEqual({
     id: 123,
     name: 'Johnny Bravo',
     verified: true,
@@ -97,7 +97,7 @@ test('two concurrent users can apply partial updates', () => {
   });
 
   doc2.applyPatch(patch3);
-  expect(doc2.view()).toStrictEqual({
+  expect(doc2.view()).toEqual({
     id: 123,
     name: 'Johnny Bravo',
     verified: true,

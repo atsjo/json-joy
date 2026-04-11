@@ -1,9 +1,12 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import {compare, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
+import {compare, type IClockVector, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import {ConNode} from '../const/ConNode';
+import {InsObjOp, NewObjOp} from '../../../json-crdt-patch';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Model} from '../../model';
 import type {Printable} from 'tree-dump/lib/types';
+import type {DeltaMutator} from '../../delta/Delta';
 
 /**
  * Represents a `obj` JSON CRDT node, which is a Last-write-wins (LWW) object.
@@ -98,10 +101,31 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   }
 
   /** @ignore */
+  public clone(doc: Model<any>): ObjNode<Value> {
+    const clone = new ObjNode<Value>(doc, this.id);
+    this.keys.forEach((id, key) => clone.keys.set(key, id));
+    return clone;
+  }
+
+  /** @ignore */
+  public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
+    const {id, keys} = this;
+    if (!cc.has(id)) ops.push(new NewObjOp(id));
+    const keyUpdates: [key: string, val: ITimestampStruct][] = [];
+    for (const [key, val] of keys) {
+      const valueNode = model.index.get(val);
+      if (!valueNode) continue;
+      valueNode.delta(model, cc, ops);
+      if (!cc.has(val)) keyUpdates.push([key, val]);
+    }
+    if (keyUpdates.length) ops.push(new InsObjOp(ORIGIN, id, keyUpdates));
+  }
+
+  /** @ignore */
   private _tick: number = 0;
 
   /** @ignore */
-  private _view = {} as JsonNodeView<Value>;
+  private _view = Object.create(null) as JsonNodeView<Value>;
 
   /** @ignore */
   public view(): JsonNodeView<Value> {
@@ -109,7 +133,7 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
     const tick = doc.clock.time + doc.tick;
     const _view = this._view;
     if (this._tick === tick) return _view;
-    const view = {} as JsonNodeView<Value>;
+    const view = Object.create(null) as JsonNodeView<Value>;
     const index = doc.index;
     let useCache = true;
     this.keys.forEach((id, key) => {
@@ -121,17 +145,10 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
       const value = valueNode.view();
       if (value !== undefined) {
         if (_view[key] !== value) useCache = false;
-        (<any>view)[key] = value;
+        (view as any)[key] = value;
       } else if (_view[key] !== undefined) useCache = false;
     });
     return useCache ? _view : ((this._tick = tick), (this._view = view));
-  }
-
-  /** @ignore */
-  public clone(doc: Model<any>): ObjNode<Value> {
-    const clone = new ObjNode<Value>(doc, this.id);
-    this.keys.forEach((id, key) => clone.keys.set(key, id));
-    return clone;
   }
 
   /** @ignore */

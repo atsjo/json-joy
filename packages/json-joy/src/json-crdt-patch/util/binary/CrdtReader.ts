@@ -1,4 +1,5 @@
 import {Reader} from '@jsonjoy.com/buffers/lib/Reader';
+import {Timestamp, type VersionVector} from '../../clock';
 
 /** @todo Rename file name. */
 export class CrdtReader extends Reader {
@@ -146,4 +147,15 @@ export class CrdtReader extends Reader {
   //   if (o7 <= 0b01111111) return;
   //   this.u8();
   // }
+
+  public vv(): VersionVector {
+    const length = this.vu57();
+    const vv: VersionVector = [];
+    for (let i = 0; i < length; i++) {
+      const sid = this.vu57();
+      const time = this.vu57();
+      vv.push(new Timestamp(sid, time));
+    }
+    return vv;
+  }
 }

@@ -1,4 +1,5 @@
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+import type {VersionVector} from '../../clock';
 
 export class CrdtWriter extends Writer {
   /**
@@ -18,16 +19,16 @@ export class CrdtWriter extends Writer {
    * ```
    *
    * Otherwise the top bit of the first byte is set to 1; and x and y are encoded
-   * separately using b1vuint28 and vuint39, respectively.
+   * separately using b1vu56 and vu57, respectively.
    *
    * ```
-   *       x          y
-   * +===========+=========+
-   * | b1vuint28 | vuint39 |
-   * +===========+=========+
+   *      x           y
+   * +==========+==========+
+   * |  b1vu56  |   vu57   |
+   * +==========+==========+
    * ```
    *
-   * The boolean flag of x b1vuint28 value is always set to 1.
+   * The boolean flag of x b1vu56 value is always set to 1.
    */
   public id(x: number, y: number): void {
     if (x <= 0b111 && y <= 0b1111) {
@@ -227,6 +228,17 @@ export class CrdtWriter extends Writer {
           uint8[this.x++] = hi32 >>> 16;
         }
       }
+    }
+  }
+
+  public vv(vv: VersionVector): void {
+    const length = vv.length;
+    this.ensureCapacity(8 + length * 8 * 2);
+    this.vu57(length);
+    for (let i = 0; i < length; i++) {
+      const ts = vv[i];
+      this.vu57(ts.sid);
+      this.vu57(ts.time);
     }
   }
 }

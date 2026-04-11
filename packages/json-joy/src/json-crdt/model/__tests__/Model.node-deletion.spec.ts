@@ -177,12 +177,12 @@ test('calling .view() on dangling "obj" when it was deleted, should not throw', 
   const bar = doc.root.child()!.get('foo')!.get('bar')!;
   const baz = bar.get('baz')!;
   const qux = bar.get('qux')!;
-  expect(bar.view()).toStrictEqual({
+  expect(bar.view()).toEqual({
     baz: 123,
     qux: 'asdf',
   });
   doc.api.obj(['foo']).del(['bar']);
-  expect(bar.view()).toStrictEqual({});
+  expect(bar.view()).toEqual({});
   expect((bar + '').includes(bar.id.time + '')).toBe(true);
   expect(baz.view()).toBe(123);
   expect(qux.view()).toBe('asdf');
@@ -197,9 +197,9 @@ test('calling .view() on dangling "arr" when it was deleted, should not throw', 
     }),
   );
   const bar = doc.root.child()!.get('foo')!.get('bar')!;
-  expect(bar.view()).toStrictEqual([123, 'asdf']);
+  expect(bar.view()).toEqual([123, 'asdf']);
   doc.api.obj(['foo']).del(['bar']);
-  expect(bar.view()).toStrictEqual([]);
+  expect(bar.view()).toEqual([]);
   expect((bar + '').includes(bar.id.time + '')).toBe(true);
 });
 
@@ -212,9 +212,9 @@ test('calling .view() on dangling "vec" when it was deleted, should not throw', 
     }),
   );
   const bar = doc.root.child()!.get('foo')!.get('bar')!;
-  expect(bar.view()).toStrictEqual([123, 'asdf']);
+  expect(bar.view()).toEqual([123, 'asdf']);
   doc.api.obj(['foo']).del(['bar']);
-  expect(bar.view()).toStrictEqual([undefined, undefined]);
+  expect(bar.view()).toEqual([undefined, undefined]);
   expect((bar + '').includes(bar.id.time + '')).toBe(true);
 });
 
@@ -227,8 +227,8 @@ test('calling .view() on dangling "val" when it was deleted, should not throw', 
     }),
   );
   const bar = doc.root.child()!.get('foo')!.get('bar')!;
-  expect(bar.view()).toStrictEqual('asdf');
+  expect(bar.view()).toEqual('asdf');
   doc.api.obj(['foo']).del(['bar']);
-  expect(bar.view()).toStrictEqual(undefined);
+  expect(bar.view()).toEqual(undefined);
   expect((bar + '').includes(bar.id.time + '')).toBe(true);
 });

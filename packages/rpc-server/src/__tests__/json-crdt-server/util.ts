@@ -24,7 +24,7 @@ export const runUtilTests = (_setup: ApiTestSetup) => {
       test('returns objects', async () => {
         const {call, stop} = await setup();
         const res = await call('util.echo', {foo: 'bar'});
-        expect(res).toStrictEqual({foo: 'bar'});
+        expect(res).toEqual({foo: 'bar'});
         stop();
       });
     });

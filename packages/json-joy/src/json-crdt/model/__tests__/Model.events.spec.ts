@@ -17,7 +17,7 @@ describe('DOM Level 0, .onchange event system', () => {
     builder.insObj(objId, [['hello', builder.con(456)]]);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
-    expect(model.view()).toStrictEqual({
+    expect(model.view()).toEqual({
       foo: 123,
       hello: 456,
     });
@@ -54,7 +54,7 @@ describe('DOM Level 0, .onchange event system', () => {
     builder.insObj(objId, [['foo', builder.con(undefined)]]);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
-    expect(model.view()).toStrictEqual({});
+    expect(model.view()).toEqual({});
   });
 
   it('should trigger the onchange event when a non-existent value is deleted', () => {
@@ -72,7 +72,7 @@ describe('DOM Level 0, .onchange event system', () => {
     builder.insObj(objId, [['bar', builder.con(undefined)]]);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
-    expect(model.view()).toStrictEqual({foo: 123});
+    expect(model.view()).toEqual({foo: 123});
   });
 
   it('should trigger when root value is changed', () => {
@@ -107,7 +107,7 @@ describe('DOM Level 0, .onchange event system', () => {
       expect(cnt).toBe(0);
       model1.reset(model2);
       expect(cnt).toBe(1);
-      expect(model1.view()).toStrictEqual([1, 2, 3]);
+      expect(model1.view()).toEqual([1, 2, 3]);
     });
   });
 });

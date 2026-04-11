@@ -7,28 +7,12 @@ import type {Printable} from 'tree-dump/lib/types';
 /**
  * A union type of all possible JSON CRDT patch operations.
  */
-export type JsonCrdtPatchOperation =
-  | operations.NewConOp
-  | operations.NewValOp
-  | operations.NewVecOp
-  | operations.NewObjOp
-  | operations.NewStrOp
-  | operations.NewBinOp
-  | operations.NewArrOp
-  | operations.InsValOp
-  | operations.InsObjOp
-  | operations.InsVecOp
-  | operations.InsStrOp
-  | operations.InsBinOp
-  | operations.InsArrOp
-  | operations.UpdArrOp
-  | operations.DelOp
-  | operations.NopOp;
+export type JsonCrdtPatchOperation = operations.JsonCrdtOperation;
 
 /**
- * Represents a JSON CRDT patch.
- *
- * Normally, you would create a new patch using the {@link PatchBuilder} class.
+ * Represents a JSON CRDT patch. Normally, you would create a new patch using
+ * the {@link PatchBuilder} class. IDs of all operations share the same `sid`
+ * (the `sid` of the replica) and have strictly increasing `time` values.
  *
  * ```ts
  * import {Patch, PatchBuilder, LogicalClock} from 'json-joy/lib/json-crdt-patch';
@@ -52,7 +36,7 @@ export type JsonCrdtPatchOperation =
  *
  * @category Patch
  */
-export class Patch implements Printable {
+export class Patch implements operations.JsonCrdtOperationGroup<JsonCrdtPatchOperation>, Printable {
   /**
    * Un-marshals a JSON CRDT patch from a binary representation.
    */
@@ -60,16 +44,18 @@ export class Patch implements Printable {
     return decode(data);
   }
 
-  /**
-   * A list of operations in the patch.
-   */
-  public ops: JsonCrdtPatchOperation[] = [];
+  constructor(
+    /**
+     * A list of operations in the patch.
+     */
+    public ops: JsonCrdtPatchOperation[] = [],
 
-  /**
-   * Arbitrary metadata associated with the patch, which is not used by the
-   * library.
-   */
-  public meta: unknown = undefined;
+    /**
+     * Arbitrary metadata associated with the patch, which is not used by the
+     * library.
+     */
+    public meta: unknown = undefined,
+  ) {}
 
   /**
    * Returns the patch ID, which is equal to the ID of the first operation

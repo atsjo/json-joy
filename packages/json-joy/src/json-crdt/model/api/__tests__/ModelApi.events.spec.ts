@@ -83,7 +83,7 @@ describe('FanOut event API', () => {
     model.api.obj([]).set({foo: undefined});
     await Promise.resolve();
     expect(cnt).toBe(2);
-    expect(model.view()).toStrictEqual({});
+    expect(model.view()).toEqual({});
   });
 
   test('reports local change type when a value is set locally', async () => {

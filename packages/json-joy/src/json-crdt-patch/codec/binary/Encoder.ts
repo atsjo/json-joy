@@ -23,11 +23,19 @@ export class Encoder extends CborEncoder<CrdtWriter> {
   /**
    * Encodes a JSON CRDT Patch into a {@link Uint8Array} blob.
    *
+   * @todo Rename to `encodePatch`?
+   *
    * @param patch A JSON CRDT Patch to encode.
    * @returns A {@link Uint8Array} blob containing the encoded JSON CRDT Patch.
    */
   public encode(patch: Patch): Uint8Array {
-    this.writer.reset();
+    const writer = this.writer;
+    writer.reset();
+    this.writePatch(patch);
+    return writer.flush();
+  }
+
+  public writePatch(patch: Patch): void {
     const id = patch.getId()!;
     const sid = (this.patchSid = id.sid);
     const writer = this.writer;
@@ -36,15 +44,14 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const meta = patch.meta;
     if (meta === undefined) this.writeUndef();
     else this.writeArr([meta]);
-    this.encodeOperations(patch);
-    return writer.flush();
+    this.writeOps(patch);
   }
 
-  protected encodeOperations(patch: Patch): void {
+  protected writeOps(patch: Patch): void {
     const ops = patch.ops;
     const length = ops.length;
     this.writer.vu57(length);
-    for (let i = 0; i < length; i++) this.encodeOperation(ops[i]);
+    for (let i = 0; i < length; i++) this.writeOp(ops[i]);
   }
 
   protected encodeId(id: ITimestampStruct) {
@@ -77,7 +84,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     return writer.utf8(str);
   }
 
-  protected encodeOperation(op: JsonCrdtPatchOperation): void {
+  protected writeOp(op: JsonCrdtPatchOperation): void {
     const writer = this.writer;
     const constr = op.constructor;
     switch (constr) {

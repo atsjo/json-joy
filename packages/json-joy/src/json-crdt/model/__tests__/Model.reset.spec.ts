@@ -13,8 +13,8 @@ describe('reset()', () => {
     doc2.api.str(['text']).ins(5, ' world');
     expect(doc2.view()).toEqual({text: 'hello world'});
     doc1.reset(doc2);
-    expect(doc1.view()).toStrictEqual(doc2.view());
-    expect(doc1.view()).toStrictEqual({text: 'hello world'});
+    expect(doc1.view()).toEqual(doc2.view());
+    expect(doc1.view()).toEqual({text: 'hello world'});
     expect(doc1.view()).not.toBe(doc2.view());
     expect(doc1.clock.sid).toBe(doc2.clock.sid);
     expect(doc1.clock.time).toBe(doc2.clock.time);
@@ -34,8 +34,8 @@ describe('reset()', () => {
     doc2.api.str(['text']).ins(5, ' world');
     doc2.reset(doc1);
     doc2.api.obj([]).set({foo: 'bar', qux: 42});
-    expect(doc1.view()).toStrictEqual({foo: 123});
-    expect(doc2.view()).toStrictEqual({foo: 'bar', qux: 42});
+    expect(doc1.view()).toEqual({foo: 123});
+    expect(doc2.view()).toEqual({foo: 'bar', qux: 42});
     expect(doc1.clock.sid).toBe(doc2.clock.sid);
     expect(doc1.clock.time).not.toBe(doc2.clock.time);
     expect(doc1.clock).not.toBe(doc2.clock);

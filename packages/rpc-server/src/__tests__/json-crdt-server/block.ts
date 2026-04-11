@@ -85,7 +85,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
           },
         });
         const model2 = Model.fromBinary(res.block.snapshot.blob);
-        expect(model2.view()).toStrictEqual({
+        expect(model2.view()).toEqual({
           name: 'Super Woman',
           age: 26,
         });
@@ -210,7 +210,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
           },
         });
         const block2 = await call('block.get', {id});
-        expect(Model.fromBinary(block2.block.snapshot.blob).view()).toStrictEqual({
+        expect(Model.fromBinary(block2.block.snapshot.blob).view()).toEqual({
           text: 'Hello World',
         });
         const str = model.api.str(['text']);
@@ -233,7 +233,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
           },
         });
         const block3 = await call('block.get', {id});
-        expect(Model.fromBinary(block3.block.snapshot.blob).view()).toStrictEqual({
+        expect(Model.fromBinary(block3.block.snapshot.blob).view()).toEqual({
           text: 'Hello, World!',
         });
         await stop();
@@ -275,11 +275,11 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
             ],
           },
         });
-        expect(model2.view()).toStrictEqual({text: 'Hell yeah!'});
+        expect(model2.view()).toEqual({text: 'Hell yeah!'});
 
         const block3 = await call('block.get', {id});
         const model3 = Model.fromBinary(block3.block.snapshot.blob).fork();
-        expect(model3.view()).toStrictEqual({text: 'Hell yeah!'});
+        expect(model3.view()).toEqual({text: 'Hell yeah!'});
 
         // User 1
         model.api.str(['text']).ins(4, 'o');
@@ -302,7 +302,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
 
         const block4 = await call('block.get', {id});
         const model4 = Model.fromBinary(block4.block.snapshot.blob).fork();
-        expect(model4.view()).not.toStrictEqual({text: 'Hell yeah!'});
+        expect(model4.view()).not.toEqual({text: 'Hell yeah!'});
         await stop();
       });
 
@@ -325,10 +325,10 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
         model1.api.obj([]).set({x: 123});
         const patch3 = model1.api.flush();
         await call('block.upd', {id, batch: {patches: [{blob: patch3.toBinary()}]}});
-        expect(model1.view()).toStrictEqual({text: 'Hello', x: 123});
+        expect(model1.view()).toEqual({text: 'Hello', x: 123});
         model2.api.str(['text']).ins(4, '!');
         const patch4 = model2.api.flush();
-        expect(model2.view()).toStrictEqual({text: 'Hell!'});
+        expect(model2.view()).toEqual({text: 'Hell!'});
         const res = await call('block.upd', {
           id,
           seq: user2.block.snapshot.seq,
@@ -351,12 +351,12 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
         });
         for (const batch of res.pull!.batches!)
           for (const patch of batch.patches) model2.applyPatch(Patch.fromBinary(patch.blob));
-        expect(model2.view()).toStrictEqual({text: 'Hell!o', x: 123});
+        expect(model2.view()).toEqual({text: 'Hell!o', x: 123});
         const pull = await call('block.scan', {id, seq: 2, limit: 100});
-        expect(model1.view()).toStrictEqual({text: 'Hello', x: 123});
+        expect(model1.view()).toEqual({text: 'Hello', x: 123});
         for (const batch of pull.batches!)
           for (const patch of batch.patches) model1.applyPatch(Patch.fromBinary(patch.blob));
-        expect(model1.view()).toStrictEqual({text: 'Hell!o', x: 123});
+        expect(model1.view()).toEqual({text: 'Hell!o', x: 123});
         await stop();
       });
 
@@ -403,10 +403,10 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
           const patch = model1.api.flush();
           await call('block.upd', {id, batch: {patches: [{blob: patch.toBinary()}]}});
         }
-        expect(model1.view()).toStrictEqual({text: 'Hell', num: 110});
+        expect(model1.view()).toEqual({text: 'Hell', num: 110});
         model2.api.str(['text']).ins(4, '!');
         const patch2 = model2.api.flush();
-        expect(model2.view()).toStrictEqual({text: 'Hell!'});
+        expect(model2.view()).toEqual({text: 'Hell!'});
         const res = await call('block.upd', {
           id,
           seq: user2.block.snapshot.seq,
@@ -427,9 +427,9 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
           for (const patch of b.patches) model3.applyPatch(Patch.fromBinary(patch.blob));
           expect(b.seq).toBe(snapshot.seq + i + 1);
         }
-        expect(model3.view()).toStrictEqual({text: 'Hell', num: 110});
+        expect(model3.view()).toEqual({text: 'Hell', num: 110});
         model3.applyPatch(patch2);
-        expect(model3.view()).toStrictEqual({text: 'Hell!', num: 110});
+        expect(model3.view()).toEqual({text: 'Hell!', num: 110});
         await stop();
       }, 45000);
     });
@@ -667,7 +667,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
         for (let i = 1; i <= 150; i++) await setX(i);
         const block = await call('block.get', {id});
         const model2 = Model.load(block.block.snapshot.blob);
-        expect(model2.view()).toStrictEqual({text: 'Hell', x: 150});
+        expect(model2.view()).toEqual({text: 'Hell', x: 150});
         const assertPull = async (seq: number) => {
           const pull = await call('block.pull', {id, seq});
           const model = pull.snapshot ? Model.load(pull.snapshot.blob) : Model.create();
@@ -678,7 +678,7 @@ export const runBlockTests = (_setup: ApiTestSetup, params: {staticOnly?: true} 
               model.applyPatch(patch);
             }
           }
-          expect(model.view()).toStrictEqual({text: 'Hell', x: 150});
+          expect(model.view()).toEqual({text: 'Hell', x: 150});
         };
         for (let i = -1; i <= 150; i++) await assertPull(i);
         await stop();

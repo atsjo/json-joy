@@ -1,4 +1,7 @@
+import type {IClockVector} from '../../json-crdt-patch';
 import type {Identifiable} from '../../json-crdt-patch/types';
+import type {DeltaMutator} from '../delta/Delta';
+import type {Model} from '../model';
 
 /**
  * Each JsonNode represents a structural unit of a JSON document. It is like an
@@ -39,6 +42,16 @@ export interface JsonNode<View = unknown> extends Identifiable {
    * an array are container nodes, as they hold other nodes.
    */
   container(): JsonNode | undefined;
+
+  /**
+   * Populates the delta group with the operations that MUST applied to the
+   * model of another peer to "fill in" the missing state.
+   *
+   * @param model The model of the current document.
+   * @param cc The causal context of the "has seen" events.
+   * @param ops Delta group - a list of delta mutators to be populated.
+   */
+  delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void;
 
   /**
    * A singleton cache, instance which provides public API for this node.

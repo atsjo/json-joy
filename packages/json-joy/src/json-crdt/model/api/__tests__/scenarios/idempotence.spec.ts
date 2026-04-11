@@ -8,7 +8,7 @@ test('applying old operations has no effect', () => {
     bool: [true],
     arr: [1, 2, 3],
   });
-  expect(doc.view()).toStrictEqual({
+  expect(doc.view()).toEqual({
     str: 'asdf',
     num: 123,
     bool: [true],
@@ -19,7 +19,7 @@ test('applying old operations has no effect', () => {
   doc.applyPatch(patch1);
   doc.applyPatch(patch1);
   doc.applyPatch(patch1);
-  expect(doc.view()).toStrictEqual({
+  expect(doc.view()).toEqual({
     str: 'a!!sdf',
     num: 123,
     bool: [true],
@@ -33,7 +33,7 @@ test('applying old operations has no effect', () => {
   doc.applyPatch(patch2);
   doc.applyPatch(patch1);
   doc.applyPatch(patch3);
-  expect(doc.view()).toStrictEqual({
+  expect(doc.view()).toEqual({
     str: 'a!!sdf',
     num: 456,
     bool: [true],
@@ -45,7 +45,7 @@ test('applying old operations has no effect', () => {
   doc.applyPatch(patch4);
   doc.applyPatch(patch2);
   doc.applyPatch(patch3);
-  expect(doc.view()).toStrictEqual({
+  expect(doc.view()).toEqual({
     str: 'a!!sdf',
     num: 456,
     bool: [false],
@@ -56,7 +56,7 @@ test('applying old operations has no effect', () => {
   doc.applyPatch(patch4);
   doc.applyPatch(patch2);
   doc.applyPatch(patch3);
-  expect(doc.view()).toStrictEqual({
+  expect(doc.view()).toEqual({
     str: 'a!!sdf',
     num: 456,
     bool: [false],
