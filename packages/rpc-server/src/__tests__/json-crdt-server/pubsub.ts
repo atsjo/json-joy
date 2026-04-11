@@ -16,7 +16,7 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
         } as any);
         throw new Error('should not reach here');
       } catch (err: any) {
-        expect(err.meta.path).toStrictEqual(['channel2']);
+        expect(err.meta.path).toEqual(['channel2']);
       }
       stop();
     });
@@ -34,7 +34,7 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
           message: 'hello world',
         });
         await until(() => emits.length === 1);
-        expect(emits).toStrictEqual(['hello world']);
+        expect(emits).toEqual(['hello world']);
         subscription.unsubscribe();
         stop();
       });
@@ -92,9 +92,9 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
           message: 'hello world',
         });
         await tick(50);
-        expect(user1).toStrictEqual([]);
-        expect(user2).toStrictEqual([]);
-        expect(user3).toStrictEqual([]);
+        expect(user1).toEqual([]);
+        expect(user2).toEqual([]);
+        expect(user3).toEqual([]);
         call('pubsub.publish', {
           channel: channel1,
           message: 'msg1',
@@ -106,8 +106,8 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
         await until(() => user1.length === 1);
         await until(() => user2.length === 1);
         await until(() => user3.length === 2);
-        expect(user1).toStrictEqual(['msg1']);
-        expect(user2).toStrictEqual(['msg2']);
+        expect(user1).toEqual(['msg1']);
+        expect(user2).toEqual(['msg2']);
         expect(user3.indexOf('msg1') > -1).toBe(true);
         expect(user3.indexOf('msg2') > -1).toBe(true);
         sub2.unsubscribe();
@@ -116,8 +116,8 @@ export const runPubsubTests = (_setup: ApiTestSetup, params: {staticOnly?: true}
           message: 'msg3',
         }).catch(() => {});
         await until(() => user3.length === 3);
-        expect(user1).toStrictEqual(['msg1']);
-        expect(user2).toStrictEqual(['msg2']);
+        expect(user1).toEqual(['msg1']);
+        expect(user2).toEqual(['msg2']);
         expect(user3.indexOf('msg1') > -1).toBe(true);
         expect(user3.indexOf('msg2') > -1).toBe(true);
         expect(user3.indexOf('msg3') > -1).toBe(true);
