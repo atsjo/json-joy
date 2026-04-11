@@ -46,7 +46,7 @@ export class CborCodegen extends AbstractBinaryCodegen<CborEncoder> {
       for (let i = 0; i < optionalLength; i++) {
         const field = optionalFields[i];
         const accessor = normalizeAccessor(field.key);
-        codegen.js(`if (${JSON.stringify(field.key)} in ${r}) {`);
+        codegen.js(`if (${r}${accessor} !== undefined) {`);
         this.blob(this.gen((encoder) => encoder.writeStr(field.key)));
         this.onNode([...path, field.key], new JsExpression(() => `${r}${accessor}`), field.val);
         codegen.js(`}`);

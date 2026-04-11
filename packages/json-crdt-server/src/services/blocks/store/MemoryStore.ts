@@ -71,9 +71,9 @@ export class MemoryStore implements types.Store {
       const batch2: types.StoreBatch = {
         seq: 0,
         ts: end.ts,
-        cts,
         patches,
       };
+      if (cts !== void 0) batch2.cts = cts;
       block.history.push(batch2);
       return {block: block.data, batch: batch2};
     }
@@ -102,7 +102,7 @@ export class MemoryStore implements types.Store {
     const batch1: types.StoreBatch = {
       seq,
       ts: now,
-      cts: batch0.cts,
+      ...(batch0.cts !== undefined ? {cts: batch0.cts} : undefined),
       patches,
     };
     history.push(batch1);

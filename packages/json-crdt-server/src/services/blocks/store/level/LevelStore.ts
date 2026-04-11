@@ -134,9 +134,9 @@ export class LevelStore implements types.Store {
         const batch: types.StoreBatch = {
           seq: 0,
           ts: end.ts,
-          cts,
           patches,
         };
+        if (cts !== void 0) batch.cts = cts;
         const batchBlob = encoder.encode(batch);
         const batchKey = this.batchKey(id, 0);
         ops.push({type: 'put', key: batchKey, value: batchBlob});
@@ -169,9 +169,10 @@ export class LevelStore implements types.Store {
       const batch1: types.StoreBatch = {
         seq,
         ts: now,
-        cts: batch0.cts,
         patches,
       };
+      const cts = batch0.cts;
+      if (cts !== void 0) batch1.cts = cts;
       const ops: BinStrLevelOperation[] = [
         {type: 'put', key: this.endKey(id), value: encoder.encode(blockData)},
         {type: 'put', key: this.batchKey(id, seq), value: encoder.encode(batch1)},
