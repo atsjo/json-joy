@@ -44,7 +44,7 @@ export interface JsonNode<View = unknown> extends Identifiable {
   container(): JsonNode | undefined;
 
   /**
-   * Populates the delta group with the operations that can MUST applied to the
+   * Populates the delta group with the operations that MUST applied to the
    * model of another peer to "fill in" the missing state.
    *
    * @param model The model of the current document.

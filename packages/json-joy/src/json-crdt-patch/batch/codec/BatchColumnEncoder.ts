@@ -66,8 +66,8 @@ export class BatchColumnEncoder {
   private buildGroup(group: JsonCrdtOperationGroup): void {
     const {ops, meta} = group;
     const length = ops.length;
-    if (!length) return;
     this.uint.push(length);
+    if (!length) return;
     this.meta.push(meta ?? null);
     for (let i = 0; i < length; i++) this.buildOp(ops[i]);
   }
