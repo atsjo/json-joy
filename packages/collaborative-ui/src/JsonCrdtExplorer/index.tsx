@@ -5,13 +5,13 @@ import {context} from './context';
 import TwoColumnLayout from '@jsonjoy.com/ui/lib/6-page/TwoColumnLayout';
 import {Preview} from './Preview';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 
 export interface JsonCrdtExplorerProps {
   state?: JsonCrdtExplorerState;
+  top?: number;
 }
 
-export const JsonCrdtExplorer: React.FC<JsonCrdtExplorerProps> = ({state: _state}) => {
+export const JsonCrdtExplorer: React.FC<JsonCrdtExplorerProps> = ({state: _state, top = 0}) => {
   const state = React.useMemo(() => _state || new JsonCrdtExplorerState(), [_state]);
   const files = useBehaviorSubject(state.files$);
 
@@ -23,7 +23,7 @@ export const JsonCrdtExplorer: React.FC<JsonCrdtExplorerProps> = ({state: _state
     <TwoColumnLayout
       left={<ExplorerSidenav />}
       right={<Preview />}
-      top={NiceUiSizes.TopNavHeight + NiceUiSizes.TopNavHeight + 24}
+      top={top}
     />
   );
 

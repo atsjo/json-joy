@@ -29,7 +29,7 @@ export const ExplorerSidenav: React.FC<ExplorerSidenavProps> = () => {
           <Text as={'h6'} font="sans" style={{textAlign: 'center', margin: '16px 0 0', opacity: .55, lineHeight: '1.5em', fontSize: '15px'}}>
             JSON CRDT playground
             ·
-            Explore JSON CRDT documents
+            Explore JSON CRDT documents state and patches
             ·
             Save, load documents in various formats
             ·
