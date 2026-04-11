@@ -3,6 +3,31 @@ import {lightTheme as theme, rule} from 'nano-theme';
 
 const h = React.createElement;
 
+const thumbClass = rule({
+  h: '24px',
+  pos: 'absolute',
+  top: '3px',
+  d: 'inline-block',
+  bdrad: '12px',
+  trs: 'left 0.2s, width 0.2s',
+  bg: '#fff',
+});
+
+const labelClass = rule({
+  pos: 'absolute',
+  top: 0,
+  h: '100%',
+  d: 'inline-flex',
+  ai: 'center',
+  jc: 'center',
+  pe: 'none',
+  fz: '12px',
+  fw: 700,
+  lh: 1,
+  us: 'none',
+  ttf: 'uppercase',
+});
+
 const blockClass = rule({
   pos: 'relative',
   cur: 'pointer',
@@ -21,19 +46,10 @@ const blockClass = rule({
   },
   '&:hover': {
     bxsh: `0 0 0 3px ${theme.color.sem.accent[0]}`,
-    '& > span': {
+    [`& > .${thumbClass}`]: {
       bg: '#f4f4f4',
       'box-shadow': '0 0 3px rgba(0,0,0,.4)',
     },
-  },
-  '& > span': {
-    h: '24px',
-    pos: 'absolute',
-    top: '3px',
-    d: 'inline-block',
-    bdrad: '12px',
-    trs: 'left 0.2s, width 0.2s',
-    bg: '#fff',
   },
 });
 
@@ -63,6 +79,20 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
     width: small ? (active ? 20 : 14) : active ? 30 : 24,
   };
 
+  const styleLabelOn: any = {
+    left: small ? 6 : 6,
+    width: small ? 11 : 16,
+    fontSize: small ? 10 : 12,
+    color: 'rgba(255,255,255,.6)',
+  };
+
+  const styleLabelOff: any = {
+    right: small ? 5 : 6,
+    width: small ? 11 : 16,
+    fontSize: small ? 10 : 12,
+    color: 'rgba(255,255,255,.4)',
+  };
+
   if (small) {
     style.width = 40;
     style.height = 20;
@@ -86,6 +116,8 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       onMouseDown,
       onMouseUp,
     },
-    h('span', {style: styleSpan}, ' '),
+    h('span', {className: labelClass, style: styleLabelOn, fontFamily: 'monospace', 'aria-hidden': true}, 'I'),
+    h('span', {className: labelClass, style: styleLabelOff, fontFamily: 'monospace', 'aria-hidden': true}, 'O'),
+    h('span', {className: thumbClass, style: styleSpan}, ' '),
   );
 };

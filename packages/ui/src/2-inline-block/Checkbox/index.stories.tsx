@@ -16,3 +16,22 @@ export default meta;
 export const Primary: StoryObj<typeof meta> = {
   args: {},
 };
+
+export const On: StoryObj<typeof meta> = {
+  args: {
+    on: true,
+  },
+};
+
+export const SmallOn: StoryObj<typeof meta> = {
+  args: {
+    on: true,
+    small: true,
+  },
+};
+export const SmallOff: StoryObj<typeof meta> = {
+  args: {
+    on: false,
+    small: true,
+  },
+};
