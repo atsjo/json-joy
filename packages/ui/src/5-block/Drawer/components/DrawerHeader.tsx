@@ -15,9 +15,15 @@ export const DrawerHeader: React.FC<DrawerHeaderProps> = ({children, className =
   const theme = useTheme();
 
   return (
-    <div {...rest} className={className + headerClass({
-      bdb: `1px solid ${theme.g(0, 0.08)}`,
-    })}>
+    <div
+      {...rest}
+      className={
+        className +
+        headerClass({
+          bdb: `1px solid ${theme.g(0, 0.08)}`,
+        })
+      }
+    >
       {children}
     </div>
   );

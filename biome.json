@@ -57,7 +57,9 @@
 			},
 			"a11y": {
 				"noSvgWithoutTitle": "off",
-				"noStaticElementInteractions": "off"
+				"noStaticElementInteractions": "off",
+				"useButtonType": "off",
+				"useSemanticElements": "off"
 			},
 			"correctness": {
 				"noUnusedFunctionParameters": "off",

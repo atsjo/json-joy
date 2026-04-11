@@ -10,9 +10,7 @@ export const useFocusTrap = (ref: RefObject<HTMLElement | null>, active: boolean
     triggerRef.current = document.activeElement;
     const el = ref.current;
 
-    const siblings = Array.from(document.body.children).filter(
-      (ch) => ch !== el && !ch.contains(el),
-    );
+    const siblings = Array.from(document.body.children).filter((ch) => ch !== el && !ch.contains(el));
     siblings.forEach((s) => ((s as HTMLElement).inert = true));
 
     const firstFocusable = el.querySelector<HTMLElement>(

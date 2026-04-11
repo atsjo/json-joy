@@ -121,7 +121,13 @@ export const OverlayLeft: StoryObj = {
     return (
       <div style={{height: 400, position: 'relative', border: '1px solid #ddd', padding: 16}}>
         <button onClick={() => setOpen(true)}>Open overlay drawer</button>
-        <OverlayDrawer open={open} onOpenChange={(next) => setOpen(next)} side="left" width={260} aria-label="Navigation">
+        <OverlayDrawer
+          open={open}
+          onOpenChange={(next) => setOpen(next)}
+          side="left"
+          width={260}
+          aria-label="Navigation"
+        >
           <DrawerHeader>
             <span style={{fontSize: 13, fontWeight: 600}}>Navigation</span>
           </DrawerHeader>
@@ -138,7 +144,13 @@ export const OverlayRight: StoryObj = {
     return (
       <div style={{height: 400, position: 'relative', border: '1px solid #ddd', padding: 16}}>
         <button onClick={() => setOpen(true)}>Open right panel</button>
-        <OverlayDrawer open={open} onOpenChange={(next) => setOpen(next)} side="right" width={300} aria-label="Settings">
+        <OverlayDrawer
+          open={open}
+          onOpenChange={(next) => setOpen(next)}
+          side="right"
+          width={300}
+          aria-label="Settings"
+        >
           <DrawerHeader>
             <span style={{fontSize: 13, fontWeight: 600}}>Settings</span>
           </DrawerHeader>

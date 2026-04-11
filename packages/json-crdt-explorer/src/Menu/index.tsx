@@ -19,18 +19,11 @@ const linkStyle: React.CSSProperties = {
 };
 
 export const Menu: React.FC = () => {
-  const { width } = useWindowSize();
+  const {width} = useWindowSize();
 
   const logo = (
     <BasicTooltip nowrap renderTooltip={() => 'jsonjoy.com'}>
-      <BasicButton
-        to="https://jsonjoy.com"
-        round
-        target="_blank"
-        rel="noreferrer"
-        style={linkStyle}
-        size={40}
-      >
+      <BasicButton to="https://jsonjoy.com" round target="_blank" rel="noreferrer" style={linkStyle} size={40}>
         <span style={{margin: '0 1px 0 -1px', display: 'flex'}}>
           <JsonJoyLogo color size={24} />
         </span>
@@ -50,17 +43,17 @@ export const Menu: React.FC = () => {
     </div>
   );
 
-  const middle = width > 1000 && (
-    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-      {/* <span style={{fontSize: '11px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
-        JSON CRDT playground
-      </span>
-      <span style={{opacity: 0.3, fontSize: '13px', userSelect: 'none'}}>·</span> */}
-      <span style={{fontSize: '11px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
-        Load and explore JSON CRDT documents
-      </span>
-    </div>
-  );
+  // const middle = width > 1000 && (
+  //   <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
+  //     {/* <span style={{fontSize: '11px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
+  //       JSON CRDT playground
+  //     </span>
+  //     <span style={{opacity: 0.3, fontSize: '13px', userSelect: 'none'}}>·</span> */}
+  //     <span style={{fontSize: '11px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
+  //       Load and explore JSON CRDT documents
+  //     </span>
+  //   </div>
+  // );
 
   const right = (
     <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
@@ -70,15 +63,12 @@ export const Menu: React.FC = () => {
             to="https://jsonjoy.com/specs/json-crdt"
             target="_blank"
             rel="noreferrer"
-            width='auto'
+            width="auto"
             height={32}
             rounder
             compact
-            
           >
-            <span
-              style={linkStyle}
-            >
+            <span style={linkStyle}>
               JSON CRDT <Label>Spec</Label>
             </span>
           </BasicButton>

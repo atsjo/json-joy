@@ -20,11 +20,7 @@ export const JsonCrdtExplorer: React.FC<JsonCrdtExplorerProps> = ({state: _state
       <ExplorerSidenav />
     </div>
   ) : (
-    <TwoColumnLayout
-      left={<ExplorerSidenav />}
-      right={<Preview />}
-      top={top}
-    />
+    <TwoColumnLayout left={<ExplorerSidenav />} right={<Preview />} top={top} />
   );
 
   return <context.Provider value={state}>{content}</context.Provider>;

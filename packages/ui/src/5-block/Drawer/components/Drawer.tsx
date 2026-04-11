@@ -19,12 +19,8 @@ export interface DrawerProps extends React.HTMLAttributes<HTMLElement> {
   mountNode?: HTMLElement | null;
 }
 
-export const Drawer: React.FC<DrawerProps> = ({
-  state: _state,
-  onOpenChange,
-  defaultOpen,
-  ...rest
-}) => {
+export const Drawer: React.FC<DrawerProps> = ({state: _state, onOpenChange, defaultOpen, ...rest}) => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies : custom deps management
   const state = React.useMemo(() => {
     if (_state) return _state;
     return new DrawerState({

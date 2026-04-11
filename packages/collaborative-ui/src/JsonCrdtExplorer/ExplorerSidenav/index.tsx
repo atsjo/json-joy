@@ -26,14 +26,13 @@ export const ExplorerSidenav: React.FC<ExplorerSidenavProps> = () => {
     <div style={{display: 'flex', maxWidth: 360, width: '100%', alignItems: 'center', flexDirection: 'column'}}>
       <div style={{width}} onClick={(e) => e.stopPropagation()} onKeyDown={() => {}}>
         {expanded && (
-          <Text as={'h6'} font="sans" style={{textAlign: 'center', margin: '16px 0 0', opacity: .55, lineHeight: '1.5em', fontSize: '15px'}}>
-            JSON CRDT playground
-            ·
-            Explore JSON CRDT documents state and patches
-            ·
-            Save, load documents in various formats
-            ·
-            Time travel and debug document internal state
+          <Text
+            as={'h6'}
+            font="sans"
+            style={{textAlign: 'center', margin: '16px 0 0', opacity: 0.55, lineHeight: '1.5em', fontSize: '15px'}}
+          >
+            JSON CRDT playground · Explore JSON CRDT documents state and patches · Save, load documents in various
+            formats · Time travel and debug document internal state
           </Text>
         )}
         <div style={{width}}>

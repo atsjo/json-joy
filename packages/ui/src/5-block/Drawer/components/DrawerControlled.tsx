@@ -57,14 +57,7 @@ export const DrawerControlled: React.FC<DrawerControlledProps> = ({
   }
 
   return (
-    <InlineDrawer
-      {...rest}
-      open={open}
-      side={side}
-      width={width}
-      separator={separator}
-      onOpenChange={onOpenChange}
-    >
+    <InlineDrawer {...rest} open={open} side={side} width={width} separator={separator} onOpenChange={onOpenChange}>
       {children}
     </InlineDrawer>
   );

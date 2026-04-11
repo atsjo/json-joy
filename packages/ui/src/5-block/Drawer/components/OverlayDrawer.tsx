@@ -154,9 +154,7 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
         dynamicPanelClass +
         (isLeft ? leftPanelShapeClass : rightPanelShapeClass) +
         (open ? panelOpenClass : '') +
-        (isLeft
-          ? open ? leftOpenClass : leftClosedClass
-          : open ? rightOpenClass : rightClosedClass) +
+        (isLeft ? (open ? leftOpenClass : leftClosedClass) : open ? rightOpenClass : rightClosedClass) +
         (className ? ' ' + className : '')
       }
       style={{
@@ -174,7 +172,6 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
   return (
     <Portal parent={mountNode ?? undefined}>
       {backdrop && open && (
-        // biome-ignore lint/a11y/useKeyWithClickEvents: Escape key handled separately
         <div className={backdropClass + dynamicBackdropClass} onClick={onBackdropClick} aria-hidden="true" />
       )}
       {panel}

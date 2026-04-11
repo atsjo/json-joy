@@ -60,10 +60,8 @@ const TwoColumnLayout: React.FC<Props> = ({top = 0, left, right, sidebarTopPaddi
   if (width < 1000) {
     return (
       <>
-        <OverlayDrawer
-          open={sidebar}
-          onOpenChange={() => setSidebar((x) => !x)}
-        >
+        <OverlayDrawer open={sidebar} onOpenChange={() => setSidebar((x) => !x)}>
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler */}
           <div
             style={{padding: 16, minWidth: `calc(min(100vw - 32px, ${NiceUiSizes.SidebarWidth}px))`}}
             onClick={() => setSidebar(false)}
@@ -76,7 +74,7 @@ const TwoColumnLayout: React.FC<Props> = ({top = 0, left, right, sidebarTopPaddi
             <BasicTooltip renderTooltip={() => 'Sidebar'}>
               <BasicButton rounder size={32} onClick={() => setSidebar((x) => !x)}>
                 {/* <Iconista set="ant_outline" icon="menu" width={16} height={16} /> */}
-                <Iconista set="bootstrap" icon="layout-sidebar" width={16} height={16} style={{fill: styles.g(.4)}} />
+                <Iconista set="bootstrap" icon="layout-sidebar" width={16} height={16} style={{fill: styles.g(0.4)}} />
               </BasicButton>
             </BasicTooltip>
           </div>
