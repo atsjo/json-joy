@@ -56,7 +56,15 @@ const runTests = async () => {
   });
   const cp = spawn(
     'npx',
-    ['jest', '--config', jestConfig, '--maxWorkers', '1', '--no-cache', 'packages/json-crdt-server/src/__tests__/e2e/json-crdt-server/'],
+    [
+      'jest',
+      '--config',
+      jestConfig,
+      '--maxWorkers',
+      '1',
+      '--no-cache',
+      'packages/json-crdt-server/src/__tests__/e2e/json-crdt-server/',
+    ],
     {
       cwd: rootDir,
       env: {

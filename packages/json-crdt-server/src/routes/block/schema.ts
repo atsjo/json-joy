@@ -146,8 +146,8 @@ export const BlockDeleteEvent = t
   .options({title: 'Delete Event'});
 
 export const BlockUpdateEvent = t
-  .Tuple(
-    [t.Const(<const>'upd').options({title: 'Event Type'}),
+  .Tuple([
+    t.Const(<const>'upd').options({title: 'Event Type'}),
     t
       .Object(
         t.Key('batch', BlockBatchRef).options({
@@ -156,8 +156,8 @@ export const BlockUpdateEvent = t
         }),
       )
       .options({title: 'Event Data'}),
-    t.Number({format: 'u32'}).options({title: 'Client ID'})],
-  )
+    t.Number({format: 'u32'}).options({title: 'Client ID'}),
+  ])
   .options({title: 'Update Event'});
 
 export const BlockEvent = t.Or(BlockCreateEvent, BlockUpdateEvent, BlockDeleteEvent).options({
