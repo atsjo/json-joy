@@ -44,7 +44,7 @@ export class Encoder {
   }
 
   public cObj(obj: nodes.ObjNode): types.JsonCrdtVerboseObj {
-    const map: Record<string, types.JsonCrdtNode> = {};
+    const map: Record<string, types.JsonCrdtNode> = Object.create(null);
     obj.nodes((node, key) => {
       map[key] = this.cNode(node);
     });
