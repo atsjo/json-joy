@@ -27,6 +27,7 @@ export class CborEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         const constr = value.constructor;
         switch (constr) {
           case Object:
+          case undefined:
             return this.writeObj(value as Record<string, unknown>);
           case Array:
             return this.writeArr(value as unknown[]);

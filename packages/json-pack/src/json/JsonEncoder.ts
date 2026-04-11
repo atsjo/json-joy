@@ -34,6 +34,7 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
         const constr = value.constructor;
         switch (constr) {
           case Object:
+          case undefined:
             return this.writeObj(value as Record<string, unknown>);
           case Array:
             return this.writeArr(value as unknown[]);
