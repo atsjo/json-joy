@@ -5,7 +5,7 @@ import * as path from 'path';
 const pkgDir = path.resolve(__dirname, '../../..');
 const rootDir = path.resolve(pkgDir, '../..');
 
-const startServer = async () => {
+const startServer = async (port: number) => {
   const started = new Defer<void>();
   const exitCode = new Defer<number>();
   const entryPoint = path.join('src', 'main.ts');
@@ -13,6 +13,7 @@ const startServer = async () => {
     cwd: pkgDir,
     env: {
       ...process.env,
+      PORT: String(port),
     },
   });
   process.on('exit', () => {
@@ -41,45 +42,23 @@ const startServer = async () => {
   };
 };
 
-const runTests = async () => {
+const runTests = async (port: number) => {
   const exitCode = new Defer<number>();
-  const jestConfig = JSON.stringify({
-    preset: 'ts-jest',
-    testEnvironment: 'node',
-    moduleFileExtensions: ['ts', 'js'],
-    transform: {
-      '^.+\\.tsx?$': ['ts-jest', {tsconfig: path.join(pkgDir, 'tsconfig.test.json')}],
+  const cp = spawn('npx', ['vitest', 'run', '--reporter=verbose', 'packages/json-crdt-server/src/__tests__/e2e/json-crdt-server/'], {
+    cwd: rootDir,
+    env: {
+      ...process.env,
+      TEST_E2E: '1',
+      PORT: String(port),
     },
-    transformIgnorePatterns: ['node_modules/(?!@jsonjoy\\.com/)'],
-    testRegex: '.*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$',
-    rootDir: rootDir,
+    stdio: 'inherit',
   });
-  const cp = spawn(
-    'npx',
-    [
-      'jest',
-      '--config',
-      jestConfig,
-      '--maxWorkers',
-      '1',
-      '--no-cache',
-      'packages/json-crdt-server/src/__tests__/e2e/json-crdt-server/',
-    ],
-    {
-      cwd: rootDir,
-      env: {
-        ...process.env,
-        TEST_E2E: '1',
-      },
-      stdio: 'inherit',
-    },
-  );
   process.on('exit', () => {
     cp.kill();
   });
   cp.on('close', (code) => {
     exitCode.resolve(code || 0);
-    process.stdout.write('[jest] ' + `process exited with code ${code}\n`);
+    process.stdout.write('[vitest] ' + `process exited with code ${code}\n`);
   });
   return {
     cp,
@@ -96,9 +75,10 @@ const runTests = async () => {
     }
   };
   try {
-    server = await startServer();
+    const port = 10003;
+    server = await startServer(port);
     await server.started;
-    const jest = await runTests();
+    const jest = await runTests(port);
     const exitCode = await jest.exitCode;
     await killServer();
     process.exit(exitCode);
