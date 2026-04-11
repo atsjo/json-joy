@@ -2543,9 +2543,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/json-crdt-playground@workspace:packages/json-crdt-playground":
+"@jsonjoy.com/json-crdt-explorer@workspace:packages/json-crdt-explorer":
   version: 0.0.0-use.local
-  resolution: "@jsonjoy.com/json-crdt-playground@workspace:packages/json-crdt-playground"
+  resolution: "@jsonjoy.com/json-crdt-explorer@workspace:packages/json-crdt-explorer"
   dependencies:
     "@jsonjoy.com/collaborative-ui": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
