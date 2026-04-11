@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {DrawerState} from '../state';
-import useMedia from 'react-use/lib/useMedia';
-import {InlineDrawer} from './InlineDrawer';
-import {OverlayDrawer} from './OverlayDrawer';
+import {ctx} from '../context';
 import type {DrawerSide, DrawerMode, CloseSource} from '../types';
+import {DrawerControlled} from './DrawerControlled';
 
 export interface DrawerProps extends React.HTMLAttributes<HTMLElement> {
   state?: DrawerState;
@@ -20,37 +19,23 @@ export interface DrawerProps extends React.HTMLAttributes<HTMLElement> {
   mountNode?: HTMLElement | null;
 }
 
-const DEFAULT_BREAKPOINT = '(max-width: 768px)';
-
 export const Drawer: React.FC<DrawerProps> = ({
   state: _state,
-  defaultOpen,
   onOpenChange,
-  side = 'left',
-  width = 260,
-  separator = true,
-  type = 'auto',
-  overlayBreakpoint = DEFAULT_BREAKPOINT,
-  modalType,
-  backdrop,
-  preventClose,
-  mountNode,
-  children,
+  defaultOpen,
   ...rest
 }) => {
   const state = React.useMemo(() => {
     if (_state) return _state;
     return new DrawerState({
       open: defaultOpen ?? false,
-      side,
-      width: typeof width === 'number' ? width : 260,
+      side: rest.side,
+      width: typeof rest.width === 'number' ? rest.width : 260,
     });
-  }, [_state]);
-
-  const isSmall = useMedia(overlayBreakpoint);
-  const overlay = type === 'overlay' || (type === 'auto' && isSmall);
+  }, [_state, rest.side]);
   const open = state.open$.use();
-
+  const width = state.width$.use();
+  const side = state.side$.use();
   const handleOpenChange = React.useCallback(
     (next: boolean, source?: CloseSource) => {
       state.open$.next(next);
@@ -59,35 +44,9 @@ export const Drawer: React.FC<DrawerProps> = ({
     [state, onOpenChange],
   );
 
-  if (overlay) {
-    return (
-      <OverlayDrawer
-        {...rest}
-        open={open}
-        onOpenChange={handleOpenChange}
-        side={side}
-        width={width}
-        modalType={modalType}
-        backdrop={backdrop}
-        preventClose={preventClose}
-        mountNode={mountNode}
-      >
-        {children}
-      </OverlayDrawer>
-    );
-  }
-
   return (
-    <InlineDrawer
-      {...rest}
-      state={state}
-      open={open}
-      side={side}
-      width={width}
-      separator={separator}
-      onOpenChange={(next) => handleOpenChange(next, 'programmatic')}
-    >
-      {children}
-    </InlineDrawer>
+    <ctx.Provider value={state}>
+      <DrawerControlled {...rest} side={side} width={width} open={open} onOpenChange={handleOpenChange} />
+    </ctx.Provider>
   );
 };

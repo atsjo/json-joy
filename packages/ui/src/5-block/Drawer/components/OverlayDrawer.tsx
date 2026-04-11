@@ -89,7 +89,7 @@ const rightOpenClass = rule({
 
 export interface OverlayDrawerProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   open?: boolean;
-  onOpenChange: (open: boolean, source: CloseSource) => void;
+  onOpenChange?: (open: boolean, source: CloseSource) => void;
   side?: DrawerSide;
   width?: number | string;
   modalType?: 'modal' | 'non-modal';
@@ -125,7 +125,7 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
-        onOpenChange(false, 'escape');
+        onOpenChange?.(false, 'escape');
       }
     };
     document.addEventListener('keydown', handler);
@@ -133,7 +133,7 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
   }, [open, preventClose, onOpenChange]);
 
   const onBackdropClick = React.useCallback(() => {
-    if (!preventClose) onOpenChange(false, 'backdrop');
+    if (!preventClose) onOpenChange?.(false, 'backdrop');
   }, [preventClose, onOpenChange]);
 
   const isLeft = side === 'left';

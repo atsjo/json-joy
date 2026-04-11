@@ -154,44 +154,17 @@ export const OverlayRight: StoryObj = {
   },
 };
 
-export const ResponsiveAuto: StoryObj = {
-  render: () => {
-    const [open, setOpen] = React.useState(true);
-    return (
-      <div style={{display: 'flex', height: 400, border: '1px solid #ddd'}}>
-        <Drawer
-          open={open}
-          onOpenChange={(next) => setOpen(next)}
-          type="auto"
-          side="left"
-          width={220}
-          aria-label="Navigation"
-        >
-          <DrawerHeader>
-            <span style={{fontSize: 13, fontWeight: 600}}>Sidebar</span>
-          </DrawerHeader>
-          <NavContent />
-        </Drawer>
-        <div style={{flex: 1, padding: 16}}>
-          <button onClick={() => setOpen((v) => !v)}>{open ? 'Close' : 'Open'}</button>
-          <p style={{fontSize: 13}}>Resize the window below 768 px to switch from inline to overlay mode.</p>
-        </div>
-      </div>
-    );
-  },
-};
-
 export const ExternalState: StoryObj = {
   render: () => {
     const state = React.useMemo(() => new DrawerState({open: true, side: 'left', width: 200}), []);
     return (
       <div style={{display: 'flex', height: 400, border: '1px solid #ddd'}}>
-        <InlineDrawer state={state} aria-label="Navigation">
+        <Drawer state={state} aria-label="Navigation">
           <DrawerHeader>
             <span style={{fontSize: 13, fontWeight: 600}}>Controlled via state</span>
           </DrawerHeader>
           <NavContent />
-        </InlineDrawer>
+        </Drawer>
         <div style={{flex: 1, padding: 16}}>
           <button onClick={state.toggle}>Toggle</button>
           <button onClick={() => state.width$.next(state.width$.value + 20)} style={{marginLeft: 8}}>
