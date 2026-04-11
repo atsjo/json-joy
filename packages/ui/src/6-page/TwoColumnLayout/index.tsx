@@ -5,6 +5,9 @@ import {NiceUiSizes} from '../../constants';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import BasicButton from '../../2-inline-block/BasicButton';
 import {Iconista} from '../../icons/Iconista';
+import {OverlayDrawer} from '../../5-block/Drawer';
+import {BasicTooltip} from '../../4-card/BasicTooltip';
+import {useStyles} from '../../styles/context';
 
 const padding = 32;
 
@@ -14,9 +17,6 @@ const blockClass = rule({
   bxz: 'border-box',
   maxW: '1300px',
   mr: '0 auto',
-  '@media only screen and (max-width: 1000px)': {
-    padt: '8px',
-  },
 });
 
 const blockSmallScreenClass = rule({
@@ -53,17 +53,16 @@ export interface Props {
 }
 
 const TwoColumnLayout: React.FC<Props> = ({top = 0, left, right, sidebarTopPadding}) => {
-  const [_sidebar, setSidebar] = React.useState(false);
+  const [sidebar, setSidebar] = React.useState(false);
   const {width} = useWindowSize();
+  const styles = useStyles();
 
   if (width < 1000) {
     return (
       <>
-        {/* <Drawer
-          anchor={'left'}
+        <OverlayDrawer
           open={sidebar}
-          onClose={() => setSidebar((x) => !x)}
-          PaperProps={{style: {borderRadius: 32}}}
+          onOpenChange={() => setSidebar((x) => !x)}
         >
           <div
             style={{padding: 16, minWidth: `calc(min(100vw - 32px, ${NiceUiSizes.SidebarWidth}px))`}}
@@ -71,12 +70,15 @@ const TwoColumnLayout: React.FC<Props> = ({top = 0, left, right, sidebarTopPaddi
           >
             {left}
           </div>
-        </Drawer> */}
+        </OverlayDrawer>
         <div className={blockClass + blockSmallScreenClass}>
-          <div className={asideClass} style={{paddingTop: 16, paddingBottom: 16}}>
-            <BasicButton border size={32} onClick={() => setSidebar((x) => !x)}>
-              <Iconista set="ant_outline" icon="menu" width={16} height={16} />
-            </BasicButton>
+          <div className={asideClass} style={{paddingBottom: 16}}>
+            <BasicTooltip renderTooltip={() => 'Sidebar'}>
+              <BasicButton rounder size={32} onClick={() => setSidebar((x) => !x)}>
+                {/* <Iconista set="ant_outline" icon="menu" width={16} height={16} /> */}
+                <Iconista set="bootstrap" icon="layout-sidebar" width={16} height={16} style={{fill: styles.g(.4)}} />
+              </BasicButton>
+            </BasicTooltip>
           </div>
           <section>{right}</section>
         </div>

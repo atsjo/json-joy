@@ -14,7 +14,7 @@ const backdropClass = rule({
   left: 0,
   right: 0,
   bottom: 0,
-  z: 999,
+  z: 1500,
   trs: 'opacity 200ms ease',
 });
 
@@ -27,7 +27,7 @@ const panelClass = rule({
   d: 'flex',
   flexDirection: 'column',
   bxz: 'border-box',
-  z: 1000,
+  z: 1501,
   ov: 'hidden',
   out: 0,
   op: 0,
@@ -114,8 +114,8 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
     bd: `1px solid ${theme.isLight ? 'rgba(15,23,42,.08)' : 'rgba(255,255,255,.08)'}`,
     bdfl: 'saturate(180%) blur(18px)',
     bxsh: theme.isLight
-      ? '0 1px 2px rgba(15,23,42,.05), 0 16px 42px rgba(15,23,42,.16), 0 4px 14px rgba(15,23,42,.08)'
-      : '0 0 0 1px rgba(255,255,255,.04), 0 18px 44px rgba(0,0,0,.48), 0 4px 14px rgba(0,0,0,.28)',
+      ? '0 1px 1px rgba(15,23,42,.06), 0 8px 22px rgba(15,23,42,.15), 0 3px 8px rgba(15,23,42,.09)'
+      : '0 0 0 1px rgba(255,255,255,.04), 0 10px 28px rgba(0,0,0,.44), 0 3px 8px rgba(0,0,0,.26)',
   });
 
   useLockScrolling(open && modalType === 'modal');
