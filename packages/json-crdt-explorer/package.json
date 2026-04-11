@@ -1,0 +1,66 @@
+{
+  "name": "@jsonjoy.com/json-crdt-explorer",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.9.0",
+  "description": "Explorer playground site for JSON CRDT",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/json-crdt-explorer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/json-crdt-explorer"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "json-crdt-explorer",
+    "json-crdt-playground",
+    "json-crdt",
+    "playground",
+    "json",
+    "crdt",
+    "site",
+    "json-joy"
+  ],
+  "peerDependencies": {
+    "rxjs": "7",
+    "tslib": "*"
+  },
+  "dependencies": {
+    "@jsonjoy.com/collaborative-ui": "workspace:*",
+    "@jsonjoy.com/ui": "workspace:*",
+    "json-joy": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.0"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "deploy": "yarn build && wrangler pages deploy dist",
+    "deploy:preview": "yarn build && wrangler pages deploy dist --branch=preview",
+    "typecheck": "npx tsc --noEmit -p tsconfig.app.json",
+    "clean": "npx rimraf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "webpack": "^5.99.5",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1",
+    "wrangler": "^4.81.1"
+  }
+}

@@ -4,7 +4,7 @@ import {Services} from '../services/Services';
 import {context} from './context';
 import {Header} from './Header';
 import {GuidelinesPage} from './pages/GuidelinesPage';
-import {NiceUiProvider} from '../../context';
+import {UiProvider} from '../../context';
 import {NiceUiContentService} from '../../context/services/NiceUiContentService';
 import {content} from '../content';
 import {ComponentsPage} from './pages/ComponentsPage';
@@ -21,7 +21,7 @@ export const App: React.FC<AppProps> = () => {
 
   return (
     <CustomComponentsProvider value={custom}>
-      <NiceUiProvider content={contentService}>
+      <UiProvider content={contentService}>
         <context.Provider value={service}>
           <Header />
           <Route match={'/guidelines'} render={() => <GuidelinesPage />} />
@@ -29,7 +29,7 @@ export const App: React.FC<AppProps> = () => {
           <Route match={'/icons'} render={() => <IconsPage />} />
           <Route match={'/theme'} render={() => <ThemePage />} />
         </context.Provider>
-      </NiceUiProvider>
+      </UiProvider>
     </CustomComponentsProvider>
   );
 };

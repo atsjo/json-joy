@@ -1,2 +1,2 @@
-export * from './NiceUiProvider';
-export {useNiceUiServices} from './services';
+export * from './UiProvider';
+export {useUiServices} from './services';

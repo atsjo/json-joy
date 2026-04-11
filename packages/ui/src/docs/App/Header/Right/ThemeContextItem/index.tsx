@@ -3,14 +3,14 @@ import {useT} from 'use-t';
 import {ContextItem} from '../../../../../4-card/ContextMenu';
 import {Split} from '../../../../../3-list-item/Split';
 import {Checkbox} from '../../../../../2-inline-block/Checkbox';
-import {useNiceUiServices} from '../../../../../context';
+import {useUiServices} from '../../../../../context';
 import {useBehaviorSubject} from '../../../../../hooks/useBehaviorSubject';
 
 export type Props = {};
 
 export const ThemeContextItem: React.FC<Props> = () => {
   const [t] = useT();
-  const services = useNiceUiServices();
+  const services = useUiServices();
   const theme = useBehaviorSubject(services.theme$);
 
   const isLight = theme !== 'dark';

@@ -23,6 +23,7 @@ import {PlayIcon} from '../icons/PlayIcon';
 import type {ITimestampStruct, Model} from 'json-joy/lib/json-crdt';
 import {DownloadButton} from './DownloadButton';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const css = {
   header: rule({
@@ -56,6 +57,7 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
 }) => {
   const {width} = useWindowSize();
   const [t] = useT();
+  const styles = useStyles();
   const toasts = useToasts();
   // biome-ignore lint: manual dependency list
   const state = React.useMemo(() => (_state ? _state : new JsonCrdtLogState(log, {view: _view})), [_state, log]);
@@ -153,7 +155,10 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
 
   return (
     <context.Provider value={state}>
-      <Paper contrast round={!!spacious} style={{minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}>
+      <Paper
+        round={!!spacious}
+        style={{background: styles.g(0, 0.05), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
+      >
         {!!pinnedModel && <RunningBackground />}
         <div className={css.header} style={{marginTop: spacious ? (pinnedModel ? 6 : 8) : 0}}>
           {header}

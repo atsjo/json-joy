@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { definePreview } from '@storybook/react-webpack5';
 import { useGlobals } from 'storybook/preview-api';
-import { NiceUiProvider } from '../packages/ui/src/context';
+import { UiProvider } from '../packages/ui/src/context';
 
 const preview = definePreview({
+  addons: [],
   parameters: {
     controls: {
       matchers: {
@@ -26,7 +27,7 @@ const preview = definePreview({
       const color = globals?.backgrounds?.value;
       const isDark = color ? String(color)[1].toLowerCase() !== 'f' : false;
       return React.createElement(
-        NiceUiProvider,
+        UiProvider,
         { theme: isDark ? 'dark' : 'light' } as any,
         React.createElement(Story)
       );

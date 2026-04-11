@@ -3,4 +3,4 @@ import type {NiceUiServices} from './services/NiceUiServices';
 
 export const context = React.createContext<NiceUiServices>(null!);
 
-export const useNiceUiServices = () => React.useContext(context);
+export const useUiServices = () => React.useContext(context);
