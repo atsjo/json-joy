@@ -32,6 +32,7 @@ const packages = [
   'collaborative-prosemirror',
   'collaborative-slate',
   'collaborative-ui',
+  'json-crdt-explorer',
   'json-joy',
   'peritext',
   'ui',
