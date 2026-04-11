@@ -1,12 +1,12 @@
-# `@jsonjoy.com/json-crdt-playground`
+# `@jsonjoy.com/json-crdt-explorer`
 
-This package contains a playground site for testing and demonstrating JSON CRDTs. It includes a simple React app that allows you to create and edit JSON documents collaboratively, using json-joy's CRDT implementations under the hood.
+This package contains an explorer site for testing and demonstrating JSON CRDTs. It includes a simple React app that allows you to create and edit JSON documents collaboratively, using json-joy's CRDT implementations under the hood.
 
 
 ## Development
 
 ```sh
-yarn workspace @jsonjoy.com/json-crdt-playground dev
+yarn workspace @jsonjoy.com/json-crdt-explorer dev
 ```
 
 
@@ -18,8 +18,8 @@ yarn workspace @jsonjoy.com/json-crdt-playground dev
 **New scripts in package.json:**
 
 ```sh
-yarn workspace @jsonjoy.com/json-crdt-playground deploy           # build + deploy to production
-yarn workspace @jsonjoy.com/json-crdt-playground deploy:preview    # build + deploy to preview branch
+yarn workspace @jsonjoy.com/json-crdt-explorer deploy           # build + deploy to production
+yarn workspace @jsonjoy.com/json-crdt-explorer deploy:preview    # build + deploy to preview branch
 ```
 
 **What Wrangler publishes:** the entire `dist/` folder (the static build output).

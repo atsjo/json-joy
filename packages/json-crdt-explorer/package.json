@@ -1,19 +1,19 @@
 {
-  "name": "@jsonjoy.com/json-crdt-playground",
+  "name": "@jsonjoy.com/json-crdt-explorer",
   "publishConfig": {
     "access": "public"
   },
   "version": "18.9.0",
-  "description": "Playground site for JSON CRDT",
+  "description": "Explorer playground site for JSON CRDT",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/json-crdt-playground",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/json-crdt-explorer",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/json-crdt-playground"
+    "directory": "packages/json-crdt-explorer"
   },
   "license": "AGPL-3.0-only",
   "funding": {
@@ -21,6 +21,7 @@
     "url": "https://github.com/sponsors/streamich"
   },
   "keywords": [
+    "json-crdt-explorer",
     "json-crdt-playground",
     "json-crdt",
     "playground",
