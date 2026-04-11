@@ -82,14 +82,14 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const styleLabelOn: any = {
     left: small ? 6 : 6,
     width: small ? 11 : 16,
-    fontSize: small ? 10 : 12,
+    fontSize: small ? 9 : 12,
     color: 'rgba(255,255,255,.6)',
   };
 
   const styleLabelOff: any = {
     right: small ? 5 : 6,
     width: small ? 11 : 16,
-    fontSize: small ? 10 : 12,
+    fontSize: small ? 9 : 12,
     color: 'rgba(255,255,255,.4)',
   };
 
