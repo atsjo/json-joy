@@ -24,7 +24,12 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
+    {"path": "../buffers"},
+    {"path": "../util"},
     {"path": "../json-joy"},
-    {"path": "../reactive-rpc"}
+    {"path": "../json-type"},
+    {"path": "../json-pointer"},
+    {"path": "../json-pack"},
+    {"path": "../rpc-server"}
   ]
 }

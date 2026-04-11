@@ -20,6 +20,11 @@
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
+  "files": [
+    "LICENSE",
+    "lib/",
+    "dist/"
+  ],
   "keywords": [
     "json-crdt-explorer",
     "json-crdt-playground",

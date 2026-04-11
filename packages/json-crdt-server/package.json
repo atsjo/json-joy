@@ -20,6 +20,12 @@
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
+  "bin": "./bin/json-crdt-server.js",
+  "files": [
+    "LICENSE",
+    "lib/",
+    "bin/"
+  ],
   "keywords": [
     "json-crdt-server",
     "json-crdt",
@@ -44,8 +50,20 @@
     "tslib": "*"
   },
   "dependencies": {
-    "@jsonjoy.com/reactive-rpc": "workspace:*",
+    "@jsonjoy.com/buffers": "workspace:*",
+    "@jsonjoy.com/json-pack": "workspace:*",
+    "@jsonjoy.com/json-pointer": "workspace:*",
+    "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/rpc-server": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
+    "abstract-level": "^2.0.1",
+    "browser-level": "^1.0.1",
+    "classic-level": "^2.0.0",
     "json-joy": "workspace:*",
+    "memory-level": "^2.0.0",
+    "rxjs": "^7.8.2",
+    "sonic-forest": "^1.2.0",
+    "thingies": "^2.5.0",
     "tslib": "^2.8.1"
   },
   "engines": {
