@@ -1,6 +1,6 @@
-import {BatchColumnEncoder} from "../BatchColumnEncoder";
-import type {VerboseCodecBatch} from "./types";
-import type {Batch} from "../../Batch";
+import {BatchColumnEncoder} from '../BatchColumnEncoder';
+import type {VerboseCodecBatch} from './types';
+import type {Batch} from '../../Batch';
 
 export const encode = (batch: Batch): VerboseCodecBatch => {
   const columns = new BatchColumnEncoder();

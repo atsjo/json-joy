@@ -1,13 +1,16 @@
-import {Fuzzer} from "@jsonjoy.com/util/lib/Fuzzer";
-import {Model} from "../../model";
-import {FuzzerModel} from "./FuzzerModel";
-import {Patch, s} from "../../../json-crdt-patch";
+import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
+import type {Model} from '../../model';
+import {FuzzerModel} from './FuzzerModel';
+import {type Patch, s} from '../../../json-crdt-patch';
 
 export class FuzzerContext extends Fuzzer {
   public readonly models: FuzzerModel[] = [];
   public readonly patches: Patch[][] = [];
 
-  constructor(public readonly start: Model<any>, seed?: Buffer) {
+  constructor(
+    public readonly start: Model<any>,
+    seed?: Buffer,
+  ) {
     super(seed);
   }
 
@@ -33,7 +36,7 @@ export class FuzzerContext extends Fuzzer {
   }
 
   public valueList = [void 0, null, 123, 'str', {}, [], s.val(s.con(1))];
-  
+
   randomValue(): unknown {
     return this.pick(this.valueList);
   }

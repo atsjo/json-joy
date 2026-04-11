@@ -1,6 +1,6 @@
-import {BatchColumnDecoder} from "../BatchColumnDecoder";
-import type {VerboseCodecBatch} from "./types";
-import type {Batch} from "../../Batch";
+import {BatchColumnDecoder} from '../BatchColumnDecoder';
+import type {VerboseCodecBatch} from './types';
+import type {Batch} from '../../Batch';
 
 export const decode = (encoded: VerboseCodecBatch): Batch => {
   const columns = new BatchColumnDecoder(
@@ -14,7 +14,7 @@ export const decode = (encoded: VerboseCodecBatch): Batch => {
     encoded.t_id,
     encoded.t_val,
     encoded.data,
-    encoded.meta
+    encoded.meta,
   );
   const batch = columns.decode();
   return batch;

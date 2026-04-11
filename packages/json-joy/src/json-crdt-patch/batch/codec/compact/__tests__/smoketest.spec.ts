@@ -1,7 +1,7 @@
-import {ts} from "../../../../clock";
-import {InsStrOp, NewConOp, NewStrOp} from "../../../../operations";
-import {Batch} from "../../../Batch";
-import {assertRoundtrip} from "./assertRoundtrip";
+import {ts} from '../../../../clock';
+import {InsStrOp, NewConOp, NewStrOp} from '../../../../operations';
+import {Batch} from '../../../Batch';
+import {assertRoundtrip} from './assertRoundtrip';
 
 test('empty patch', () => {
   assertRoundtrip([]);

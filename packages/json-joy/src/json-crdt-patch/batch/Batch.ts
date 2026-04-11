@@ -34,6 +34,12 @@ export class Batch {
   public toString(tab: string = ''): string {
     const id = this.getId();
     const header = `Batch ${id ? printTs(id) : '(nil)'}`;
-    return header + printTree(tab, this.patches.map((patch) => (tab) => patch.toString(tab)));
+    return (
+      header +
+      printTree(
+        tab,
+        this.patches.map((patch) => (tab) => patch.toString(tab)),
+      )
+    );
   }
 }

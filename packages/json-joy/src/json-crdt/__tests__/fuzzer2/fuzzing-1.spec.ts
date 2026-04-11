@@ -1,9 +1,9 @@
-import {Model} from "../../model";
-import {FuzzerContext} from "./FuzzerContext";
+import {Model} from '../../model';
+import {FuzzerContext} from './FuzzerContext';
 
 const Math$$random = Math.random;
 const randomInt = (min: number, max: number): number => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math$$random() * (max - min + 1)) + min;
 };
 
 describe('`str` node fuzzing', () => {
@@ -23,7 +23,10 @@ describe('`str` node fuzzing', () => {
   test('run seeds', () => {
     for (let seed = 0; seed < 100; seed++) {
       const model = Model.create('');
-      const ctx = new FuzzerContext(model, Buffer.from([1, 3, 3, 7, seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      const ctx = new FuzzerContext(
+        model,
+        Buffer.from([1, 3, 3, 7, seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]),
+      );
       ctx.forkModel();
       ctx.forkModel();
       ctx.forkModel();
@@ -41,7 +44,10 @@ describe('`bin` node fuzzing', () => {
   test('run seeds', () => {
     for (let seed = 0; seed < 25; seed++) {
       const model = Model.create(new Uint8Array());
-      const ctx = new FuzzerContext(model, Buffer.from([42, 42, 42, seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      const ctx = new FuzzerContext(
+        model,
+        Buffer.from([42, 42, 42, seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]),
+      );
       ctx.forkModel();
       ctx.forkModel();
       ctx.forkModel();
@@ -74,7 +80,23 @@ describe('all nodes - 2 peers', () => {
   test('run seeds', () => {
     for (let seed = 0; seed < 10; seed++) {
       const model = Model.create({});
-      const ctx = new FuzzerContext(model, Buffer.from([42, 42, 42, seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      const ctx = new FuzzerContext(
+        model,
+        Buffer.from([
+          42,
+          42,
+          42,
+          seed,
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+        ]),
+      );
       ctx.forkModel();
       ctx.forkModel();
       for (let i = 0; i < 100; i++) {
@@ -92,7 +114,23 @@ describe('all nodes - 3 peers', () => {
   test('run seeds', () => {
     for (let seed = 0; seed < 10; seed++) {
       const model = Model.create({});
-      const ctx = new FuzzerContext(model, Buffer.from([seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      const ctx = new FuzzerContext(
+        model,
+        Buffer.from([
+          seed,
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+        ]),
+      );
       ctx.forkModel();
       ctx.forkModel();
       ctx.forkModel();
@@ -111,7 +149,23 @@ describe('all nodes - 4 peers', () => {
   test('run seeds', () => {
     for (let seed = 0; seed < 10; seed++) {
       const model = Model.create({});
-      const ctx = new FuzzerContext(model, Buffer.from([seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      const ctx = new FuzzerContext(
+        model,
+        Buffer.from([
+          seed,
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+          randomInt(0, 255),
+        ]),
+      );
       ctx.forkModel();
       ctx.forkModel();
       ctx.forkModel();

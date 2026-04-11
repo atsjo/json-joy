@@ -17,7 +17,7 @@ export interface ITimestampStruct {
    *
    * Needs to be mutable in vector clock. Other than that, it should be
    * treated as immutable.
-   * 
+   *
    * @todo Rename to `seq`?
    */
   time: number;

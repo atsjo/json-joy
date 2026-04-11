@@ -3,7 +3,7 @@ import {PatchBuilder} from '../../../../PatchBuilder';
 import {documents} from '../../../../../__tests__/json-documents';
 import {binaryDocuments} from '../../../../../__tests__/binary-documents';
 import {assertRoundtrip} from './assertRoundtrip';
-import {Patch} from '../../../../Patch';
+import type {Patch} from '../../../../Patch';
 import {Batch} from '../../../Batch';
 
 for (const document of [...documents, ...binaryDocuments]) {
@@ -15,7 +15,6 @@ for (const document of [...documents, ...binaryDocuments]) {
     assertRoundtrip(void 0, builder.patch);
   });
 }
-
 
 test('all docs in one batch', () => {
   const patches: Patch[] = [];

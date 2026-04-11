@@ -187,7 +187,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     for (let i = 0; i < length; i++) clone.elements.push(elements[i]);
     return clone as any;
   }
-  
+
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
     const {id, elements} = this;

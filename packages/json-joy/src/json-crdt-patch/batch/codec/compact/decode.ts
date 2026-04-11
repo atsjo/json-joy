@@ -1,6 +1,6 @@
-import {BatchColumnDecoder} from "../BatchColumnDecoder";
-import type {CompactCodecBatch} from "./types";
-import type {Batch} from "../../Batch";
+import {BatchColumnDecoder} from '../BatchColumnDecoder';
+import type {CompactCodecBatch} from './types';
+import type {Batch} from '../../Batch';
 
 export const decode = (encoded: CompactCodecBatch): Batch => {
   const columns = new BatchColumnDecoder(
@@ -14,7 +14,7 @@ export const decode = (encoded: CompactCodecBatch): Batch => {
     encoded[7],
     encoded[8],
     encoded[9],
-    encoded[10]
+    encoded[10],
   );
   const batch = columns.decode();
   return batch;

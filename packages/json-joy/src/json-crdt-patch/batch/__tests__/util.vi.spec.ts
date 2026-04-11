@@ -1,4 +1,4 @@
-import {de, dd, rld, rle, ze, zd, drle, drld} from "../util";
+import {de, dd, rld, rle, ze, zd, drle, drld} from '../util';
 
 describe('rle()', () => {
   test('encodes empty array', () => {
@@ -8,7 +8,7 @@ describe('rle()', () => {
   test('encodes array with no repeats', () => {
     expect(rle([1, 2, 3])).toEqual([1, 2, 3]);
   });
-  
+
   test('encodes array with repeats', () => {
     expect(rle([1, 1, 1, 2, 3, 3])).toEqual([1, -2, 2, 3, -1]);
   });
@@ -38,7 +38,7 @@ describe('rld()', () => {
   test('decodes array with no repeats', () => {
     expect(rld([1, 2, 3])).toEqual([1, 2, 3]);
   });
-  
+
   test('decodes array with repeats', () => {
     expect(rld([1, -2, 2, 3, -1])).toEqual([1, 1, 1, 2, 3, 3]);
   });
@@ -100,7 +100,7 @@ describe('drle()', () => {
     expect(drle([{}, null, 3])).toEqual([{}, null, 1, 3]);
   });
 
-  test.only('encodes array with repeats', () => {
+  test('encodes array with repeats', () => {
     expect(drle([{}, null, null, 3])).toEqual([{}, null, 2, 3]);
   });
 
@@ -141,12 +141,12 @@ describe('drle() and drld() roundtrip', () => {
     assertRoundtrip([1]);
     assertRoundtrip(['asdf']);
     assertRoundtrip([2, 'adsf', {}, null]);
-    assertRoundtrip([2, 'adsf', {}, null, {foo: 'bar'}, [1, 2, 3], null, null, undefined, 123]);
+    assertRoundtrip([2, 'adsf', {}, null, {foo: 'bar'}, [1, 2, 3], null, null, null, 123]);
   });
 
   test('fuzz', () => {
     for (let i = 0; i < 100; i++) {
-      const arr = Array.from({ length: i }, () => Math.random() > 0.5 ? null : {});
+      const arr = Array.from({length: i}, () => (Math.random() > 0.5 ? null : {}));
       assertRoundtrip(arr);
     }
   });

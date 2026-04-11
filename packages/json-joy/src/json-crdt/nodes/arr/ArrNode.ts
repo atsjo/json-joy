@@ -244,12 +244,12 @@ export class ArrNode<Element extends JsonNode = JsonNode>
     });
     return clone;
   }
-      
+
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
     const obj = this.id;
     if (!cc.has(obj)) ops.push(new NewArrOp(obj));
-    this.children(child => {
+    this.children((child) => {
       child.delta(model, cc, ops);
     });
     const iterator = this.iterator();

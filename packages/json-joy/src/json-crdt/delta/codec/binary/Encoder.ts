@@ -1,5 +1,5 @@
-import {Encoder as BatchEncoder} from "../../../../json-crdt-patch/batch/codec/binary/Encoder";
-import type {Delta} from "../../Delta";
+import {Encoder as BatchEncoder} from '../../../../json-crdt-patch/batch/codec/binary/Encoder';
+import type {Delta} from '../../Delta';
 
 export class Encoder extends BatchEncoder {
   public encodeDelta(delta: Delta): Uint8Array {

@@ -1,6 +1,6 @@
-import {Delta} from "../../Delta";
-import {ClockVector} from "../../../../json-crdt-patch";
-import {Decoder as BatchDecoder} from "../../../../json-crdt-patch/batch/codec/binary/Decoder";
+import {Delta} from '../../Delta';
+import {ClockVector} from '../../../../json-crdt-patch';
+import {Decoder as BatchDecoder} from '../../../../json-crdt-patch/batch/codec/binary/Decoder';
 
 export class Decoder extends BatchDecoder {
   public decodeDelta(data: Uint8Array): Delta {

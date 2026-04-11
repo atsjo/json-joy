@@ -1,9 +1,9 @@
-import {type ITimespanStruct, type ITimestampStruct, ts, tss} from "../../clock";
-import {JsonCrdtPatchOpcodeOverlay} from "../../enums";
-import * as operations from "../../operations";
-import {Patch} from "../../Patch";
-import {Batch} from "../Batch";
-import {dd, drld, rld, zd} from "../util";
+import {type ITimespanStruct, type ITimestampStruct, ts, tss} from '../../clock';
+import {JsonCrdtPatchOpcodeOverlay} from '../../enums';
+import * as operations from '../../operations';
+import {Patch} from '../../Patch';
+import {Batch} from '../Batch';
+import {dd, drld, rld, zd} from '../util';
 
 export class BatchColumnDecoder {
   private uintIdx: number = 0;
@@ -64,8 +64,7 @@ export class BatchColumnDecoder {
     const extra = opRaw & 0b111;
     switch (base) {
       case JsonCrdtPatchOpcodeOverlay.new_con: {
-        if (extra === 1)
-          return new operations.NewConOp(id, this.readTsNew());
+        if (extra === 1) return new operations.NewConOp(id, this.readTsNew());
         return new operations.NewConOp(id, this.data[this.dataIdx++]);
       }
       case JsonCrdtPatchOpcodeOverlay.new_val: {

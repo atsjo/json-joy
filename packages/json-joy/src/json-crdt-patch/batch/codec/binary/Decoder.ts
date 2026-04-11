@@ -1,6 +1,6 @@
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {CrdtReader} from '../../../util/binary/CrdtReader';
-import {Batch} from '../../Batch';
+import type {Batch} from '../../Batch';
 import {BatchColumnDecoder} from '../BatchColumnDecoder';
 
 /**
@@ -40,7 +40,19 @@ export class Decoder extends CborDecoder<CrdtReader> {
     const t_val = this.readUintCol();
     const data = this.readCborCol();
     const meta = this.readCborCol();
-    const columns = new BatchColumnDecoder(minSeq, maxSeq, sidTable, uint, s_old, s_new, t_obj, t_id, t_val, data, meta);
+    const columns = new BatchColumnDecoder(
+      minSeq,
+      maxSeq,
+      sidTable,
+      uint,
+      s_old,
+      s_new,
+      t_obj,
+      t_id,
+      t_val,
+      data,
+      meta,
+    );
     return columns.decode();
   }
 

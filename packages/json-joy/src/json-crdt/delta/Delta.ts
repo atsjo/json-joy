@@ -1,6 +1,6 @@
 import {printTree} from 'tree-dump';
-import {Batch} from '../../json-crdt-patch/Batch';
-import {IClockVector} from '../../json-crdt-patch';
+import type {Batch} from '../../json-crdt-patch/Batch';
+import type {IClockVector} from '../../json-crdt-patch';
 import {encoder, decoder} from './codec/binary/shared';
 import {indent} from '../../util/print';
 import type {Printable} from 'tree-dump/lib/types';
@@ -58,11 +58,14 @@ export class Delta implements Printable {
    * @returns Text representation of the delta.
    */
   public toString(tab: string = ''): string {
-    return 'Delta' + printTree(tab, [
-      (tab) => 'meta' + printTree(tab, [(tab) => indent(tab, this.meta)]),
-      (tab: string) => 'vv0: ' +this.vv0.toString(tab),
-      (tab: string) => 'vv1: ' + this.vv1.toString(tab),
-      (tab: string) => this.batch.toString(tab),
-    ]);
+    return (
+      'Delta' +
+      printTree(tab, [
+        (tab) => 'meta' + printTree(tab, [(tab) => indent(tab, this.meta)]),
+        (tab: string) => 'vv0: ' + this.vv0.toString(tab),
+        (tab: string) => 'vv1: ' + this.vv1.toString(tab),
+        (tab: string) => this.batch.toString(tab),
+      ])
+    );
   }
 }

@@ -1,7 +1,7 @@
-import {b} from "@jsonjoy.com/buffers/src/b";
-import {ClockVector, s, tick, ts} from "../../../json-crdt-patch";
-import {Model} from "../../model";
-import {Delta} from "../Delta";
+import {b} from '@jsonjoy.com/buffers/src/b';
+import {type ClockVector, s, tick, ts} from '../../../json-crdt-patch';
+import {Model} from '../../model';
+import {Delta} from '../Delta';
 
 const covers: (upper: ClockVector, lower: ClockVector) => boolean = (upper, lower) => {
   for (const ts of lower.peers.values()) if (!upper.has(ts)) return false;
@@ -119,7 +119,7 @@ test('`ins_arr` + `new_str` + `new_bin` + `new_arr` + `del`', () => {
   const model = Model.create(['a', 'x']);
   const model2 = model.fork();
   model2.api.arr([]).ins(1, ['b', 'c', b(5, 0, 0, 5), []]);
-  model2.api.arr([]).del(5, 1);;
+  model2.api.arr([]).del(5, 1);
   const delta = model2.delta(model.clock);
   model.applyDelta(delta);
   expect(model2.view()).toEqual(model.view());
@@ -148,12 +148,7 @@ test('complex case with many ops', () => {
       {id: 2, name: 'Bob'},
     ],
     verified: true,
-    tags: [
-      'Silk',
-      'Road',
-      {group: 'A', members: ['Alice', 'Bob']},
-      {group: 'B', members: ['Carol', 'Dave']},
-    ],
+    tags: ['Silk', 'Road', {group: 'A', members: ['Alice', 'Bob']}, {group: 'B', members: ['Carol', 'Dave']}],
   });
   const delta = model2.delta(model.clock);
   const blob = delta.toBinary();

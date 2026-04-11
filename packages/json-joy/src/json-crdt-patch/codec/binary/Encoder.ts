@@ -22,7 +22,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   /**
    * Encodes a JSON CRDT Patch into a {@link Uint8Array} blob.
-   * 
+   *
    * @todo Rename to `encodePatch`?
    *
    * @param patch A JSON CRDT Patch to encode.

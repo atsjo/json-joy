@@ -12,9 +12,9 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
 import {cmpNode} from '../equal/cmpNode';
 import {indent} from '../../util/print';
-import {Delta, DeltaMutator} from '../delta/Delta';
+import {Delta, type DeltaMutator} from '../delta/Delta';
 import {Batch} from '../../json-crdt-patch/Batch';
-import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
+import {type JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {SchemaToJsonNode} from '../schema/types';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from 'tree-dump/lib/types';
@@ -697,8 +697,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           );
         },
         nl,
-        (tab) =>
-          `view${printTree(tab, [(tab) => indent(tab, this.view())])}`,
+        (tab) => `view${printTree(tab, [(tab) => indent(tab, this.view())])}`,
         nl,
         (tab) => this.clock.toString(tab),
         hasExtensions ? nl : null,

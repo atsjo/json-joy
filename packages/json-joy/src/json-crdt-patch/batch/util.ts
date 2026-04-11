@@ -52,7 +52,7 @@ export const rld = (encoded: number[]): number[] => {
  * with arbitrarily complex POJO objects. Records repeats only of missing items
  * (null or undefined), other items are copied over as-is. A run of missing items
  * is recorded as `null` followed by a count of how many missing items there are.
- * 
+ *
  * For example, the sequence `[{}, null, null, 3]` would be encoded as `[{}, null, 2, 3]`.
  *
  * @param data List of arbitrary POJO data structures.
@@ -126,7 +126,7 @@ export const dd = (encoded: number[]): number[] => {
   if (!length) return [];
   let curr = encoded[0];
   const uint: number[] = [curr];
-  for (let i = 1; i < length; i++) uint.push(curr += encoded[i]);
+  for (let i = 1; i < length; i++) uint.push((curr += encoded[i]));
   return uint;
 };
 

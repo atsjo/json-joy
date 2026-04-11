@@ -1,7 +1,7 @@
-import {CborEncoder} from "@jsonjoy.com/json-pack/lib/cbor/CborEncoder";
-import {CrdtWriter} from "../../../../json-crdt-patch/util/binary/CrdtWriter";
-import {BatchColumnEncoder} from "../BatchColumnEncoder";
-import {Batch} from "../../Batch";
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
+import {BatchColumnEncoder} from '../BatchColumnEncoder';
+import type {Batch} from '../../Batch';
 
 export class Encoder extends CborEncoder<CrdtWriter> {
   constructor(public readonly writer: CrdtWriter = new CrdtWriter()) {

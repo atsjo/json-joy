@@ -1,8 +1,8 @@
-import {JsonCrdtOperation, JsonCrdtOperationGroup, Timestamp} from "../../../json-crdt-patch";
-import {JsonCrdtPatchOpcodeOverlay} from "../../../json-crdt-patch/enums";
-import {de, drle, rle, ze} from "../util";
-import * as operations from "../../../json-crdt-patch/operations";
-import {Batch} from "../Batch";
+import {type JsonCrdtOperation, type JsonCrdtOperationGroup, Timestamp} from '../../../json-crdt-patch';
+import {JsonCrdtPatchOpcodeOverlay} from '../../../json-crdt-patch/enums';
+import {de, drle, rle, ze} from '../util';
+import * as operations from '../../../json-crdt-patch/operations';
+import type {Batch} from '../Batch';
 
 export class BatchColumnEncoder {
   // ------------------------------------------------------ Header - page stats
@@ -11,12 +11,12 @@ export class BatchColumnEncoder {
   public readonly sids: Set<number> = new Set();
   public sidTable: number[] = [];
   public readonly sidMap: Map<number, number> = new Map();
-  
+
   // ------------------------------------------------------------------ Columns
 
   /**
    * Unsigned integers - used for multiple purposes:
-   * 
+   *
    * - Group size - number of operations in group
    * - Operation size - number of data elements in operation
    * - Opcodes - type of each operation in the group
@@ -27,7 +27,7 @@ export class BatchColumnEncoder {
   public s_old: number[] = [];
   /** SID new. */
   public s_new: number[] = [];
-  
+
   /** Time for existing obj references (obj, ref). */
   public t_obj: number[] = [];
   /** Time for operation IDs. */

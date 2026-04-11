@@ -161,7 +161,7 @@ export class ClockVector extends LogicalClock implements IClockVector {
   public static from(vv: VersionVector): ClockVector {
     const length = vv.length;
     if (length === 0) throw new Error('INV_VV');
-    const local = vv[0]
+    const local = vv[0];
     const clock = new ClockVector(local.sid, local.time + 1);
     for (let i = 1; i < length; i++) {
       const ts = vv[i];

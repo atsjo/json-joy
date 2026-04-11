@@ -1,9 +1,8 @@
-import {s} from "../../../json-crdt-patch";
-import {ArrApi, BinApi, Model, NodeApi, ObjApi, StrApi, ValApi, VecApi} from "../../model";
-import {FuzzerContext} from "./FuzzerContext";
+import {ArrApi, BinApi, type Model, type NodeApi, ObjApi, StrApi, ValApi, VecApi} from '../../model';
+import type {FuzzerContext} from './FuzzerContext';
 
 export class FuzzerModel {
-  constructor (
+  constructor(
     public readonly ctx: FuzzerContext,
     public readonly model: Model<any>,
   ) {}
@@ -30,11 +29,13 @@ export class FuzzerModel {
       if (!length) {
         node.ins(0, ctx.randomStr(ctx.randomInt(1, 10)));
       } else {
-        if (ctx.random() < .25) { // delete
+        if (ctx.random() < 0.25) {
+          // delete
           const pos = ctx.randomInt(0, length - 2);
           const len = ctx.randomInt(1, length - pos);
           node.del(pos, len);
-        } else { // insert
+        } else {
+          // insert
           const str = ctx.randomStr(ctx.randomInt(1, 10));
           const pos = ctx.randomInt(0, length);
           node.ins(pos, str);
@@ -45,11 +46,13 @@ export class FuzzerModel {
       if (!length) {
         node.ins(0, ctx.randomUint8Array(ctx.randomInt(1, 10)));
       } else {
-        if (ctx.random() < .25) { // delete
+        if (ctx.random() < 0.25) {
+          // delete
           const pos = ctx.randomInt(0, length - 2);
           const len = ctx.randomInt(1, length - pos);
           node.del(pos, len);
-        } else { // insert
+        } else {
+          // insert
           const str = ctx.randomUint8Array(ctx.randomInt(1, 10));
           const pos = ctx.randomInt(0, length);
           node.ins(pos, str);
@@ -60,11 +63,13 @@ export class FuzzerModel {
       if (!length) {
         node.ins(0, [ctx.randomValue()]);
       } else {
-        if (ctx.random() < .25) { // delete
+        if (ctx.random() < 0.25) {
+          // delete
           const pos = ctx.randomInt(0, length - 2);
           const len = ctx.randomInt(1, length - pos);
           node.del(pos, len);
-        } else { // insert
+        } else {
+          // insert
           const value = ctx.randomValue();
           const pos = ctx.randomInt(0, length);
           node.ins(pos, [value]);

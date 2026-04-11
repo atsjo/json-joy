@@ -131,7 +131,7 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
     });
     return clone;
   }
-    
+
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
     const obj = this.id;

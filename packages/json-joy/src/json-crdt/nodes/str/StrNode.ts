@@ -1,4 +1,4 @@
-import {IClockVector, type ITimestampStruct, tick, tss} from '../../../json-crdt-patch/clock';
+import {type IClockVector, type ITimestampStruct, tick, tss} from '../../../json-crdt-patch/clock';
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
 import {next} from 'sonic-forest/lib/util';
 import {DelOp, InsStrOp, NewStrOp} from '../../../json-crdt-patch';
@@ -132,7 +132,7 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
     });
     return clone;
   }
-  
+
   /** @ignore */
   public delta(model: Model, cc: IClockVector, ops: DeltaMutator[]): void {
     const obj = this.id;

@@ -1,10 +1,9 @@
-import {encode as encodePatch} from "../../../../json-crdt-patch/codec/verbose/encode";
-import type {ITimestampStruct} from "../../../../json-crdt-patch";
-import type {VerboseCodecDelta, VerboseCodecTimestamp} from "./types";
-import type {Delta} from "../../Delta";
+import {encode as encodePatch} from '../../../../json-crdt-patch/codec/verbose/encode';
+import type {ITimestampStruct} from '../../../../json-crdt-patch';
+import type {VerboseCodecDelta, VerboseCodecTimestamp} from './types';
+import type {Delta} from '../../Delta';
 
-const encodeTimestamp = (ts: ITimestampStruct): VerboseCodecTimestamp =>
-  [ts.sid, ts.time];
+const encodeTimestamp = (ts: ITimestampStruct): VerboseCodecTimestamp => [ts.sid, ts.time];
 
 export const encode = (delta: Delta): VerboseCodecDelta => {
   const res: VerboseCodecDelta = {
