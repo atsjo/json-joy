@@ -55,11 +55,65 @@ describe('`bin` node fuzzing', () => {
   });
 });
 
-describe('all nodes', () => {
-  test.only('run seeds', () => {
+describe('all nodes - 2 peers', () => {
+  test('Seed: Buffer.from([42, 42, 42, 1, 201, 161, 61, 197, 88, 106, 76, 108])', () => {
+    for (let seed = 0; seed < 10; seed++) {
+      const model = Model.create({});
+      const ctx = new FuzzerContext(model, Buffer.from([42, 42, 42, 1, 201, 161, 61, 197, 88, 106, 76, 108]));
+      ctx.forkModel();
+      ctx.forkModel();
+      for (let i = 0; i < 100; i++) {
+        ctx.execRandomOpsOnAllModels(1, 5);
+        ctx.flushPatches();
+        ctx.mergeAllModels();
+        ctx.assertAllModelViews();
+      }
+    }
+  });
+
+  test('run seeds', () => {
     for (let seed = 0; seed < 10; seed++) {
       const model = Model.create({});
       const ctx = new FuzzerContext(model, Buffer.from([42, 42, 42, seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      ctx.forkModel();
+      ctx.forkModel();
+      for (let i = 0; i < 100; i++) {
+        ctx.execRandomOpsOnAllModels(1, 5);
+        ctx.flushPatches();
+        ctx.mergeAllModels();
+        ctx.assertAllModelViews();
+      }
+      // ctx.dump();
+    }
+  });
+});
+
+describe('all nodes - 3 peers', () => {
+  test('run seeds', () => {
+    for (let seed = 0; seed < 10; seed++) {
+      const model = Model.create({});
+      const ctx = new FuzzerContext(model, Buffer.from([seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      ctx.forkModel();
+      ctx.forkModel();
+      ctx.forkModel();
+      for (let i = 0; i < 100; i++) {
+        ctx.execRandomOpsOnAllModels(1, 5);
+        ctx.flushPatches();
+        ctx.mergeAllModels();
+        ctx.assertAllModelViews();
+      }
+      // ctx.dump();
+    }
+  });
+});
+
+describe('all nodes - 4 peers', () => {
+  test('run seeds', () => {
+    for (let seed = 0; seed < 10; seed++) {
+      const model = Model.create({});
+      const ctx = new FuzzerContext(model, Buffer.from([seed, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)]));
+      ctx.forkModel();
+      ctx.forkModel();
       ctx.forkModel();
       ctx.forkModel();
       for (let i = 0; i < 100; i++) {

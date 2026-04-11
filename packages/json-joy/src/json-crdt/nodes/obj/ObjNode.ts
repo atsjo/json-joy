@@ -125,7 +125,7 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   private _tick: number = 0;
 
   /** @ignore */
-  private _view = {} as JsonNodeView<Value>;
+  private _view = Object.create(null) as JsonNodeView<Value>;
 
   /** @ignore */
   public view(): JsonNodeView<Value> {
@@ -133,7 +133,7 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
     const tick = doc.clock.time + doc.tick;
     const _view = this._view;
     if (this._tick === tick) return _view;
-    const view = {} as JsonNodeView<Value>;
+    const view = Object.create(null) as JsonNodeView<Value>;
     const index = doc.index;
     let useCache = true;
     this.keys.forEach((id, key) => {
@@ -145,7 +145,7 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
       const value = valueNode.view();
       if (value !== undefined) {
         if (_view[key] !== value) useCache = false;
-        (<any>view)[key] = value;
+        (view as any)[key] = value;
       } else if (_view[key] !== undefined) useCache = false;
     });
     return useCache ? _view : ((this._tick = tick), (this._view = view));
