@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, makeRule} from 'nano-theme';
+import {rule, drule, useTheme} from 'nano-theme';
 import type {DrawerSide} from '../types';
 
 const blockClass = rule({
@@ -20,13 +20,9 @@ const innerClass = rule({
   bxz: 'border-box',
 });
 
-const useBlockClass = makeRule((theme) => ({
-  bg: theme.bg,
-}));
+const blockThemeClass = drule({});
 
-const useSeparatorClass = makeRule((theme) => ({
-  borderColor: theme.g(0, 0.08),
-}));
+const separatorThemeClass = drule({});
 
 const leftSeparatorClass = rule({
   bdr: '1px solid transparent',
@@ -57,8 +53,13 @@ export const InlineDrawer: React.FC<InlineDrawerProps> = ({
   style,
   ...rest
 }) => {
-  const dynamicClass = useBlockClass();
-  const dynamicSeparatorClass = useSeparatorClass();
+  const theme = useTheme();
+  const dynamicClass = blockThemeClass({
+    bg: theme.bg,
+  });
+  const dynamicSeparatorClass = separatorThemeClass({
+    borderColor: theme.g(0, 0.08),
+  });
   const resolvedWidth = typeof width === 'string' ? width : `${width}px`;
 
   return (

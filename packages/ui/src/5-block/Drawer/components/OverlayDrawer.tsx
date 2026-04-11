@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, makeRule} from 'nano-theme';
+import {rule, drule, useTheme} from 'nano-theme';
 import {Portal} from '../../../utils/portal/Portal';
 import {useLockScrolling} from '../../../hooks/useLockScrolling';
 import {useFocusTrap} from '../hooks/useFocusTrap';
@@ -18,10 +18,7 @@ const backdropClass = rule({
   trs: 'opacity 200ms ease',
 });
 
-const useBackdropClass = makeRule((theme) => ({
-  bg: theme.isLight ? 'rgba(241,245,249,.46)' : 'rgba(2,6,23,.42)',
-  bdfl: 'saturate(180%) blur(14px)',
-}));
+const backdropThemeClass = drule({});
 
 const panelClass = rule({
   pos: 'fixed',
@@ -52,14 +49,7 @@ const panelOpenClass = rule({
   vis: 'visible',
 });
 
-const usePanelClass = makeRule((theme) => ({
-  bg: theme.isLight ? 'rgba(255,255,255,.92)' : 'rgba(19,24,32,.92)',
-  bd: `1px solid ${theme.isLight ? 'rgba(15,23,42,.08)' : 'rgba(255,255,255,.08)'}`,
-  bdfl: 'saturate(180%) blur(18px)',
-  bxsh: theme.isLight
-    ? '0 1px 2px rgba(15,23,42,.05), 0 16px 42px rgba(15,23,42,.16), 0 4px 14px rgba(15,23,42,.08)'
-    : '0 0 0 1px rgba(255,255,255,.04), 0 18px 44px rgba(0,0,0,.48), 0 4px 14px rgba(0,0,0,.28)',
-}));
+const panelThemeClass = drule({});
 
 const leftPanelShapeClass = rule({
   bdrad: `0 ${PANEL_RADIUS} ${PANEL_RADIUS} 0`,
@@ -114,8 +104,19 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
   ...rest
 }) => {
   const panelRef = React.useRef<HTMLDivElement>(null);
-  const dynamicBackdropClass = useBackdropClass();
-  const dynamicPanelClass = usePanelClass();
+  const theme = useTheme();
+  const dynamicBackdropClass = backdropThemeClass({
+    bg: theme.isLight ? 'rgba(241,245,249,.46)' : 'rgba(2,6,23,.42)',
+    bdfl: 'saturate(180%) blur(14px)',
+  });
+  const dynamicPanelClass = panelThemeClass({
+    bg: theme.isLight ? 'rgba(255,255,255,.92)' : 'rgba(19,24,32,.92)',
+    bd: `1px solid ${theme.isLight ? 'rgba(15,23,42,.08)' : 'rgba(255,255,255,.08)'}`,
+    bdfl: 'saturate(180%) blur(18px)',
+    bxsh: theme.isLight
+      ? '0 1px 2px rgba(15,23,42,.05), 0 16px 42px rgba(15,23,42,.16), 0 4px 14px rgba(15,23,42,.08)'
+      : '0 0 0 1px rgba(255,255,255,.04), 0 18px 44px rgba(0,0,0,.48), 0 4px 14px rgba(0,0,0,.28)',
+  });
 
   useLockScrolling(open && modalType === 'modal');
   useFocusTrap(panelRef, open && modalType === 'modal');
