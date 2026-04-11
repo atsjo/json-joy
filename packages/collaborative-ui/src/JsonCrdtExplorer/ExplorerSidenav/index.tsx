@@ -23,11 +23,17 @@ export const ExplorerSidenav: React.FC<ExplorerSidenavProps> = () => {
   const width = expanded ? NiceUiSizes.SidebarWidth + 100 : NiceUiSizes.SidebarWidth;
 
   return (
-    <div style={{display: 'flex', maxWidth: 400, width: '100%', alignItems: 'center', flexDirection: 'column'}}>
+    <div style={{display: 'flex', maxWidth: 360, width: '100%', alignItems: 'center', flexDirection: 'column'}}>
       <div style={{width}} onClick={(e) => e.stopPropagation()} onKeyDown={() => {}}>
         {expanded && (
-          <Text as={'h1'} size={16} font="sans" kind="bold" style={{textAlign: 'center', margin: '64px 0 0'}}>
-            {t('Explorer')}
+          <Text as={'h6'} font="sans" style={{textAlign: 'center', margin: '16px 0 0', opacity: .55, lineHeight: '1.5em', fontSize: '15px'}}>
+            JSON CRDT playground
+            ·
+            Explore JSON CRDT documents
+            ·
+            Save, load documents in various formats
+            ·
+            Time travel and debug document internal state
           </Text>
         )}
         <div style={{width}}>

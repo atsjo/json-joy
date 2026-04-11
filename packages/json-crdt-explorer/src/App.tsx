@@ -6,7 +6,9 @@ export const App: React.FC = () => {
   return (
     <>
       <Menu />
-      <JsonCrdtExplorer />
+      <div style={{width: 'calc(100vw - 64px)', maxWidth: 1300, margin: '0 auto', padding: '16px 0'}}>
+        <JsonCrdtExplorer />
+      </div>
     </>
   );
 };

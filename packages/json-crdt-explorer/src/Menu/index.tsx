@@ -5,6 +5,7 @@ import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {TopNav} from '@jsonjoy.com/ui/lib/5-block/TopNav';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import JsonJoyLogo from '@jsonjoy.com/ui/lib/icons/svg/JsonJoyLogo';
+import useWindowSize from 'react-use/lib/useWindowSize';
 
 const linkStyle: React.CSSProperties = {
   color: 'inherit',
@@ -18,6 +19,8 @@ const linkStyle: React.CSSProperties = {
 };
 
 export const Menu: React.FC = () => {
+  const { width } = useWindowSize();
+
   const logo = (
     <BasicTooltip nowrap renderTooltip={() => 'jsonjoy.com'}>
       <BasicButton
@@ -47,13 +50,13 @@ export const Menu: React.FC = () => {
     </div>
   );
 
-  const middle = (
+  const middle = width > 1000 && (
     <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-      <span style={{fontSize: '12px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
+      {/* <span style={{fontSize: '11px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
         JSON CRDT playground
       </span>
-      <span style={{opacity: 0.3, fontSize: '13px', userSelect: 'none'}}>·</span>
-      <span style={{fontSize: '12px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
+      <span style={{opacity: 0.3, fontSize: '13px', userSelect: 'none'}}>·</span> */}
+      <span style={{fontSize: '11px', opacity: 0.55, maxWidth: '340px', lineHeight: 1.35}}>
         Load and explore JSON CRDT documents
       </span>
     </div>
@@ -61,24 +64,26 @@ export const Menu: React.FC = () => {
 
   const right = (
     <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
-      <BasicTooltip renderTooltip={() => 'Specification of JSON CRDT format'}>
-        <BasicButton
-          to="https://jsonjoy.com/specs/json-crdt"
-          target="_blank"
-          rel="noreferrer"
-          width='auto'
-          height={32}
-          rounder
-          compact
-          
-        >
-          <span
-            style={linkStyle}
+      {width > 400 && (
+        <BasicTooltip renderTooltip={() => 'Specification of JSON CRDT format'}>
+          <BasicButton
+            to="https://jsonjoy.com/specs/json-crdt"
+            target="_blank"
+            rel="noreferrer"
+            width='auto'
+            height={32}
+            rounder
+            compact
+            
           >
-            JSON CRDT <Label>Spec</Label>
-          </span>
-      </BasicButton>
-      </BasicTooltip>
+            <span
+              style={linkStyle}
+            >
+              JSON CRDT <Label>Spec</Label>
+            </span>
+          </BasicButton>
+        </BasicTooltip>
+      )}
       <BasicTooltip nowrap renderTooltip={() => 'GitHub repository'}>
         <BasicButton
           to="https://github.com/streamich/json-joy"
@@ -97,7 +102,7 @@ export const Menu: React.FC = () => {
   return (
     <TopNav>
       {left}
-      {middle}
+      {/* {middle} */}
       {right}
     </TopNav>
   );
