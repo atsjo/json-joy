@@ -1,4 +1,5 @@
-import {Model, NodeApi, StrApi} from "../../model";
+import {s} from "../../../json-crdt-patch";
+import {ArrApi, BinApi, Model, NodeApi, ObjApi, StrApi, ValApi, VecApi} from "../../model";
 import {FuzzerContext} from "./FuzzerContext";
 
 export class FuzzerModel {
@@ -39,6 +40,59 @@ export class FuzzerModel {
           node.ins(pos, str);
         }
       }
+    } else if (node instanceof BinApi) {
+      const length = node.length();
+      if (!length) {
+        node.ins(0, ctx.randomUint8Array(ctx.randomInt(1, 10)));
+      } else {
+        if (ctx.random() < .25) { // delete
+          const pos = ctx.randomInt(0, length - 2);
+          const len = ctx.randomInt(1, length - pos);
+          node.del(pos, len);
+        } else { // insert
+          const str = ctx.randomUint8Array(ctx.randomInt(1, 10));
+          const pos = ctx.randomInt(0, length);
+          node.ins(pos, str);
+        }
+      }
+    } else if (node instanceof ArrApi) {
+      const length = node.length();
+      if (!length) {
+        node.ins(0, [ctx.randomValue()]);
+      } else {
+        if (ctx.random() < .25) { // delete
+          const pos = ctx.randomInt(0, length - 2);
+          const len = ctx.randomInt(1, length - pos);
+          node.del(pos, len);
+        } else { // insert
+          const value = ctx.randomValue();
+          const pos = ctx.randomInt(0, length);
+          node.ins(pos, [value]);
+        }
+      }
+    } else if (node instanceof ObjApi) {
+      const keys = Object.keys(node.view() as Record<string, unknown>);
+      const doInsert = !keys.length || ctx.random() < 0.75;
+      if (doInsert) {
+        const key = ctx.randomKey();
+        const value = ctx.randomValue();
+        node.set({[key]: value});
+      } else {
+        const key = ctx.pick(keys);
+        node.del([key]);
+      }
+    } else if (node instanceof VecApi) {
+      const length = node.length();
+      const doInsert = !length || ctx.random() < 0.75;
+      if (doInsert) {
+        const value = ctx.randomValue();
+        node.set([[length, value]]);
+      } else {
+        const key = ctx.randomInt(0, length - 1);
+        node.set([[key, void 0]]); // delete
+      }
+    } else if (node instanceof ValApi) {
+      node.set(ctx.randomValue());
     }
   }
 }

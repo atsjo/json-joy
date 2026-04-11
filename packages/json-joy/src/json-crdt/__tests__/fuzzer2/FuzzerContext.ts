@@ -1,7 +1,7 @@
 import {Fuzzer} from "@jsonjoy.com/util/lib/Fuzzer";
 import {Model} from "../../model";
 import {FuzzerModel} from "./FuzzerModel";
-import {Patch} from "../../../json-crdt-patch";
+import {Patch, s} from "../../../json-crdt-patch";
 
 export class FuzzerContext extends Fuzzer {
   public readonly models: FuzzerModel[] = [];
@@ -18,6 +18,24 @@ export class FuzzerContext extends Fuzzer {
       str += String.fromCharCode(charCode);
     }
     return str;
+  }
+
+  randomUint8Array(length: number) {
+    const arr = new Uint8Array(length);
+    for (let i = 0; i < length; i++) arr[i] = this.randomInt(0, 255);
+    return arr;
+  }
+
+  public keyList = ['a', 'b', 'id', 'test', 'name', '', '__proto__'];
+
+  randomKey(): string {
+    return this.pick(this.keyList);
+  }
+
+  public valueList = [void 0, null, 123, 'str', {}, [], s.val(s.con(1))];
+  
+  randomValue(): unknown {
+    return this.pick(this.valueList);
   }
 
   forkModel(): FuzzerModel {
@@ -68,15 +86,22 @@ export class FuzzerContext extends Fuzzer {
       try {
         expect(otherView).toEqual(view);
       } catch (error) {
-        for (let i = 0; i < length; i++) {
-          const m = models[i].model;
-          console.log(`Model ${i}`);
-          console.log(m + '');
-          for (const patch of this.patches[i]) {
-            console.log(patch + '');
-          }
-        }
+        this.dump();
         throw error;
+      }
+    }
+  }
+
+  dump() {
+    console.log('Seed:', `Buffer.from([${this.seed.join(', ')}])`);
+    const {models} = this;
+    const length = models.length;
+    for (let i = 0; i < length; i++) {
+      const m = models[i].model;
+      console.log(`Model ${i}`);
+      console.log(m + '');
+      for (const patch of this.patches[i]) {
+        console.log(patch + '');
       }
     }
   }
