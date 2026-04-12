@@ -2566,6 +2566,44 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/json-crdt-server@workspace:packages/json-crdt-server":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/json-crdt-server@workspace:packages/json-crdt-server"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-pointer": "workspace:*"
+    "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-server": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    "@types/node": "npm:^22.14.1"
+    abstract-level: "npm:^2.0.1"
+    browser-level: "npm:^1.0.1"
+    classic-level: "npm:^2.0.0"
+    css-loader: "npm:^7.1.2"
+    html-webpack-plugin: "npm:^5.6.3"
+    json-joy: "workspace:*"
+    memory-level: "npm:^2.0.0"
+    mini-css-extract-plugin: "npm:^2.9.2"
+    rxjs: "npm:^7.8.2"
+    sonic-forest: "npm:^1.2.0"
+    style-loader: "npm:^4.0.0"
+    thingies: "npm:^2.5.0"
+    ts-loader: "npm:^9.5.2"
+    tslib: "npm:^2.8.1"
+    webpack: "npm:^5.99.5"
+    webpack-cli: "npm:^6.0.1"
+    webpack-dev-server: "npm:^5.2.1"
+    wrangler: "npm:^4.81.1"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  bin:
+    json-crdt-server: ./bin/json-crdt-server.js
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-equal@workspace:*, @jsonjoy.com/json-equal@workspace:packages/json-equal":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-equal@workspace:packages/json-equal"
@@ -2976,7 +3014,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/rpc-server@workspace:packages/rpc-server":
+"@jsonjoy.com/rpc-server@workspace:*, @jsonjoy.com/rpc-server@workspace:packages/rpc-server":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-server@workspace:packages/rpc-server"
   dependencies:

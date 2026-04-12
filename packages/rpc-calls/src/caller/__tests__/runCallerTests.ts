@@ -3,7 +3,7 @@ import {firstValueFrom, lastValueFrom} from 'rxjs';
 import {of} from 'thingies/lib/of';
 import type {ProceduresToCallerMethods, Caller} from '../types';
 import type {procedures} from '../../testing/Callee.fixtures';
-import type {RpcError} from 'rpc-error';
+import type {RpcError} from '@jsonjoy.com/rpc-error';
 
 export interface ApiTestSetupResult {
   caller: Caller<ProceduresToCallerMethods<typeof procedures>>;

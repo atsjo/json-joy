@@ -3,7 +3,7 @@ import {createRpcCallee} from '../../testing/Callee.fixtures';
 import {RpcCallee} from '../RpcCallee';
 import {Procedure} from '../../procedures';
 import {of} from 'thingies';
-import {RpcError} from 'rpc-error';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 
 const setup = () => {
   const callee = createRpcCallee();

@@ -286,6 +286,14 @@ export const testBinaryCodegen = (transcode: (system: ModuleType, type: Type, va
       expect(transcode(system, type, value2)).toStrictEqual(value2);
     });
 
+    test('skips optional field when key is present but value is undefined', () => {
+      const system = new ModuleType();
+      const t = system.t;
+      const type = t.Object(t.Key('id', t.num), t.KeyOpt('cts', t.num));
+      const value: any = {id: 1, cts: undefined};
+      expect(transcode(system, type, value)).toStrictEqual({id: 1});
+    });
+
     test('can encode fixed size object', () => {
       const system = new ModuleType();
       const t = system.t;

@@ -1,6 +1,6 @@
 import {timer, from, Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
-import {RpcError} from 'rpc-error';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 import {Procedure} from '../procedures';
 import {RpcCallee} from '../callee/RpcCallee';
 

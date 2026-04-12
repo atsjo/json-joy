@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import {createTypedCallee} from '../../testing/TypedCallee.fixtures';
-import {RpcError} from 'rpc-error';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 
 describe('.call()', () => {
   test('can execute simple call with "str" response', async () => {

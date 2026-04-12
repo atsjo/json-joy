@@ -137,5 +137,6 @@ debug-storybook.log
 
 /.docs/
 
-# LevelDB files
+# Temporary test files
 /db/
+test-tmp/

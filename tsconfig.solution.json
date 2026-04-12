@@ -44,6 +44,8 @@
     { "path": "packages/rpc-codec/tsconfig.build.json" },
     { "path": "packages/jit-router/tsconfig.build.json" },
     { "path": "packages/rpc-client/tsconfig.build.json" },
-    { "path": "packages/rpc-server/tsconfig.build.json" }
+    { "path": "packages/rpc-server/tsconfig.build.json" },
+    { "path": "packages/json-crdt-explorer/tsconfig.build.json" },
+    { "path": "packages/json-crdt-server/tsconfig.build.json" }
   ]
 }

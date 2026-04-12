@@ -63,5 +63,6 @@ jobs:
       - run: yarn build
       - run: yarn vitest
       - run: yarn workspace @jsonjoy.com/rpc-server test:e2e:all
+      - run: yarn workspace @jsonjoy.com/json-crdt-server test:e2e
       - run: yarn typecheck
       - run: yarn typedoc

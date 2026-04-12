@@ -1,0 +1,172 @@
+import {t} from '../system';
+import type {ResolveType} from '@jsonjoy.com/json-type';
+
+export const BlockId = t.str.options({
+  title: 'Block ID',
+  min: 6,
+  max: 256,
+});
+export const BlockIdRef = t.Ref<typeof BlockId>('BlockId');
+
+export const BlockCur = t.num.options({
+  title: 'Block Sequence Number',
+  gte: -1,
+  format: 'i32',
+});
+export const BlockCurRef = t.Ref<typeof BlockCur>('BlockCur');
+
+export const BlockBatchSeq = t.num.options({
+  title: 'Batch Sequence Number',
+  gte: 0,
+  format: 'u32',
+});
+export const BlockBatchSeqRef = t.Ref<typeof BlockBatchSeq>('BlockBatchSeq');
+
+// ---------------------------------------------------------------------- Patch
+
+// biome-ignore format: props
+export const BlockPatchPartial = t.Object(
+  t.Key('blob', t.bin).options({
+    title: 'Patch Blob',
+    description: 'The binary data of the patch. The format of the data is defined by the patch type.',
+  }),
+);
+export const BlockPatchPartialRef = t.Ref<typeof BlockPatchPartial>('BlockPatchPartial');
+
+// biome-ignore format: props
+export const BlockPatchPartialReturn = t.Object(
+  t.Key('ts', t.num.options({format: 'u'})).options({
+    title: 'Patch Creation Time',
+    description: 'The time when the patch was created, in milliseconds since the Unix epoch.' +
+      '\n\n' + 
+      'This time is set by the server when the patch received and stored on the server. If you ' +
+      'want to also store the time when the patch was created by the user, you can include this ' +
+      'information in the patch blob itself.',
+  }),
+);
+export const BlockPatchPartialReturnRef = t.Ref<typeof BlockPatchPartialReturn>('BlockPatchPartialReturn');
+
+export const BlockPatch = BlockPatchPartial.extend(BlockPatchPartialReturn);
+export const BlockPatchRef = t.Ref<typeof BlockPatch>('BlockPatch');
+
+// ---------------------------------------------------------------------- Batch
+
+// biome-ignore format: props
+export const BlockBatchPartial = t.Object(
+  t.Key('patches', t.Array(BlockPatchPartialRef)),
+  t.KeyOpt('cts', t.num.options({
+    format: 'u',
+    title: 'Batch Creation Time',
+    description: 'The time when the batch was created, in milliseconds since the Unix epoch.',
+  })),
+);
+export const BlockBatchPartialRef = t.Ref<typeof BlockBatchPartial>('BlockBatchPartial');
+
+// biome-ignore format: props
+export const BlockBatchPartialReturn = t.Object(
+  t.Key('seq', t.num.options({format: 'u'})).options({
+    title: 'Batch Sequence Number',
+    description: 'The sequence number of the batch, representing the position in the history.',
+  }),
+  t.Key('ts', t.num.options({format: 'u'})).options({
+    title: 'Batch Creation Time',
+    description: 'The time when the batch was created, in milliseconds since the Unix epoch.' +
+      '\n\n' + 
+      'This time is set by the server when the batch was received and stored on the server.',
+  }),
+);
+export const BlockBatchPartialReturnRef = t.Ref<typeof BlockBatchPartialReturn>('BlockBatchPartialReturn');
+
+export const BlockBatch = BlockBatchPartial.extend(BlockBatchPartialReturn);
+export const BlockBatchRef = t.Ref<typeof BlockBatch>('BlockBatch');
+
+// ------------------------------------------------------------------- Snapshot
+
+export const BlockSnapshotReturn = t
+  .Object(
+    t.Key('id', BlockIdRef).options({
+      title: 'Block ID',
+      description: 'The ID of the block.',
+    }),
+    t.Key('seq', BlockCurRef).options({
+      title: 'Snapshot Cursor',
+      description: 'The cursor of the snapshot, representing the position in the history.',
+    }),
+    t.Key('ts', t.num.options({format: 'u'})).options({
+      title: 'Snapshot Creation Time',
+      description: 'The time when the snapshot was created, in milliseconds since the Unix epoch.',
+    }),
+  )
+  .options({
+    title: 'Block Snapshot Return',
+    description: "Partial snapshot returned on creation, doesn't include the blob.",
+  });
+export const BlockSnapshotReturnRef = t.Ref<typeof BlockSnapshotReturn>('BlockSnapshotReturn');
+
+// biome-ignore format: props
+export const BlockSnapshot = BlockSnapshotReturn.extend(t.Object(
+  t.Key('blob', t.bin).options({
+    title: 'Snapshot Blob',
+    description: 'A serialized JSON CRDT model.',
+  }),
+)).options({
+  title: 'Block Snapshot',
+  description: "A snapshot of the block's state at a certain point in time.",
+});
+export const BlockSnapshotRef = t.Ref<typeof BlockSnapshot>('BlockSnapshot');
+
+export const NewBlockSnapshotResponse = BlockSnapshot.omit('blob');
+export const NewBlockSnapshotResponseRef = t.Ref<typeof NewBlockSnapshotResponse>('NewBlockSnapshotResponse');
+
+// ---------------------------------------------------------------------- Block
+
+// biome-ignore format: props
+export const BlockNew = t.Object(
+  t.Key('id', t.Ref<typeof BlockId>('BlockId')),
+  t.Key('ts', t.num.options({format: 'u'})),
+  t.Key('uts', t.num.options({format: 'u'})),
+);
+export const BlockNewRef = t.Ref<typeof BlockNew>('BlockNew');
+
+// biome-ignore format: props
+export const Block = BlockNew.extend(t.Object(
+  t.Key('snapshot', BlockSnapshotRef),
+  t.Key('tip', t.Array(BlockBatchRef)),
+));
+export const BlockRef = t.Ref<typeof Block>('Block');
+
+// --------------------------------------------------------------------- Events
+
+export const BlockCreateEvent = t
+  .Tuple([t.Const(<const>'new').options({title: 'Event Type'})])
+  .options({title: 'Creation Event'});
+
+export const BlockDeleteEvent = t
+  .Tuple([t.Const(<const>'del').options({title: 'Event Type'})])
+  .options({title: 'Delete Event'});
+
+export const BlockUpdateEvent = t
+  .Tuple([
+    t.Const(<const>'upd').options({title: 'Event Type'}),
+    t
+      .Object(
+        t.Key('batch', BlockBatchRef).options({
+          title: 'Latest Patches',
+          description: 'Patches that have been applied to the block.',
+        }),
+      )
+      .options({title: 'Event Data'}),
+    t.Number({format: 'u32'}).options({title: 'Client ID'}),
+  ])
+  .options({title: 'Update Event'});
+
+export const BlockEvent = t.Or(BlockCreateEvent, BlockUpdateEvent, BlockDeleteEvent).options({
+  title: 'Block Event',
+  description: 'A collection of possible events that can happen to a block.',
+});
+export const BlockEventRef = t.Ref<typeof BlockEvent>('BlockEvent');
+
+export type TBlockDeleteEvent = ResolveType<typeof BlockDeleteEvent>;
+export type TBlockCreateEvent = ResolveType<typeof BlockCreateEvent>;
+export type TBlockUpdateEvent = ResolveType<typeof BlockUpdateEvent>;
+export type TBlockEvent = ResolveType<typeof BlockEvent>;
