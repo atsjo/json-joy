@@ -2,14 +2,15 @@ import {runBlockTests} from '../../server/block';
 import {runPresenceTests} from '../../server/presence';
 import {runPubsubTests} from '../../server/pubsub';
 import {runUtilTests} from '../../server/util';
+import {cborCodec, jsonCodec} from '../codecs';
+import {setupWsClient, setupHttpClient} from './client';
 import type {ApiTestSetup} from '../../types';
-import {cborCodec} from '../codecs';
-import {setupDemoServerPersistentClient, setupDemoServerFetchClient} from '../demo-client';
 
-if (process.env.TEST_E2E && process.env.TEST_E2E_DEMO_SERVER) {
+
+if (process.env.TEST_PUBLIC_SERVER) {
   describe('RxPersistentCaller', () => {
     const codec = cborCodec();
-    const setup: ApiTestSetup = async () => setupDemoServerPersistentClient(codec);
+    const setup: ApiTestSetup = async () => setupWsClient(codec);
     describe(`protocol: application/x.${codec.specifier()}`, () => {
       runUtilTests(setup);
       runPubsubTests(setup);
@@ -19,8 +20,8 @@ if (process.env.TEST_E2E && process.env.TEST_E2E_DEMO_SERVER) {
   });
 
   describe('FetchCaller', () => {
-    const codec = cborCodec();
-    const setup: ApiTestSetup = async () => setupDemoServerFetchClient(codec);
+    const codec = jsonCodec();
+    const setup: ApiTestSetup = async () => setupHttpClient(codec);
     describe(`protocol: application/x.${codec.specifier()}`, () => {
       runUtilTests(setup);
       runPubsubTests(setup, {staticOnly: true});
@@ -28,5 +29,5 @@ if (process.env.TEST_E2E && process.env.TEST_E2E_DEMO_SERVER) {
     });
   });
 } else {
-  test.skip('set TEST_E2E=1 env var to run this test suite', () => {});
+  test.skip('set TEST_PUBLIC_SERVER=1 env var to run this test suite', () => {});
 }

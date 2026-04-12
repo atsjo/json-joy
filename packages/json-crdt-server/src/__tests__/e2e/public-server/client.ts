@@ -8,8 +8,7 @@ import type {RxMessage} from '@jsonjoy.com/rpc-messages';
 import type {BinBatchCodec} from '@jsonjoy.com/rpc-codec-base';
 
 const secure = true;
-const host = 'demo-iasd8921ondk0.jsonjoy.com';
-// const host = '127.0.0.1:8080';
+const host = 'pub-1-api.jsonjoy.org';
 
 /** Adapts an {@link RpcCodec} to the {@link BinBatchCodec} interface for use with {@link FetchCaller}. */
 const rpcCodecToBinBatchCodec = (rpcCodec: RpcCodec<RxMessage>): BinBatchCodec<RxMessage> => ({
@@ -19,7 +18,7 @@ const rpcCodecToBinBatchCodec = (rpcCodec: RpcCodec<RxMessage>): BinBatchCodec<R
   fromChunk: (chunk: Uint8Array) => rpcCodec.decode(chunk, rpcCodec.res),
 });
 
-export const setupDemoServerPersistentClient = (codec: RpcCodec<RxMessage>) => {
+export const setupWsClient = (codec: RpcCodec<RxMessage>) => {
   const url = `ws${secure ? 's' : ''}://${host}/rx`;
   const caller = new RxPersistentCaller({
     codec,
@@ -36,7 +35,7 @@ export const setupDemoServerPersistentClient = (codec: RpcCodec<RxMessage>) => {
   return {caller: caller as any, call, call$, stop: async () => void caller.stop()};
 };
 
-export const setupDemoServerFetchClient = (codec: RpcCodec<RxMessage>) => {
+export const setupHttpClient = (codec: RpcCodec<RxMessage>) => {
   const url = `http${secure ? 's' : ''}://${host}/rx`;
   const caller = new FetchCaller({
     url,
