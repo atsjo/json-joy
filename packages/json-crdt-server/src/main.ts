@@ -3,7 +3,7 @@
 
 import * as fs from 'node:fs';
 import {createCaller, createServices} from './routes';
-import {RpcServer, RpcServerStartOpts} from '@jsonjoy.com/rpc-server/lib/http1/RpcServer';
+import {RpcServer, type RpcServerStartOpts} from '@jsonjoy.com/rpc-server/lib/http1/RpcServer';
 import type * as tls from 'node:tls';
 
 export type JsonJoyDemoRpcCaller = ReturnType<typeof createCaller>['caller'];

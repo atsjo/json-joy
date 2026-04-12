@@ -6,7 +6,6 @@ import {cborCodec, jsonCodec} from '../codecs';
 import {setupWsClient, setupHttpClient} from './client';
 import type {ApiTestSetup} from '../../types';
 
-
 if (process.env.TEST_PUBLIC_SERVER) {
   describe('RxPersistentCaller', () => {
     const codec = cborCodec();
