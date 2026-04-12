@@ -1,6 +1,6 @@
 import type * as msg from '@jsonjoy.com/rpc-messages';
 import {firstValueFrom, type Observable, ReplaySubject, timer} from 'rxjs';
-import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, share, switchMap, takeUntil} from 'rxjs/operators';
 import {RxLogicalChannelCaller} from './RxLogicalChannelCaller';
 import {PersistentPhysicalChannel, type PersistentPhysicalChannelOptions} from '@jsonjoy.com/channel';
 import {RxBatchCodecLogicalChannel} from '../channel/RxBatchCodecLogicalChannel';
@@ -76,7 +76,6 @@ export class RxPersistentCaller<Methods extends CallerMethods<any> = CallerMetho
     data: Observable<Methods[K][0]> | Methods[K][0],
   ): Observable<Methods[K][1]> {
     return this.rpc$.pipe(
-      first(),
       switchMap((rpc) => rpc.call$(method, data as any)),
       share(),
     );

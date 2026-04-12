@@ -72,12 +72,12 @@
   },
   "private": true,
   "scripts": {
-    "dev": "webpack serve --mode development",
-    "build": "webpack --mode production",
-    "typecheck": "npx tsc --noEmit -p tsconfig.app.json",
-    "clean": "npx rimraf dist",
-    "test": "jest --maxWorkers 7",
     "start": "npx ts-node --transpile-only src/main.ts",
+    "clean": "npx rimraf lib",
+    "build": "tsc -b tsconfig.build.json",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit",
+    "test": "jest --maxWorkers 7",
     "test:e2e": "node -r ts-node/register/transpile-only src/__tests__/e2e/run.ts",
     "test:e2e:jest": "TEST_E2E=1 jest --maxWorkers 1 --no-cache src/__tests__/e2e/json-crdt-server/"
   },

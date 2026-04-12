@@ -75,3 +75,4 @@ export const setupSymmetricCodecs = (opts: SetupCodecsOpts = {}) => {
 };
 
 export const cborCodec = () => createRpcCodecs().get('rpc.rx.binary.cbor');
+export const jsonCodec = () => createRpcCodecs().get('rpc.rx.compact.json');
