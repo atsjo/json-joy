@@ -20,56 +20,26 @@ DEPLOY_USER="deploy"
 APP_DIR="/srv/json-crdt-server"
 WIPE_DB="${WIPE_DB:-0}"
 
-# 1. build
+# 1. build + pack
 echo "==> Building"
 yarn workspace @jsonjoy.com/json-crdt-server build
 
-# 2. resolve workspace: deps to real npm versions
-echo "==> Preparing package.json"
-node - <<'NODEEOF'
-const fs = require('fs');
-const pkg = JSON.parse(fs.readFileSync('packages/json-crdt-server/package.json', 'utf8'));
-function resolve(deps) {
-  if (!deps) return deps;
-  return Object.fromEntries(Object.entries(deps).map(([name, ver]) => {
-    if (!ver.startsWith('workspace:')) return [name, ver];
-    const dir = name.startsWith('@jsonjoy.com/')
-      ? 'packages/' + name.replace('@jsonjoy.com/', '')
-      : 'packages/' + name;
-    try {
-      const v = JSON.parse(fs.readFileSync(dir + '/package.json', 'utf8')).version;
-      return [name, '^' + v];
-    } catch { return [name, '*']; }
-  }));
-}
-pkg.dependencies = resolve(pkg.dependencies);
-pkg.peerDependencies = resolve(pkg.peerDependencies);
-delete pkg.devDependencies;
-fs.writeFileSync('/tmp/deploy-package.json', JSON.stringify(pkg, null, 2));
-NODEEOF
+echo "==> Packing"
+(cd packages/json-crdt-server && yarn pack -o /tmp/json-crdt-server.tgz)
 
-# 3. push artifacts
-echo "==> Uploading lib/ to ${HOST}"
-rsync -rlzv --delete \
-  -e "ssh -i $SSH_KEY" \
-  packages/json-crdt-server/lib/ \
-  "${DEPLOY_USER}@${HOST}:${APP_DIR}/lib/"
-
-echo "==> Uploading config"
+# 2. push artifacts
+echo "==> Uploading to ${HOST}"
 scp -i "$SSH_KEY" \
-  /tmp/deploy-package.json \
-  "${DEPLOY_USER}@${HOST}:${APP_DIR}/package.json"
-scp -i "$SSH_KEY" \
+  /tmp/json-crdt-server.tgz \
   packages/json-crdt-server/ecosystem.config.js \
-  "${DEPLOY_USER}@${HOST}:${APP_DIR}/ecosystem.config.js"
+  "${DEPLOY_USER}@${HOST}:~/"
 
-# 4. install + restart
+# 3. install + restart
 echo "==> Restarting server"
 $SSH "${DEPLOY_USER}@${HOST}" "
   set -e
   export NVM_DIR=\"\$HOME/.nvm\"
   . \"\$NVM_DIR/nvm.sh\"
-  cd ${APP_DIR}
 
   if [[ '${WIPE_DB}' == '1' ]]; then
     echo '--- wiping database'
@@ -77,13 +47,16 @@ $SSH "${DEPLOY_USER}@${HOST}" "
     rm -rf /var/lib/json-crdt-server/db
   fi
 
+  mkdir -p ${APP_DIR}
+  tar -xzf ~/json-crdt-server.tgz -C ${APP_DIR} --strip-components=1
+  cp ~/ecosystem.config.js ${APP_DIR}/ecosystem.config.js
+  cd ${APP_DIR}
   npm install --omit=dev
   pm2 restart json-crdt-server 2>/dev/null || pm2 start ecosystem.config.js
   pm2 save
 "
 
-# 5. smoke test
-echo "==> Smoke test"
+# 4. smoke test
 sleep 2
 curl -sf "https://${DOMAIN}/rpc" \
   -H 'Content-Type: rpc.rx.compact.json' \
