@@ -2566,7 +2566,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/json-crdt-server@workspace:packages/json-crdt-server":
+"@jsonjoy.com/json-crdt-repo@workspace:packages/json-crdt-repo":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/json-crdt-repo@workspace:packages/json-crdt-repo"
+  dependencies:
+    "@jsonjoy.com/channel": "workspace:*"
+    "@jsonjoy.com/json-crdt-server": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/rpc-calls": "workspace:*"
+    "@jsonjoy.com/rpc-client": "workspace:*"
+    "@jsonjoy.com/rpc-codec": "workspace:*"
+    "@jsonjoy.com/rpc-codec-base": "workspace:*"
+    "@jsonjoy.com/rpc-error": "workspace:*"
+    "@jsonjoy.com/rpc-messages": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    abstract-level: "npm:^2.0.0"
+    browser-level: "npm:^1.0.1"
+    json-joy: "workspace:*"
+    memory-level: "npm:^1.0.0"
+    rx-use: "npm:^1.8.2"
+    sonic-forest: "npm:^1.2.1"
+    thingies: "npm:^2.6.0"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/json-crdt-server@workspace:*, @jsonjoy.com/json-crdt-server@workspace:packages/json-crdt-server":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-crdt-server@workspace:packages/json-crdt-server"
   dependencies:
@@ -2908,7 +2935,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/rpc-client@workspace:packages/rpc-client":
+"@jsonjoy.com/rpc-client@workspace:*, @jsonjoy.com/rpc-client@workspace:packages/rpc-client":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/rpc-client@workspace:packages/rpc-client"
   dependencies:

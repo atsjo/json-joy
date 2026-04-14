@@ -1,0 +1,94 @@
+{
+  "name": "@jsonjoy.com/json-crdt-repo",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.12.0",
+  "description": "Local-first browser client for JSON CRDTs.",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/json-crdt-repo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/json-crdt-repo"
+  },
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "json",
+    "crdt",
+    "browser",
+    "local-first",
+    "client",
+    "json-crdt",
+    "json-joy",
+    "repository",
+    "repo"
+  ],
+  "peerDependencies": {
+    "rxjs": "7",
+    "tslib": "*"
+  },
+  "dependencies": {
+    "@jsonjoy.com/channel": "workspace:*",
+    "@jsonjoy.com/json-crdt-server": "workspace:*",
+    "@jsonjoy.com/json-pack": "workspace:*",
+    "@jsonjoy.com/rpc-calls": "workspace:*",
+    "@jsonjoy.com/rpc-client": "workspace:*",
+    "@jsonjoy.com/rpc-codec": "workspace:*",
+    "@jsonjoy.com/rpc-codec-base": "workspace:*",
+    "@jsonjoy.com/rpc-error": "workspace:*",
+    "@jsonjoy.com/rpc-messages": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
+    "abstract-level": "^2.0.0",
+    "browser-level": "^1.0.1",
+    "json-joy": "workspace:*",
+    "memory-level": "^1.0.0",
+    "rx-use": "^1.8.2",
+    "sonic-forest": "^1.2.1",
+    "thingies": "^2.6.0"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -b --noEmit",
+    "test": "jest --maxWorkers 7"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}
