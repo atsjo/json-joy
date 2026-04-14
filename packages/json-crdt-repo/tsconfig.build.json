@@ -25,6 +25,7 @@
   "references": [
     {"path": "../json-joy/tsconfig.build.json"},
     {"path": "../util/tsconfig.build.json"},
+    {"path": "../json-equal/tsconfig.build.json"},
     {"path": "../json-pack/tsconfig.build.json"},
     {"path": "../json-crdt-server/tsconfig.build.json"},
     {"path": "../rpc-client/tsconfig.build.json"},

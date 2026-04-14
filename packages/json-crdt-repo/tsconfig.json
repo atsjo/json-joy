@@ -27,6 +27,7 @@
     {"path": "../json-joy"},
     {"path": "../util"},
     {"path": "../json-pack"},
+    {"path": "../json-equal"},
     {"path": "../json-crdt-server"},
     {"path": "../rpc-client"},
     {"path": "../rpc-calls"}

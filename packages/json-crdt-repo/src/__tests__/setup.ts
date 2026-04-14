@@ -1,0 +1,44 @@
+import {MemoryLevel} from 'memory-level';
+import {CalleeCaller} from '@jsonjoy.com/rpc-calls/lib/caller/CalleeCaller';
+import {createCaller} from '@jsonjoy.com/json-crdt-server/lib/routes';
+import {LevelStore} from '@jsonjoy.com/json-crdt-server/lib/services/blocks/store/level/LevelStore';
+import {Services} from '@jsonjoy.com/json-crdt-server/lib/services/Services';
+import {ClassicLevel} from 'classic-level';
+import {MemoryStore} from '@jsonjoy.com/json-crdt-server/lib/services/blocks/store/MemoryStore';
+import type {Store} from '@jsonjoy.com/json-crdt-server/lib/services/blocks/store/types';
+
+export const setup = async (store: Store = new MemoryStore(), close?: () => Promise<void>) => {
+  const services = new Services({store});
+  const {caller} = createCaller(services);
+  const client = new CalleeCaller(caller.rpc as any, {} as any);
+  const call = async (method: string, req?: unknown): Promise<any> =>
+    await client.call(method as any, req as any);
+  const call$ = client.call$.bind(client);
+  const stop = async (): Promise<void> => {
+    await close?.();
+  };
+  return {call, call$, stop};
+};
+
+export const setupMemory = async () => {
+  const store = new MemoryStore();
+  return setup(store);
+};
+
+export const setupLevelMemory = async () => {
+  const kv = new MemoryLevel<string, Uint8Array>({
+    keyEncoding: 'utf8',
+    valueEncoding: 'view',
+  });
+  const store = new LevelStore(<any>kv);
+  return setup(store);
+};
+
+export const setupLevelClassic = async () => {
+  const kv = new ClassicLevel<string, Uint8Array>('./db', {valueEncoding: 'view'});
+  await kv.open();
+  const store = new LevelStore(<any>kv);
+  return setup(store, async () => kv.close());
+};
+
+export type JsonCrdtTestSetup = typeof setup;
