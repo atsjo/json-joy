@@ -2,6 +2,25 @@ import {Model, s} from 'json-joy/lib/json-crdt';
 import {setup} from './setup';
 import {of, tick, until} from 'thingies';
 import type {BlockId, LocalRepo} from '../../local/types';
+import {EditSessionFactory} from '../EditSessionFactory';
+
+const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+const createDelayedSessions = (repo: LocalRepo, sid: number, pullDelay: number) => {
+  const delayedRepo: LocalRepo = {
+    create: repo.create.bind(repo),
+    get: repo.get.bind(repo),
+    getIf: repo.getIf.bind(repo),
+    sync: repo.sync.bind(repo),
+    pull: async (id) => {
+      await delay(pullDelay);
+      return await repo.pull(id);
+    },
+    del: repo.del.bind(repo),
+    change$: repo.change$.bind(repo),
+  };
+  return new EditSessionFactory({repo: delayedRepo, sid});
+};
 
 const readLocal = async (local: LocalRepo, id: BlockId) => {
   const {model} = await local.get({id});
@@ -252,6 +271,7 @@ describe('.load()', () => {
 
   test('can specify timeout when loading from remote, and throw if it is exceeded', async () => {
     const kit = await setup();
+    const sessions = createDelayedSessions(kit.local, kit.sid, 25);
     // Create on remote.
     const model = Model.create(undefined, kit.sid);
     model.api.root({foo: 'bar'});
@@ -261,13 +281,14 @@ describe('.load()', () => {
     const model2 = await kit.getModelFromRemote(kit.blockId.join('/'));
     expect(model2.view()).toEqual({foo: 'bar'});
     // Load session with the same ID.
-    const [, error] = await of(kit.sessions.load({id, remote: {timeout: 1}}));
+    const [, error] = await of(sessions.load({id, remote: {timeout: 5}}));
     expect(error).toEqual(new Error('TIMEOUT'));
     await kit.stop();
   });
 
   test('can specify timeout when loading from remote, and not throw if it is not exceeded', async () => {
     const kit = await setup();
+    const sessions = createDelayedSessions(kit.local, kit.sid, 25);
     // Create on remote.
     const model = Model.create(undefined, kit.sid);
     model.api.root({foo: 'bar'});
@@ -277,7 +298,7 @@ describe('.load()', () => {
     const model2 = await kit.getModelFromRemote(kit.blockId.join('/'));
     expect(model2.view()).toEqual({foo: 'bar'});
     // Load session with the same ID.
-    const session = await kit.sessions.load({id, remote: {timeout: 1111}});
+    const session = await sessions.load({id, remote: {timeout: 100}});
     expect(session.model.view()).toEqual({foo: 'bar'});
     await session.dispose();
     await kit.stop();
@@ -285,6 +306,7 @@ describe('.load()', () => {
 
   test('can specify timeout when loading from remote, but does not throw if "make" is specified', async () => {
     const kit = await setup();
+    const sessions = createDelayedSessions(kit.local, kit.sid, 25);
     // Create on remote.
     const model = Model.create(undefined, kit.sid);
     model.api.root({foo: 'bar'});
@@ -295,7 +317,7 @@ describe('.load()', () => {
     expect(model2.view()).toEqual({foo: 'bar'});
     // Load session with the same ID.
     const schema = s.obj({xyz: s.con(123)});
-    const session = await kit.sessions.load({id, remote: {timeout: 1}, make: {schema}});
+    const session = await sessions.load({id, remote: {timeout: 5}, make: {schema}});
     expect(session.model.view()).toEqual({xyz: 123});
     await session.dispose();
     await kit.stop();

@@ -244,7 +244,10 @@ describe('.delete()', () => {
       await caller.call('block.get', {id}, {});
       throw new Error('not this error');
     } catch (err: any) {
-      expect(err.data.message).toBe('Not Found');
+      expect(err).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'Not Found',
+      });
     }
   });
 });
@@ -259,31 +262,36 @@ describe('.listen()', () => {
     const blob = patch.toBinary();
     await remote.create(id, {patches: [{blob}]});
     const events: any[] = [];
-    remote.listen(id).subscribe(({event}) => {
+    const subscription = remote.listen(id).subscribe(({event}) => {
       events.push(event);
     });
-    Model.create();
-    model.api.obj([]).set({
-      foo: 'bar',
-    });
-    const patch2 = model.api.flush();
-    const blob2 = patch2.toBinary();
-    await remote.update(id, {patches: [{blob: blob2}]});
-    await until(() => events.length === 1);
-    expect(events[0]).toMatchObject([
-      'upd',
-      {
-        batch: {
-          seq: 1,
-          ts: expect.any(Number),
-          patches: [
-            {
-              blob: expect.any(Uint8Array),
-            },
-          ],
+    try {
+      Model.create();
+      model.api.obj([]).set({
+        foo: 'bar',
+      });
+      const patch2 = model.api.flush();
+      const blob2 = patch2.toBinary();
+      await remote.update(id, {patches: [{blob: blob2}]});
+      await until(() => events.some((event) => event[0] === 'upd' && event[1].batch.seq === 1));
+      const event = events.find((event) => event[0] === 'upd' && event[1].batch.seq === 1);
+      expect(event).toMatchObject([
+        'upd',
+        {
+          batch: {
+            seq: 1,
+            ts: expect.any(Number),
+            patches: [
+              {
+                blob: expect.any(Uint8Array),
+              },
+            ],
+          },
         },
-      },
-      0,
-    ]);
+        0,
+      ]);
+    } finally {
+      subscription.unsubscribe();
+    }
   });
 });

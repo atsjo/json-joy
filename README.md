@@ -19,8 +19,8 @@ Conflict-free Replicated Data Type that enables seamless
 merging of changes in JSON data models, avoiding conflicts between replicas.
 
 - [**Website**](https://jsonjoy.com)
-- [**JSON CRDT Explorer**](https://explorer.jsoncrdt.org)
 - [**Documentation**](https://jsonjoy.com/libs/json-joy-js)
+- [**JSON CRDT Explorer**](https://explorer.jsoncrdt.org)
 - Integrations
   - [**React.js**](./packages/collaborative-react/README.md)
   - [React.js **`<CollaborativeInput>`**](./packages/collaborative-input-react/README.md)

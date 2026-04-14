@@ -65,9 +65,10 @@ export class BlocksServices {
         blob: model.toBinary(),
         ts: now,
       };
+      const res = await this.store.create(snapshot, snapshot);
       this.__emitNew(id);
       go(() => this.gc());
-      return await this.store.create(snapshot, snapshot);
+      return res;
     }
     validateBatch(batch);
     const model = Model.create(void 0, 2 /* SESSION.GLOBAL */);
@@ -91,7 +92,7 @@ export class BlocksServices {
     return res;
   }
 
-  private __emitNew(id: string) {
+  private __emitNew(id: string): void {
     const msg: TBlockCreateEvent = ['new'];
     this.services.pubsub.publish(`__block:${id}`, msg).catch((error) => {
       // tslint:disable-next-line:no-console
@@ -99,11 +100,19 @@ export class BlocksServices {
     });
   }
 
-  private __emitUpd(id: string, batch: StoreBatch, clientId: number) {
+  private __emitUpd(id: string, batch: StoreBatch, clientId: number): void {
     const msg: TBlockUpdateEvent = ['upd', {batch}, clientId];
     this.services.pubsub.publish(`__block:${id}`, msg).catch((error) => {
       // tslint:disable-next-line:no-console
       console.error('Error publishing block patches', error);
+    });
+  }
+
+  private __emitDel(id: string): void {
+    const msg: TBlockDeleteEvent = ['del'];
+    this.services.pubsub.publish(`__block:${id}`, msg).catch((error) => {
+      // tslint:disable-next-line:no-console
+      console.error('Error publishing block deletion', error);
     });
   }
 
@@ -124,11 +133,7 @@ export class BlocksServices {
 
   public async remove(id: string) {
     const deleted = await this.store.remove(id);
-    const msg: TBlockDeleteEvent = ['del'];
-    this.services.pubsub.publish(`__block:${id}`, msg).catch((error) => {
-      // tslint:disable-next-line:no-console
-      console.error('Error publishing block deletion', error);
-    });
+    if (deleted) this.__emitDel(id);
     return deleted;
   }
 
