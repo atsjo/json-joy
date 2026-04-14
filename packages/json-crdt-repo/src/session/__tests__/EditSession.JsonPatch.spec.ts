@@ -72,9 +72,7 @@ describe('JSON Patch interface', () => {
     };
     await assertView({foo: 'bar'});
     jp2.update({op: 'add', path: '/tags', value: ['tag1', 'tag2']});
-    console.log(jp2.get());
     await tick(1111);
-    console.log(jp1.get());
     await assertView({foo: 'bar', tags: ['tag1', 'tag2']});
     jp1.update({op: 'add', path: '/a', value: {b: 'c'}});
     await assertView({foo: 'bar', tags: ['tag1', 'tag2'], a: {b: 'c'}});

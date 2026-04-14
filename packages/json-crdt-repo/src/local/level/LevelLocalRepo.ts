@@ -1,5 +1,5 @@
-import {BehaviorSubject, defer, type Observable, type Subscription} from 'rxjs';
-import {catchError, filter, finalize, map, share, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, defer, type Observable, Subject, type Subscription} from 'rxjs';
+import {catchError, filter, finalize, map, share, switchMap, takeUntil} from 'rxjs/operators';
 import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
@@ -34,6 +34,7 @@ import type {
   LocalBatch,
   SyncResult,
   LevelLocalRepoPubSub,
+  LevelLocalRepoPubSubMessage,
   LevelLocalRepoCursor,
   BlockSyncRecord,
 } from './types';
@@ -202,13 +203,31 @@ export class LevelLocalRepo implements LocalRepo {
 
   private _conSub: Subscription | undefined = undefined;
   private _stopped = false;
+  private readonly _stop$ = new Subject<void>();
 
   @once
   public stop(): void {
     this._remoteSyncLoopActive = false;
     clearTimeout(this._remoteSyncDelayTimer as any);
     this._stopped = true;
+    this._stop$.next();
+    this._stop$.complete();
     this._conSub?.unsubscribe();
+  }
+
+  protected emitSyncError(error: Error | unknown): void {
+    if (this._stopped) return;
+    this.opts.onSyncError?.(error);
+  }
+
+  protected emitPubSub(message: LevelLocalRepoPubSubMessage): void {
+    if (this._stopped) return;
+    try {
+      this.pubsub.pub(message);
+    } catch (error) {
+      if (this._stopped) return;
+      this.emitSyncError(error);
+    }
   }
 
   // eslint-disable-next-line
@@ -431,7 +450,7 @@ export class LevelLocalRepo implements LocalRepo {
     if (this._stopped) return false;
     this.markDirty(keyBase, id).catch((error) => {
       if (this._stopped) return;
-      this.opts.onSyncError?.(error);
+      this.emitSyncError(error);
     });
     try {
       return await this.push(keyBase, id, true);
@@ -466,7 +485,10 @@ export class LevelLocalRepo implements LocalRepo {
       const meta = await this.readMeta(keyBase);
       if (meta.seq === -1) {
         remote.create(remoteId).catch((error) => {
-          this.opts.onSyncError?.(error);
+          const code = !!error && typeof error === 'object' ? (error as any).code : undefined;
+          const message = error instanceof Error ? error.message : undefined;
+          if (code === 'CONFLICT' || message === 'CONFLICT') return;
+          this.emitSyncError(error);
         });
       }
       if (doPull) {
@@ -557,7 +579,7 @@ export class LevelLocalRepo implements LocalRepo {
           ops.push(...modelOps);
           await this.kv.batch(ops);
           if (merge.length) {
-            this.pubsub.pub({type: 'merge', id, patches: merge, seq: seq});
+            this.emitPubSub({type: 'merge', id, patches: merge, seq: seq});
           }
           return true;
         } catch (error) {
@@ -568,7 +590,7 @@ export class LevelLocalRepo implements LocalRepo {
             const op = await this._metaWrOp(keyBase, meta);
             await this.kv.batch([op]);
           } catch (err) {
-            this.opts.onSyncError?.(err);
+            this.emitSyncError(err);
           }
           throw error;
         }
@@ -646,7 +668,7 @@ export class LevelLocalRepo implements LocalRepo {
     }
     this.remoteSyncAll()
       .catch((error) => {
-        this.opts.onSyncError?.(error);
+        this.emitSyncError(error);
       })
       .finally(() => {
         if (!this._remoteSyncLoopActive) return;
@@ -654,10 +676,12 @@ export class LevelLocalRepo implements LocalRepo {
           this._remoteSyncLoopActive = false;
           return;
         }
-        this._remoteSyncDelayTimer = setTimeout(() => {
+        const timer = setTimeout(() => {
           if (!this._remoteSyncLoopActive) return;
           this.runRemoteSyncLoop();
         }, 2000);
+        (timer as {unref?: () => void}).unref?.();
+        this._remoteSyncDelayTimer = timer;
       });
   }
 
@@ -695,7 +719,7 @@ export class LevelLocalRepo implements LocalRepo {
       .then(() => {})
       .catch((error) => {
         if (this._stopped) return;
-        this.opts.onSyncError?.(error);
+        this.emitSyncError(error);
       });
     remote.catch(() => {});
     return {model, remote};
@@ -830,7 +854,7 @@ export class LevelLocalRepo implements LocalRepo {
         ops.push(op);
       }
       if (writtenPatches.length) {
-        this.pubsub.pub({type: 'rebase', id, patches: writtenPatches, session: req.session});
+        this.emitPubSub({type: 'rebase', id, patches: writtenPatches, session: req.session});
       }
       if (ops.length) {
         await this.kv.batch(ops);
@@ -846,7 +870,7 @@ export class LevelLocalRepo implements LocalRepo {
       .then(() => {})
       .catch((error) => {
         if (this._stopped) return;
-        this.opts.onSyncError?.(error);
+        this.emitSyncError(error);
       });
     if (needsReset) {
       const {cursor, model} = await this._syncRead0(keyBase);
@@ -892,7 +916,7 @@ export class LevelLocalRepo implements LocalRepo {
         {type: 'del', key: keyBase + Defaults.Metadata},
         {type: 'del', key: keyBase + Defaults.Model},
       ]);
-      this.pubsub.pub({id, type: 'del'});
+      this.emitPubSub({id, type: 'del'});
       await Promise.all([
         kv.clear({
           gt: frontierKeyBase,
@@ -951,7 +975,7 @@ export class LevelLocalRepo implements LocalRepo {
       };
       const blob = model.toBinary();
       await this._wrModel(keyBase, blob, meta);
-      pubsub.pub({type: 'reset', id, model: blob});
+      this.emitPubSub({type: 'reset', id, model: blob});
       return {model, meta};
     });
   }
@@ -976,7 +1000,7 @@ export class LevelLocalRepo implements LocalRepo {
           const modelBlob = model.toBinary();
           meta.seq = nextSeq;
           await this._wrModel(keyBase, modelBlob, meta);
-          pubsub.pub({type: 'reset', id, model: modelBlob});
+          this.emitPubSub({type: 'reset', id, model: modelBlob});
         }
         return {model, meta};
       }
@@ -989,7 +1013,7 @@ export class LevelLocalRepo implements LocalRepo {
         }
       meta.seq = nextSeq;
       await this._wrModel(keyBase, model.toBinary(), meta);
-      pubsub.pub({type: 'merge', id, patches, seq: meta.seq});
+        this.emitPubSub({type: 'merge', id, patches, seq: meta.seq});
       return {model, meta};
     });
   }
@@ -998,6 +1022,7 @@ export class LevelLocalRepo implements LocalRepo {
     return defer(() => {
       const remoteSubscription = this._subRemote(id).subscribe(() => {});
       return this.pubsub.bus$.pipe(
+          takeUntil(this._stop$),
         map((msg) => {
           switch (msg.type) {
             case 'rebase': {
@@ -1049,7 +1074,9 @@ export class LevelLocalRepo implements LocalRepo {
     if (sub) return sub;
     const source = defer(() =>
       this.opts.rpc.listen(blockId).pipe(
+        takeUntil(this._stop$),
         switchMap(async ({event}) => {
+          if (this._stopped) return;
           switch (event[0]) {
             case 'new':
               await this.pull(id);
@@ -1077,6 +1104,7 @@ export class LevelLocalRepo implements LocalRepo {
 
   protected async _onUpd(id: BlockId, batch: ServerBatch): Promise<void> {
     try {
+      if (this._stopped) return;
       const keyBase = await this.blockKeyBase(id);
       const firstPatch = batch.patches[0];
       if (!firstPatch) return;
@@ -1093,14 +1121,22 @@ export class LevelLocalRepo implements LocalRepo {
         }
       } catch (error) {
         if (!!error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') {
+          if (this._stopped) return;
           await this.pullNew(id, keyBase);
           return;
         }
         throw error;
       }
+      let needsPull = false;
       await this.lockBlock(keyBase, async () => {
+        if (this._stopped) return;
         const [model, meta] = await Promise.all([this.readModel(keyBase), this.readMeta(keyBase)]);
-        if (meta.seq + 1 !== batch.seq) throw new Error('CONFLICT');
+        if (this._stopped) return;
+        if (meta.seq >= batch.seq) return;
+        if (meta.seq + 1 < batch.seq) {
+          needsPull = true;
+          return;
+        }
         const patches: Uint8Array[] = [];
         for (const serverPatch of batch.patches) {
           const patch = Patch.fromBinary(serverPatch.blob);
@@ -1109,10 +1145,11 @@ export class LevelLocalRepo implements LocalRepo {
         }
         meta.seq = batch.seq;
         await this._wrModel(keyBase, model.toBinary(), meta);
-        this.pubsub.pub({type: 'merge', id, patches, seq: meta.seq});
+        this.emitPubSub({type: 'merge', id, patches, seq: meta.seq});
       });
+      if (needsPull && !this._stopped) await this.pull(id);
     } catch (error) {
-      this.opts.onSyncError?.(error);
+      this.emitSyncError(error);
     }
   }
 }

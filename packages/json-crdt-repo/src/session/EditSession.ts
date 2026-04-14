@@ -115,7 +115,7 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
         }
         const cursorBehind = this.cursor !== res.cursor;
         if (cursorBehind) {
-          setTimeout(async () => {
+          const timer = setTimeout(async () => {
             if (this._stopped) return;
             const get = await this.repo.getIf({
               id: this.id,
@@ -125,6 +125,7 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
             if (!get) return;
             this.reset(<any>get.model);
           }, 50);
+          (timer as {unref?: () => void}).unref?.();
         }
         return {remote: res.remote};
       } else {
