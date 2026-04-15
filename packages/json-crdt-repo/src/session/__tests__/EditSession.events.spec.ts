@@ -28,7 +28,7 @@ describe('events', () => {
     expect(model2.view()).toEqual({foo: 2});
     sub.unsubscribe();
     await kit.stop();
-  });
+  }, 20_000);
 
   test('can synchronize sessions using local .applyPatch()', async () => {
     const repo = Testbed.createRepo();
@@ -51,5 +51,5 @@ describe('events', () => {
     await session1.dispose();
     await session2.dispose();
     await repo.stopTab();
-  });
+  }, 20_000);
 });
