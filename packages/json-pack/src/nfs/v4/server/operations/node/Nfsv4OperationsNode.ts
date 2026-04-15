@@ -401,7 +401,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
   }
 
   public async ILLEGAL(request: msg.Nfsv4IllegalRequest, ctx: Nfsv4OperationCtx): Promise<msg.Nfsv4IllegalResponse> {
-    ctx.connection.logger.log('ILLEGAL', request);
+    if (ctx.connection.debug) ctx.connection.logger.log('ILLEGAL', request);
     return new msg.Nfsv4IllegalResponse(Nfsv4Stat.NFS4ERR_OP_ILLEGAL);
   }
 

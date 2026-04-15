@@ -3,6 +3,17 @@ import {ChannelState, WebSocketState} from '../constants';
 import {WebSocketChannel} from '../WebSocketChannel';
 import {WebSocketMockServerConnection} from '../testing/WebSocketMockServerConnection';
 
+const activeChannels: WebSocketChannel<any>[] = [];
+
+afterEach(() => {
+  for (const channel of activeChannels.splice(0)) {
+    if (channel.closed) continue;
+    try {
+      channel.close();
+    } catch {}
+  }
+});
+
 test('creates raw socket and initializes it with listeners', () => {
   let ws: WebSocketMock;
   const newSocket = jest.fn(() => {
@@ -15,6 +26,7 @@ test('creates raw socket and initializes it with listeners', () => {
   const rx = new WebSocketChannel({
     newSocket,
   });
+  activeChannels.push(rx);
 
   expect(newSocket).toHaveBeenCalledTimes(1);
   expect(ws!.onclose).not.toBe(null);
@@ -31,6 +43,7 @@ const setup = () => {
   const channel = new WebSocketChannel({
     newSocket: () => ws,
   });
+  activeChannels.push(channel);
   return {
     connection,
     ws,

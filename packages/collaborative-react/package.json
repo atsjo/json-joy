@@ -74,6 +74,9 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/__tests__/setup.ts"
+    ],
     "testEnvironment": "node",
     "moduleFileExtensions": [
       "ts",

@@ -37,6 +37,7 @@ const setupBound = (doc: SlateDocument) => {
     model,
     unbind,
     [Symbol.dispose]() {
+      facade.dispose();
       unbind();
     },
   };

@@ -8,6 +8,12 @@ import {EditorView} from 'prosemirror-view';
 import {ProseMirrorFacade} from '../ProseMirrorFacade';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext';
 
+const activeCleanups = new Set<() => void>();
+
+export const cleanupTestbeds = (): void => {
+  for (const cleanup of [...activeCleanups]) cleanup();
+};
+
 export const assertCanConvert = (doc: Node) => {
   const viewRange = FromPm.convert(doc);
   const model = Model.create(ext.peritext.new(''));
@@ -93,12 +99,18 @@ export const setup = (pmDoc: Node) => {
   const facade = new ProseMirrorFacade(view, () => api);
   const unbind = PeritextBinding.bind(() => api, facade);
 
+  let cleaned = false;
   const cleanup = () => {
+    if (cleaned) return;
+    cleaned = true;
+    activeCleanups.delete(cleanup);
     unbind();
     facade.dispose();
     view.destroy();
-    document.body.removeChild(place);
+    if (place.parentNode) place.parentNode.removeChild(place);
   };
+
+  activeCleanups.add(cleanup);
 
   return {
     facade,
