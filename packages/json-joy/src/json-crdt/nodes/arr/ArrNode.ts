@@ -227,7 +227,10 @@ export class ArrNode<Element extends JsonNode = JsonNode>
       const data = chunk.data;
       if (!data) continue;
       const length = data.length;
-      for (let i = 0; i < length; i++) callback(index.get(data[i])!);
+      for (let i = 0; i < length; i++) {
+        const node = index.get(data[i]);
+        if (node) callback(node);
+      }
     }
   }
 
