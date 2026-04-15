@@ -26,6 +26,7 @@
   "references": [
     {"path": "../json-joy"},
     {"path": "../util"},
+    {"path": "../buffers"},
     {"path": "../json-pack"},
     {"path": "../json-equal"},
     {"path": "../json-crdt-server"},

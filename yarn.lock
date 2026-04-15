@@ -2570,6 +2570,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-crdt-repo@workspace:packages/json-crdt-repo"
   dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
     "@jsonjoy.com/channel": "workspace:*"
     "@jsonjoy.com/json-crdt-server": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"

@@ -1,6 +1,6 @@
 import {BehaviorSubject, defer, type Observable, Subject, type Subscription} from 'rxjs';
 import {catchError, filter, finalize, map, share, switchMap, takeUntil} from 'rxjs/operators';
-import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {deepEqual} from '@jsonjoy.com/json-equal/lib/deepEqual';

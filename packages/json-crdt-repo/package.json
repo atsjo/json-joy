@@ -36,6 +36,7 @@
     "tslib": "*"
   },
   "dependencies": {
+    "@jsonjoy.com/buffers": "workspace:*",
     "@jsonjoy.com/channel": "workspace:*",
     "@jsonjoy.com/json-crdt-server": "workspace:*",
     "@jsonjoy.com/json-equal": "workspace:*",
