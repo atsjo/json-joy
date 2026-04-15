@@ -20,6 +20,13 @@ describe('REMOVE operation', () => {
     await stop();
   });
 
+  test('remove non-empty directory returns NOTEMPTY', async () => {
+    const {client, stop} = await setupNfsClientServerTestbed();
+    const res = await client.compound([nfs.PUTROOTFH(), nfs.REMOVE('subdir')]);
+    expect(res.status).toBe(Nfsv4Stat.NFS4ERR_NOTEMPTY);
+    await stop();
+  });
+
   describe('change_info semantics', () => {
     test('returns before < after on successful remove', async () => {
       const {client, stop, vol} = await setupNfsClientServerTestbed();

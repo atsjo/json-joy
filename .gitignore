@@ -140,3 +140,5 @@ debug-storybook.log
 # Temporary test files
 /db/
 test-tmp/
+
+/.tmp

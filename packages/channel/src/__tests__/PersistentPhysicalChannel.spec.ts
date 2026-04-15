@@ -7,30 +7,45 @@ import {WebSocketChannel} from '../WebSocketChannel';
 import type {PhysicalChannel} from '../types';
 import {WebSocketMockServerConnection} from '../testing/WebSocketMockServerConnection';
 
+const activePersistents: PersistentPhysicalChannel<any>[] = [];
+
+afterEach(() => {
+  for (const persistent of activePersistents.splice(0)) persistent.stop();
+});
+
+const trackPersistent = <T extends string | Uint8Array = string | Uint8Array>(
+  persistent: PersistentPhysicalChannel<T>,
+): PersistentPhysicalChannel<T> => {
+  activePersistents.push(persistent);
+  return persistent;
+};
+
 const setup = <T extends string | Uint8Array = string | Uint8Array>(
   params: Partial<PersistentPhysicalChannelOptions<T>> = {},
 ) => {
   let ws: WebSocketMock;
   const onClose = jest.fn();
   const onSend = jest.fn();
-  const persistent = new PersistentPhysicalChannel({
-    ...params,
-    newChannel: () => {
-      const connection = new WebSocketMockServerConnection();
-      ws = new WebSocketMock({connection}, 'http://example.com');
-      const origClose = ws.close.bind(ws);
-      ws.close = (code?: number, reason?: string) => {
-        onClose(code, reason);
-        origClose(code, reason);
-      };
-      const origSend = ws.send.bind(ws);
-      ws.send = (data: any) => {
-        onSend(data);
-        origSend(data);
-      };
-      return new WebSocketChannel({newSocket: () => ws}) as unknown as PhysicalChannel<T>;
-    },
-  });
+  const persistent = trackPersistent(
+    new PersistentPhysicalChannel({
+      ...params,
+      newChannel: () => {
+        const connection = new WebSocketMockServerConnection();
+        ws = new WebSocketMock({connection}, 'http://example.com');
+        const origClose = ws.close.bind(ws);
+        ws.close = (code?: number, reason?: string) => {
+          onClose(code, reason);
+          origClose(code, reason);
+        };
+        const origSend = ws.send.bind(ws);
+        ws.send = (data: any) => {
+          onSend(data);
+          origSend(data);
+        };
+        return new WebSocketChannel({newSocket: () => ws}) as unknown as PhysicalChannel<T>;
+      },
+    }),
+  );
   return {
     ws: () => ws!,
     persistent,
@@ -312,12 +327,14 @@ describe('error$', () => {
   test('emits when newChannel() throws on start', () => {
     let callCount = 0;
     const errors: Error[] = [];
-    const persistent = new PersistentPhysicalChannel({
-      newChannel: () => {
-        callCount++;
-        throw new Error('factory failed');
-      },
-    });
+    const persistent = trackPersistent(
+      new PersistentPhysicalChannel({
+        newChannel: () => {
+          callCount++;
+          throw new Error('factory failed');
+        },
+      }),
+    );
     persistent.error$.subscribe((e) => errors.push(e));
     persistent.start();
     expect(callCount).toBe(1);
@@ -327,11 +344,13 @@ describe('error$', () => {
 
   test('wraps non-Error throws into Error', () => {
     const errors: Error[] = [];
-    const persistent = new PersistentPhysicalChannel({
-      newChannel: () => {
-        throw 'string error';
-      },
-    });
+    const persistent = trackPersistent(
+      new PersistentPhysicalChannel({
+        newChannel: () => {
+          throw 'string error';
+        },
+      }),
+    );
     persistent.error$.subscribe((e) => errors.push(e));
     persistent.start();
     expect(errors.length).toBe(1);

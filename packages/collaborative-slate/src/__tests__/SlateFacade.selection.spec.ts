@@ -25,6 +25,7 @@ const setup = (doc: SlateDocument) => {
     txt: api.txt,
     unbind,
     [Symbol.dispose]() {
+      facade.dispose();
       unbind();
     },
   };

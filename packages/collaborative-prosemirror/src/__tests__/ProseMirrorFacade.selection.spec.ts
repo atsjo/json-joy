@@ -283,7 +283,7 @@ onlyNode24AndHigher('ProseMirrorFacade selection', () => {
       // Peritext: \nHello\nWorld (gap 0..12)
       // PM: <doc><p>Hello</p><p>World</p></doc>
       const pmDoc = doc(p('Hello'), p('World')) as Node;
-      const testbed = setup(pmDoc);
+      using testbed = setup(pmDoc);
       const {facade, view, api: peritextApi, txt} = testbed;
 
       // Peritext gap 7 (after \n of 2nd paragraph) -> PM 8 (start of 2nd p)

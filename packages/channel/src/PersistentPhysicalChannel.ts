@@ -1,5 +1,5 @@
-import {Subject, BehaviorSubject, type Observable, type Subscription, from} from 'rxjs';
-import {delay, filter, map, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {Subject, BehaviorSubject, Observable, type Subscription} from 'rxjs';
+import {filter, map, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {ChannelState} from './constants';
 import type {PhysicalChannel} from './types';
 
@@ -116,18 +116,14 @@ export class PersistentPhysicalChannel<T extends string | Uint8Array = string | 
           takeUntil(this.stop$),
           switchMap((channel) => channel!.close$),
           takeUntil(this.stop$),
-          switchMap(() =>
-            from(
-              (async () => {
-                const timeout = this.reconnectDelay();
-                this.retries++;
-                await new Promise((resolve) => setTimeout(resolve, timeout));
-              })(),
-            ),
-          ),
+          switchMap(() => {
+            const timeout = this.reconnectDelay();
+            this.retries++;
+            return this.wait(timeout);
+          }),
           takeUntil(this.stop$),
           tap(() => this.createChannel()),
-          delay(params.minUptime || 5_000),
+          switchMap(() => this.wait(params.minUptime || 5_000)),
           takeUntil(this.stop$),
           tap(() => {
             const isOpen = this.channel$.getValue()?.isOpen();
@@ -159,6 +155,19 @@ export class PersistentPhysicalChannel<T extends string | Uint8Array = string | 
         this.retries = 0;
       }),
     );
+  }
+
+  private wait(ms: number): Observable<void> {
+    return new Observable<void>((subscriber) => {
+      const handle = setTimeout(() => {
+        subscriber.next();
+        subscriber.complete();
+      }, ms);
+      (handle as any).unref?.();
+      return () => {
+        clearTimeout(handle as any);
+      };
+    });
   }
 
   private createChannel(): void {

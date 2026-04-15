@@ -17,8 +17,7 @@ describe('READLINK operation', () => {
   test('readlink returns error for non-symlink', async () => {
     const {client, stop} = await setupNfsClientServerTestbed();
     const res = await client.compound([nfs.PUTROOTFH(), nfs.LOOKUP('file.txt'), nfs.READLINK()]);
-    // server should report error (not a symlink)
-    expect(res.status).not.toBe(Nfsv4Stat.NFS4_OK);
+    expect(res.status).toBe(Nfsv4Stat.NFS4ERR_INVAL);
     await stop();
   });
 });

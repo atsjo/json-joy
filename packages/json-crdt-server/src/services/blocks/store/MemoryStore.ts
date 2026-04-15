@@ -4,6 +4,34 @@ import type * as types from './types';
 
 const tick = new Promise((resolve) => setImmediate(resolve));
 
+const clonePatch = (patch: types.StorePatch): types.StorePatch => ({
+  ...(patch.cts !== undefined ? {cts: patch.cts} : undefined),
+  ...(patch.uid !== undefined ? {uid: patch.uid} : undefined),
+  blob: patch.blob.slice(),
+});
+
+const cloneBatch = (batch: types.StoreBatch): types.StoreBatch => ({
+  seq: batch.seq,
+  ts: batch.ts,
+  ...(batch.cts !== undefined ? {cts: batch.cts} : undefined),
+  patches: batch.patches.map(clonePatch),
+});
+
+const cloneSnapshot = (snapshot: types.StoreSnapshot): types.StoreSnapshot => ({
+  id: snapshot.id,
+  seq: snapshot.seq,
+  ts: snapshot.ts,
+  blob: snapshot.blob.slice(),
+});
+
+const cloneBlock = (block: types.StoreBlock): types.StoreBlock => ({
+  id: block.id,
+  ts: block.ts,
+  uts: block.uts,
+  snapshot: cloneSnapshot(block.snapshot),
+  tip: block.tip.map(cloneBatch),
+});
+
 export class MemoryBlock {
   constructor(
     public readonly start: types.StoreSnapshot,
@@ -19,7 +47,7 @@ export class MemoryStore implements types.Store {
     await tick;
     const block = this.blocks.get(id);
     if (!block) return;
-    return {block: block.data};
+    return {block: cloneBlock(block.data)};
   }
 
   public async getSnapshot(
@@ -38,9 +66,9 @@ export class MemoryStore implements types.Store {
       const seq2 = batch.seq;
       if (seq2 <= snapshot.seq) continue;
       if (seq2 > seq) break;
-      batches.push(batch);
+      batches.push(cloneBatch(batch));
     }
-    return {snapshot, batches};
+    return {snapshot: cloneSnapshot(snapshot), batches};
   }
 
   public async exists(id: string): Promise<boolean> {
@@ -75,9 +103,9 @@ export class MemoryStore implements types.Store {
       };
       if (cts !== void 0) batch2.cts = cts;
       block.history.push(batch2);
-      return {block: block.data, batch: batch2};
+      return {block: cloneBlock(block.data), batch: cloneBatch(batch2)};
     }
-    return {block: block.data};
+    return {block: cloneBlock(block.data)};
   }
 
   public async push(
@@ -106,7 +134,7 @@ export class MemoryStore implements types.Store {
       patches,
     };
     history.push(batch1);
-    return {snapshot, batch: batch1};
+    return {snapshot: cloneSnapshot(snapshot), batch: cloneBatch(batch1)};
   }
 
   public async compact(id: string, to: number, advance: types.Advance): Promise<void> {
@@ -142,7 +170,7 @@ export class MemoryStore implements types.Store {
       const batch = history[i];
       const seq = batch.seq;
       if (seq > max) break;
-      if (seq >= min && seq <= max) list.push(batch);
+      if (seq >= min && seq <= max) list.push(cloneBatch(batch));
     }
     return list;
   }
