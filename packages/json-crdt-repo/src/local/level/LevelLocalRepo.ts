@@ -958,7 +958,7 @@ export class LevelLocalRepo implements LocalRepo {
   protected async pullNew(id: BlockId, keyBase: string): Promise<{model: Model; meta: BlockMeta}> {
     const blockId = id.join('/');
     const {block} = await this.opts.rpc.read(blockId);
-    const pubsub = this.pubsub;
+    const _pubsub = this.pubsub;
     return this.lockBlock(keyBase, async () => {
       const exists = await this._exists(keyBase);
       if (exists) throw new Error('EXISTS');
@@ -987,7 +987,7 @@ export class LevelLocalRepo implements LocalRepo {
     const {seq} = await this.readMeta(keyBase);
     const pull = await this.opts.rpc.pull(blockId, seq);
     const nextSeq = pull.batches.length ? pull.batches[pull.batches.length - 1].seq : (pull.snapshot?.seq ?? seq);
-    const pubsub = this.pubsub;
+    const _pubsub = this.pubsub;
     return this.lockBlock(keyBase, async () => {
       const [model, meta] = await Promise.all([this.readModel(keyBase), this.readMeta(keyBase)]);
       const seq2 = meta.seq;
@@ -1013,7 +1013,7 @@ export class LevelLocalRepo implements LocalRepo {
         }
       meta.seq = nextSeq;
       await this._wrModel(keyBase, model.toBinary(), meta);
-        this.emitPubSub({type: 'merge', id, patches, seq: meta.seq});
+      this.emitPubSub({type: 'merge', id, patches, seq: meta.seq});
       return {model, meta};
     });
   }
@@ -1022,7 +1022,7 @@ export class LevelLocalRepo implements LocalRepo {
     return defer(() => {
       const remoteSubscription = this._subRemote(id).subscribe(() => {});
       return this.pubsub.bus$.pipe(
-          takeUntil(this._stop$),
+        takeUntil(this._stop$),
         map((msg) => {
           switch (msg.type) {
             case 'rebase': {

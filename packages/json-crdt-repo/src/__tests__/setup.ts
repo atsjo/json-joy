@@ -11,8 +11,7 @@ export const setup = async (store: Store = new MemoryStore(), close?: () => Prom
   const services = new Services({store});
   const {caller} = createCaller(services);
   const client = new CalleeCaller(caller.rpc as any, {} as any);
-  const call = async (method: string, req?: unknown): Promise<any> =>
-    await client.call(method as any, req as any);
+  const call = async (method: string, req?: unknown): Promise<any> => await client.call(method as any, req as any);
   const call$ = client.call$.bind(client);
   const stop = async (): Promise<void> => {
     await close?.();

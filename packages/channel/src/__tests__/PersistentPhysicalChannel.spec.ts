@@ -28,22 +28,22 @@ const setup = <T extends string | Uint8Array = string | Uint8Array>(
   const onSend = jest.fn();
   const persistent = trackPersistent(
     new PersistentPhysicalChannel({
-    ...params,
-    newChannel: () => {
-      const connection = new WebSocketMockServerConnection();
-      ws = new WebSocketMock({connection}, 'http://example.com');
-      const origClose = ws.close.bind(ws);
-      ws.close = (code?: number, reason?: string) => {
-        onClose(code, reason);
-        origClose(code, reason);
-      };
-      const origSend = ws.send.bind(ws);
-      ws.send = (data: any) => {
-        onSend(data);
-        origSend(data);
-      };
-      return new WebSocketChannel({newSocket: () => ws}) as unknown as PhysicalChannel<T>;
-    },
+      ...params,
+      newChannel: () => {
+        const connection = new WebSocketMockServerConnection();
+        ws = new WebSocketMock({connection}, 'http://example.com');
+        const origClose = ws.close.bind(ws);
+        ws.close = (code?: number, reason?: string) => {
+          onClose(code, reason);
+          origClose(code, reason);
+        };
+        const origSend = ws.send.bind(ws);
+        ws.send = (data: any) => {
+          onSend(data);
+          origSend(data);
+        };
+        return new WebSocketChannel({newSocket: () => ws}) as unknown as PhysicalChannel<T>;
+      },
     }),
   );
   return {
@@ -329,10 +329,10 @@ describe('error$', () => {
     const errors: Error[] = [];
     const persistent = trackPersistent(
       new PersistentPhysicalChannel({
-      newChannel: () => {
-        callCount++;
-        throw new Error('factory failed');
-      },
+        newChannel: () => {
+          callCount++;
+          throw new Error('factory failed');
+        },
       }),
     );
     persistent.error$.subscribe((e) => errors.push(e));
@@ -346,9 +346,9 @@ describe('error$', () => {
     const errors: Error[] = [];
     const persistent = trackPersistent(
       new PersistentPhysicalChannel({
-      newChannel: () => {
-        throw 'string error';
-      },
+        newChannel: () => {
+          throw 'string error';
+        },
       }),
     );
     persistent.error$.subscribe((e) => errors.push(e));

@@ -4,10 +4,7 @@ import {runPubsubTests} from '../../server/pubsub';
 import {runUtilTests} from '../../server/util';
 import type {ApiTestSetup} from '../../types';
 import {cborCodec} from '../codecs';
-import {
-  setupDemoServerPersistentClient,
-  setupDemoServerFetchClient,
-} from '../demo-client';
+import {setupDemoServerPersistentClient, setupDemoServerFetchClient} from '../demo-client';
 
 if (process.env.TEST_E2E && process.env.TEST_E2E_DEMO_SERVER) {
   describe('RpcPersistentClient', () => {

@@ -116,5 +116,7 @@ export class DemoServerRemoteHistory implements ServerHistory {
     return res;
   }
 
-  public readonly listen = shareByKey((id: string) => this.client.call$('block.listen', {id, clientId: this.clientId})) as (id: string) => import('rxjs').Observable<{event: ServerEvent}>;
+  public readonly listen = shareByKey((id: string) =>
+    this.client.call$('block.listen', {id, clientId: this.clientId}),
+  ) as (id: string) => import('rxjs').Observable<{event: ServerEvent}>;
 }

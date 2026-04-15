@@ -1,7 +1,15 @@
 import {Patch} from '../../../json-crdt-patch';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {ts} from '../../../json-crdt-patch/clock';
-import {InsArrOp, InsObjOp, InsValOp, NewArrOp, NewConOp, NewObjOp, NewValOp} from '../../../json-crdt-patch/operations';
+import {
+  InsArrOp,
+  InsObjOp,
+  InsValOp,
+  NewArrOp,
+  NewConOp,
+  NewObjOp,
+  NewValOp,
+} from '../../../json-crdt-patch/operations';
 import {Model} from '../Model';
 
 const source0 = 1841463426075560;
@@ -22,7 +30,10 @@ describe('sync replays', () => {
       [
         emptyPatch(),
         emptyPatch(),
-        patch(new NewValOp(ts(source0, 172)), new InsObjOp(ts(source0, 175), ts(source2, 153), [['name', ts(source0, 172)]])),
+        patch(
+          new NewValOp(ts(source0, 172)),
+          new InsObjOp(ts(source0, 175), ts(source2, 153), [['name', ts(source0, 172)]]),
+        ),
         emptyPatch(),
         emptyPatch(),
         emptyPatch(),
@@ -42,7 +53,10 @@ describe('sync replays', () => {
         emptyPatch(),
         emptyPatch(),
         emptyPatch(),
-        patch(new NewValOp(ts(source1, 230)), new InsArrOp(ts(source1, 233), ts(source2, 180), ts(source2, 180), [ts(source1, 230)])),
+        patch(
+          new NewValOp(ts(source1, 230)),
+          new InsArrOp(ts(source1, 233), ts(source2, 180), ts(source2, 180), [ts(source1, 230)]),
+        ),
       ],
       [
         patch(new NewObjOp(ts(source2, 153)), new InsValOp(ts(source2, 154), ORIGIN, ts(source2, 153))),
