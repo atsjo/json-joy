@@ -6,7 +6,7 @@ import type {Observable} from 'rxjs';
  * slow to access, or not accessible at all, depending on the network.
  *
  * The `RemoteHistory` interface is a low-level interface that abstracts: (1)
- * a centra server; (2) un-fetched content addressable storage files; or (3) a
+ * a central server; (2) un-fetched content addressable storage files; or (3) a
  * peer-to-peer network.
  *
  * A *block* is a collaboratively edited document, which is a JSON-like object

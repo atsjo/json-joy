@@ -92,11 +92,11 @@ export interface EditSessionMakeOpts {
   /** Block ID. */
   id: BlockId;
 
-  /** Thew new block schema, if any. */
+  /** The new block schema, if any. */
   schema?: NodeBuilder;
 
   /**
-   * Weather to asynchronously pull for any existing local block state, if a
+   * Whether to asynchronously pull for any existing local block state, if a
    * block with the same ID already exists. Defaults to `true`.
    */
   pull?: boolean;
@@ -122,8 +122,8 @@ export interface EditSessionLoadOpts {
    */
   make?: Omit<EditSessionMakeOpts, 'id'>;
 
-  /** Thew new block schema, if any. */
-  schema?: NodeBuilder;
+  // /** The new block schema, if any. */
+  // schema?: NodeBuilder;
 
   /**
    * Internal unique session ID.
