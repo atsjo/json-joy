@@ -10,6 +10,14 @@ import {onLine$} from 'rx-use/lib/onLine$';
 import type {BinStrLevel, LevelLocalRepoPubSubMessage} from './local/level/types';
 import type {EditSession} from './session/EditSession';
 
+let LS: Record<string, string> = {};
+try {
+  LS = window.localStorage;
+  (LS as any).getItem('test');
+} catch (error) {
+  LS = {};
+}
+
 export interface JsonCrdtRepoOpts {
   name: string;
   wsUrl: string;
@@ -53,12 +61,11 @@ export class JsonCrdtRepo {
   }
 
   public readSid(): number {
-    const ls = typeof window !== 'undefined' ? window.localStorage : {};
     const key = this.opts.name + '-sid';
-    const value = (ls as any)[key];
+    const value = LS[key];
     if (value) return +value;
     const sid: number = Model.sid();
-    (ls as any)[key] = sid + '';
+    LS[key] = sid + '';
     return sid;
   }
 
