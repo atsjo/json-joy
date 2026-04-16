@@ -3,6 +3,7 @@ import {setup} from './setup';
 import {of, tick, until} from 'thingies';
 import type {BlockId, LocalRepo} from '../../local/types';
 import {EditSessionFactory} from '../EditSessionFactory';
+import {Testbed} from '../../__tests__/testbed';
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -377,5 +378,66 @@ describe('.load()', () => {
     const [, error] = await of(kit.sessions.load({id, remote: {throwIf: 'missing'}, make: {schema}}));
     expect((error as any)!.message).toBe('Not Found');
     await kit.stop();
+  });
+
+  test('can create two documents concurrently', async () => {
+    const repo = Testbed.createRepo();
+    const schema = s.obj({xyz: s.con(123)});
+    const doc1Promise = repo.sessions.load({id: repo.blockId, make: {schema}, remote: {timeout: 1000}});
+    const doc2Promise = repo.sessions.load({id: repo.blockId, make: {schema}, remote: {timeout: 1000}});
+    const [doc1, doc2] = await Promise.all([doc1Promise, doc2Promise]);
+    expect(doc1.model.view()).toEqual({xyz: 123});
+    expect(doc2.model.view()).toEqual({xyz: 123});
+    await doc1.dispose();
+    await doc2.dispose();
+    await repo.stopTab();
+  });
+
+  test('can create two documents from different tabs', async () => {
+    const testbed = Testbed.create();
+    const browser = testbed.createBrowser();
+    const tab1 = browser.createTab();
+    const tab2 = browser.createTab();
+    const repo1 = tab1.createRepo();
+    const repo2 = tab2.createRepo();
+    const schema = s.obj({xyz: s.con(123)});
+    const doc1Promise = repo1.sessions.load({id: repo1.blockId, make: {schema}, remote: {timeout: 1000}});
+    const doc2Promise = repo2.sessions.load({id: repo2.blockId, make: {schema}, remote: {timeout: 1000}});
+    const [doc1, doc2] = await Promise.all([doc1Promise, doc2Promise]);
+    expect(doc1.model.view()).toEqual({xyz: 123});
+    expect(doc2.model.view()).toEqual({xyz: 123});
+    await doc1.dispose();
+    await doc2.dispose();
+    await repo1.stopTab();
+    await repo2.stopTab();
+  });
+
+  test('can create two documents from different tabs while another creator races in between', async () => {
+    const testbed = Testbed.create();
+    const browser = testbed.createBrowser();
+    const tab1 = browser.createTab();
+    const tab2 = browser.createTab();
+    const repo1 = tab1.createRepo();
+    const repo2 = tab2.createRepo();
+    const schema = s.obj({xyz: s.con(123)});
+    const doc1Promise = repo1.sessions.load({id: repo1.blockId, make: {schema}, remote: {timeout: 1000}});
+
+    const creator = testbed.createBrowser().createTab().createRepo();
+    const {session, sync} = creator.sessions.make({id: repo1.blockId, schema});
+    await sync;
+    const syncRes = await session.sync();
+    await syncRes?.remote;
+
+    const doc2Promise = repo2.sessions.load({id: repo2.blockId, make: {schema}, remote: {timeout: 1000}});
+    const [doc1, doc2] = await Promise.all([doc1Promise, doc2Promise]);
+    expect(doc1.model.view()).toEqual({xyz: 123});
+    expect(doc2.model.view()).toEqual({xyz: 123});
+
+    await session.dispose();
+    await doc1.dispose();
+    await doc2.dispose();
+    await creator.stopTab();
+    await repo1.stopTab();
+    await repo2.stopTab();
   });
 });

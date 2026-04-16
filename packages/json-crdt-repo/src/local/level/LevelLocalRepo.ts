@@ -945,8 +945,16 @@ export class LevelLocalRepo implements LocalRepo {
       return {model, cursor: meta.seq};
     } catch (error) {
       if (!!error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') {
-        const {model, meta} = await this.pullNew(id, keyBase);
-        return {model, cursor: meta.seq};
+        try {
+          const {model, meta} = await this.pullNew(id, keyBase);
+          return {model, cursor: meta.seq};
+        } catch (error) {
+          if (error instanceof Error && error.message === 'EXISTS') {
+            const {model, meta} = await this.pullExisting(id, keyBase);
+            return {model, cursor: meta.seq};
+          }
+          throw error;
+        }
       } else if (error instanceof Error && error.message === 'CONCURRENCY') {
         const [model, cursor] = await this.readLocal0(keyBase);
         return {model, cursor};

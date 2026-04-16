@@ -76,16 +76,23 @@ export class EditSessionFactory {
             session.log.end.api.autoFlush();
             return session;
           } catch (error) {
-            if (!!error && typeof error === 'object' && (error as Record<string, unknown>).message === 'TIMEOUT') {
-              if (!opts.make) throw error;
-            } else if (
-              !!error &&
-              typeof error === 'object' &&
-              ((error as Record<string, unknown>).message === 'NOT_FOUND' ||
-                (error as Record<string, unknown>).code === 'NOT_FOUND')
-            ) {
-              if (remote.throwIf === 'missing') throw error;
-            } else throw error;
+            const errorCode =
+              !!error && typeof error === 'object'
+                ? (error as Record<string, unknown>).code || (error as Record<string, unknown>).message || ''
+                : '';
+            switch (errorCode) {
+              case 'TIMEOUT': {
+                if (!opts.make) throw error;
+                break;
+              }
+              case 'NOT_FOUND': {
+                if (remote.throwIf === 'missing') throw error;
+                break;
+              }
+              default: {
+                throw error;
+              }
+            }
           }
         }
         if (opts.make) return this.make({session: opts.session, ...opts.make, id}).session;
