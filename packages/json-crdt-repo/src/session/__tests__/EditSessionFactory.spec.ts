@@ -1,8 +1,9 @@
-import {Model, s} from 'json-joy/lib/json-crdt';
+import {Model, Patch, s} from 'json-joy/lib/json-crdt';
 import {setup} from './setup';
 import {of, tick, until} from 'thingies';
 import type {BlockId, LocalRepo} from '../../local/types';
 import {EditSessionFactory} from '../EditSessionFactory';
+import {Testbed} from '../../__tests__/testbed';
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -182,7 +183,7 @@ describe('.load()', () => {
   test('throws if the block does not exist in the local repo', async () => {
     const kit = await setup();
     const [, error] = await of(kit.sessions.load({id: kit.blockId}));
-    expect((error as any)!.message).toBe('NOT_FOUND');
+    expect((error as any)!.code).toBe('NOT_FOUND');
     await kit.stop();
   });
 
@@ -213,6 +214,39 @@ describe('.load()', () => {
     expect(session2.model.view()).toEqual({foo: 'bar'});
     await session.dispose();
     await session2.dispose();
+    await kit.stop();
+  });
+
+  test('can pull latest remote state in the background when block exists locally', async () => {
+    const kit = await setup();
+    const {session} = kit.sessions.make({id: kit.blockId});
+    session.model.api.root({foo: 'bar'});
+    const sync = await session.sync();
+    await sync?.remote;
+    await session.dispose();
+
+    const remoteBlock = await kit.remote.client.call('block.get', {id: kit.blockId.join('/')});
+    const remoteModel = Model.load(remoteBlock.block.snapshot.blob);
+    for (const batch of remoteBlock.block.tip)
+      for (const remotePatch of batch.patches) remoteModel.applyPatch(Patch.fromBinary(remotePatch.blob));
+    remoteModel.api.obj([]).set({x: 1});
+    const patch = remoteModel.api.flush();
+    await kit.remote.client.call('block.upd', {
+      id: kit.blockId.join('/'),
+      batch: {patches: [{blob: patch.toBinary()}]},
+    });
+
+    const localRead = await kit.local.get({id: kit.blockId});
+    expect(localRead.model.view()).toEqual({foo: 'bar'});
+
+    const sessions = createDelayedSessions(kit.local, kit.sid, 25);
+    const loaded = await sessions.load({id: kit.blockId, pull: true});
+    expect(loaded.model.view()).toEqual({foo: 'bar'});
+
+    await until(() => loaded.model.view()?.x === 1);
+    expect(loaded.model.view()).toEqual({foo: 'bar', x: 1});
+
+    await loaded.dispose();
     await kit.stop();
   });
 
@@ -248,7 +282,7 @@ describe('.load()', () => {
     expect(model2.view()).toEqual({foo: 'bar'});
     // Load session with the same ID.
     const [, error] = await of(kit.sessions.load({id}));
-    expect((error as any)!.message).toBe('NOT_FOUND');
+    expect((error as any)!.code).toBe('NOT_FOUND');
     await kit.stop();
   });
 
@@ -346,7 +380,68 @@ describe('.load()', () => {
     // Load session with the same ID.
     const schema = s.obj({xyz: s.con(123)});
     const [, error] = await of(kit.sessions.load({id, remote: {throwIf: 'missing'}, make: {schema}}));
-    expect((error as any)!.message).toBe('Not Found');
+    expect((error as any)!.code).toBe('NOT_FOUND');
     await kit.stop();
+  });
+
+  test('can create two documents concurrently', async () => {
+    const repo = Testbed.createRepo();
+    const schema = s.obj({xyz: s.con(123)});
+    const doc1Promise = repo.sessions.load({id: repo.blockId, make: {schema}, remote: {timeout: 1000}});
+    const doc2Promise = repo.sessions.load({id: repo.blockId, make: {schema}, remote: {timeout: 1000}});
+    const [doc1, doc2] = await Promise.all([doc1Promise, doc2Promise]);
+    expect(doc1.model.view()).toEqual({xyz: 123});
+    expect(doc2.model.view()).toEqual({xyz: 123});
+    await doc1.dispose();
+    await doc2.dispose();
+    await repo.stopTab();
+  });
+
+  test('can create two documents from different tabs', async () => {
+    const testbed = Testbed.create();
+    const browser = testbed.createBrowser();
+    const tab1 = browser.createTab();
+    const tab2 = browser.createTab();
+    const repo1 = tab1.createRepo();
+    const repo2 = tab2.createRepo();
+    const schema = s.obj({xyz: s.con(123)});
+    const doc1Promise = repo1.sessions.load({id: repo1.blockId, make: {schema}, remote: {timeout: 1000}});
+    const doc2Promise = repo2.sessions.load({id: repo2.blockId, make: {schema}, remote: {timeout: 1000}});
+    const [doc1, doc2] = await Promise.all([doc1Promise, doc2Promise]);
+    expect(doc1.model.view()).toEqual({xyz: 123});
+    expect(doc2.model.view()).toEqual({xyz: 123});
+    await doc1.dispose();
+    await doc2.dispose();
+    await repo1.stopTab();
+    await repo2.stopTab();
+  });
+
+  test('can create two documents from different tabs while another creator races in between', async () => {
+    const testbed = Testbed.create();
+    const browser = testbed.createBrowser();
+    const tab1 = browser.createTab();
+    const tab2 = browser.createTab();
+    const repo1 = tab1.createRepo();
+    const repo2 = tab2.createRepo();
+    const schema = s.obj({xyz: s.con(123)});
+    const doc1Promise = repo1.sessions.load({id: repo1.blockId, make: {schema}, remote: {timeout: 1000}});
+
+    const creator = testbed.createBrowser().createTab().createRepo();
+    const {session, sync} = creator.sessions.make({id: repo1.blockId, schema});
+    await sync;
+    const syncRes = await session.sync();
+    await syncRes?.remote;
+
+    const doc2Promise = repo2.sessions.load({id: repo2.blockId, make: {schema}, remote: {timeout: 1000}});
+    const [doc1, doc2] = await Promise.all([doc1Promise, doc2Promise]);
+    expect(doc1.model.view()).toEqual({xyz: 123});
+    expect(doc2.model.view()).toEqual({xyz: 123});
+
+    await session.dispose();
+    await doc1.dispose();
+    await doc2.dispose();
+    await creator.stopTab();
+    await repo1.stopTab();
+    await repo2.stopTab();
   });
 });

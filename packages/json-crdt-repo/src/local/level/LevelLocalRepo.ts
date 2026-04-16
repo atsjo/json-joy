@@ -4,6 +4,7 @@ import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {deepEqual} from '@jsonjoy.com/json-equal/lib/deepEqual';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
 import {once} from 'thingies/lib/once';
 import {timeout} from 'thingies/lib/timeout';
@@ -23,6 +24,7 @@ import type {
   LocalRepoGetRequest,
   LocalRepoCreateResponse,
   LocalRepoCreateRequest,
+  LocalRepoGet0Response,
   LocalRepoGetIfResponse,
   LocalRepoGetIfRequest,
   LocalRepoPullResponse,
@@ -725,13 +727,34 @@ export class LevelLocalRepo implements LocalRepo {
     return {model, remote};
   }
 
+  public async get0(id: BlockId): Promise<LocalRepoGet0Response> {
+    const keyBase = await this.blockKeyBase(id);
+    const [model, meta, frontier] = await Promise.all([
+      this.readModel(keyBase),
+      this.readMeta(keyBase),
+      this.readFrontier0(keyBase),
+    ]);
+    return {
+      model,
+      frontier,
+      meta,
+    };
+  }
+
   public async get({id, remote}: LocalRepoGetRequest): Promise<LocalRepoGetResponse> {
     try {
       const {model, cursor} = await this._syncRead(id);
-      if (!model) throw new Error('NOT_FOUND');
+      if (!model) throw RpcError.notFound();
       return {model, cursor};
     } catch (error) {
-      if (remote && error instanceof Error && error.message === 'NOT_FOUND') return await this.load(id);
+      const code = !!error && typeof error === 'object' ? (error as any).code : undefined;
+      const message = error instanceof Error ? error.message : undefined;
+      const notFound = code === 'NOT_FOUND' || message === 'NOT_FOUND' || message === 'Not Found';
+      if (remote && notFound) return await this.load(id);
+      if (notFound) {
+        if (RpcError.isRpcError(error)) throw error;
+        throw RpcError.notFound('Not Found', undefined, error);
+      }
       throw error;
     }
   }
@@ -945,8 +968,16 @@ export class LevelLocalRepo implements LocalRepo {
       return {model, cursor: meta.seq};
     } catch (error) {
       if (!!error && typeof error === 'object' && (error as any).code === 'LEVEL_NOT_FOUND') {
-        const {model, meta} = await this.pullNew(id, keyBase);
-        return {model, cursor: meta.seq};
+        try {
+          const {model, meta} = await this.pullNew(id, keyBase);
+          return {model, cursor: meta.seq};
+        } catch (error) {
+          if (error instanceof Error && error.message === 'EXISTS') {
+            const {model, meta} = await this.pullExisting(id, keyBase);
+            return {model, cursor: meta.seq};
+          }
+          throw error;
+        }
       } else if (error instanceof Error && error.message === 'CONCURRENCY') {
         const [model, cursor] = await this.readLocal0(keyBase);
         return {model, cursor};
@@ -984,10 +1015,29 @@ export class LevelLocalRepo implements LocalRepo {
     // TODO: try catching up using batches, if not possible, reset
     // TODO: load batches to catch up with remote
     const blockId = id.join('/');
-    const {seq} = await this.readMeta(keyBase);
+    const meta = await this.readMeta(keyBase);
+    const {seq} = meta;
     const pull = await this.opts.rpc.pull(blockId, seq);
     const nextSeq = pull.batches.length ? pull.batches[pull.batches.length - 1].seq : (pull.snapshot?.seq ?? seq);
     const _pubsub = this.pubsub;
+    if (nextSeq < seq) {
+      return this.lockBlock(keyBase, async () => {
+        const seq2 = (await this.readMeta(keyBase)).seq;
+        if (seq2 !== seq) throw new Error('CONCURRENCY');
+        if (!pull.snapshot) throw new Error('missing snapshot');
+        const model = Model.load(pull.snapshot.blob, this.sid);
+        for (const batch of pull.batches)
+          for (const patch of batch.patches) model.applyPatch(Patch.fromBinary(patch.blob));
+        const modelBlob = model.toBinary();
+        meta.time = model.clock.time - 1;
+        meta.seq = nextSeq;
+        meta.syncTs = Date.now();
+        delete meta.syncFailures;
+        await this._wrModel(keyBase, modelBlob, meta);
+        this.emitPubSub({type: 'reset', id, model: modelBlob});
+        return {model, meta};
+      });
+    }
     return this.lockBlock(keyBase, async () => {
       const [model, meta] = await Promise.all([this.readModel(keyBase), this.readMeta(keyBase)]);
       const seq2 = meta.seq;

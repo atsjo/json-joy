@@ -15,7 +15,7 @@ describe('.del()', () => {
     expect(get1.model.view()).toEqual({id: 'asdf'});
     await session.del();
     const [, error] = await of(repo.repo.get({id: repo.blockId}));
-    expect((error as any).message).toBe('NOT_FOUND');
+    expect((error as any).code).toBe('NOT_FOUND');
     expect(session.model.view()).toBe(undefined);
     await session.dispose();
     await repo.stopTab();

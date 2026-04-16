@@ -42,7 +42,8 @@ export class EditSessionFactory {
    * asynchronously from an existing local block.
    *
    * It is also possible to block on remote state check in case the block does
-   * not exist locally, or to pull the latest state from the remote.
+   * not exist locally. When `pull` is set, it will also refresh the latest
+   * state from the remote in the background after returning local state.
    */
   public async load(opts: EditSessionLoadOpts): Promise<EditSession> {
     const id = opts.id;
@@ -51,9 +52,22 @@ export class EditSessionFactory {
       const {model, cursor} = await repo.get({id});
       const session = new EditSession(repo, id, model, cursor, opts.session);
       session.log.end.api.autoFlush();
+      if (opts.pull) {
+        void repo
+          .pull(id)
+          .then(async ({cursor}) => {
+            session.cursor = cursor;
+            await session.load();
+          })
+          .catch(() => {});
+      }
       return session;
     } catch (error) {
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
+      const errorCode =
+        !!error && typeof error === 'object'
+          ? (error as Record<string, unknown>).code || (error as Record<string, unknown>).message || ''
+          : '';
+      if (errorCode === 'NOT_FOUND') {
         const remote = opts.remote;
         if (remote) {
           const timeoutMs = remote.timeout;
@@ -66,16 +80,23 @@ export class EditSessionFactory {
             session.log.end.api.autoFlush();
             return session;
           } catch (error) {
-            if (!!error && typeof error === 'object' && (error as Record<string, unknown>).message === 'TIMEOUT') {
-              if (!opts.make) throw error;
-            } else if (
-              !!error &&
-              typeof error === 'object' &&
-              ((error as Record<string, unknown>).message === 'NOT_FOUND' ||
-                (error as Record<string, unknown>).code === 'NOT_FOUND')
-            ) {
-              if (remote.throwIf === 'missing') throw error;
-            } else throw error;
+            const errorCode =
+              !!error && typeof error === 'object'
+                ? (error as Record<string, unknown>).code || (error as Record<string, unknown>).message || ''
+                : '';
+            switch (errorCode) {
+              case 'TIMEOUT': {
+                if (!opts.make) throw error;
+                break;
+              }
+              case 'NOT_FOUND': {
+                if (remote.throwIf === 'missing') throw error;
+                break;
+              }
+              default: {
+                throw error;
+              }
+            }
           }
         }
         if (opts.make) return this.make({session: opts.session, ...opts.make, id}).session;
@@ -92,11 +113,11 @@ export interface EditSessionMakeOpts {
   /** Block ID. */
   id: BlockId;
 
-  /** Thew new block schema, if any. */
+  /** The new block schema, if any. */
   schema?: NodeBuilder;
 
   /**
-   * Weather to asynchronously pull for any existing local block state, if a
+   * Whether to asynchronously pull for any existing local block state, if a
    * block with the same ID already exists. Defaults to `true`.
    */
   pull?: boolean;
@@ -122,13 +143,19 @@ export interface EditSessionLoadOpts {
    */
   make?: Omit<EditSessionMakeOpts, 'id'>;
 
-  /** Thew new block schema, if any. */
-  schema?: NodeBuilder;
+  // /** The new block schema, if any. */
+  // schema?: NodeBuilder;
 
   /**
    * Internal unique session ID.
    */
   session?: number;
+
+  /**
+   * Whether to refresh the latest state from the remote in the background
+   * after loading an existing local block.
+   */
+  pull?: boolean;
 
   remote?: {
     /**
