@@ -52,12 +52,12 @@ export class JsonCrdtRepo {
   }
 
   public readSid(): number {
-    const ls = window.localStorage;
+    const ls = typeof window !== 'undefined' ? window.localStorage : {};
     const key = this.opts.name + '-sid';
-    const value = ls.getItem(key);
+    const value = (ls as any)[key];
     if (value) return +value;
     const sid: number = Model.sid();
-    ls.setItem(key, sid + '');
+    (ls as any)[key] = sid + '';
     return sid;
   }
 

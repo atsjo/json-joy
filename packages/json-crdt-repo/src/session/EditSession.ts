@@ -123,6 +123,7 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
             if (this._stopped) return;
             if (!get) return;
             this.reset(<any>get.model);
+            this.cursor = get.cursor;
           }, 50);
           (timer as {unref?: () => void}).unref?.();
         }
@@ -147,7 +148,7 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
     this._syncRace(() => {
       this.sync()
         .then((error) => {
-          this.onsyncerror?.(error);
+          if (error instanceof Error) this.onsyncerror?.(error);
         })
         .catch((error) => {
           this.onsyncerror?.(error);
