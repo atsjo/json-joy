@@ -1,4 +1,4 @@
-import {Model, s} from 'json-joy/lib/json-crdt';
+import {Model, Patch, s} from 'json-joy/lib/json-crdt';
 import {setup} from './setup';
 import {of, tick, until} from 'thingies';
 import type {BlockId, LocalRepo} from '../../local/types';
@@ -213,6 +213,35 @@ describe('.load()', () => {
     expect(session2.model.view()).toEqual({foo: 'bar'});
     await session.dispose();
     await session2.dispose();
+    await kit.stop();
+  });
+
+  test('can pull latest remote state in the background when block exists locally', async () => {
+    const kit = await setup();
+    const {session} = kit.sessions.make({id: kit.blockId});
+    session.model.api.root({foo: 'bar'});
+    const sync = await session.sync();
+    await sync?.remote;
+    await session.dispose();
+
+    const remoteBlock = await kit.remote.client.call('block.get', {id: kit.blockId.join('/')});
+    const remoteModel = Model.load(remoteBlock.block.snapshot.blob);
+    for (const batch of remoteBlock.block.tip) for (const remotePatch of batch.patches) remoteModel.applyPatch(Patch.fromBinary(remotePatch.blob));
+    remoteModel.api.obj([]).set({x: 1});
+    const patch = remoteModel.api.flush();
+    await kit.remote.client.call('block.upd', {id: kit.blockId.join('/'), batch: {patches: [{blob: patch.toBinary()}]}});
+
+    const localRead = await kit.local.get({id: kit.blockId});
+    expect(localRead.model.view()).toEqual({foo: 'bar'});
+
+    const sessions = createDelayedSessions(kit.local, kit.sid, 25);
+    const loaded = await sessions.load({id: kit.blockId, pull: true});
+    expect(loaded.model.view()).toEqual({foo: 'bar'});
+
+    await until(() => loaded.model.view()?.x === 1);
+    expect(loaded.model.view()).toEqual({foo: 'bar', x: 1});
+
+    await loaded.dispose();
     await kit.stop();
   });
 
