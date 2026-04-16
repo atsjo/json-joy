@@ -63,7 +63,11 @@ export class EditSessionFactory {
       }
       return session;
     } catch (error) {
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
+      const errorCode =
+        !!error && typeof error === 'object'
+          ? (error as Record<string, unknown>).code || (error as Record<string, unknown>).message || ''
+          : '';
+      if (errorCode === 'NOT_FOUND') {
         const remote = opts.remote;
         if (remote) {
           const timeoutMs = remote.timeout;

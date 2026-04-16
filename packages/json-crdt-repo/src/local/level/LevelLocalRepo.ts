@@ -4,6 +4,7 @@ import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
 import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {deepEqual} from '@jsonjoy.com/json-equal/lib/deepEqual';
+import {RpcError} from '@jsonjoy.com/rpc-error';
 import {SESSION} from 'json-joy/lib/json-crdt-patch/constants';
 import {once} from 'thingies/lib/once';
 import {timeout} from 'thingies/lib/timeout';
@@ -728,10 +729,17 @@ export class LevelLocalRepo implements LocalRepo {
   public async get({id, remote}: LocalRepoGetRequest): Promise<LocalRepoGetResponse> {
     try {
       const {model, cursor} = await this._syncRead(id);
-      if (!model) throw new Error('NOT_FOUND');
+      if (!model) throw RpcError.notFound();
       return {model, cursor};
     } catch (error) {
-      if (remote && error instanceof Error && error.message === 'NOT_FOUND') return await this.load(id);
+      const code = !!error && typeof error === 'object' ? (error as any).code : undefined;
+      const message = error instanceof Error ? error.message : undefined;
+      const notFound = code === 'NOT_FOUND' || message === 'NOT_FOUND' || message === 'Not Found';
+      if (remote && notFound) return await this.load(id);
+      if (notFound) {
+        if (RpcError.isRpcError(error)) throw error;
+        throw RpcError.notFound('Not Found', undefined, error);
+      }
       throw error;
     }
   }

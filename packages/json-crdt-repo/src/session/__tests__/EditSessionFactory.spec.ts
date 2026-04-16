@@ -183,7 +183,7 @@ describe('.load()', () => {
   test('throws if the block does not exist in the local repo', async () => {
     const kit = await setup();
     const [, error] = await of(kit.sessions.load({id: kit.blockId}));
-    expect((error as any)!.message).toBe('NOT_FOUND');
+    expect((error as any)!.code).toBe('NOT_FOUND');
     await kit.stop();
   });
 
@@ -278,7 +278,7 @@ describe('.load()', () => {
     expect(model2.view()).toEqual({foo: 'bar'});
     // Load session with the same ID.
     const [, error] = await of(kit.sessions.load({id}));
-    expect((error as any)!.message).toBe('NOT_FOUND');
+    expect((error as any)!.code).toBe('NOT_FOUND');
     await kit.stop();
   });
 
@@ -376,7 +376,7 @@ describe('.load()', () => {
     // Load session with the same ID.
     const schema = s.obj({xyz: s.con(123)});
     const [, error] = await of(kit.sessions.load({id, remote: {throwIf: 'missing'}, make: {schema}}));
-    expect((error as any)!.message).toBe('Not Found');
+    expect((error as any)!.code).toBe('NOT_FOUND');
     await kit.stop();
   });
 
