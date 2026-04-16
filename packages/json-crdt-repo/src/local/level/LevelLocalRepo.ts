@@ -992,10 +992,28 @@ export class LevelLocalRepo implements LocalRepo {
     // TODO: try catching up using batches, if not possible, reset
     // TODO: load batches to catch up with remote
     const blockId = id.join('/');
-    const {seq} = await this.readMeta(keyBase);
+    const meta = await this.readMeta(keyBase);
+    const {seq} = meta;
     const pull = await this.opts.rpc.pull(blockId, seq);
     const nextSeq = pull.batches.length ? pull.batches[pull.batches.length - 1].seq : (pull.snapshot?.seq ?? seq);
     const _pubsub = this.pubsub;
+    if (nextSeq < seq) {
+      return this.lockBlock(keyBase, async () => {
+        const seq2 = (await this.readMeta(keyBase)).seq;
+        if (seq2 !== seq) throw new Error('CONCURRENCY');
+        if (!pull.snapshot) throw new Error('missing snapshot');
+        const model = Model.load(pull.snapshot.blob, this.sid);
+        for (const batch of pull.batches)
+          for (const patch of batch.patches) model.applyPatch(Patch.fromBinary(patch.blob));
+        const modelBlob = model.toBinary();
+        meta.seq = nextSeq;
+        meta.syncTs = Date.now();
+        delete meta.syncFailures;
+        await this._wrModel(keyBase, modelBlob, meta);
+        this.emitPubSub({type: 'reset', id, model: modelBlob});
+        return {model, meta};
+      });
+    }
     return this.lockBlock(keyBase, async () => {
       const [model, meta] = await Promise.all([this.readModel(keyBase), this.readMeta(keyBase)]);
       const seq2 = meta.seq;
