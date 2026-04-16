@@ -24,6 +24,7 @@ import type {
   LocalRepoGetRequest,
   LocalRepoCreateResponse,
   LocalRepoCreateRequest,
+  LocalRepoGet0Response,
   LocalRepoGetIfResponse,
   LocalRepoGetIfRequest,
   LocalRepoPullResponse,
@@ -724,6 +725,20 @@ export class LevelLocalRepo implements LocalRepo {
       });
     remote.catch(() => {});
     return {model, remote};
+  }
+
+  public async get0(id: BlockId): Promise<LocalRepoGet0Response> {
+    const keyBase = await this.blockKeyBase(id);
+    const [model, meta, frontier] = await Promise.all([
+      this.readModel(keyBase),
+      this.readMeta(keyBase),
+      this.readFrontier0(keyBase),
+    ]);
+    return {
+      model,
+      frontier,
+      meta,
+    };
   }
 
   public async get({id, remote}: LocalRepoGetRequest): Promise<LocalRepoGetResponse> {

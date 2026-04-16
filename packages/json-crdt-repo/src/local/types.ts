@@ -16,6 +16,11 @@ export interface LocalRepo {
   create(request: LocalRepoCreateRequest): Promise<LocalRepoCreateResponse>;
 
   /**
+   * Read local block state for debugging purposes.
+   */
+  get0?(id: BlockId): Promise<LocalRepoGet0Response>;
+
+  /**
    * Reads a block (document) from the local repo. Simply fetches the current
    * state of the block stored in the repo.
    */
@@ -161,6 +166,17 @@ export interface LocalRepoGetRequest {
    * Defaults to `false`.
    */
   remote?: boolean;
+}
+
+export interface LocalRepoGet0Response {
+  /** The locally stored model snapshot. */
+  model: Model;
+
+  /** Frontier patches that have not been folded into a clean read path yet. */
+  frontier: Patch[];
+
+  /** Persisted block metadata. */
+  meta: unknown;
 }
 
 export interface LocalRepoGetResponse {

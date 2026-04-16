@@ -16,6 +16,7 @@ export interface JsonCrdtRepoOpts {
 }
 
 export class JsonCrdtRepo {
+  public readonly repo: LevelLocalRepo;
   public readonly sessions: EditSessionFactory;
   public readonly opts: JsonCrdtRepoOpts;
   public readonly remote: DemoServerRemoteHistory;
@@ -37,14 +38,14 @@ export class JsonCrdtRepo {
     const pubsub = new PubSubBC<LevelLocalRepoPubSubMessage>(this.opts.name);
     const locks = new Locks();
     const connected$ = onLine$ as LevelLocalRepoOpts['connected$'];
-    const repo = new LevelLocalRepo({
+    const repo = (this.repo = new LevelLocalRepo({
       kv,
       locks,
       sid,
       rpc: this.remote,
       pubsub,
       connected$,
-    });
+    }));
     this.sessions = new EditSessionFactory({
       repo,
       sid,
