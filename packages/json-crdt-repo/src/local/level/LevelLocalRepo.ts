@@ -1029,6 +1029,7 @@ export class LevelLocalRepo implements LocalRepo {
         for (const batch of pull.batches)
           for (const patch of batch.patches) model.applyPatch(Patch.fromBinary(patch.blob));
         const modelBlob = model.toBinary();
+        meta.time = model.clock.time - 1;
         meta.seq = nextSeq;
         meta.syncTs = Date.now();
         delete meta.syncFailures;
