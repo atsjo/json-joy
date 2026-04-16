@@ -227,10 +227,14 @@ describe('.load()', () => {
 
     const remoteBlock = await kit.remote.client.call('block.get', {id: kit.blockId.join('/')});
     const remoteModel = Model.load(remoteBlock.block.snapshot.blob);
-    for (const batch of remoteBlock.block.tip) for (const remotePatch of batch.patches) remoteModel.applyPatch(Patch.fromBinary(remotePatch.blob));
+    for (const batch of remoteBlock.block.tip)
+      for (const remotePatch of batch.patches) remoteModel.applyPatch(Patch.fromBinary(remotePatch.blob));
     remoteModel.api.obj([]).set({x: 1});
     const patch = remoteModel.api.flush();
-    await kit.remote.client.call('block.upd', {id: kit.blockId.join('/'), batch: {patches: [{blob: patch.toBinary()}]}});
+    await kit.remote.client.call('block.upd', {
+      id: kit.blockId.join('/'),
+      batch: {patches: [{blob: patch.toBinary()}]},
+    });
 
     const localRead = await kit.local.get({id: kit.blockId});
     expect(localRead.model.view()).toEqual({foo: 'bar'});
