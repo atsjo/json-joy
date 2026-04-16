@@ -14,7 +14,7 @@ let LS: Record<string, string> = {};
 try {
   LS = window.localStorage;
   (LS as any).getItem('test');
-} catch (error) {
+} catch {
   LS = {};
 }
 
